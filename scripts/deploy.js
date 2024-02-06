@@ -2,7 +2,8 @@ const { REST, Routes } = require('discord.js');
 const { clientId, guildId } = require('../configs/config.json');
 const fs = require('node:fs');
 const path = require('node:path');
-const { err, success } = require('../functions/utils')
+const { err, success } = require('../data/utils')
+require('dotenv').config()
 
 const commands = [];
 const treausryFolder = path.join(__dirname, '../treasury/slashtype');
@@ -28,8 +29,8 @@ const rest = new REST().setToken(process.env.TOKEN);
 			{ body: commands },
 		);
 
-		success('INFO', `[INFO] Successfully reloaded ${data.length} application (/) commands.`);
+		success('INFO', `Successfully reloaded ${data.length} application (/) commands.`);
 	} catch (error) {
-		err(error)
+		err(error, 'Deploy js failed')
 	}
 })();

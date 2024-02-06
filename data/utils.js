@@ -7,10 +7,15 @@ const chalk = require('chalk')
   and uhhh idk
 */
 
-export function err(err, txt) {
-    console.log(`${chalk.red(`ℹ`)}: ${txt}`)
+function err(err, txt) {
+    console.log(`[${chalk.red(`info`)}]: ${txt}`)
     console.log(`[${chalk.red(`ERROR | ${err.name}`)}]: ${err.message}`)
 }
-export function success(nm, txt) {
-    console.log(`[${chalk.red(`${nm}`)}]: ${txt}`)
+function success(nm, txt) {
+    console.log(`[${chalk.blue(`${nm}`)}]: ${txt}`)
+}
+
+module.exports = {
+  err,
+  success
 }

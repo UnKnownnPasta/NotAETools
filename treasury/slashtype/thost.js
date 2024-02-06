@@ -9,10 +9,10 @@ const {
     ComponentType
 } = require("discord.js");
 const { google } = require("googleapis");
-const { interactionTimeout } = require('../../configs/config.json')
 
 module.exports = {
     name: "thost",
+    type: 'slash',
     data: new SlashCommandBuilder()
         .setName("thost")
         .setDescription("Hosts a treasury run")
@@ -102,12 +102,13 @@ module.exports = {
                 return;
             } else {
                 setOfUsers.push(interaction.user.id);
-                relicDesc = `${relicCount}x ${relicStuff}`
+
+                relicDesc = `\`${relicCount}x ${relicStuff}\`\n`
                 const relicEmbed = new EmbedBuilder()
                     .setTitle(`Squad by ${interaction.member.nickname ?? interaction.member.user.username}`);
 
                 const confirm = new ButtonBuilder()
-                    .setCustomId('join')
+                    .setCustomId('thost-join')
                     .setLabel('✔')
                     .setStyle(ButtonStyle.Success);
         
@@ -116,52 +117,13 @@ module.exports = {
                     .setLabel('❌')
                     .setStyle(ButtonStyle.Danger);
 
+                relicDesc += `${setOfUsers.map(x => `<@!${x}>`).join("\n")}`
+
                 const hostButtons = new ActionRowBuilder().addComponents(confirm, cancel)
 
                 relicEmbed.setDescription(relicDesc)
-                interaction.reply({content: `Successfully hosted a run for ${relicStuff}`, ephemeral: true });
-                const hostedMsg = await interaction.channel.send({ content: `${setOfUsers.map(x => `<@!${x}>`).join(" ")}`, embeds: [relicEmbed], components: [hostButtons] });
-
-                const collector = (await hostedMsg).createMessageComponentCollector({ componentType: ComponentType.Button, time: interactionTimeout });
-
-                collector.on('collect', async i => {
-                    const selection = i.customId;
-                    if (selection == 'thost-join') {
-                        if (setOfUsers.indexOf(i.user.id) !== -1) return;
-                        setOfUsers.push(i.user.id)
-                        relicEmbed.setDescription(setOfUsers.map(x => `<@!${x}>`).join('\n'))
-                        i.update({ embeds: [relicEmbed] })
-                        if (setOfUsers.length === 4) {
-                            const filledEmbed = new EmbedBuilder()
-                            .setTitle(`Run for [${relicStuff}] filled`)
-                            .setDescription(setOfUsers.map(x => `<@!${x}> - /invite ${userData.find(v => v[0] == x)[1]}`).join('\n'))
-
-                            i.deleteReply()
-                            i.channel.send({ embeds: [filledEmbed] })
-                            collector.stop()
-                            return;
-                        }
-                    } else if (selection == 'thost-cancel') {
-                        if (setOfUsers.indexOf(i.user.id) === -1) 
-                            return i.update({ embeds: [relicEmbed] })
-                        else if (i.user.id === interaction.user.id && setOfUsers.length === 1) {
-                            i.update({ embeds: [] })
-                            i.deleteReply()
-                            i.channel.send({ embeds: [
-                                new EmbedBuilder()
-                                .setTitle(`Run for ${relicStuff} is cancelled`)
-                                .setDescription(`Run was cancelled by the host.`)
-                            ] })
-                            collector.stop()
-                            return;
-                        }
-                        else if (setOfUsers.indexOf(i.user.id) != -1) {
-                            setOfUsers = setOfUsers.filter(x => x !== i.user.id)
-                            relicEmbed.setDescription(setOfUsers.map(x => `<@!${x}>`).join('\n'))
-                            i.update({ embeds: [relicEmbed] })
-                        }
-                    }
-                });
+                interaction.reply({ content: `Successfully hosted a run for ${relicStuff}`, ephemeral: true });
+                await interaction.channel.send({ content: `${setOfUsers.map(x => `<@!${x}>`).join(" ")}`, embeds: [relicEmbed], components: [hostButtons] });
             }
         });
     },

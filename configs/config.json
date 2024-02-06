@@ -24,15 +24,6 @@
                 "",
                 ""
             ]
-        },
-        "treasury": {
-            "lfgTimeout": 7200000
-        },
-        "farmer": {
-            "lfgTimeout": 1800000,
-            "lfgDelete": 600000
         }
-    },
-    "interactionTimeout": 300000,
-    "errorTimeout": 5000
+    }
 }
