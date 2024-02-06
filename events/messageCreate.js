@@ -15,7 +15,7 @@ module.exports = {
         
         try {
             const word = message.content.split(' ')[0].slice(2)
-            const command = client.treasury.get(word)
+            const command = client.treasury.get(word.toLocaleLowerCase())
             if (command.data) {
                 const reply = await message.reply({ content: `Unknown command. Perhaps its a slash command?` })
                 setTimeout(() => {

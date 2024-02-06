@@ -25,7 +25,7 @@ for (const folder of commandFolders) {
 		const filePath = path.join(commandsPath, file);
 		const command = require(filePath);
 		if ('execute' in command) {
-			client.treasury.set(command.data ? command.data.name : command.name, command);
+            command.name.forEach(name => client.treasury.set(name, command))
 		} else {
 			success(`WARNING`, `The command at ${filePath} is missing a required "execute" property.`);
 		}

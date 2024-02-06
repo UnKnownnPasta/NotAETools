@@ -21,7 +21,7 @@ module.exports = {
         switch (i.customId) {
 
             case 'thost-join':
-                // if (setOfUsers.indexOf(i.user.id) !== -1) return i.update();
+                if (setOfUsers.indexOf(i.user.id) !== -1) return i.update();
 
                 setOfUsers.push(i.user.id)
                 const relicEmbed = new EmbedBuilder()
@@ -48,13 +48,8 @@ module.exports = {
                     i.update({ embeds: [] });
                     i.deleteReply();
                     i.channel.send({
-                        embeds: [
-                            new EmbedBuilder()
-                                .setTitle(`Run for ${relicStuff} is cancelled`)
-                                .setDescription(`Run was cancelled by the host.`),
-                        ],
+                        embeds: [new EmbedBuilder().setTitle(`Run for ${relic} is cancelled`)],
                     });
-                    collector.stop();
                     return;
 
                 } else if (setOfUsers.indexOf(i.user.id) != -1) {

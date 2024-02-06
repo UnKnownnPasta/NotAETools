@@ -11,7 +11,7 @@ const {
 const { google } = require("googleapis");
 
 module.exports = {
-    name: "thost",
+    name: ["thost"],
     type: 'slash',
     data: new SlashCommandBuilder()
         .setName("thost")

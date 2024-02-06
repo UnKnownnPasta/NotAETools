@@ -11,7 +11,7 @@ const types = {
 }
 
 module.exports = {
-    name: 'soup',
+    name: ['soup'],
     type: 'msg',
     /**
     * Soup formats given relic codes
