@@ -1,0 +1,38 @@
+{
+    "clientId": "1010795947497898054",
+    "guildId": "957216457140342784",
+    "prefix": "++",
+    "mainServer": "957216457140342784",
+    "fissureChannel": "1172943281571762308",
+    "dept": {
+        "roles": {
+            "treasury": "1204381585982623804",
+            "treasuryRunner": "",
+            "farmer": [
+                "",
+                "",
+                ""
+            ]
+        },
+        "channels": {
+            "treasury": [
+                "1204381761015119914"
+            ],
+            "treasuryLfg": "1204381761015119914",
+            "farmerLfg": "1204381761015119914",
+            "farmer": [
+                "",
+                ""
+            ]
+        },
+        "treasury": {
+            "lfgTimeout": 7200000
+        },
+        "farmer": {
+            "lfgTimeout": 1800000,
+            "lfgDelete": 600000
+        }
+    },
+    "interactionTimeout": 300000,
+    "errorTimeout": 5000
+}
