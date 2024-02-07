@@ -8,8 +8,8 @@ const chalk = require('chalk')
 */
 
 function err(err, txt) {
-    console.log(`[${chalk.red(`info`)}]: ${txt}`)
-    console.log(`[${chalk.red(`ERROR | ${err.name}`)}]: ${err.message}`)
+    console.log(`[${chalk.red(`INFO`)}]: ${txt}`)
+    console.log(`[${chalk.red(`${err.name}`)}]: ${err}`)
 }
 function alert(nm, txt) {
     console.log(`[${chalk.blue(`${nm}`)}]: ${txt}`)

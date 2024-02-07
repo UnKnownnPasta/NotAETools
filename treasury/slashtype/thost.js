@@ -75,7 +75,7 @@ module.exports = {
             const confirm = new ButtonBuilder()
                 .setCustomId('thost-join')
                 .setLabel('✔')
-                .setStyle(ButtonStyle.alert);
+                .setStyle(ButtonStyle.Success);
     
             const cancel = new ButtonBuilder()
                 .setCustomId('thost-cancel')

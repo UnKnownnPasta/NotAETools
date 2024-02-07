@@ -22,6 +22,7 @@ module.exports = {
                 await command.execute(client, interaction);
                 alert(`COMMAND`, `"${interaction.commandName}" by ${interaction.member.nickname??interaction.user.username} @ ${new Date().toLocaleTimeString()}`)
             } catch (error) {
+                console.log(error)
                 err(error, `"${interaction.commandName}" by ${interaction.member.nickname??interaction.user.username} @ ${new Date().toLocaleTimeString()}`)
                 if (interaction.replied || interaction.deferred) {
                     await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
