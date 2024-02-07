@@ -23,6 +23,7 @@
     "discord.js": "^14.14.1",
     "dotenv": "^16.4.1",
     "googleapis": "^132.0.0",
+    "pagination.djs": "^4.0.13",
     "sequelize": "^6.36.0"
   }
 }

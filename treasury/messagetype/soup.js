@@ -71,10 +71,10 @@ module.exports = {
         const msgfilter = message.content.toLowerCase().split(' ').slice(1)
         const relics = msgfilter.splice(msgfilter.indexOf('soup')+1).join('_')
         const soupedRelics = (await soupedType(relics))
-        const axirelics = soupedRelics[0].filter(x => x.indexOf(`Axi`) !== -1)
-        const neorelics = soupedRelics[0].filter(x => x.indexOf(`Neo`) !== -1)
-        const mesorelics = soupedRelics[0].filter(x => x.indexOf(`Meso`) !== -1)
-        const lithrelics = soupedRelics[0].filter(x => x.indexOf(`Lith`) !== -1)
+        const axirelics = [... new Set(soupedRelics[0].filter(x => x.indexOf(`Axi`) !== -1))]
+        const neorelics = [... new Set(soupedRelics[0].filter(x => x.indexOf(`Neo`) !== -1))]
+        const mesorelics = [... new Set(soupedRelics[0].filter(x => x.indexOf(`Meso`) !== -1))]
+        const lithrelics = [... new Set(soupedRelics[0].filter(x => x.indexOf(`Lith`) !== -1))]
         response.edit({ embeds: [
             new EmbedBuilder()
             .setTitle(`Soup formatted`)

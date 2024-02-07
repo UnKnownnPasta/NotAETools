@@ -1,5 +1,6 @@
-const { Client, Message, EmbedBuilder } = require('discord.js')
+const { Client, Message, EmbedBuilder, ButtonStyle } = require('discord.js')
 const fs = require('node:fs')
+const { Pagination } = require('pagination.djs');
 
 const types = { 
     'ED': "#0d071e",
@@ -33,15 +34,30 @@ module.exports = {
         }
 
         allParts = [...new Set(allParts)]
+        const refluxedParts = allParts.sort((a, b) => a.slice(a.indexOf('[') + 1, -1) - b.slice(b.indexOf('[') + 1, -1))
+        const embedsOfParts = []
 
-        message.reply({ embeds: [
-            new EmbedBuilder()
-            .setTitle(`List of ${filterType} | ? / ?`)
+        for (var i = 0; i <= allParts.length; i+=15) {
+            embedsOfParts.push(new EmbedBuilder()
             .setDescription(`
 \`\`\`ml
-${allParts.sort((a, b) => a.slice(a.indexOf('[') + 1, -1) - b.slice(b.indexOf('[') + 1, -1)).slice(0, 15).map(x => `${spaceText(x.slice(x.indexOf('[')), 5, 1)} | ${x.slice(0, x.indexOf('['))}`).join('\n')}
-\`\`\`
-`)
-        ] })
+${refluxedParts.slice(i, i+15).map(x => `${spaceText(x.slice(x.indexOf('[')), 5, 1)} | ${x.slice(0, x.indexOf('['))}`).join('\n')}
+\`\`\``))
+        }
+
+        const pagination = new Pagination(message, {
+            firstEmoji: '⏮', // First button emoji
+            prevEmoji: '◀️', // Previous button emoji
+            nextEmoji: '▶️', // Next button emoji
+            lastEmoji: '⏭', // Last button emoji
+            idle: 60000, // idle time in ms before the pagination closes
+            buttonStyle: ButtonStyle.Secondary, // button style
+            loop: true // loop through the pages
+        });
+
+        pagination.setEmbeds(embedsOfParts, (embed, index, array) => {
+            return embed.setTitle(`[ ${filterType} ] ${index + 1}/${array.length}`);
+        });
+        pagination.render();
     }
 }
