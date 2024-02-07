@@ -1,4 +1,4 @@
-const { Client, Message, EmbedBuilder } = require('discord.js')
+const { Client, Message, EmbedBuilder, time } = require('discord.js')
 const { success, err } = require('../data/utils');
 const { prefix, dept } = require('../configs/config.json')
 const fs = require('node:fs')
@@ -27,14 +27,15 @@ module.exports = {
                 return;
             } else if (command) {
                 command?.execute(client, message)
+                success(`COMMAND`, `"${word}" by ${message.member.nickname??message.member.user.username} @ ${new Date().toLocaleTimeString()}`)
             } else {
-                success(`COMMAND`, `"${word}" by ${message.member.nickname??message.member.user.username}`)
+                success(`COMMAND`, `"${word}" by ${message.member.nickname??message.member.user.username} @ ${new Date().toLocaleTimeString()}`)
 
                 // Checking if its something like ++lg1, similar to soup
-                
+                client.treasury.get('*').execute(client, message, word)
             }
         } catch (error) {
-            err(error, `"${word}" by ${message.member.nickname??message.member.user.username}`)
+            err(error, `"${word}" by ${message.member.nickname??message.member.user.username} @ ${new Date().toLocaleTimeString()}`)
             console.log(error)
         }
     },

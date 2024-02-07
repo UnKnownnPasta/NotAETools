@@ -25,12 +25,13 @@ for (const folder of commandFolders) {
 		const filePath = path.join(commandsPath, file);
 		const command = require(filePath);
 		if ('execute' in command) {
-            command.name.forEach(name => client.treasury.set(name, command))
+            command.name.forEach(name => name != '*' ? client.treasury.set(name, command) : '')
 		} else {
 			success(`WARNING`, `The command at ${filePath} is missing a required "execute" property.`);
 		}
 	}
 }
+client.treasury.set('*', require('./treasury/messagetype/anyrelic.js'))
 success('INFO', 'All treasury commands loaded')
 
 // Initializing event listeners

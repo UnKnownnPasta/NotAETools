@@ -1,4 +1,4 @@
-const { Client, Message, EmbedBuilder } = require('discord.js')
+const { Client, Message, EmbedBuilder, codeBlock } = require('discord.js')
 const fs = require('node:fs')
 const { err } = require('../../data/utils')
 
@@ -62,7 +62,7 @@ module.exports = {
 
                 const res = await getRelic(`${era} ${type}`)
                 if (res == null) continue
-                soupedStrings.push(`${spaceText(howmany + "x", 5, 1)}| ${spaceText(`${era} ${type}`, 9, 0)}| ${res[1].slice(1,7).filter(x => x == types.ED).length} ED | ${res[1].slice(1,7).filter(x => x == types.RED).length} RED | ${res[1].slice(1,7).filter(x => x == types.ORANGE).length} ORANGE |`)
+                soupedStrings.push(`${`${howmany + "x"}`.padEnd(5)}| ${`${era} ${type}`.padEnd(9)}| ${res[1].slice(1,7).filter(x => x == types.ED).length} ED | ${res[1].slice(1,7).filter(x => x == types.RED).length} RED | ${res[1].slice(1,7).filter(x => x == types.ORANGE).length} ORANGE |`)
             }
 
             return [soupedStrings, soups]
@@ -78,13 +78,7 @@ module.exports = {
         response.edit({ embeds: [
             new EmbedBuilder()
             .setTitle(`Soup formatted`)
-            .setDescription(`
-\`\`\`ml
-${axirelics.length !== 0? axirelics.join('\n')+ '\n\n' : ''}${neorelics.length !== 0? neorelics.join('\n')+ '\n\n' : ''}${mesorelics.length !== 0? mesorelics.join('\n')+ '\n\n' : ''}${lithrelics.length !== 0? lithrelics.join('\n')+ '\n\n' : ''}
-\`\`\`
-
-*CODE: ${soupedRelics[1].join(' ')}*`
-)
+            .setDescription(`${codeBlock('ml', `${axirelics.length !== 0? axirelics.join('\n')+ '\n\n' : ''}${neorelics.length !== 0? neorelics.join('\n')+ '\n\n' : ''}${mesorelics.length !== 0? mesorelics.join('\n')+ '\n\n' : ''}${lithrelics.length !== 0? lithrelics.join('\n')+ '\n\n' : ''}`)}\n\n*CODE: ${soupedRelics[1].join(' ')}*`)
         ], content: null })
     }
 }

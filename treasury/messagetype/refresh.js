@@ -13,11 +13,11 @@ module.exports = {
     async execute(client, message) {
         if (!message.member.roles.cache.some(role => role.id === '890240560496017476')) return;
 
-        const m = message.channel.send({ content: `Refreshing..\n[ ] Relic Data\n[ ] User ids` })
+        const m = message.channel.send({ content: `Refreshing..\n[-] Relic Data\n[-] User ids` })
         await fetchAllPrimeParts("!A2:H573")
-        ;(await m).edit({ content: `[-] Relic Data\n[ ] User ids` })
+        ;(await m).edit({ content: `[+] Relic Data\n[-] User ids` })
         await fetchUserIds("!B14:C116")
-        ;(await m).edit({ content: `[-] Relic Data\n[-] User ids` })
+        ;(await m).edit({ content: `Completed.\n[+] Relic Data\n[+] User ids` })
     }
 }
 

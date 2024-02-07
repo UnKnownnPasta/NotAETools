@@ -20,9 +20,9 @@ module.exports = {
             
             try {
                 await command.execute(client, interaction);
-                success(`COMMAND`, `"${interaction.commandName}" by ${interaction.member.nickname??interaction.user.username}`)
+                success(`COMMAND`, `"${interaction.commandName}" by ${interaction.member.nickname??interaction.user.username} @ ${new Date().toLocaleTimeString()}`)
             } catch (error) {
-                err(error, `"${interaction.commandName}" by ${interaction.member.nickname??interaction.user.username}`)
+                err(error, `"${interaction.commandName}" by ${interaction.member.nickname??interaction.user.username} @ ${new Date().toLocaleTimeString()}`)
                 if (interaction.replied || interaction.deferred) {
                     await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
                 } else {

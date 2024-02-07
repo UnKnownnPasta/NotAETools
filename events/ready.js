@@ -15,7 +15,7 @@ module.exports = {
              }],
             status: 'dnd'
         });
-        success('LOGIN', `Logged in as ${client.user.username} at ${new Date().toJSON().slice(0,10).replace(/-/g,'/')}`)
+        success('LOGIN', `Logged in as ${client.user.username} at ${new Date().toJSON().slice(0,10).replace(/-/g,'/')} // ${new Date().toLocaleTimeString()}`)
         client.startuptime = new Date().getTime()
     },
 };
