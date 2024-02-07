@@ -3,10 +3,6 @@ const {
     Client,
     CommandInteraction,
     EmbedBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-    ActionRowBuilder,
-    ComponentType
 } = require("discord.js");
 const fs = require('node:fs')
 
