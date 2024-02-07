@@ -12,7 +12,8 @@ module.exports = {
     */
     async execute(client, message) { 
         if (!message.content.startsWith(prefix) || message.author.bot) return;
-        
+        if (!message.member.roles.has('890240560319856711')) return;
+
         try {
             const word = message.content.split(' ')[0].slice(2)
             const command = client.treasury.get(word.toLocaleLowerCase())
@@ -30,6 +31,5 @@ module.exports = {
         } catch (error) {
             err(error, `"${word}" by ${message.member.nickname??message.member.user.username}`)
         }
-        await message.reply({ content: `Unknown command.` })
     },
 };
