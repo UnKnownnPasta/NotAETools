@@ -11,7 +11,7 @@ module.exports = {
     * @param {Message} message
     */
     async execute(client, message) {
-        if (!member.roles.cache.some(role => role.id === '890240560496017476')) return;
+        if (!message.member.roles.cache.some(role => role.id === '890240560496017476')) return;
 
         const m = message.channel.send({ content: `Refreshing..\n[ ] Relic Data\n[ ] User ids` })
         await fetchAllPrimeParts("!A2:H573")
