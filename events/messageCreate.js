@@ -1,13 +1,11 @@
-const { Client, Message, EmbedBuilder, time } = require('discord.js')
-const { success, err } = require('../data/utils');
+const { Client, Message } = require('discord.js')
+const { alert, err } = require('../data/utils');
 const { prefix, dept } = require('../configs/config.json')
-const fs = require('node:fs')
 
 module.exports = {
     name: 'messageCreate', 
     once: false,
     /**
-    * This is a event listener with all stuff related to Queri commands 
     * @param {Message} message
     * @param {Client} client
     */
@@ -27,9 +25,9 @@ module.exports = {
                 return;
             } else if (command) {
                 command?.execute(client, message)
-                success(`COMMAND`, `"${word}" by ${message.member.nickname??message.member.user.username} @ ${new Date().toLocaleTimeString()}`)
+                alert(`COMMAND`, `"${word}" by ${message.member.nickname??message.member.user.username} @ ${new Date().toLocaleTimeString()}`)
             } else {
-                success(`COMMAND`, `"${word}" by ${message.member.nickname??message.member.user.username} @ ${new Date().toLocaleTimeString()}`)
+                alert(`COMMAND`, `"${word}" by ${message.member.nickname??message.member.user.username} @ ${new Date().toLocaleTimeString()}`)
 
                 // Checking if its something like ++lg1, similar to soup
                 client.treasury.get('*').execute(client, message, word)

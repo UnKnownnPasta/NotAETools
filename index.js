@@ -1,8 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
-const chalk = require('chalk');
-const { err, success } = require('./data/utils');
+const { err, alert } = require('./data/utils');
 require('dotenv').config()
 
 const client = new Client({
@@ -27,12 +26,12 @@ for (const folder of commandFolders) {
 		if ('execute' in command) {
             command.name.forEach(name => name != '*' ? client.treasury.set(name, command) : '')
 		} else {
-			success(`WARNING`, `The command at ${filePath} is missing a required "execute" property.`);
+			alert(`WARNING`, `The command at ${filePath} is missing a required "execute" property.`);
 		}
 	}
 }
 client.treasury.set('*', require('./treasury/messagetype/anyrelic.js'))
-success('INFO', 'All treasury commands loaded')
+alert('INFO', 'All treasury commands loaded')
 
 // Initializing event listeners
 const eventsPath = path.join(__dirname, './events/');
@@ -47,7 +46,7 @@ for (const file of eventFiles) {
 		client.on(event.name, (...args) => event.execute(client, ...args));
 	}
 }
-success('INFO', 'Event listeners loaded & active')
+alert('INFO', 'Event listeners loaded & active')
 
 // Retrieve all button components
 client.buttons = new Collection(); 
@@ -61,10 +60,10 @@ for (const file of buttonFiles) {
         client.buttons.set(button.name, button)
     }
     else { 
-        success(`WARNING`, `The command at ${filePath} is missing a required "execute" property.`);
+        alert(`WARNING`, `The command at ${filePath} is missing a required "execute" property.`);
     }
 }
-success('INFO', 'Cached all button handlers')
+alert('INFO', 'Cached all button handlers')
 
 // we're done here
 client.login(process.env.TOKEN)

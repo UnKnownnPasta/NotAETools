@@ -21,14 +21,6 @@ module.exports = {
     async execute(client, message) {
         const response = await message.channel.send({ content: `Preparing..` })
 
-        function spaceText(text, spaceAmt, increment) {
-            var spaces = new Array(spaceAmt).fill(" ");
-            for (var i = increment; i < spaces.length; i++) {
-                spaces[i] = text[i - increment] ?? " ";
-            }
-            return spaces.join("");
-        }
-
         async function getRelic(name) {
             const relicsList = await JSON.parse(await fs.readFileSync('./data/relicdata.json', 'utf-8'))
             for (const relic of relicsList) {

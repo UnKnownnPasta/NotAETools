@@ -1,8 +1,6 @@
 const {
     Client,
     EmbedBuilder,
-    ButtonBuilder,
-    ButtonStyle,
     ButtonInteraction,
 } = require("discord.js");
 const fs = require('node:fs')
@@ -10,7 +8,7 @@ const fs = require('node:fs')
 module.exports = { 
     name: "thost",
 /**
- * Updating embed with removed rules set
+ * Updating embed with button functionality
  * @param {Client} client 
  * @param {ButtonInteraction} i 
  */
@@ -21,7 +19,7 @@ module.exports = {
         switch (i.customId) {
 
             case 'thost-join':
-                if (setOfUsers.indexOf(i.user.id) !== -1) return i.update();
+                if (setOfUsers.indexOf(i.user.id) !== -1) return i.update({ embeds: [i.message.embeds[0]] });
 
                 setOfUsers.push(i.user.id)
                 const relicEmbed = new EmbedBuilder()

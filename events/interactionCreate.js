@@ -1,5 +1,5 @@
 const { CommandInteraction, Client } = require('discord.js')
-const { err, success } = require('../data/utils.js');
+const { err, alert } = require('../data/utils.js');
 
 module.exports = {
     name: 'interactionCreate', 
@@ -14,13 +14,13 @@ module.exports = {
             const command = client.treasury.get(interaction.commandName);
         
             if (!command) {
-                success(`WARNING`, `No command matching ${interaction.commandName} was found, even though it was run.`)
+                alert(`WARNING`, `No command matching ${interaction.commandName} was found, even though it was run.`)
                 return;
             }
             
             try {
                 await command.execute(client, interaction);
-                success(`COMMAND`, `"${interaction.commandName}" by ${interaction.member.nickname??interaction.user.username} @ ${new Date().toLocaleTimeString()}`)
+                alert(`COMMAND`, `"${interaction.commandName}" by ${interaction.member.nickname??interaction.user.username} @ ${new Date().toLocaleTimeString()}`)
             } catch (error) {
                 err(error, `"${interaction.commandName}" by ${interaction.member.nickname??interaction.user.username} @ ${new Date().toLocaleTimeString()}`)
                 if (interaction.replied || interaction.deferred) {

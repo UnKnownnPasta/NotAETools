@@ -13,7 +13,7 @@ const types = {
 module.exports = {
     name: ['ed', 'red', 'yellow', 'orange', 'green'],
     /**
-    * Get relics filtered by part status(es)
+    * Get parts filtered by part status(es)
     * @param {Client} client
     * @param {Message} message
     */

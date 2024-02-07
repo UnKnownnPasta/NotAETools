@@ -1,12 +1,12 @@
 const { Client, Message } = require('discord.js')
 const { google } = require('googleapis');
-const { err, success } = require('../../data/utils');
+const { err, alert } = require('../../data/utils');
 const fs = require('node:fs')
 
 module.exports = {
     name: ['refresh'], 
     /**
-    * Description
+    * Refresh all stored data (relics and userids)
     * @param {Client} client
     * @param {Message} message
     */
@@ -34,7 +34,7 @@ async function fetchUserIds(range) {
         if (values && values.length > 0) {
             fs.writeFileSync('./data/userids.json', JSON.stringify(values))
         } else {
-            success('Google Error', 'Could not fetch any user ids.')
+            alert('Google Error', 'Could not fetch any user ids.')
         }
     } catch (error) {
         err(error, `Error fetching userids`);
@@ -80,7 +80,7 @@ async function fetchAllPrimeParts(range) {
 
             fs.writeFileSync('./data/relicdata.json', JSON.stringify(combinedData))
         } else {
-            success(`Google Error`, `No data found for range ${range}.`);
+            alert(`Google Error`, `No data found for range ${range}.`);
         }
     } catch (error) {
         err(error, `Error fetching data for range ${range}`);

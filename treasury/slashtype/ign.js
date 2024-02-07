@@ -13,7 +13,7 @@ module.exports = {
 		.setDescription('Gives ign of specified person')
         .addUserOption(option => option.setName('user').setDescription('Gives ign of user').setRequired(true)),
 	/**
-	 * Descripition
+	 * Retrieves Warframe IGN of given user
 	 * @param {Client} client 
 	 * @param {CommandInteraction} interaction 
 	 */
