@@ -13,7 +13,7 @@ module.exports = {
     */
     async execute(client, message) { 
         if (!message.content.startsWith(prefix) || message.author.bot) return;
-        // if (!member.roles.cache.some(role => role.id == '890240560319856711')) return;
+        if (!member.roles.cache.some(role => role.id == '890240560319856711')) return;
 
         var word = "";
         try {
