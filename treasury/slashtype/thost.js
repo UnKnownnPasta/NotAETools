@@ -9,6 +9,7 @@ const {
     ComponentType
 } = require("discord.js");
 const { google } = require("googleapis");
+const { dept } = require('../../configs/config.json')
 
 module.exports = {
     name: ["thost"],
@@ -34,8 +35,8 @@ module.exports = {
      * @param {Client} client
      */
     async execute(client, interaction) {
+        if (!interaction.member.roles.cache.some(role => role.id == dept.roles.treasuryRunner)) return;
         let relicData = [];
-        let userData = [];
         const authKey = process.env.GOOGLEAPIKEY,
             spreadsheetId = "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY",
             relicRange = 'Tracker!A2:A555',
