@@ -51,7 +51,7 @@ alert('INFO', 'Event listeners loaded & active')
 // Fissures channel ID: 1192962141205045328
 setInterval(async () => {
 	await updateFissures(client)
-}, 10000);
+}, 120000);
 
 // Retrieve all button components
 client.buttons = new Collection(); 

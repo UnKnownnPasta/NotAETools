@@ -1,5 +1,7 @@
 const chalk = require('chalk')
 const axios = require('axios')
+const { Client, EmbedBuilder } = require('discord.js')
+const { fissureChannel } = require('../configs/config.json')
 
 /**
 * @description 
@@ -36,17 +38,47 @@ function checkForRelic(relic) {
   }
 }
 
-
+/**
+ * Updates fissures in fissure channel every 3 minutes: 1192962141205045328
+ * @param {Client} client 
+ */
 async function updateFissures(client) {
   const response = await axios.get("https://api.warframestat.us/pc/")
   const fissures = response.data.fissures
   let normFissureString = ""
   let spFissureString = ""
+  const acceptableFissures = ['Extermination ', 'Capture', 'Sabotage', 'Rescue']
   fissures.forEach(async (fis) => {
-    if (fis["isHard"]) {
-      
+    
+    if (fis["isHard"] && !fis["isStorm"] && acceptableFissures.includes(fis["missionType"]) && fis['active']) {
+      spFissureString += `${fis['missionType']} - ${fis['node']} - ${timeDiff(fis['expiry'], Date.now())}\n`
+
+    } else if (!fis["isHard"] && !fis["isStorm"] && acceptableFissures.includes(fis["missionType"]) && fis['active']) {
+      normFissureString += `${fis['missionType']} - ${fis['node']} - ${timeDiff(fis['expiry'], Date.now())}\n`
     }
   })
+  const SPEmbed = new EmbedBuilder()
+  .setTitle('Steel Path fissures')
+  .setDescription(spFissureString.length > 1 ? spFissureString : '-')
+  .setTimestamp();
+  const NormEmbed = new EmbedBuilder()
+  .setTitle('Normal Fissures')
+  .setDescription(normFissureString.length > 1 ? normFissureString : '-');
+
+  await client.channels.cache.get(fissureChannel).messages.fetch({ limit: 1 }).then(async (msg) => await msg.first().edit({ embeds: [NormEmbed, SPEmbed] }))
+}
+
+function timeDiff(time1, time2) {
+  const date1 = new Date(time1);
+  const date2 = new Date(time2);
+
+  const timeDifference = Math.abs(date2 - date1) / 1000; // in seconds
+
+  const hours = Math.floor(timeDifference / 3600);
+  const minutes = Math.floor((timeDifference % 3600) / 60);
+  const seconds = Math.floor(timeDifference % 60);
+
+  return `${hours}h ${minutes}m ${seconds}s`;
 }
 
 module.exports = {
