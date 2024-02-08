@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
-const { err, alert } = require('./data/utils');
+const { err, alert, updateFissures } = require('./data/utils');
 require('dotenv').config()
 
 const client = new Client({
@@ -47,6 +47,11 @@ for (const file of eventFiles) {
 	}
 }
 alert('INFO', 'Event listeners loaded & active')
+
+// Fissures channel ID: 1192962141205045328
+setInterval(async () => {
+	await updateFissures(client)
+}, 10000);
 
 // Retrieve all button components
 client.buttons = new Collection(); 

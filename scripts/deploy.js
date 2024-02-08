@@ -1,9 +1,8 @@
+require('dotenv').config()
 const { REST, Routes } = require('discord.js');
-const { clientId, guildId } = require('../configs/config.json');
 const fs = require('node:fs');
 const path = require('node:path');
 const { err, alert } = require('../data/utils')
-require('dotenv').config()
 
 const commands = [];
 const treausryFolder = path.join(__dirname, '../treasury/slashtype');
@@ -25,7 +24,7 @@ const rest = new REST().setToken(process.env.TOKEN);
 		alert('INFO', `Started refreshing ${commands.length} application (/) commands.`);
 
 		const data = await rest.put(
-			Routes.applicationGuildCommands(clientId, guildId),
+			Routes.applicationGuildCommands(process.env.CLIENTID, process.env.MAINGUILDID),
 			{ body: commands },
 		);
 

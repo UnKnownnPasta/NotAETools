@@ -1,6 +1,6 @@
 const { Client, Message, EmbedBuilder, codeBlock } = require('discord.js')
 const fs = require('node:fs')
-const { err } = require('../../data/utils')
+const { checkForRelic } = require('../../data/utils')
 
 const types = { 
     ED: "#0d071e",
@@ -29,48 +29,45 @@ module.exports = {
             return null
         }
 
+        const validrelics = []
         async function soupedType(relic) {
             const soupedStrings = []
-            const soups = []
-            const relicEra = relic.split('_')
-            for (const i of relicEra) {
+            const relicShorthands = relic.split('_')
+            for (const i of relicShorthands) {
                 var currentRelic = i.toLowerCase()
-                var era, type, howmany, firstindex, currentEra;
+                var howmany, firstindex, fishedRelicName;
 
                 if (currentRelic.length > 7) continue
-                try {
-                    firstindex = currentRelic.search(/[a-zA-Z]/)
-                } catch (e) { continue }
-                howmany = currentRelic.slice(0, firstindex)
-                currentEra = currentRelic.slice(firstindex)
-                soups.push(currentRelic)
-                if (!howmany) continue
-                else if (!isNaN(currentRelic)) continue
-                else if (currentEra[0] === 'a') era = "Axi"
-                else if (currentEra[0] === 'n') era = "Neo"
-                else if (currentEra[0] === 'm') era = "Meso"
-                else if (currentEra[0] === 'l') era = "Lith"
-                type = currentRelic.slice(firstindex + 1).toUpperCase()
+                firstindex = currentRelic.match(/[a-zA-Z]/);
+                
+                if (firstindex == null) continue
+                if (firstindex.index == 0) continue
+                howmany = currentRelic.slice(0, firstindex.index)
+                fishedRelicName = currentRelic.slice(firstindex.index)
 
-                const res = await getRelic(`${era} ${type}`)
+                const verifiedRelic = checkForRelic(fishedRelicName)
+                if (!verifiedRelic) continue
+
+                const res = await getRelic(verifiedRelic)
                 if (res == null) continue
-                soupedStrings.push(`${`${howmany + "x"}`.padEnd(5)}| ${`${era} ${type}`.padEnd(9)}| ${res[1].slice(1,7).filter(x => x == types.ED).length} ED | ${res[1].slice(1,7).filter(x => x == types.RED).length} RED | ${res[1].slice(1,7).filter(x => x == types.ORANGE).length} ORANGE |`)
+                validrelics.push(i)
+                soupedStrings.push(`${`${howmany + "x"}`.padEnd(5)}| ${verifiedRelic.padEnd(9)}| ${res[1].slice(1,7).filter(x => x == types.ED).length} ED | ${res[1].slice(1,7).filter(x => x == types.RED).length} RED | ${res[1].slice(1,7).filter(x => x == types.ORANGE).length} ORANGE |`)
             }
 
-            return [soupedStrings, soups]
+            return soupedStrings
         }
 
         const msgfilter = message.content.toLowerCase().split(' ').slice(1)
         const relics = msgfilter.splice(msgfilter.indexOf('soup')+1).join('_')
         const soupedRelics = (await soupedType(relics))
-        const axirelics = [... new Set(soupedRelics[0].filter(x => x.indexOf(`Axi`) !== -1))]
-        const neorelics = [... new Set(soupedRelics[0].filter(x => x.indexOf(`Neo`) !== -1))]
-        const mesorelics = [... new Set(soupedRelics[0].filter(x => x.indexOf(`Meso`) !== -1))]
-        const lithrelics = [... new Set(soupedRelics[0].filter(x => x.indexOf(`Lith`) !== -1))]
+        const axirelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Axi`) !== -1))]
+        const neorelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Neo`) !== -1))]
+        const mesorelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Meso`) !== -1))]
+        const lithrelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Lith`) !== -1))]
         response.edit({ embeds: [
             new EmbedBuilder()
             .setTitle(`Soup formatted`)
-            .setDescription(`${codeBlock('ml', `${axirelics.length !== 0? axirelics.join('\n')+ '\n\n' : ''}${neorelics.length !== 0? neorelics.join('\n')+ '\n\n' : ''}${mesorelics.length !== 0? mesorelics.join('\n')+ '\n\n' : ''}${lithrelics.length !== 0? lithrelics.join('\n')+ '\n\n' : ''}`)}\n\n*CODE: ${soupedRelics[1].join(' ')}*`)
+            .setDescription(`${codeBlock('ml', `${axirelics.length !== 0? axirelics.join('\n')+ '\n\n' : ''}${neorelics.length !== 0? neorelics.join('\n')+ '\n\n' : ''}${mesorelics.length !== 0? mesorelics.join('\n')+ '\n\n' : ''}${lithrelics.length !== 0? lithrelics.join('\n')+ '\n\n' : ''}`)}\n\n*CODE: ${validrelics.join(' ')}*`)
         ], content: null })
     }
 }

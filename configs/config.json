@@ -1,29 +1,17 @@
 {
-    "clientId": "1010795947497898054",
-    "guildId": "957216457140342784",
     "prefix": "++",
-    "mainServer": "957216457140342784",
-    "fissureChannel": "1172943281571762308",
+    "fissureChannel": "1192962141205045328",
     "dept": {
         "roles": {
-            "treasury": "1204381585982623804",
+            "treasury": "890240560319856711",
             "treasuryRunner": "890240560294682631",
-            "farmer": [
-                "",
-                "",
-                ""
-            ]
+            "farmer": ["", ""]
         },
         "channels": {
-            "treasury": [
-                "890240565155864606"
-            ],
+            "treasurySpam": "890240565155864615",
             "treasuryLfg": "890240565155864608",
-            "farmerLfg": "",
-            "farmer": [
-                "",
-                ""
-            ]
+            "farmerLfg": ""
         }
-    }
+    },
+    "spreadsheetId": "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY"
 }

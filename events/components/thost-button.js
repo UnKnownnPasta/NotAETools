@@ -22,7 +22,7 @@ module.exports = {
         switch (i.customId) {
 
             case 'thost-join':
-                // if (setOfUsers.indexOf(i.user.id) !== -1) return i.update({ embeds: [i.message.embeds[0]] });
+                if (setOfUsers.indexOf(i.user.id) !== -1) return i.update({ embeds: [i.message.embeds[0]] });
 
                 setOfUsers.push(i.user.id)
 

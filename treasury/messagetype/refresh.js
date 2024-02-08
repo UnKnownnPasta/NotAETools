@@ -2,6 +2,7 @@ const { Client, Message } = require('discord.js')
 const { google } = require('googleapis');
 const { err, alert } = require('../../data/utils');
 const fs = require('node:fs')
+const { spreadsheetId } = require('../../configs/config.json')
 
 module.exports = {
     name: ['refresh'], 
@@ -24,7 +25,7 @@ async function fetchUserIds(range) {
     try {
         const response = await google.sheets("v4").spreadsheets.values.get({
             auth: process.env.GOOGLEAPIKEY,
-            spreadsheetId: "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY",
+            spreadsheetId: spreadsheetId,
             range: "Directory" + range,
         });
 
@@ -44,7 +45,7 @@ async function fetchAllPrimeParts(range) {
     try {
         const response = await google.sheets("v4").spreadsheets.values.get({
             auth: process.env.GOOGLEAPIKEY,
-            spreadsheetId: "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY",
+            spreadsheetId: spreadsheetId,
             range: "Tracker - LIVE" + range,
         });
 
@@ -63,8 +64,8 @@ async function fetchAllPrimeParts(range) {
             // Fetch background colors separately
             const backgroundResponse = await google.sheets("v4").spreadsheets.get({
                 auth: process.env.GOOGLEAPIKEY,
-                spreadsheetId: "14Lxib9u73S8lGJjbWrgiXXhfP3NFyzbH_aqh-gwMyn8",
-                ranges: ["relics" + range],
+                spreadsheetId: spreadsheetId,
+                ranges: ["Tracker - LIVE" + range],
                 includeGridData: true
             });
 
