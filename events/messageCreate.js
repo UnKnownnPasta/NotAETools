@@ -11,7 +11,6 @@ module.exports = {
     */
     async execute(client, message) { 
         if (!message.content.startsWith(prefix) || message.author.bot) return;
-        if (!message.member.roles.cache.some(role => role.id == dept.roles.treasury)) return;
 
         var word = "";
         try {

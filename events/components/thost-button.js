@@ -14,25 +14,33 @@ module.exports = {
  */
     async execute(client, i) {
         const embedDesc = i.message.embeds[0].description.split('\n')
-        const setOfUsers = embedDesc.slice(1).map(x => x.slice(3, -1))
+        let setOfUsers = embedDesc.slice(1).map(x => x.slice(3, -1))
         const relic = embedDesc[0]
+        const relicEmbed = new EmbedBuilder()
+            .setTitle(`${i.message.embeds[0].title}`);
+
         switch (i.customId) {
 
             case 'thost-join':
-                if (setOfUsers.indexOf(i.user.id) !== -1) return i.update({ embeds: [i.message.embeds[0]] });
+                // if (setOfUsers.indexOf(i.user.id) !== -1) return i.update({ embeds: [i.message.embeds[0]] });
 
                 setOfUsers.push(i.user.id)
-                const relicEmbed = new EmbedBuilder()
-                    .setTitle(`${i.message.embeds[0].title}`);
 
                 relicEmbed.setDescription(relic + '\n' + setOfUsers.map(x => `<@!${x}>`).join('\n'))
                 i.update({ embeds: [relicEmbed] })
 
                 if (setOfUsers.length === 4) {
                     const userData = await JSON.parse(fs.readFileSync('./data/userids.json'))
+                    let usersInviteDesc = ""
+                    setOfUsers.forEach(x => {
+                        var index = userData.findIndex(v => v[0] == x)
+                        if (index == -1) usersInviteDesc +=  `<@${x}> - No IGN known\n`
+                        else { usersInviteDesc +=  `<@${x}> - /inv ${userData[index][1]}\n` }
+                    })
+                    
                     const filledEmbed = new EmbedBuilder()
                     .setTitle(`Run for [${relic}] filled`)
-                    .setDescription(`Invite Others:\n` + setOfUsers.map(x => `<@!${x}> - /inv ${userData.find(v => v[0] == x)[1] ?? '*No IGN found*'}`).join('\n'))
+                    .setDescription(`Invite Others:\n` + usersInviteDesc)
 
                     i.message.delete()
                     i.channel.send({ embeds: [filledEmbed] })
@@ -41,19 +49,19 @@ module.exports = {
                 break;
 
             case 'thost-cancel':
-                if (setOfUsers.indexOf(i.user.id) === -1) return i.update({ embeds: [relicEmbed] });
-                else if (i.user.id === i.message.content.slice(3, -1) && setOfUsers.length === 1) {
-                    i.update({ embeds: [] });
+                if (setOfUsers.indexOf(i.user.id) === -1) return i.update({ });
+
+                else if (i.user.id == i.message.content.slice(3, -1)) {
+                    i.update({ content: null });
                     i.deleteReply();
                     i.channel.send({
                         embeds: [new EmbedBuilder().setTitle(`Run for ${relic} is cancelled`)],
                     });
                     return;
-
                 } else if (setOfUsers.indexOf(i.user.id) != -1) {
-                    setOfUsers = setOfUsers.filter((x) => x !== i.user.id);
+                    setOfUsers = setOfUsers.filter((x) => x != i.user.id);
                     relicEmbed.setDescription(
-                        setOfUsers.map((x) => `<@!${x}>`).join("\n")
+                        relic + '\n' + setOfUsers.map((x) => `<@!${x}>`).join("\n")
                     );
                     i.update({ embeds: [relicEmbed] });
                 }

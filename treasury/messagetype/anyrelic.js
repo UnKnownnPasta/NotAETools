@@ -30,7 +30,7 @@ module.exports = {
             else if (relicShort[0] === 'n') relicEra = "Neo"
             else if (relicShort[0] === 'm') relicEra = "Meso"
             else if (relicShort[0] === 'l') relicEra = "Lith"
-            relicType = word.slice(1).toUpperCase()
+            relicType = word.slice(1).toUpperCase();
         }
 
         let jsfile = await JSON.parse(await fs.readFileSync('./data/relicdata.json', 'utf-8'))

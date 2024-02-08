@@ -11,12 +11,11 @@ module.exports = {
     * @param {Message} message
     */
     async execute(client, message) {
-        if (!message.member.roles.cache.some(role => role.id === '890240560496017476')) return;
 
         const m = message.channel.send({ content: `Refreshing..\n[-] Relic Data\n[-] User ids` })
-        await fetchAllPrimeParts("!A2:H573")
+        await fetchAllPrimeParts("!A2:H")
         ;(await m).edit({ content: `[+] Relic Data\n[-] User ids` })
-        await fetchUserIds("!B14:C116")
+        await fetchUserIds("!B2:C")
         ;(await m).edit({ content: `Completed.\n[+] Relic Data\n[+] User ids` })
     }
 }
@@ -32,7 +31,7 @@ async function fetchUserIds(range) {
         const values = response.data.values;
 
         if (values && values.length > 0) {
-            fs.writeFileSync('./data/userids.json', JSON.stringify(values))
+            fs.writeFileSync('./data/userids.json', JSON.stringify(values.filter(x => x.length != 0)))
         } else {
             alert('Google Error', 'Could not fetch any user ids.')
         }
@@ -45,8 +44,8 @@ async function fetchAllPrimeParts(range) {
     try {
         const response = await google.sheets("v4").spreadsheets.values.get({
             auth: process.env.GOOGLEAPIKEY,
-            spreadsheetId: "14Lxib9u73S8lGJjbWrgiXXhfP3NFyzbH_aqh-gwMyn8",
-            range: "relics" + range,
+            spreadsheetId: "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY",
+            range: "Tracker - LIVE" + range,
         });
 
         const values = response.data.values;

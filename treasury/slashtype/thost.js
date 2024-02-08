@@ -34,7 +34,6 @@ module.exports = {
      * @param {Client} client
      */
     async execute(client, interaction) {
-        if (!interaction.member.roles.cache.some(role => role.id == dept.roles.treasuryRunner)) return;
 
         const relicData = await JSON.parse(await fs.readFileSync('./data/relicdata.json', 'utf-8')).map(x => x[0][0])
         
