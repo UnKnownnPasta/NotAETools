@@ -1,11 +1,13 @@
 {
     "prefix": "++",
-    "fissureChannel": "1172943281571762308",
+    "fissureChannel": "1204381761015119914",
     "dept": {
         "roles": {
             "treasury": "890240560319856711",
             "treasuryRunner": "890240560294682631",
-            "farmer": ["", ""]
+            "farmer": ["", ""],
+            "treasuryManager": "890240560496017476",
+            "treasuryMarketHost": "890240560131104802"
         },
         "channels": {
             "treasurySpam": "890240565155864615",
@@ -13,5 +15,9 @@
             "farmerLfg": ""
         }
     },
-    "spreadsheetId": "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY"
+    "spreadsheet": {
+        "id": "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY",
+        "relicName": "Tracker - LIVE",
+        "useridName": "Directory"
+    }
 }

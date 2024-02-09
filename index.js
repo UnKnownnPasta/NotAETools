@@ -48,10 +48,16 @@ for (const file of eventFiles) {
 }
 alert('INFO', 'Event listeners loaded & active')
 
-// Fissures channel ID: 1192962141205045328
+// initial one
+setTimeout(() => {
+	updateFissures(client)
+}, 3000);
+// Fissures channel ID: 1192962141205045328, every 2 minutes
 setInterval(async () => {
-	await updateFissures(client)
-}, 120000);
+	await updateFissures(client).catch((error) => {err(error, 'Could not update fissures.')})
+	await require('./treasury/messagetype/refresh.js').fetchAllPrimeParts().catch((error) => {err(error, 'Could not update relics data.')})
+	await require('./treasury/messagetype/refresh.js').fetchUserIds().catch((error) => {err(error, 'Could not update user ids.')})
+}, 120_000);
 
 // Retrieve all button components
 client.buttons = new Collection(); 

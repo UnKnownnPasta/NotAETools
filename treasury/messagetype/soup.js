@@ -3,7 +3,7 @@ const fs = require('node:fs')
 const { checkForRelic } = require('../../data/utils')
 
 const types = { 
-    ED: "#0d071e",
+    ED: "#150b2e",
     RED: "#3c0000",
     ORANGE: "#472502",
     YELLOW: "#4b3800",

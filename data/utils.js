@@ -48,15 +48,15 @@ async function updateFissures(client) {
   let normFissureString = ""
   let spFissureString = ""
   const acceptableFissures = ['Extermination ', 'Capture', 'Sabotage', 'Rescue']
+  
   fissures.forEach(async (fis) => {
-    
     if (fis["isHard"] && !fis["isStorm"] && acceptableFissures.includes(fis["missionType"]) && fis['active']) {
-      spFissureString += `${fis['missionType']} - ${fis['node']} - ${timeDiff(fis['expiry'], Date.now())}\n`
-
+      spFissureString += `${fis['missionType']} - ${fis['node']} - ${fis['eta']}\n`
     } else if (!fis["isHard"] && !fis["isStorm"] && acceptableFissures.includes(fis["missionType"]) && fis['active']) {
-      normFissureString += `${fis['missionType']} - ${fis['node']} - ${timeDiff(fis['expiry'], Date.now())}\n`
+      normFissureString += `${fis['missionType']} - ${fis['node']} - ${fis['eta']}\n`
     }
   })
+  
   const SPEmbed = new EmbedBuilder()
   .setTitle('Steel Path fissures')
   .setDescription(spFissureString.length > 1 ? spFissureString : '-')
@@ -65,20 +65,7 @@ async function updateFissures(client) {
   .setTitle('Normal Fissures')
   .setDescription(normFissureString.length > 1 ? normFissureString : '-');
 
-  await client.channels.cache.get(fissureChannel).messages.fetch({ limit: 1 }).then(async (msg) => await msg.first().edit({ embeds: [NormEmbed, SPEmbed] }))
-}
-
-function timeDiff(time1, time2) {
-  const date1 = new Date(time1);
-  const date2 = new Date(time2);
-
-  const timeDifference = Math.abs(date2 - date1) / 1000; // in seconds
-
-  const hours = Math.floor(timeDifference / 3600);
-  const minutes = Math.floor((timeDifference % 3600) / 60);
-  const seconds = Math.floor(timeDifference % 60);
-
-  return `${hours}h ${minutes}m ${seconds}s`;
+  await client.channels.cache.get(fissureChannel)?.messages?.fetch({ limit: 1 })?.then(async (msg) => await msg.first().edit({ embeds: [NormEmbed, SPEmbed] }))
 }
 
 module.exports = {
