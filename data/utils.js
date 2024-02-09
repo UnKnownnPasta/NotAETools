@@ -65,14 +65,20 @@ async function updateFissures(client) {
   .setTitle('Normal Fissures')
   .setDescription(normFissureString.length > 1 ? normFissureString : '-');
 
-  await client.channels.cache.get(fissureChannel).messages.fetch({ limit: 1 }).then(async (msg) => await msg.first().edit({ embeds: [NormEmbed, SPEmbed] }))
+  await client.channels.cache.get(fissureChannel).messages.fetch({ limit: 4 }).then(async (msg) => {
+    msg.each(m => {
+      if (m.author.id == client.user.id) {
+        m.edit({ embeds: [NormEmbed, SPEmbed] })
+      }
+    })
+  })
 }
 
 function titleCase(str) {
   const words = str.split(' ');
 
   for (let i = 0; i < words.length; i++) {
-    if (words[i] === 'bp') {
+    if (words[i] == 'bp') {
       words[i] = 'BP';
       continue;
     }

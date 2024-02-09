@@ -37,7 +37,6 @@ module.exports = {
                 detectedType = 'part'
             }
         }
-        console.log(finalRelic)
 
         switch (detectedType) {
             case 'relic':
@@ -67,8 +66,6 @@ module.exports = {
                     ] })
                 }
             break;
-        }
-
-        
+        }        
     }
 }

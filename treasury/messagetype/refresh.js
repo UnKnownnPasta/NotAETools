@@ -10,7 +10,7 @@ module.exports = {
     * Refresh all stored data (relics and userids)
     * @param {Client} client
     * @param {Message} message
-    */
+    */  
     async execute(client, message) {
         if (message.member.roles.cache.some(role => role.id == dept.roles.treasuryManager) || message.member.roles.cache.some(role => role.id == dept.roles.treasuryMarketHost)) {
             const m = message.channel.send({ content: `Refreshing..\n[-] Relic Data\n[-] User ids` })
