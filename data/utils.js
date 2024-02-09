@@ -65,7 +65,7 @@ async function updateFissures(client) {
   .setTitle('Normal Fissures')
   .setDescription(normFissureString.length > 1 ? normFissureString : '-');
 
-  await client.channels.cache.get(fissureChannel)?.messages?.fetch({ limit: 1 })?.then(async (msg) => await msg.first().edit({ embeds: [NormEmbed, SPEmbed] }))
+  await client.channels.cache.get(fissureChannel).messages.fetch({ limit: 1 }).then(async (msg) => await msg.first().edit({ embeds: [NormEmbed, SPEmbed] }))
 }
 
 module.exports = {

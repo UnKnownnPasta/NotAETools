@@ -41,7 +41,6 @@ module.exports = {
             }
             catch(error) { 
                 err(error, 'Button Failure');
-                await interaction.channel.send({ content: 'There was an error while executing the button script!', ephemeral: true});
             }
         }
     },

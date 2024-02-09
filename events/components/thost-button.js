@@ -22,8 +22,6 @@ module.exports = {
         switch (i.customId) {
 
             case 'thost-join':
-                if (setOfUsers.indexOf(i.user.id) !== -1) return i.update({ embeds: [i.message.embeds[0]] });
-
                 setOfUsers.push(i.user.id)
 
                 relicEmbed.setDescription(relic + '\n' + setOfUsers.map(x => `<@!${x}>`).join('\n'))
@@ -43,7 +41,7 @@ module.exports = {
                     .setDescription(`Invite Others:\n` + usersInviteDesc)
 
                     i.message.delete()
-                    i.channel.send({ embeds: [filledEmbed] })
+                    i.channel.send({ embeds: [filledEmbed], content: `${setOfUsers.map(x => `<@${x}>`).join(" ")}` })
                     return;
                 }
                 break;
