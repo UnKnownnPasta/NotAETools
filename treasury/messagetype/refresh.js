@@ -14,9 +14,9 @@ module.exports = {
     async execute(client, message) {
         if (message.member.roles.cache.some(role => role.id == dept.roles.treasuryManager) || message.member.roles.cache.some(role => role.id == dept.roles.treasuryMarketHost)) {
             const m = message.channel.send({ content: `Refreshing..\n[-] Relic Data\n[-] User ids` })
-            await this.fetchAllPrimeParts("!A2:H")
+            await this.fetchAllPrimeParts(spreadsheet.ranges[0])
             ;(await m).edit({ content: `[+] Relic Data\n[-] User ids` })
-            await this.fetchUserIds("!B2:C")
+            await this.fetchUserIds(spreadsheet.ranges[1])
             ;(await m).edit({ content: `Completed.\n[+] Relic Data\n[+] User ids` })
         }
     },

@@ -17,5 +17,7 @@ module.exports = {
         });
         alert('LOGIN', `Logged in as ${client.user.username} at ${new Date().toJSON().slice(0,10).replace(/-/g,'/')} // ${new Date().toLocaleTimeString()}`)
         client.startuptime = new Date().getTime()
+        await require('../data/utils').updateFissures(client).catch((error) => {err(error, 'Could not update fissures. Maybe fissure channel is not there?')})
+        alert('UPDATE', 'Started updating fissures channel successfully.')
     },
 };

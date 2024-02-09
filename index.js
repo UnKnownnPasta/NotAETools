@@ -2,6 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const { err, alert, updateFissures } = require('./data/utils');
+const { spreadsheet } = require('./configs/config.json')
 require('dotenv').config()
 
 const client = new Client({
@@ -48,16 +49,15 @@ for (const file of eventFiles) {
 }
 alert('INFO', 'Event listeners loaded & active')
 
-// initial one
-setTimeout(() => {
-	updateFissures(client)
-}, 3000);
-// Fissures channel ID: 1192962141205045328, every 2 minutes
+let intervalCounter = 0
+// Fissures channel ID: 1192962141205045328, every 5 minutes
 setInterval(async () => {
-	await updateFissures(client).catch((error) => {err(error, 'Could not update fissures.')})
-	await require('./treasury/messagetype/refresh.js').fetchAllPrimeParts().catch((error) => {err(error, 'Could not update relics data.')})
-	await require('./treasury/messagetype/refresh.js').fetchUserIds().catch((error) => {err(error, 'Could not update user ids.')})
-}, 120_000);
+	await updateFissures(client).catch((error) => {err(error, 'Could not update fissures in interval.')})
+	await require('./treasury/messagetype/refresh.js').fetchAllPrimeParts(spreadsheet.ranges[0]).catch((error) => {err(error, 'Could not update relics data in interval.')})
+	await require('./treasury/messagetype/refresh.js').fetchUserIds(spreadsheet.ranges[1]).catch((error) => {err(error, 'Could not update user ids in interval.')})
+	intervalCounter++
+	if (intervalCounter%5 == 0) alert(`UPDATE`, `Updated relics/ids/fissures ${intervalCounter} times`)
+}, 300_000);
 
 // Retrieve all button components
 client.buttons = new Collection(); 
