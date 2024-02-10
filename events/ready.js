@@ -21,6 +21,7 @@ module.exports = {
             await require('../data/utils').updateFissures(client)
             alert('UPDATE', 'Started updating fissures channel successfully.')
         } catch (error) {
+            console.log(error)
             err(error, 'Could not update fissures. Maybe fissure channel is not there?')
         }
     },

@@ -1,6 +1,6 @@
 const chalk = require('chalk')
 const axios = require('axios')
-const { Client, EmbedBuilder } = require('discord.js')
+const { Client, EmbedBuilder, Embed } = require('discord.js')
 const { fissureChannel } = require('../configs/config.json')
 
 /**
@@ -43,35 +43,28 @@ function checkForRelic(relic) {
  * @param {Client} client 
  */
 async function updateFissures(client) {
-  const response = await axios.get("https://api.warframestat.us/pc/")
-  const fissures = response.data.fissures
-  let normFissureString = ""
-  let spFissureString = ""
-  const acceptableFissures = ['Extermination ', 'Capture', 'Sabotage', 'Rescue']
+  const channel = await client.channels.cache.get(fissureChannel).messages.fetch({ limit: 4 })
+  const missions = ['Extermination ', 'Capture', 'Sabotage', 'Rescue']
+  const response = (await axios.get("https://api.warframestat.us/pc/fissures")).data.filter(
+    (f) => !f["isStorm"] && missions.includes(f["missionType"]) && f['active']
+  )
   
-  fissures.forEach(async (fis) => {
-    if (fis["isHard"] && !fis["isStorm"] && acceptableFissures.includes(fis["missionType"]) && fis['active']) {
-      spFissureString += `${fis['missionType']} - ${fis['node']} - ${fis['eta']}\n`
-    } else if (!fis["isHard"] && !fis["isStorm"] && acceptableFissures.includes(fis["missionType"]) && fis['active']) {
-      normFissureString += `${fis['missionType']} - ${fis['node']} - ${fis['eta']}\n`
-    }
-  })
-  
-  const SPEmbed = new EmbedBuilder()
-  .setTitle('Steel Path fissures')
-  .setDescription(spFissureString.length > 1 ? spFissureString : '-')
-  .setTimestamp();
-  const NormEmbed = new EmbedBuilder()
-  .setTitle('Normal Fissures')
-  .setDescription(normFissureString.length > 1 ? normFissureString : '-');
+  const fissures = response.map(fis => [titleCase(fis['tier']), `${fis['missionType']} - ${fis['node']} - 🕗 ${fis['eta']}`, fis['isHard']])
+  const activeEras = fissures.map(x => `${x[0]}${x[2]}`)
 
-  await client.channels.cache.get(fissureChannel).messages.fetch({ limit: 4 }).then(async (msg) => {
-    msg.each(m => {
-      if (m.author.id == client.user.id) {
-        m.edit({ embeds: [NormEmbed, SPEmbed] })
-      }
-    })
-  })
+  const NormEmbed = new EmbedBuilder().setTitle('Normal Fissures');
+  activeEras.some(x => x == 'Lithfalse') ? NormEmbed.addFields({ name: 'Lith', value: fissures.filter(x => x[0] == 'Lith' && !x[2]).map(x => x[1]).join('\n') }) : null;
+  activeEras.some(x => x == 'Mesofalse') ? NormEmbed.addFields({ name: 'Meso', value: fissures.filter(x => x[0] == 'Meso' && !x[2]).map(x => x[1]).join('\n') }) : null;
+  activeEras.some(x => x == 'Neofalse') ? NormEmbed.addFields({ name: 'Neo', value: fissures.filter(x => x[0] == 'Neo' && !x[2]).map(x => x[1]).join('\n') }) : null;
+  activeEras.some(x => x == 'Axifalse') ? NormEmbed.addFields({ name: 'Axi', value: fissures.filter(x => x[0] == 'Axi' && !x[2]).map(x => x[1]).join('\n') }) : null;
+
+  const SPEmbed = new EmbedBuilder().setTitle('Steel Path fissures').setTimestamp();
+  activeEras.some(x => x == 'Lithtrue') ? SPEmbed.addFields({ name: 'Lith', value: fissures.filter(x => x[0] == 'Lith' && x[2]).map(x => x[1]).join('\n') }) : null;
+  activeEras.some(x => x == 'Mesotrue') ? SPEmbed.addFields({ name: 'Meso', value: fissures.filter(x => x[0] == 'Meso' && x[2]).map(x => x[1]).join('\n') }) : null;
+  activeEras.some(x => x == 'Neotrue') ? SPEmbed.addFields({ name: 'Neo', value: fissures.filter(x => x[0] == 'Neo' && x[2]).map(x => x[1]).join('\n') }) : null;
+  activeEras.some(x => x == 'Axitrue') ? SPEmbed.addFields({ name: 'Axi', value: fissures.filter(x => x[0] == 'Axi' && x[2]).map(x => x[1]).join('\n') }) : null;
+
+  await channel.forEach(async (msg) => msg.author.id == client.user.id ? (await msg.edit({ embeds: [NormEmbed, SPEmbed] })) : null)
 }
 
 function titleCase(str) {
