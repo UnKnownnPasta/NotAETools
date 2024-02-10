@@ -17,6 +17,7 @@ module.exports = {
         });
         alert('LOGIN', `Logged in as ${client.user.username} at ${new Date().toJSON().slice(0,10).replace(/-/g,'/')} // ${new Date().toLocaleTimeString()}`)
         client.startuptime = new Date().getTime()
+        await client.guilds.fetch({ force: true })
         try {
             await require('../data/utils').updateFissures(client)
             alert('UPDATE', 'Started updating fissures channel successfully.')
