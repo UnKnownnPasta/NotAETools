@@ -49,7 +49,7 @@ async function updateFissures(client) {
     (f) => !f["isStorm"] && missions.includes(f["missionType"]) && f['active']
   )
   
-  const fissures = response.map(fis => [titleCase(fis['tier']), `${fis['missionType']} - ${fis['node']} - 🕗 ${fis['eta']}`, fis['isHard']])
+  const fissures = response.map(fis => [titleCase(fis['tier']), `${fis['missionType']} - ${fis['node']} - <t:${new Date(fis['expiry']).getTime()/1000 | 0}:R>`, fis['isHard']])
   const activeEras = fissures.map(x => `${x[0]}${x[2]}`)
 
   const NormEmbed = new EmbedBuilder().setTitle('Normal Fissures');
