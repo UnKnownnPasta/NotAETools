@@ -22,7 +22,7 @@ function alert(nm, txt) {
 function checkForRelic(relic) {
   let relicEra, relicType;
   if (['meso', 'neo', 'axi', 'lith'].some(x => relic.indexOf(x) !== -1)) {
-      return `${relic[0].toLocaleUpperCase()}${relic.slice(1, relic.split(' ')[0].length).toLocaleLowerCase()} ${relic.slice(relic.split(' ')[0].length+1).toLocaleUpperCase()}`
+      return `${relic[0].toUpperCase()}${relic.slice(1, relic.split(' ')[0].length).toLowerCase()} ${relic.slice(relic.split(' ')[0].length+1).toUpperCase()}`
   } else {
       if (!isNaN(relic)) return false;
       else if (relic[0] === 'a') relicEra = "Axi"
@@ -50,10 +50,10 @@ async function updateFissures(client) {
   const activeEras = fissures.map(x => `${x[0]}${x[2]}`)
 
   const NormEmbed = new EmbedBuilder().setTitle('Normal Fissures');
-  !activeEras.some(x => x == 'Mesofalse') || NormEmbed.addFields({ name: 'Meso', value: fissures.filter(x => x[0] == 'Lith' && !x[2]).map(x => x[1]).join('\n') });
+  !activeEras.some(x => x == 'Lithfalse') || NormEmbed.addFields({ name: 'Lith', value: fissures.filter(x => x[0] == 'Lith' && !x[2]).map(x => x[1]).join('\n') });
   !activeEras.some(x => x == 'Mesofalse') || NormEmbed.addFields({ name: 'Meso', value: fissures.filter(x => x[0] == 'Meso' && !x[2]).map(x => x[1]).join('\n') });
   !activeEras.some(x => x == 'Neofalse') || NormEmbed.addFields({ name: 'Neo', value: fissures.filter(x => x[0] == 'Neo' && !x[2]).map(x => x[1]).join('\n') });
-  !activeEras.some(x => x == 'Mesofalse') || NormEmbed.addFields({ name: 'Meso', value: fissures.filter(x => x[0] == 'Axi' && !x[2]).map(x => x[1]).join('\n') });
+  !activeEras.some(x => x == 'Axifalse') || NormEmbed.addFields({ name: 'Axi', value: fissures.filter(x => x[0] == 'Axi' && !x[2]).map(x => x[1]).join('\n') });
 
   const SPEmbed = new EmbedBuilder().setTitle('Steel Path fissures').setTimestamp();
   !activeEras.some(x => x == 'Lithtrue') || SPEmbed.addFields({ name: 'Lith', value: fissures.filter(x => x[0] == 'Lith' && x[2]).map(x => x[1]).join('\n') });

@@ -21,13 +21,14 @@ module.exports = {
     async execute(client, message) {
         const response = await message.channel.send({ content: `Preparing..` })
 
+        const relicsList = await JSON.parse(await fs.readFileSync('./data/relicdata.json', 'utf-8'))
         async function getRelic(name) {
-            const relicsList = await JSON.parse(await fs.readFileSync('./data/relicdata.json', 'utf-8'))
             for (const relic of relicsList) {
                 if (relic[0][0] == name) return [relic.map(x => x[0]), relic.map(x => x[1])]
             }
             return null
         }
+        var content = [];
 
         const validrelics = []
         async function soupedType(relic) {
@@ -44,6 +45,7 @@ module.exports = {
                 if (firstindex.index == 0) continue
                 howmany = currentRelic.slice(0, firstindex.index)
                 fishedRelicName = currentRelic.slice(firstindex.index)
+                if (validrelics.some(x => x.toLowerCase().indexOf(fishedRelicName.toLowerCase()) !== -1)) { content.push(i); continue }
 
                 const verifiedRelic = checkForRelic(fishedRelicName)
                 if (!verifiedRelic) continue
@@ -59,7 +61,7 @@ module.exports = {
 
         const msgfilter = message.content.toLowerCase().split(' ').slice(1)
         const relics = msgfilter.splice(msgfilter.indexOf('soup')+1).join('_')
-        const soupedRelics = (await soupedType(relics)).sort()
+        const soupedRelics = (await soupedType(relics)).sort((a, b) => a.localeCompare(b))
         const axirelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Axi`) !== -1))]
         const neorelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Neo`) !== -1))]
         const mesorelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Meso`) !== -1))]
@@ -67,7 +69,7 @@ module.exports = {
         response.edit({ embeds: [
             new EmbedBuilder()
             .setTitle(`Soup formatted`)
-            .setDescription(`${codeBlock('ml', `${axirelics.length !== 0? axirelics.join('\n')+ '\n\n' : ''}${neorelics.length !== 0? neorelics.join('\n')+ '\n\n' : ''}${mesorelics.length !== 0? mesorelics.join('\n')+ '\n\n' : ''}${lithrelics.length !== 0? lithrelics.join('\n')+ '\n\n' : ''}`)}\n\n*CODE: ${validrelics.join(' ')}*`)
-        ], content: null })
+            .setDescription(`${codeBlock('ml', `${axirelics.length !== 0? axirelics.join('\n')+'\n\n' : ''}${neorelics.length !== 0? neorelics.join('\n')+'\n\n' : ''}${mesorelics.length !== 0? mesorelics.join('\n')+'\n\n' : ''}${lithrelics.length !== 0? lithrelics.join('\n')+'\n\n' : ''}`)}\n\n*CODE: ${validrelics.join(' ')}*`)
+        ], content: content.length == 0? null : `Duplicates found: ${content.join(' ')}` })
     }
 }

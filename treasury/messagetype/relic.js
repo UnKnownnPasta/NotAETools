@@ -18,7 +18,7 @@ module.exports = {
     * @param {Message} message
     */
     async execute(client, message) {
-        const filterType = message.content.split(' ')[0].slice(2).toLocaleUpperCase()
+        const filterType = message.content.split(' ')[0].slice(2).toUpperCase()
         const relicsList = await JSON.parse(await fs.readFileSync('./data/relicdata.json', 'utf-8'))
         let hits = relicsList.filter(x => x.map(n => n[1]).includes(types[filterType]))
         let allParts = []
