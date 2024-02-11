@@ -8,7 +8,8 @@ const {
     ActionRowBuilder
 } = require("discord.js");
 const fs = require("node:fs");
-const { dept } = require('../../configs/config.json')
+const { dept } = require('../../configs/config.json');
+const { checkForRelic } = require("../../data/utils");
 
 module.exports = {
     name: ["thost"],
@@ -16,16 +17,16 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("thost")
         .setDescription("Hosts a treasury run")
-        .addStringOption((option) =>
-            option
-                .setName("relic")
-                .setDescription("Name of the relic you want to host")
-                .setRequired(true)
-        )
         .addIntegerOption((option) =>
             option
                 .setName("count")
                 .setDescription("Number of Relics")
+                .setRequired(true)
+        )
+        .addStringOption((option) =>
+            option
+                .setName("relic")
+                .setDescription("Name of the relic you want to host")
                 .setRequired(true)
         ),
     /**
@@ -38,20 +39,9 @@ module.exports = {
         const relicData = await JSON.parse(await fs.readFileSync('./data/relicdata.json', 'utf-8')).map(x => x[0][0])
         
         function parseString(input, relics) {
-            const validRelicEras = ["lith", "meso", "neo", "axi"];
-            const parts = input.toLowerCase().split(" ");
-
-            if (parts.length < 1) return null;
-
-            const Era = parts[0];
-            if (!validRelicEras.includes(Era)) return null;
-
-            const relicRarity = parts[1];
-            const fixedString = Era[0].toUpperCase() + Era.substr(1).toLowerCase() + " " + relicRarity.toUpperCase()
-            if (relicRarity.length > 4 || relics.indexOf(fixedString.trim()) === -1)
-                return null;
-
-            return fixedString;
+            const validRelic = checkForRelic(input)
+            if (validRelic && relics.indexOf(validRelic) !== -1) return validRelic
+            return null;
         }
 
         // Handling interaction

@@ -29,7 +29,7 @@ module.exports = {
                 alert(`COMMAND`, `"${word}" by ${message.member.nickname??message.member.user.username} @ ${new Date().toLocaleTimeString()}`)
 
                 // Checking if its something like ++lg1, similar to soup
-                client.treasury.get('*').execute(client, message, word)
+                client.treasury.get('*').execute(client, message)
             }
         } catch (error) {
             err(error, `"${word}" by ${message.member.nickname??message.member.user.username} @ ${new Date().toLocaleTimeString()}`)

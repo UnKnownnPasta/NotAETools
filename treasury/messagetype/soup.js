@@ -59,7 +59,7 @@ module.exports = {
 
         const msgfilter = message.content.toLowerCase().split(' ').slice(1)
         const relics = msgfilter.splice(msgfilter.indexOf('soup')+1).join('_')
-        const soupedRelics = (await soupedType(relics))
+        const soupedRelics = (await soupedType(relics)).sort()
         const axirelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Axi`) !== -1))]
         const neorelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Neo`) !== -1))]
         const mesorelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Meso`) !== -1))]

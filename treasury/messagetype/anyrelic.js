@@ -18,22 +18,27 @@ module.exports = {
     * @param {Client} client
     * @param {Message} message
     */
-    async execute(client, message, word) {
+    async execute(client, message) {
         var finalRelic = [];
-        var verifiedRelic = checkForRelic(word)
+        var verifiedRelic = checkForRelic(message.content.slice(2))
         if (!verifiedRelic) return;
 
         let detectedType = ""
         const rarities = ['C', 'C', 'C', 'UC', 'UC', 'RA']
         let jsfile = await JSON.parse(await fs.readFileSync('./data/relicdata.json', 'utf-8'))
+        const itemName = titleCase(message.content.slice(2))
+        let amt;
 
         for (const relic of jsfile) {
+            let itemCheckPart = relic.map(x => x[0].slice(0, x[0].indexOf('[')-1));
+            
             if (relic[0][0] == verifiedRelic) {
                 finalRelic = relic.map(x => [x[0], `${types[x[1]] ? `{${types[x[1]]}}` : ''}`])
                 detectedType = "relic"
-            } else if (relic.map(x => x[0].slice(0, x[0].indexOf('[')-1)).includes(titleCase(message.content.slice(2)))) {
-                const ind = relic.map(x => x[0].slice(0, x[0].indexOf('[')-1)).indexOf(titleCase(message.content.slice(2)))
+            } else if (itemCheckPart.includes(itemName)) {
+                const ind = itemCheckPart.indexOf(itemName)
                 finalRelic.push([rarities[ind - 1], `${relic[0][0]} {${relic[7][0]}}`])
+                amt = relic[ind][0].slice(relic[ind][0].indexOf('[')+1, -1)
                 detectedType = 'part'
             }
         }
@@ -61,7 +66,7 @@ module.exports = {
                     }
                     await message.reply({ embeds: [
                         new EmbedBuilder()
-                        .setTitle(`[ ${titleCase(message.content.slice(2))} ] Relics`)
+                        .setTitle(`[ ${titleCase(message.content.slice(2))} ] {x${amt}}`)
                         .setDescription(`${codeBlock('ml', descstring)}`) 
                     ] })
                 }

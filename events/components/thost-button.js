@@ -22,6 +22,7 @@ module.exports = {
         switch (i.customId) {
 
             case 'thost-join':
+                if (setOfUsers.indexOf(i.user.id) !== -1) return i.update({ });
                 setOfUsers.push(i.user.id)
 
                 relicEmbed.setDescription(relic + '\n' + setOfUsers.map(x => `<@!${x}>`).join('\n'))
