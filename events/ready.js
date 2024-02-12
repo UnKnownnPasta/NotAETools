@@ -1,6 +1,5 @@
 const { Client, ActivityType } = require('discord.js')
 const { alert, err } = require('../data/utils');
-const { spreadsheet } = require('../configs/config.json')
 
 module.exports = {
     name: 'ready', 

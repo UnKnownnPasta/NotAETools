@@ -19,27 +19,34 @@ module.exports = {
     * @param {Message} message
     */
     async execute(client, message) {
-        var finalRelic = [];
-        var verifiedRelic = checkForRelic(message.content.slice(2))
+        var finalRelic = [],
+            itemName = message.content.slice(2),
+            primed = false;
+        if (itemName.toLowerCase().indexOf('prime') !== -1) { itemName = itemName.toLowerCase().split(' ').filter(x => x.trim()!='prime').join(' '); primed=true }
+        var verifiedRelic = checkForRelic(itemName)
         if (!verifiedRelic) return;
 
         let detectedType = ""
         const rarities = ['C', 'C', 'C', 'UC', 'UC', 'RA']
         let jsfile = await JSON.parse(await fs.readFileSync('./data/relicdata.json', 'utf-8'))
-        const itemName = titleCase(message.content.slice(2))
         let amt;
 
         for (const relic of jsfile) {
-            let itemCheckPart = relic.map(x => x[0].slice(0, x[0].indexOf('[')-1));
+            let itemCheckPart = relic.map(x => x[0].slice(0, x[0].indexOf('[')-1))
             
             if (relic[0][0] == verifiedRelic) {
                 finalRelic = relic.map(x => [x[0], `${types[x[1]] ? `{${types[x[1]]}}` : ''}`])
                 detectedType = "relic"
-            } else if (itemCheckPart.includes(itemName)) {
-                const ind = itemCheckPart.indexOf(itemName)
+            } else if (itemCheckPart.includes(titleCase(itemName))) {
+                const ind = itemCheckPart.indexOf(titleCase(itemName))
                 finalRelic.push([rarities[ind - 1], `${relic[0][0]} {${relic[7][0]}}`])
                 amt = relic[ind][0].slice(relic[ind][0].indexOf('[')+1, -1)
                 detectedType = 'part'
+            } else if (primed) {
+                if (itemCheckPart.some(x => x.indexOf(titleCase(itemName)) !== -1)) {
+                    finalRelic.push(relic)
+                    detectedType = 'set'
+                }
             }
         }
 
@@ -68,8 +75,20 @@ module.exports = {
                         new EmbedBuilder()
                         .setTitle(`[ ${titleCase(message.content.slice(2))} ] {x${amt}}`)
                         .setDescription(`${codeBlock('ml', descstring)}`) 
-                    ] })
+                    ] });
                 }
+            break;
+            case 'set':
+                let itemsOnly = finalRelic.slice(1, -1).map(x => {
+                    const name = x.map(y => [y[0].slice(0, y[0].indexOf('[')-1), y[0].slice(y[0].indexOf('[')+1, -1), y[1]])
+                    return name.filter(x => x[0].indexOf(titleCase(itemName)) != -1)[0]
+                })
+                itemsOnly = [... new Set(itemsOnly.map(x => `${x[1].padEnd(2)} | ${x[0]} {${types[x[2]]}}`))]
+                await message.reply({ embeds: [
+                    new EmbedBuilder()
+                    .setTitle(`[ ${titleCase(itemName)} Set ]`)
+                    .setDescription(codeBlock('ml', itemsOnly.join('\n')))
+                ] })
             break;
         }        
     }
