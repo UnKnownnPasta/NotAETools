@@ -2,6 +2,7 @@ const {
     Client,
     EmbedBuilder,
     ButtonInteraction,
+    codeBlock
 } = require("discord.js");
 const fs = require('node:fs')
 
@@ -51,9 +52,9 @@ module.exports = {
                 if (setOfUsers.indexOf(i.user.id) === -1) return i.update({ });
 
                 else if (i.user.id == i.message.content.slice(3, -1)) {
-                    i.update({ content: null });
-                    i.deleteReply();
-                    i.channel.send({
+                    await i.update({ content: null });
+                    await i.deleteReply();
+                    await i.channel.send({
                         embeds: [new EmbedBuilder().setTitle(`Run for ${relic} is cancelled`)],
                     });
                     return;
@@ -65,6 +66,35 @@ module.exports = {
                     i.update({ embeds: [relicEmbed] });
                 }
                 break;
+
+            case 'thost-relicview':
+                const types = { 
+                    "#150b2e": "ED",
+                    "#3c0000": "RED",
+                    "#472502": "ORANGE",
+                    "#4b3800": "YELLOW",
+                    "#162e0b": "GREEN",
+                    "#282828": undefined
+                };
+                const relicName = relic.split('x ')[1].slice(0, -1)
+                let jsfile = await JSON.parse(await fs.readFileSync('./data/relicdata.json', 'utf-8'))
+                const relicInfo = jsfile.filter(x => x[0][0] == relicName)[0].map(x => [x[0], types[x[1]]])
+                const rarities = ['C', 'C', 'C', 'UC', 'UC', 'RA']
+                
+                const itemCounts = relicInfo.slice(1, -1).map(x => x[0].slice(x[0].indexOf('[')+1, -1))
+                const itemNames = relicInfo.slice(1, -1).map(x => (x[0].slice(0, x[0].indexOf('[') != -1 ? x[0].indexOf('[')-1 : 100) + `${x[1] ? ` {${x[1]}}` : ''}`))
+                let embedDesc = ""
+                for (r=0;r<6;r++) {
+                    if (isNaN(parseInt(itemCounts[r])))
+                        embedDesc += `${rarities[r].padEnd(2)} |    | ${itemNames[r]}\n`
+                    else {
+                        embedDesc += `${rarities[r].padEnd(2)} | ${itemCounts[r].padEnd(3)}| ${itemNames[r]}\n`
+                    }
+                }
+
+                await i.update({ })
+                await i.user.send({ embeds: [new EmbedBuilder().setTitle(`[ ${relicName} ]`).setDescription(codeBlock('ml', embedDesc)).setTimestamp()] })
+                    .catch((error) => { return; })
         }
     },
 }

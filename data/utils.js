@@ -40,7 +40,7 @@ function checkForRelic(relic) {
  * @param {Client} client 
  */
 async function updateFissures(client) {
-  const channel = await client.channels.cache.get(fissureChannel).messages.fetch({ limit: 4 })
+  const channel = await client.channels.cache.get(fissureChannel).messages.fetch({ limit: 2 })
   const missions = ['Extermination', 'Capture', 'Sabotage', 'Rescue']
   const response = (await axios.get("https://api.warframestat.us/pc/fissures")).data.filter(
     (f) => !f["isStorm"] && missions.includes(f["missionType"]) && f['active']
@@ -50,16 +50,11 @@ async function updateFissures(client) {
   const activeEras = fissures.map(x => `${x[0]}${x[2]}`)
 
   const NormEmbed = new EmbedBuilder().setTitle('Normal Fissures');
-  !activeEras.some(x => x == 'Lithfalse') || NormEmbed.addFields({ name: 'Lith', value: fissures.filter(x => x[0] == 'Lith' && !x[2]).map(x => x[1]).join('\n') });
-  !activeEras.some(x => x == 'Mesofalse') || NormEmbed.addFields({ name: 'Meso', value: fissures.filter(x => x[0] == 'Meso' && !x[2]).map(x => x[1]).join('\n') });
-  !activeEras.some(x => x == 'Neofalse') || NormEmbed.addFields({ name: 'Neo', value: fissures.filter(x => x[0] == 'Neo' && !x[2]).map(x => x[1]).join('\n') });
-  !activeEras.some(x => x == 'Axifalse') || NormEmbed.addFields({ name: 'Axi', value: fissures.filter(x => x[0] == 'Axi' && !x[2]).map(x => x[1]).join('\n') });
-
   const SPEmbed = new EmbedBuilder().setTitle('Steel Path fissures').setTimestamp();
-  !activeEras.some(x => x == 'Lithtrue') || SPEmbed.addFields({ name: 'Lith', value: fissures.filter(x => x[0] == 'Lith' && x[2]).map(x => x[1]).join('\n') });
-  !activeEras.some(x => x == 'Mesotrue') || SPEmbed.addFields({ name: 'Meso', value: fissures.filter(x => x[0] == 'Meso' && x[2]).map(x => x[1]).join('\n') });
-  !activeEras.some(x => x == 'Neotrue') || SPEmbed.addFields({ name: 'Neo', value: fissures.filter(x => x[0] == 'Neo' && x[2]).map(x => x[1]).join('\n') });
-  !activeEras.some(x => x == 'Axitrue') || SPEmbed.addFields({ name: 'Axi', value: fissures.filter(x => x[0] == 'Axi' && x[2]).map(x => x[1]).join('\n') });
+  ['Lith', 'Meso', 'Neo', 'Axi'].forEach(f => {
+    !activeEras.some(x => x == `${f}false`) || NormEmbed.addFields({ name: f, value: fissures.filter(x => x[0] == f && !x[2]).map(x => x[1]).join('\n') });
+    !activeEras.some(x => x == `${f}true`) || SPEmbed.addFields({ name: f, value: fissures.filter(x => x[0] == f && x[2]).map(x => x[1]).join('\n') });
+  })
 
   await channel.forEach(async (msg) => msg.author.id == client.user.id ? (await msg.edit({ embeds: [NormEmbed, SPEmbed] })) : null)
 }

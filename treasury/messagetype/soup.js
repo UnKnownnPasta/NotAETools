@@ -61,15 +61,16 @@ module.exports = {
 
         const msgfilter = message.content.toLowerCase().split(' ').slice(1)
         const relics = msgfilter.splice(msgfilter.indexOf('soup')+1).join('_')
-        const soupedRelics = (await soupedType(relics)).sort((a, b) => a.localeCompare(b))
+        const soupedRelics = (await soupedType(relics)).sort((a, b) => a.localeCompare(b) && b.split(' | ')[2].replace(' ED', '') - a.split(' | ')[2].replace(' ED', ''))
         const axirelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Axi`) !== -1))]
         const neorelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Neo`) !== -1))]
         const mesorelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Meso`) !== -1))]
         const lithrelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Lith`) !== -1))]
+        const relicsFinal = [axirelics, neorelics, mesorelics, lithrelics]
         response.edit({ embeds: [
             new EmbedBuilder()
             .setTitle(`Soup formatted`)
-            .setDescription(`${codeBlock('ml', `${axirelics.length !== 0? axirelics.join('\n')+'\n\n' : ''}${neorelics.length !== 0? neorelics.join('\n')+'\n\n' : ''}${mesorelics.length !== 0? mesorelics.join('\n')+'\n\n' : ''}${lithrelics.length !== 0? lithrelics.join('\n')+'\n\n' : ''}`)}\n\n*CODE: ${validrelics.join(' ')}*`)
+            .setDescription(codeBlock('ml', relicsFinal.map(rl => rl.length !== 0 ? `${rl.join('\n')}\n\n` : '').join('')) + `\n\n*CODE: ${validrelics.join(' ')}*`)
         ], content: content.length == 0? null : `Duplicates found: ${content.join(' ')}` })
     }
 }

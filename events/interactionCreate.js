@@ -33,7 +33,6 @@ module.exports = {
         }
         
         else if (interaction.isButton()) {
-            if (interaction.message.createdTimestamp < client.startuptime) return;
             const button = client.buttons.get(interaction.customId.split('-')[0])
             if (!button) return
             try {

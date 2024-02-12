@@ -30,6 +30,7 @@ module.exports = {
             });
 
             const values = response.data.values;
+            if (values.some(x => x[0] == '#ERROR!' || x[1] == '#ERROR!')) return
 
             if (values && values.length > 0) {
                 await fs.promises.writeFile('./data/userids.json', JSON.stringify(values.filter(x => x.length != 0)))
@@ -50,6 +51,7 @@ module.exports = {
             });
 
             const values = response.data.values;
+            if (values.some(x => x[0][0] == '#ERROR!' || x[0][1] == '#ERROR!')) return
 
             if (values && values.length > 0) {
                 // Fetch background colors separately

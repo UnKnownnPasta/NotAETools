@@ -28,6 +28,13 @@ module.exports = {
                 .setName("relic")
                 .setDescription("Name of the relic you want to host")
                 .setRequired(true)
+        )
+        .addStringOption((option) =>
+        option
+            .setName("type")
+            .setDescription("Type of run")
+            .setRequired(false)
+            .setChoices({ name: 'Normal', value: 'norm' }, { name: 'Bois Run', value: 'bois' })
         ),
     /**
      * Treasury exclusive command to host runs; to squad up
@@ -46,6 +53,7 @@ module.exports = {
 
         // Handling interaction
         const relic = interaction.options.getString("relic", true).toLowerCase(),
+            runType = interaction.options.getString("type", false) ?? undefined,
             relicCount = interaction.options.getInteger("count", true);
 
         const relicStuff = parseString(relic, relicData);
@@ -59,7 +67,7 @@ module.exports = {
 
             relicDesc = `\`${relicCount}x ${relicStuff}\`\n`
             const relicEmbed = new EmbedBuilder()
-                .setTitle(`Squad by ${interaction.member.nickname ?? interaction.member.user.username}`);
+                .setTitle(`${runType == 'norm' || !runType ? 'Squad' : 'Bois run'} by ${interaction.member.nickname ?? interaction.member.user.username}`);
 
             const confirm = new ButtonBuilder()
                 .setCustomId('thost-join')
@@ -71,9 +79,14 @@ module.exports = {
                 .setLabel('❌')
                 .setStyle(ButtonStyle.Danger);
 
+            const relicView = new ButtonBuilder()
+                .setCustomId('thost-relicview')
+                .setLabel(relicStuff)
+                .setStyle(ButtonStyle.Primary)
+
             relicDesc += `${setOfUsers.map(x => `<@!${x}>`).join("\n")}`
 
-            const hostButtons = new ActionRowBuilder().addComponents(confirm, cancel)
+            const hostButtons = new ActionRowBuilder().addComponents(confirm, cancel, relicView)
 
             relicEmbed.setDescription(relicDesc)
             interaction.reply({ content: `Successfully hosted a run for ${relicStuff}`, ephemeral: true });
