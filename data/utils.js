@@ -63,7 +63,7 @@ function titleCase(str) {
   const words = str.split(' ');
 
   for (let i = 0; i < words.length; i++) {
-    if (words[i] == 'bp') {
+    if (words[i].toLowerCase() == 'bp') {
       words[i] = 'BP';
       continue;
     }
