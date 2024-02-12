@@ -23,7 +23,7 @@ module.exports = {
             itemName = message.content.slice(2),
             primed = false;
         if (itemName.toLowerCase().indexOf('prime') !== -1) { itemName = itemName.toLowerCase().split(' ').filter(x => x.trim()!='prime').join(' '); primed=true }
-        var verifiedRelic = checkForRelic(itemName)
+        var verifiedRelic = checkForRelic(itemName.toLowerCase())
         if (!verifiedRelic) return;
 
         let detectedType = ""
