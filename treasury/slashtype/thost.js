@@ -56,7 +56,10 @@ module.exports = {
             runType = interaction.options.getString("type", false) ?? undefined,
             relicCount = interaction.options.getInteger("count", true);
 
-        if (relicCount%3 != 0 || relicCount < 6) return interaction.reply({ content: `Relic count must be greater than 6, and a multiple of 3 eg. 12, 18` })
+        if (runType == 'norm' || runType == undefined) {
+            if (relicCount%3 != 0 || relicCount < 6) 
+                return interaction.reply({ content: `Relic count must be greater than 6, and a multiple of 3 eg. 12, 18`, ephemeral: true })
+        }
         const relicStuff = parseString(relic, relicData);
         let setOfUsers = [];
 
