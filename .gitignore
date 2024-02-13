@@ -2,4 +2,7 @@ node_modules
 .env
 .vsc
 abc.*
-data/*.json
+data/relicdata.json
+data/userids.json
+*.Docker.*
+Dockerfile
