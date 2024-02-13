@@ -47,7 +47,7 @@ async function updateFissures(client) {
   )
   
   const fissures = response.map(fis => [titleCase(fis['tier']), `${fis['missionType']} - ${fis['node']} - ends <t:${new Date(fis['expiry']).getTime()/1000 | 0}:R>`, fis['isHard']])
-  const activeEras = fissures.map(x => `${x[0]}${x[2]}`)
+  const activeEras = fissures.map(era => `${era[0]}${era[2]}`) // makes Meso, isHard=true into Mesotrue
 
   const NormEmbed = new EmbedBuilder().setTitle('Normal Fissures');
   const SPEmbed = new EmbedBuilder().setTitle('Steel Path fissures').setTimestamp();

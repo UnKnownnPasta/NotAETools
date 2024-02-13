@@ -4,3 +4,4 @@ node_modules
 abc.*
 data/relicdata.json
 data/userids.json
+*.Docker.*
