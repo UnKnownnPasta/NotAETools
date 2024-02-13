@@ -5,3 +5,4 @@ abc.*
 data/relicdata.json
 data/userids.json
 *.Docker.*
+Dockerfile
