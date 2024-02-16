@@ -61,7 +61,12 @@ module.exports = {
 
         const msgfilter = message.content.toLowerCase().split(' ').slice(1)
         const relics = msgfilter.splice(msgfilter.indexOf('soup')+1).join('_')
-        const soupedRelics = (await soupedType(relics)).sort((a, b) => a.localeCompare(b) && b.split(' | ')[2].replace(' ED', '') - a.split(' | ')[2].replace(' ED', ''))
+        const soupedRelics = (await soupedType(relics)).sort((a, b) => 
+        a.localeCompare(b)
+        && b.split(' | ')[2].replace(' ED', '') - a.split(' | ')[2].replace(' ED', '')
+        && b.split(' | ')[2].replace(' RED', '') - a.split(' | ')[2].replace(' RED', '')
+        && b.split(' | ')[2].replace(' ORANGE', '') - a.split(' | ')[2].replace(' ORANGE', '')
+        )
         const axirelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Axi`) !== -1))]
         const neorelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Neo`) !== -1))]
         const mesorelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Meso`) !== -1))]
