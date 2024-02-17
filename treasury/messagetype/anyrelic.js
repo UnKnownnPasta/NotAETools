@@ -83,11 +83,16 @@ module.exports = {
                     const name = x.map(y => [y[0].slice(0, y[0].indexOf('[')-1), y[0].slice(y[0].indexOf('[')+1, -1), y[1]])
                     return name.filter(x => x[0].indexOf(titleCase(itemName)) != -1)[0]
                 })
+                let relicsOnly = finalRelic.map(x => [x[0][0], x[7][0]])
                 itemsOnly = [... new Set(itemsOnly.map(x => `${x[1].padEnd(2)} | ${x[0]} {${types[x[2]]}}`))]
+                relicsOnly = relicsOnly.map(x => `${`{${x[1]}}`.padEnd(4)} | ${x[0]}`)
                 await message.reply({ embeds: [
                     new EmbedBuilder()
                     .setTitle(`[ ${titleCase(itemName)} Set ]`)
-                    .setDescription(codeBlock('ml', itemsOnly.join('\n')))
+                    .setDescription(codeBlock('ml', itemsOnly.join('\n'))),
+                    new EmbedBuilder()
+                    .setTitle(`[ ${titleCase(itemName)} Relics ]`)
+                    .setDescription(codeBlock('ml', relicsOnly.join('\n')))
                 ] })
             break;
         }        
