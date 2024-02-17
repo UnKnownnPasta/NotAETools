@@ -11,7 +11,7 @@ const types = {
 }
 
 module.exports = {
-    name: ['soup'],
+    name: ['soup', 'souped'],
     type: 'msg',
     /**
     * Soup formats given relic codes
@@ -41,8 +41,8 @@ module.exports = {
                 if (currentRelic.length > 7) continue
                 firstindex = currentRelic.match(/[a-zA-Z]/);
                 
-                if (firstindex == null) continue
-                if (firstindex.index == 0) continue
+                if (firstindex == null) continue // checks if its smth like just lg1
+                if (firstindex.index == 0) continue // checks if 6 in 6lg8 is missing
                 howmany = currentRelic.slice(0, firstindex.index)
                 fishedRelicName = currentRelic.slice(firstindex.index)
                 if (validrelics.some(x => x.toLowerCase().indexOf(fishedRelicName.toLowerCase()) !== -1)) { content.push(i); continue }
@@ -52,25 +52,56 @@ module.exports = {
 
                 const res = await getRelic(verifiedRelic)
                 if (res == null) continue
+                const filterReq = (type) => { return `${res[1].slice(1,7).filter(x => x == type).length}` }
                 validrelics.push(i)
-                soupedStrings.push(`${`${howmany + "x"}`.padEnd(5)}| ${verifiedRelic.padEnd(9)}| ${res[1].slice(1,7).filter(x => x == types.ED).length} ED | ${res[1].slice(1,7).filter(x => x == types.RED).length} RED | ${res[1].slice(1,7).filter(x => x == types.ORANGE).length} ORANGE |`)
+                soupedStrings.push({ count: howmany+'x', relic: verifiedRelic, ed: filterReq(types.ED), red: filterReq(types.RED), orange: filterReq(types.ORANGE)  })
             }
 
             return soupedStrings
         }
 
-        const msgfilter = message.content.toLowerCase().split(' ').slice(1)
-        const relics = msgfilter.splice(msgfilter.indexOf('soup')+1).join('_')
-        const soupedRelics = (await soupedType(relics)).sort((a, b) => a.localeCompare(b) && b.split(' | ')[2].replace(' ED', '') - a.split(' | ')[2].replace(' ED', ''))
-        const axirelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Axi`) !== -1))]
-        const neorelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Neo`) !== -1))]
-        const mesorelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Meso`) !== -1))]
-        const lithrelics = [... new Set(soupedRelics.filter(x => x.indexOf(`Lith`) !== -1))]
+        function compareItems(a, b) {
+            const totalA = a.ed + a.red + a.orange;
+            const totalB = b.ed + b.red + b.orange;
+          
+            if (totalA > totalB) {
+              return -1;
+            } else if (totalA < totalB) {
+              return 1;
+            } else {
+              return a.relic.localeCompare(b.relic);
+            }
+          }
+
+        const msgfilter = message.content.toLowerCase().split(' ')
+        const relics = msgfilter.slice(1).join('_')
+        const soupedRelics = (await soupedType(relics)).sort(compareItems);
+
+        const edonly = msgfilter[0].slice(6) == 'ed' ? true : false
+        const relicFilter = (x) => {
+            if (x.relic.indexOf('Axi') == -1) return;
+            if (edonly) {
+                if (x.ed != '0') return x;
+                else return;
+            } else return x;
+        }
+        const axisets = soupedRelics.filter(x => relicFilter(x))
+        const neosets = soupedRelics.filter(x => relicFilter(x))
+        const mesosets = soupedRelics.filter(x => relicFilter(x))
+        const lithsets = soupedRelics.filter(x => relicFilter(x))
+        const mapSet = (set) => {
+            return set.map(x => `${x.count.padEnd(4)} | ${x.relic.padEnd(8)} | ${x.ed.padEnd(2)} ED | ${x.red.padEnd(2)} RED | ${x.orange.padEnd(2)} ORANGE |`)
+        }
+        const axirelics = axisets.length > 0 ? mapSet(axisets) : ''
+        const neorelics = neosets.length > 0 ? mapSet(neosets) : ''
+        const mesorelics = mesosets.length > 0 ? mapSet(mesosets) : ''
+        const lithrelics = lithsets.length > 0 ? mapSet(lithsets) : ''
+        
         const relicsFinal = [axirelics, neorelics, mesorelics, lithrelics]
         response.edit({ embeds: [
             new EmbedBuilder()
             .setTitle(`Soup formatted`)
-            .setDescription(codeBlock('ml', relicsFinal.map(rl => rl.length !== 0 ? `${rl.join('\n')}\n\n` : '').join('')) + `\n\n*CODE: ${validrelics.join(' ')}*`)
+            .setDescription(codeBlock('ml', relicsFinal.map(rl => rl != '' ? `${rl.join('\n')}\n\n` : '').join('')) + `\n\n*CODE: ${validrelics.join(' ')}*`)
         ], content: content.length == 0? null : `Duplicates found: ${content.join(' ')}` })
     }
 }
