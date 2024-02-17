@@ -20,7 +20,7 @@ module.exports = {
     */
     async execute(client, message) {
         var finalRelic = [],
-            itemName = message.content.slice(2),
+            itemName = message.content.slice(2).split(' ').filter(x => x!='r').join(' '),
             primed = false;
         if (itemName.toLowerCase().indexOf('prime') !== -1) { itemName = itemName.toLowerCase().split(' ').filter(x => x.trim()!='prime').join(' '); primed=true }
         var verifiedRelic = checkForRelic(itemName.toLowerCase())
@@ -86,14 +86,21 @@ module.exports = {
                 let relicsOnly = finalRelic.map(x => [x[0][0], x[7][0]])
                 itemsOnly = [... new Set(itemsOnly.map(x => `${x[1].padEnd(2)} | ${x[0]} {${types[x[2]]}}`))]
                 relicsOnly = relicsOnly.map(x => `${`{${x[1]}}`.padEnd(4)} | ${x[0]}`)
-                await message.reply({ embeds: [
+
+                const embedList = [
                     new EmbedBuilder()
                     .setTitle(`[ ${titleCase(itemName)} Set ]`)
-                    .setDescription(codeBlock('ml', itemsOnly.join('\n'))),
+                    .setDescription(codeBlock('ml', itemsOnly.join('\n')))
+                ];
+                
+                if (message.content.toLowerCase().split(' ').includes('r')) 
+                    embedList.push(
                     new EmbedBuilder()
                     .setTitle(`[ ${titleCase(itemName)} Relics ]`)
                     .setDescription(codeBlock('ml', relicsOnly.join('\n')))
-                ] })
+                );
+                
+                await message.reply({ embeds: [...embedList] })
             break;
         }        
     }
