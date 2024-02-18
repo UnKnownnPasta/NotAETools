@@ -1,0 +1,27 @@
+{
+    "prefix": "++",
+    "spreadsheet": {
+        "id": "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY",
+        "relicName": "Tracker - LIVE",
+        "useridName": "Directory",
+        "ranges": {
+            "relic": "!A2:H",
+            "ids": "!B2:C"
+        }
+    },
+    "byhex": { 
+        "#150b2e": "ED",
+        "#3c0000": "RED",
+        "#472502": "ORANGE",
+        "#4b3800": "YELLOW",
+        "#162e0b": "GREEN",
+        "#282828": ""
+    },
+    "bycode": { 
+        "ED": "#150b2e",
+        "RED": "#3c0000",
+        "ORANGE": "#472502",
+        "YELLOW": "#4b3800",
+        "GREEN": "#162e0b"
+    }
+}
