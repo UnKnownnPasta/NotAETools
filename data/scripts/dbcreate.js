@@ -1,5 +1,5 @@
 const { google } = require('googleapis')
-const { spreadsheet, byhex } = require('../config.json')
+const { spreadsheet, byhex, dualitemslist } = require('../config.json')
 const fs = require('node:fs')
 
 async function loadAllRelics() {
@@ -9,52 +9,52 @@ async function loadAllRelics() {
         range: spreadsheet.relicName + spreadsheet.ranges.relic,
     });
 
+    const range = (num) => {
+        return num >= 0 && num <= 7 ? 'ED'
+               : num > 7 && num <= 15 ? 'RED'
+               : num > 15 && num <=31 ? 'ORANGE'
+               : 'GREEN'
+    }
+
     const values = sheetValues.data.values;
     if (values.some(x => x[0][0] == '#ERROR!' || x[0][1] == '#ERROR!')) return;
 
-    const cellColors = await google.sheets("v4").spreadsheets.get({
-        auth: process.env.GOOGLEAPIKEY,
-        spreadsheetId: spreadsheet.id,
-        ranges: [spreadsheet.relicName + spreadsheet.ranges.relic],
-        includeGridData: true
-    });
+    const pnRegex = /(.+?)\[/,
+        pcRegex = /\[(.+?)\]/;
 
-    if (values && values.length > 0) {
-        const backgroundGridData = cellColors.data.sheets[0].data[0].rowData;
 
-        const combinedData = values.map((row, rowIndex) => {
-            return row.map((cell, columnIndex) => {
-                const backgroundColor = backgroundGridData[rowIndex]?.values[columnIndex]?.effectiveFormat?.backgroundColor || '';
-                const hexColor = `#${(backgroundColor.red ? Math.round(backgroundColor.red * 100) : 0).toString(16).padStart(2, '0')}${(backgroundColor.green ? Math.round(backgroundColor.green * 100) : 0).toString(16).padStart(2, '0')}${(backgroundColor.blue ? Math.round(backgroundColor.blue * 100) : 0).toString(16).padStart(2, '0')}`;
-                return [cell, hexColor];
-            });
-        });
-
-        const beautifiedData = combinedData.map(y => {
-            y = y.map((x, i) => {
-                if (i == 0 || i == 7) {
-                    return i == 0 ? { name: y[0][0], tokens: y[7][0] } : undefined;
+    if (values && values.length) {
+        const combinedData = values
+        .map((row, rowIndex) => {
+            return row
+            .map((rw, rwi) => {
+                let partName, partCount, partRarity;
+                const brckt = rw.match(pcRegex)
+                if (rwi == 0 || rwi == 7) {
+                    return { name: row[0], tokens: row[7], has: row.slice(1, 7).map(r => {
+                        let temp = r.slice(0, r.indexOf('[')-1)
+                        if (dualitemslist.includes(temp)) temp += ' x2'
+                        return temp
+                    }) }
                 }
-                let brckt = x[0].indexOf('[') == -1 ? false : x[0].indexOf('[')
-                const tillBracket = brckt ? x[0].slice(0, brckt-1) : x[0]
-                const fromBracket = brckt ? x[0].slice(brckt+1, -1) : ''
-                const rarity = byhex[x[1]]
-                return { name: tillBracket, count: fromBracket, type: rarity ?? null }
+                if (brckt) {
+                    partName = rw.match(pnRegex)[1].trim()
+                    if (dualitemslist.includes(partName)) partName += ' x2'
+                    partCount = rw.match(pcRegex)[1]
+                    partRarity = range(parseInt(partCount))
+                } else {
+                    partName = rw; partCount = ""; partRarity = "";
+                }
+                return { name: partName, count: partCount, type: partRarity }
             })
-            return y;
-        }).map(x => x.slice(0, 7))
+            .slice(0, 7);
+        });
+        const rNames = combinedData.map(relic => relic[0].name)
+        const pNames = [... new Set(combinedData.map(relic => relic[0].has).flat())]
 
-        const rnames = beautifiedData.map(x => { return x[0].name; })
-        const pnames = [ ...new Set(beautifiedData
-        .map(x => {
-            return x.slice(1, 7).map(y => y.name)
-        })
-        .flat()
-        .sort()
-        )];
-
-        fs.writeFileSync('./data/relicdata.json', JSON.stringify({ relicData: beautifiedData, relicNames: rnames, partNames: pnames }))
+        fs.writeFileSync('./data/relicdata.json', JSON.stringify({ relicData: combinedData, relicNames: rNames, partNames: pNames }))
     }
 }
+loadAllRelics()
 
 module.exports = { loadAllRelics }

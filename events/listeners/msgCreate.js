@@ -1,6 +1,6 @@
 const { Message, Client } = require('discord.js')
 const config = require('../../data/config.json')
-const { filterRelic, relicExists, titleCase } = require('../../data/utility')
+const { filterRelic, relicExists, titleCase } = require('../../data/scripts/utility')
 
 module.exports = {
     name: 'messageCreate',
@@ -32,7 +32,7 @@ module.exports = {
             cmdType = 'part'
         } else if (!isRelic && !isStatus && isPrime) {
             cmdType = "prime"
-        } else if (isRelic) {
+        } else if (isRelic && !isStatus && !isPrime) {
             cmdType = "relic"
         }
 

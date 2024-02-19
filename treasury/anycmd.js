@@ -2,7 +2,7 @@
 const { EmbedBuilder, codeBlock, ButtonStyle } = require('discord.js');
 const fs = require('node:fs')
 const { Pagination } = require('pagination.djs');
-const { titleCase } = require('../data/utility');
+const { filterRelic } = require('../data/scripts/utility.js');
 
 module.exports = {
     name: 'anycmd',
@@ -13,11 +13,11 @@ module.exports = {
                 let edlist = []
                 allrelics.relicData.forEach(part => {
                     part.slice(1, 7).forEach(p => {
-                        if (p.type == word.toUpperCase()) edlist.push(`${p.count.padEnd(3)} | ${p.name}`);
+                        if (p.type == word.toUpperCase()) edlist.push(`${`[${p.count}]`.padEnd(3)} | ${p.name}`);
                     })
                 });
 
-                edlist = [... new Set(edlist)].sort((a, b) => a.split('|')[0].trim() - b.split('|')[0].trim())
+                edlist = [... new Set(edlist)].sort((a, b) => a.split('|')[0].match(/\[(.+?)\]/)[1] - b.split('|')[0].match(/\[(.+?)\]/)[1])
                 const embedOfParts = []
                 for (let i=0; i < edlist.length; i+=15) {
                     embedOfParts.push(
@@ -37,7 +37,7 @@ module.exports = {
                 });
         
                 pagination.setEmbeds(embedOfParts, (embed, index, array) => {
-                    return embed.setFooter({ text: `${index + 1}/${array.length}` });
+                    return embed.setFooter({ text: `Page ${index + 1}/${array.length}` });
                 });
                 pagination.render();
             break;
@@ -48,9 +48,8 @@ module.exports = {
                 let countOfPart;
 
                 const relicList = allrelics.relicData.map(x => {
-                    let partNames = x.map(y => y.name)
-                    if (partNames.includes(word)) {
-                        const item = partNames.indexOf(word) - 1
+                    if (partNames[0].has.includes(word)) {
+                        const item = partNames[0].has.indexOf(word) - 1
                         if (!countOfPart) countOfPart = x[item].count
                         return `${scarcity[item].padEnd(2)} | ${x[0].name} {${x[0].tokens}}`
                     }
@@ -67,15 +66,14 @@ module.exports = {
                 let parts = []
 
                 let getAllRelics = allrelics.relicData.map(x => {
-                    let nnames = x.map(y => y.name)
-                    if (nnames.some(n => n.indexOf(corrWord) !== -1)) {
-                        let id = nnames.indexOf(nnames.filter(x => x.indexOf(corrWord) != -1)[0])
-                        parts.push(x[id])
+                    if (x[0].has.some(n => n.indexOf(corrWord) !== -1)) {
+                        let id = x[0].has.findIndex(x => x.includes(corrWord))
+                        parts.push(x[id+1])
                         return x[0]
                     }
                 }).filter(x => x!=undefined)
 
-                parts = parts.map(x => { return `${x.count.padEnd(2)} | ${x.name}` })
+                parts = parts.map(x => `${x.count.padEnd(2)} | ${x.name}`)
                 parts = [... new Set(parts)]
 
                 const embds = [
@@ -91,6 +89,17 @@ module.exports = {
                 }
                 
                 message.reply({ embeds: [...embds] })
+            break;
+
+            case 'relic':
+                let frelic = allrelics.relicData.filter(x => x[0].name == filterRelic(word.toLowerCase()))[0]
+                const rarties = ['C', 'C', 'C', 'UC', 'UC', 'RA']
+                let emstr = frelic.slice(1, 7).map((x, i) => `${rarties[i].padEnd(2)} | ${x.count.padEnd(2)} | ${x.name} ${x.type == ""? "" : `{${x.type}}`}`)
+                message.reply({ embeds: [
+                    new EmbedBuilder()
+                    .setTitle(`[ ${frelic[0].name} ] {${frelic[0].tokens}}`)
+                    .setDescription(codeBlock('ml', emstr.join('\n')))
+                ] })
             break;
         }
     }

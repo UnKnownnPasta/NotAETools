@@ -8,7 +8,7 @@ const warn = (txt, msg, err) => {
     console.error(err);
  }
 const alert = (alerttxt) => { console.log(chalk.bgRedBright(chalk.black(`[WARNING]`)), `${alerttxt}`); }
-const info = (type, txt) => { console.log(chalk.bgCyan(chalk.black(`[${type}]`)), `${txt}`); }
+const info = (type, txt) => { console.log(chalk.bgBlackBright(chalk.black(`[${type}]`)), `${txt}`); }
 
 /**
  * Load all files from a folder and stores them in a map.

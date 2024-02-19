@@ -2,7 +2,7 @@ const { Client, GatewayIntentBits } = require('discord.js');
 require('dotenv').config()
 const path = require('node:path')
 const fs = require('node:fs')
-const { loadFiles, info, relicExists, titleCase } = require('./data/utility.js')
+const { loadFiles, info, relicExists, titleCase } = require('./data/scripts/utility.js')
 
 // Initialize client
 const client = new Client({
