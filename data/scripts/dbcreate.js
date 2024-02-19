@@ -27,10 +27,11 @@ async function loadAllRelics() {
         const combinedData = values
         .map((row, rowIndex) => {
             return row
+            .slice(0, 7)
             .map((rw, rwi) => {
                 let partName, partCount, partRarity;
                 const brckt = rw.match(pcRegex)
-                if (rwi == 0 || rwi == 7) {
+                if (rwi == 0) {
                     return { name: row[0], tokens: row[7], has: row.slice(1, 7).map(r => {
                         let temp = r.slice(0, r.indexOf('[')-1)
                         if (dualitemslist.includes(temp)) temp += ' x2'
@@ -46,8 +47,7 @@ async function loadAllRelics() {
                     partName = rw; partCount = ""; partRarity = "";
                 }
                 return { name: partName, count: partCount, type: partRarity }
-            })
-            .slice(0, 7);
+            });
         });
         const rNames = combinedData.map(relic => relic[0].name)
         const pNames = [... new Set(combinedData.map(relic => relic[0].has).flat())]
