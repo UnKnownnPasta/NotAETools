@@ -6,8 +6,6 @@ const {
     codeBlock
 } = require("discord.js");
 const fs = require('node:fs')
-const { bycode } = require('../data/config.json');
-const { titleCase } = require("../data/scripts/utility");
 
 module.exports = {
     name: 'soup',
@@ -39,11 +37,11 @@ module.exports = {
             filtertype = i.options.getString('filtertype', false) ?? false;
 
         const relicsList = (await JSON.parse(await fs.readFileSync('./data/relicdata.json', 'utf-8')));
-        async function getRelic(name, type='none') {
+        async function getRelic(name, type=null) {
             for (const relic of relicsList.relicData) {
                 if (relic[0].name == name) {
                     let statuses = relic.slice(1, 7).map(rt => rt.type);
-                    if (type != 'none' && !statuses.includes(type.toUpperCase())) return null;
+                    if (type && !statuses.includes(type.toUpperCase())) return null;
                     return [relic[0].tokens, statuses];
                 }
             }
@@ -56,37 +54,36 @@ module.exports = {
 
             for (const r of relic) {
                 var short = r.toLowerCase()
-                var howmany, letterstart, relicfullname;
+                var howmany, letterstart, rFullName;
 
                 letterstart = short.match(/[a-zA-Z]/);
-                if (!letterstart) continue;
+                if (!letterstart || letterstart?.index == 0) continue;
                 howmany = short.slice(0, letterstart.index)
-                if (isNaN(howmany) || !howmany) continue;
 
                 const fullfms = {'a': 'Axi', 'l': 'Lith', 'm': 'Meso', 'n': 'Neo'}
                 const relicEra = fullfms[short.slice(letterstart.index, letterstart.index+1)]
                 const relicType = short.slice(letterstart.index+1).toUpperCase()
-                relicfullname = `${relicEra} ${relicType}`
-                const res = !filtertype ? await getRelic(relicfullname) : await getRelic(relicfullname, filtertype)
+                rFullName = `${relicEra} ${relicType}`
+                const res = !filtertype ? await getRelic(rFullName) : await getRelic(rFullName, filtertype)
                 if (!res) continue;
                 soupedAccepted.push(short)
                 const _ = (rarity) => {
-                    return `${res[1].filter(x => x == rarity).length}`.padEnd(2)
+                    return `| ${res[1].filter(x => x == rarity).length}`.padEnd(4) + rarity
                 }
-                if (res) soupedStrings.push(`${`{${res[0]}}`.padEnd(4)} | ${(howmany+'x').padEnd(4)}| ${relicfullname.padEnd(8)} | ${_('ED')} ED | ${_('RED')} RED | ${_('ORANGE')} ORANGE`)
+                if (res) soupedStrings.push(`${`{${res[0]}}`.padEnd(4)} | ${(howmany+'x').padEnd(4)}| ${rFullName.padEnd(8)} ${_('ED')} ${_('RED')} ${_('ORANGE')}`)
             }
             return soupedStrings
         }
 
         const splitFunc = (r) => {
             let l = r.split('|').map(x => x.trim()) // 3, 4, 5
-            let ED = l[3].split()[0], RED = l[4].split()[0], ORG = l[5].split()[0], TKS = l[0].match(/\{(.+?)\}/)[0];
-            return parseInt(ED) + parseInt(RED) + parseInt(ORG) + parseInt(TKS)
+            let ED = l[3].split()[0], RED = l[4].split()[0], ORG = l[5].split()[0]
+            return `${ED}${RED}${ORG}`
         }
         const sortFunction = (a, b) => {
             r1 = splitFunc(a)
             r2 = splitFunc(b)
-            return r1 > r2 ? -1 : r1 < r2 ? 1 : a.localeCompare(b);
+            return r2.localeCompare(r1);
         };
 
         const finishedSoup = (await soupedRelics(relics));

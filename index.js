@@ -42,7 +42,7 @@ for (const file of eventFiles) {
 
 // Login
 ;(async () => {
-	await client.login(process.env.TOKEN)
-	await client.guilds.fetch({ force: true })
-	info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.`)
+	await client.login(process.env.TOKEN);
+	await client.guilds.fetch();
+	info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.`);
 })();

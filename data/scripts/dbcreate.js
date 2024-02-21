@@ -50,7 +50,7 @@ async function loadAllRelics() {
             });
         });
         const rNames = combinedData.map(relic => relic[0].name)
-        const pNames = [... new Set(combinedData.map(relic => relic[0].has).flat())]
+        const pNames = [... new Set(combinedData.map(relic => relic[0].has).flat().map(relic => relic.replace(' x2', '')))]
 
         fs.writeFileSync('./data/relicdata.json', JSON.stringify({ relicData: combinedData, relicNames: rNames, partNames: pNames }))
     }

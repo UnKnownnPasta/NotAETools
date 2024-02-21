@@ -6,8 +6,10 @@ const { filterRelic } = require('../data/scripts/utility.js');
 
 module.exports = {
     name: 'anycmd',
-    async execute(client, message, word, type, _) {
+    async execute(client, message, wd, type) {
         const allrelics = (await JSON.parse(fs.readFileSync('./data/relicdata.json')))
+        const word = wd.replace(/--[r]/, '').trim()
+
         switch (type) {
             case 'status':
                 let edlist = []
@@ -47,15 +49,15 @@ module.exports = {
                 const scarcity = ['C', 'C', 'C', 'UC', 'UC', 'RA']
                 let countOfPart;
 
-                const relicList = allrelics.relicData.map(x => {
-                    if (partNames[0].has.includes(word)) {
-                        const item = partNames[0].has.indexOf(word) - 1
+                const relicList = allrelics.relicData.map(relic => {
+                    if (relic[0].has.some(n => n.indexOf(word) !== -1)) {
+                        const item = relic[0].has.findIndex(x => x.indexOf(word) !== -1) + 1
                         if (!countOfPart) countOfPart = x[item].count
-                        return `${scarcity[item].padEnd(2)} | ${x[0].name} {${x[0].tokens}}`
+                        return `${scarcity[item-1].padEnd(2)} | ${relic[0].name} {${relic[0].tokens}}`
                     }
                 }).filter(x => x!=undefined)
                 
-                message.reply({ embeds: [
+                await message.reply({ embeds: [
                     new EmbedBuilder().setTitle(`[ ${word} ] {x${countOfPart}}`)
                     .setDescription(codeBlock('ml', relicList.join('\n')))
                 ] })
@@ -65,12 +67,15 @@ module.exports = {
                 const corrWord = word.replace('Prime', '').trim()
                 let parts = []
 
-                let getAllRelics = allrelics.relicData.map(x => {
-                    if (x[0].has.some(n => n.indexOf(corrWord) !== -1)) {
-                        let id = x[0].has.findIndex(x => x.includes(corrWord))
-                        parts.push(x[id+1])
-                        return x[0]
-                    }
+                let getAllRelics = allrelics.relicData.map(relic => {
+                    let foundAny = false
+                    relic[0].has.forEach((part, i) => {
+                        if (part.indexOf(corrWord) !== -1) {
+                            parts.push(relic[i+1])
+                            foundAny = true
+                        }
+                    })
+                    if (foundAny) return relic[0];
                 }).filter(x => x!=undefined)
 
                 parts = parts.map(x => `${x.count.padEnd(2)} | ${x.name}`)
@@ -81,7 +86,7 @@ module.exports = {
                     .setDescription(codeBlock('ml', parts.join('\n')))
                 ]
 
-                if (_.split(' ').includes('--r')) {
+                if (wd.match(/--[r]/, '') !== null) {
                     embds.push(
                         new EmbedBuilder()
                         .setDescription(codeBlock('ml', getAllRelics.map(x => `${x.tokens.padEnd(2)} | ${x.name}`).join('\n')))

@@ -14,8 +14,7 @@ module.exports = {
         if (!message.content.startsWith(config.prefix) || message.author.bot) 
             return;
 
-        let wordf = message.content.slice(2).toLocaleLowerCase()
-        let word = message.content.slice(2).toLocaleLowerCase().replace(/--[r]/, '').trim()
+        let word = message.content.slice(2).toLocaleLowerCase()
         let cmdType = "";
 
         let isPrime = word.split(' ').includes('prime')
@@ -36,6 +35,6 @@ module.exports = {
             cmdType = "relic"
         }
 
-        client.treasury.get('anycmd').execute(client, message, titleCase(word), cmdType, wordf)
+        client.treasury.get('anycmd').execute(client, message, titleCase(word), cmdType)
     }
 }
