@@ -2,7 +2,7 @@ require('dotenv').config()
 const { REST, Routes } = require('discord.js');
 const fs = require('node:fs');
 const path = require('node:path');
-const { info, alert } = require('../utility.js')
+const { info, alert } = require('./utility.js')
 
 const commands = [];
 const treausryFolder = path.join(process.cwd(), './treasury');

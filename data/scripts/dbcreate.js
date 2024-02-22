@@ -1,12 +1,12 @@
 const { google } = require('googleapis')
-const { spreadsheet, byhex, dualitemslist } = require('../config.json')
+const { spreadsheet, dualitemslist } = require('../config.json')
 const fs = require('node:fs')
 
 async function loadAllRelics() {
     const sheetValues = await google.sheets("v4").spreadsheets.values.get({
         auth: process.env.GOOGLEAPIKEY,
-        spreadsheetId: spreadsheet.id,
-        range: spreadsheet.relicName + spreadsheet.ranges.relic,
+        spreadsheetId: spreadsheet.treasury.id,
+        range: spreadsheet.treasury.relicName + spreadsheet.treasury.ranges.relic,
     });
 
     const range = (num) => {
@@ -22,10 +22,9 @@ async function loadAllRelics() {
     const pnRegex = /(.+?)\[/,
         pcRegex = /\[(.+?)\]/;
 
-
+    // list is like [ [{}, {}], [{}, {}], ... ]
     if (values && values.length) {
-        const combinedData = values
-        .map((row, rowIndex) => {
+        const combinedData = values.map((row, rowIndex) => {
             return row
             .slice(0, 7)
             .map((rw, rwi) => {
@@ -55,6 +54,48 @@ async function loadAllRelics() {
         fs.writeFileSync('./data/relicdata.json', JSON.stringify({ relicData: combinedData, relicNames: rNames, partNames: pNames }))
     }
 }
-loadAllRelics()
 
-module.exports = { loadAllRelics }
+async function getAllClanData() {
+    // User IDs
+    const TreasIDValues = await google.sheets("v4").spreadsheets.values.get({
+        auth: process.env.GOOGLEAPIKEY,
+        spreadsheetId: spreadsheet.treasury.id,
+        range: spreadsheet.treasury.useridName + spreadsheet.treasury.ranges.ids,
+    });
+    const TreasIDs = TreasIDValues.data.values.filter(x => x.length !== 0).map(user => { return { id: user[0], name: user[1] } })
+
+    const FarmIDValues = await google.sheets("v4").spreadsheets.values.get({
+        auth: process.env.GOOGLEAPIKEY,
+        spreadsheetId: spreadsheet.farmer.id,
+        range: spreadsheet.farmer.userName + spreadsheet.farmer.ranges.users,
+    });
+    const FarmIDs = FarmIDValues.data.values.filter(x => x.length !== 0).map(user => {
+        return { id: user[0], name: user[1], ttltokens: user[2], bonus: user[3], spent: user[4], left: user[5], playtime: user[6] }
+    })
+    // Clan Resources
+    const ClanResources = [];
+
+    const promises = Object.entries(spreadsheet.farmer.ranges.resource).map(async (key) => {
+        const clandata = await google.sheets("v4").spreadsheets.values.get({
+            auth: process.env.GOOGLEAPIKEY,
+            spreadsheetId: spreadsheet.farmer.id,
+            range: spreadsheet.farmer.resourceName + key[1],
+        });
+    
+        let localist = [];
+        clandata.data.values.forEach(x => localist.push({ name: x[0], amt: x[1], short: x[2] ?? '0' }));
+        return { clan: key[0], resources: localist };
+    });
+    
+    Promise.all(promises)
+        .then(results => {
+            ClanResources.push(...results);
+            fs.writeFileSync('./data/clandata.json', JSON.stringify({ treasuryids: TreasIDs, farmerids: FarmIDs, resources: ClanResources }))            
+        })
+        .catch(error => {
+            console.error('Error fetching sheet values:', error.message);
+        });
+
+}
+
+module.exports = { loadAllRelics, getAllClanData }

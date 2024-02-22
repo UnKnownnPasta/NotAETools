@@ -1,13 +1,35 @@
 {
     "prefix": "++",
     "spreadsheet": {
-        "id": "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY",
-        "relicName": "Tracker - LIVE",
-        "useridName": "Directory",
-        "ranges": {
-            "relic": "!A2:H",
-            "ids": "!B2:C"
+        "treasury": {
+            "id": "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY",
+            "relicName": "Tracker - LIVE",
+            "useridName": "Directory",
+            "ranges": {
+                "relic": "!A2:H",
+                "ids": "!B2:C"
+            }
+        },
+        "farmer": {
+            "id": "18uYn374Y-n_VBX9sQsTLoSRY9-JtgGGLHWihotxjdPY",
+            "resourceName": "Main",
+            "userName": "Farmer List",
+            "ranges": {
+                "resource": {
+                    "AK": "!A30:C72",
+                    "CK": "!D30:F72",
+                    "HK": "!G30:I72",
+                    "TK": "!J30:L72",
+                    "YK": "!A78:C120",
+                    "IK": "!D78:F120",
+                    "MK": "!G78:I120",
+                    "WK": "!J78:L120",
+                    "donation": "!B129:K138"
+                },
+                "users": "!A3:G"
+            }
         }
+
     },
     "byhex": { 
         "#150b2e": "ED",
@@ -16,13 +38,6 @@
         "#4b3800": "YELLOW",
         "#162e0b": "GREEN",
         "#282828": ""
-    },
-    "bycode": { 
-        "ED": "#150b2e",
-        "RED": "#3c0000",
-        "ORANGE": "#472502",
-        "YELLOW": "#4b3800",
-        "GREEN": "#162e0b"
     },
     "dualitemslist": [
         "Afuris Barrel",

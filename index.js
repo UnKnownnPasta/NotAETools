@@ -44,5 +44,5 @@ for (const file of eventFiles) {
 ;(async () => {
 	await client.login(process.env.TOKEN);
 	await client.guilds.fetch();
-	info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.`);
+	info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.\n-----`);
 })();

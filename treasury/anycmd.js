@@ -1,4 +1,3 @@
-// const { spreadsheet } = require('../data/config.json')
 const { EmbedBuilder, codeBlock, ButtonStyle } = require("discord.js");
 const fs = require("node:fs");
 const { Pagination } = require("pagination.djs");
@@ -55,15 +54,17 @@ module.exports = {
                 break;
 
             case "part":
-                if (!allrelics.partNames.includes(word)) return;
+                if (!allrelics.partNames.some(x => x.indexOf(word) !== -1) || (word.split(' ').length === 1)) return;
+                if (word.split(' ')[1].length === 1) return;
                 const scarcity = ["C", "C", "C", "UC", "UC", "RA"];
-                let countOfPart;
+                let countOfPart, trueName;
 
                 const relicList = allrelics.relicData
                     .map((relic) => {
                         const item = relic[0].has.findIndex((x) => x.indexOf(word) !== -1);
                         if (item === -1) return;
                         if (!countOfPart) countOfPart = relic[item + 1].count;
+                        if (!trueName) trueName = relic[item + 1].name;
                         return `${scarcity[item].padEnd(2)} | ${relic[0].name} {${relic[0].tokens}}`;
                     })
                     .filter((x) => x !== undefined);
@@ -71,13 +72,15 @@ module.exports = {
                 await message.reply({
                     embeds: [
                         new EmbedBuilder()
-                            .setTitle(`[ ${word} ] {x${countOfPart}}`)
-                            .setDescription(codeBlock("ml", relicList.join("\n"))),
+                            .setTitle(`[ ${trueName} ] {x${countOfPart}}`)
+                            .setDescription(codeBlock("ml", relicList.sort((a, b) => b.slice(b.indexOf('{')).localeCompare(a.slice(a.indexOf('{')))).join("\n")))
+                            .setFooter({ text: `${relicList.length} results` }),
                     ],
                 });
                 break;
 
             case "prime":
+                if (word.replace(/.*Prime/, '').length >= 2) return;
                 const corrWord = word.replace("Prime", "").trim();
                 let parts = [];
 
@@ -105,7 +108,12 @@ module.exports = {
 
                 if (wd.match(/--[r]/, "") !== null) {
                     embds.push(
-                        new EmbedBuilder().setDescription(codeBlock("ml", getAllRelics.map((x) => `${x.tokens.padEnd(2)} | ${x.name}`).join("\n")))
+                        new EmbedBuilder().setDescription(
+                            codeBlock("ml", getAllRelics
+                                .map((x) => `${`{${x.tokens}}`.padEnd(4)} | ${x.name}`)
+                                .sort((a, b) => b.slice(b.indexOf('{')).localeCompare(a.slice(a.indexOf('{'))))
+                                .join("\n")
+                                )).setFooter({ text: `${getAllRelics.length} results` })
                     );
                 }
 
