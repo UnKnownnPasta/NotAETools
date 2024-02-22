@@ -13,6 +13,7 @@ async function loadAllRelics() {
         return num >= 0 && num <= 7 ? 'ED'
                : num > 7 && num <= 15 ? 'RED'
                : num > 15 && num <=31 ? 'ORANGE'
+               : num > 31 && num <=64 ? 'YELLOW'
                : 'GREEN'
     }
 

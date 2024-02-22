@@ -15,6 +15,7 @@ module.exports = {
             info('CMD', `Ran interaction command "${interaction.commandName}" with arguments: ${interaction.options.data.map(x=>`"${x.name}": ${x.value}`).join(', ')}`)
         } else if (interaction.isButton()) {
             if (interaction.customId.startsWith('paginate')) return;
+            client.buttons?.get(interaction.customId.split('-')[0])?.execute(client, interaction)
         }
     },
 };
