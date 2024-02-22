@@ -2,7 +2,8 @@ const { Client, GatewayIntentBits } = require('discord.js');
 require('dotenv').config()
 const path = require('node:path')
 const fs = require('node:fs')
-const { loadFiles, info, relicExists, titleCase } = require('./scripts/utility.js')
+const { loadFiles, info, refreshFissures } = require('./scripts/utility.js')
+const { loadAllRelics, getAllClanData, getAllUserData } = require('./scripts/dbcreate.js')
 
 // Initialize client
 const client = new Client({
@@ -11,17 +12,20 @@ const client = new Client({
         GatewayIntentBits.MessageContent, 
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildMembers
-    ] 
+    ]
 });
 
+let intrv_count = 0
 setInterval(async () => {
-	await require('./scripts/dbcreate.js').loadAllRelics();
-	await require('./scripts/dbcreate.js').getAllUserData();
-	info('INTRVL', 'Refreshed relic data from google sheet and clan user ids.');
+	await loadAllRelics();
+	await getAllUserData();
+	await refreshFissures(client);
+	intrv_count++
+	if (intrv_count%20 == 0) info(`${intrv_count} intervals done.`)
 }, 300_000);
 setInterval(async () => {
-	await require('./scripts/dbcreate.js').getAllClanData();
-	info('INTRVL', 'Refreshed clan resources and donations.');
+	await getAllClanData();
+	intrv_count++
 }, 250_000);
 
 // Load all commands	
@@ -49,5 +53,6 @@ for (const file of eventFiles) {
 ;(async () => {
 	await client.login(process.env.TOKEN);
 	await client.guilds.fetch();
+	refreshFissures(client)
 	info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.\n-----`);
 })();

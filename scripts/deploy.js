@@ -5,10 +5,20 @@ const path = require('node:path');
 const { info, alert } = require('./utility.js')
 
 const commands = [];
-const treausryFolder = path.join(process.cwd(), './treasury');
+const treasuryFolder = path.join(process.cwd(), './treasury');
 
-for (const file of fs.readdirSync(treausryFolder)) {
-	const filePath = path.join(treausryFolder, file);
+for (const file of fs.readdirSync(treasuryFolder)) {
+	const filePath = path.join(treasuryFolder, file);
+	const command = require(filePath);
+	if ('data' in command && 'execute' in command) {
+		commands.push(command.data.toJSON());
+	}
+}
+
+const farmerFolder = path.join(process.cwd(), './farmers');
+
+for (const file of fs.readdirSync(farmerFolder)) {
+	const filePath = path.join(farmerFolder, file);
 	const command = require(filePath);
 	if ('data' in command && 'execute' in command) {
 		commands.push(command.data.toJSON());
