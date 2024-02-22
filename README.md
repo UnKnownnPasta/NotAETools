@@ -1,6 +1,7 @@
+![AUR Last Modified](https://img.shields.io/aur/last-modified/:packageName) ![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json)
+
 # AETools - Recreated
 A multipurpose utility bot created to aid warframe players
-[-](https://img.shields.io/badge/any_text-you_like-blue)
 
 # Brief history
 This project is dedicated towards recreating Warframes "Anime Empire" staff bot - AETools, used in treasury and farmers as a tool of convenience. This rewrite also focuses on adding sought-after features and new capabilities to the bot.
