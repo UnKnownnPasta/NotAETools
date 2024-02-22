@@ -1,4 +1,8 @@
 # AETools - Recreated
+A multipurpose utility bot created to aid warframe players
+[-](https://img.shields.io/badge/any_text-you_like-blue)
+
+# Brief history
 This project is dedicated towards recreating Warframes "Anime Empire" staff bot - AETools, used in treasury and farmers as a tool of convenience. This rewrite also focuses on adding sought-after features and new capabilities to the bot.
 AETools handles data dynamically - from google sheets to waframe apis, and allows it to be displayed in a user friendly manner.
 The bot is Discord.js v14 compatible - yet it still depends on message command, for the sake of convenience.
@@ -17,7 +21,7 @@ Uses environment keys and `scripts/deploy.js` for deploying slash commands.
 Needs `Node.js` v18.x.x or greater
 
 # Credits
-Created by me, [dePasta](https://github.com/UnKnownnPasta), original bot idea from [Zlushiie](https://github.com/Zlushiie)
+Created by [dePasta](https://github.com/UnKnownnPasta), original bot idea from [Zlushiie](https://github.com/Zlushiie)
 
 # Features
 The bot has many capabilities, to name a few:
