@@ -24,7 +24,7 @@ setInterval(async () => {
 	info('INTRVL', 'Refreshed clan resources and donations.');
 }, 250_000);
 
-// Load all commands
+// Load all commands	
 client.treasury = loadFiles('./treasury');
 client.farmers = loadFiles('./farmers');
 client.buttons = loadFiles('./events/buttons')
