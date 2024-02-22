@@ -1,4 +1,4 @@
-![AUR Last Modified](https://img.shields.io/aur/last-modified/:packageName) ![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json)
+![AUR Last Modified](https://img.shields.io/aur/last-modified/:index.js) ![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json)
 
 # AETools - Recreated
 A multipurpose utility bot created to aid warframe players
