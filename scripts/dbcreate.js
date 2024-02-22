@@ -1,5 +1,5 @@
 const { google } = require('googleapis')
-const { spreadsheet, dualitemslist } = require('../config.json')
+const { spreadsheet, dualitemslist } = require('../data/config.json')
 const fs = require('node:fs')
 
 async function loadAllRelics() {
@@ -56,7 +56,7 @@ async function loadAllRelics() {
     }
 }
 
-async function getAllClanData() {
+async function getAllUserData() {
     // User IDs
     const TreasIDValues = await google.sheets("v4").spreadsheets.values.get({
         auth: process.env.GOOGLEAPIKEY,
@@ -73,6 +73,18 @@ async function getAllClanData() {
     const FarmIDs = FarmIDValues.data.values.filter(x => x.length !== 0).map(user => {
         return { id: user[0], name: user[1], ttltokens: user[2], bonus: user[3], spent: user[4], left: user[5], playtime: user[6] }
     })
+
+    // Clan resorces
+    const clanstuff = (await JSON.parse(fs.readFileSync('./data/clandata.json'))).resources
+
+    await fs.writeFileSync('./data/clandata.json', JSON.stringify({ treasuryids: TreasIDs, farmerids: FarmIDs, resources: clanstuff }))
+}
+
+async function getAllClanData() {
+    // User IDs
+    const data = (await JSON.parse(fs.readFileSync('./data/clandata.json'))).resources
+    const TreasIDs = data.treasuryids
+    const FarmIDs = data.farmerids
     // Clan Resources
     const ClanResources = [];
 
@@ -96,7 +108,6 @@ async function getAllClanData() {
         .catch(error => {
             console.error('Error fetching sheet values:', error.message);
         });
-
 }
 
-module.exports = { loadAllRelics, getAllClanData }
+module.exports = { loadAllRelics, getAllUserData, getAllClanData }

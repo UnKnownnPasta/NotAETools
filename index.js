@@ -2,7 +2,7 @@ const { Client, GatewayIntentBits } = require('discord.js');
 require('dotenv').config()
 const path = require('node:path')
 const fs = require('node:fs')
-const { loadFiles, info, relicExists, titleCase } = require('./data/scripts/utility.js')
+const { loadFiles, info, relicExists, titleCase } = require('./scripts/utility.js')
 
 // Initialize client
 const client = new Client({
@@ -15,9 +15,14 @@ const client = new Client({
 });
 
 setInterval(async () => {
-	await require('./data/scripts/dbcreate.js').loadAllRelics()
-	info('INTRVL', 'Refreshed relic data from google sheets.')
+	await require('./scripts/dbcreate.js').loadAllRelics();
+	await require('./scripts/dbcreate.js').getAllUserData();
+	info('INTRVL', 'Refreshed relic data from google sheet and clan user ids.');
 }, 300_000);
+setInterval(async () => {
+	await require('./scripts/dbcreate.js').getAllClanData();
+	info('INTRVL', 'Refreshed clan resources and donations.');
+}, 250_000);
 
 // Load all commands
 client.treasury = loadFiles('./treasury');

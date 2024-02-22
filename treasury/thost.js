@@ -8,7 +8,7 @@ const {
     ActionRowBuilder
 } = require("discord.js");
 const fs = require("node:fs");
-const { filterRelic, relicExists } = require("../data/scripts/utility");
+const { filterRelic, relicExists } = require("../scripts/utility");
 
 module.exports = {
     name: "thost",

@@ -5,7 +5,7 @@ const {
     relicExists,
     titleCase,
     info,
-} = require("../../data/scripts/utility");
+} = require("../../scripts/utility");
 
 module.exports = {
     name: "messageCreate",

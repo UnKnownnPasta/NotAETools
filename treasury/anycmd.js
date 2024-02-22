@@ -1,7 +1,7 @@
 const { EmbedBuilder, codeBlock, ButtonStyle } = require("discord.js");
 const fs = require("node:fs");
 const { Pagination } = require("pagination.djs");
-const { filterRelic } = require("../data/scripts/utility.js");
+const { filterRelic } = require("../scripts/utility.js");
 
 module.exports = {
     name: "anycmd",
