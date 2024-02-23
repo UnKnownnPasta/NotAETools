@@ -78,17 +78,17 @@ module.exports = {
         const soupedRelics = (await soupedType(relics)).sort(compareItems);
 
         const edonly = msgfilter[0].slice(6) == 'ed' ? true : false
-        const relicFilter = (x) => {
-            if (x.relic.indexOf('Axi') == -1) return;
+        const relicFilter = (x, era) => {
+            if (x.relic.indexOf(era) == -1) return;
             if (edonly) {
                 if (x.ed != '0') return x;
                 else return;
             } else return x;
         }
-        const axisets = soupedRelics.filter(x => relicFilter(x))
-        const neosets = soupedRelics.filter(x => relicFilter(x))
-        const mesosets = soupedRelics.filter(x => relicFilter(x))
-        const lithsets = soupedRelics.filter(x => relicFilter(x))
+        const axisets = soupedRelics.filter(x => relicFilter(x, 'Axi'))
+        const neosets = soupedRelics.filter(x => relicFilter(x, 'Neo'))
+        const mesosets = soupedRelics.filter(x => relicFilter(x, 'Meso'))
+        const lithsets = soupedRelics.filter(x => relicFilter(x, 'Lith'))
         const mapSet = (set) => {
             return set.map(x => `${x.count.padEnd(4)} | ${x.relic.padEnd(8)} | ${x.ed.padEnd(2)} ED | ${x.red.padEnd(2)} RED | ${x.orange.padEnd(2)} ORANGE |`)
         }

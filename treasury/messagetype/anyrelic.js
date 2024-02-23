@@ -37,16 +37,14 @@ module.exports = {
             if (relic[0][0] == verifiedRelic) {
                 finalRelic = relic.map(x => [x[0], `${types[x[1]] ? `{${types[x[1]]}}` : ''}`])
                 detectedType = "relic"
-            } else if (itemCheckPart.includes(titleCase(itemName))) {
-                const ind = itemCheckPart.indexOf(titleCase(itemName))
+            } else if (!primed && itemCheckPart.some(x => x.indexOf(titleCase(itemName)) !== -1)) {
+                const ind = itemCheckPart.findIndex(x => x.indexOf(titleCase(itemName)) !== -1)
                 finalRelic.push([rarities[ind - 1], `${relic[0][0]} {${relic[7][0]}}`])
                 amt = relic[ind][0].slice(relic[ind][0].indexOf('[')+1, -1)
                 detectedType = 'part'
-            } else if (primed) {
-                if (itemCheckPart.some(x => x.indexOf(titleCase(itemName)) !== -1)) {
-                    finalRelic.push(relic)
-                    detectedType = 'set'
-                }
+            } else if (primed && itemCheckPart.some(x => x.indexOf(titleCase(itemName)) !== -1)) {
+                finalRelic.push(relic)
+                detectedType = 'set'
             }
         }
 
@@ -79,10 +77,10 @@ module.exports = {
                 }
             break;
             case 'set':
-                let itemsOnly = finalRelic.slice(1, -1).map(x => {
+                let itemsOnly = finalRelic.map(x => {
                     const name = x.map(y => [y[0].slice(0, y[0].indexOf('[')-1), y[0].slice(y[0].indexOf('[')+1, -1), y[1]])
-                    return name.filter(x => x[0].indexOf(titleCase(itemName)) != -1)[0]
-                })
+                    return name.filter(x => x[0].indexOf(titleCase(itemName)) !== -1)
+                }).flat()
                 let relicsOnly = finalRelic.map(x => [x[0][0], x[7][0]])
                 itemsOnly = [... new Set(itemsOnly.map(x => `${x[1].padEnd(2)} | ${x[0]} {${types[x[2]]}}`))]
                 relicsOnly = relicsOnly.map(x => `${`{${x[1]}}`.padEnd(4)} | ${x[0]}`)
