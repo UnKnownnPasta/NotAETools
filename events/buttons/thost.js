@@ -32,15 +32,10 @@ module.exports = {
                 if (setOfUsers.length === 4) {
                     const userData = (await JSON.parse(fs.readFileSync('./data/clandata.json'))).treasuryids
                     let usersInviteDesc = ""
-                    setOfUsers.forEach(x => {
-                        var index = userData.findIndex(v => v[0] == x)
-                        if (index == -1) usersInviteDesc +=  `<@${x}> - No IGN known\n`
-                        else { usersInviteDesc +=  `<@${x}> - /inv ${userData[index][1]}\n` }
-                    })
                     setOfUsers.forEach(userj => {
                         var index = userData.findIndex(n => n.id == userj)
-                        if (index === -1) usersInviteDesc +=  `<@${x}> - No IGN known\n`
-                        else usersInviteDesc +=  `<@${x}> - /inv ${userData[index][1]}\n`
+                        if (index === -1) usersInviteDesc +=  `<@${userj}> - No IGN known\n`
+                        else usersInviteDesc +=  `<@${userj}> - /inv ${userData[index].name}\n`
                     })
                     
                     const filledEmbed = new EmbedBuilder()
