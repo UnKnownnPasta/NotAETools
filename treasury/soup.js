@@ -49,6 +49,7 @@ module.exports = {
         }
         let soupedAccepted = []
 
+        const duplicateStrings = []
         async function soupedRelics(relic) {
             const soupedStrings = []
 
@@ -66,6 +67,10 @@ module.exports = {
                 rFullName = `${relicEra} ${relicType}`
                 const res = !filtertype ? await getRelic(rFullName) : await getRelic(rFullName, filtertype)
                 if (!res) continue;
+                if (soupedAccepted.includes(short)) {
+                    duplicateStrings.push(short); continue;
+                }
+
                 soupedAccepted.push(short)
                 const _ = (rarity) => {
                     return `| ${res[1].filter(x => x == rarity).length}`.padEnd(4) + rarity
@@ -99,10 +104,18 @@ module.exports = {
         .filter(x => x!==undefined)
         .join('\n\n')
         
-        i.reply({ embeds: [ 
-            new EmbedBuilder()
-            .setTitle('Souped relics')
-            .setDescription(codeBlock('ml', soupedString) + '\n\n' + `*CODE: ${soupedAccepted.join(' ')}*`)
-         ] })
+        if (duplicateStrings.length !== 0) {
+            i.reply({ content: `Duplicates found: ${duplicateStrings.join(' ')}`, embeds: [ 
+                new EmbedBuilder()
+                .setTitle('Souped relics')
+                .setDescription(codeBlock('ml', soupedString) + '\n\n' + `*CODE: ${soupedAccepted.join(' ')}*`)
+             ] })
+        } else {
+            i.reply({ embeds: [ 
+                new EmbedBuilder()
+                .setTitle('Souped relics')
+                .setDescription(codeBlock('ml', soupedString) + '\n\n' + `*CODE: ${soupedAccepted.join(' ')}*`)
+             ] })
+        }
     }
 }
