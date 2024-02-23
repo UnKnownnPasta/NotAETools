@@ -2,8 +2,12 @@ const { Client, GatewayIntentBits } = require('discord.js');
 require('dotenv').config()
 const path = require('node:path')
 const fs = require('node:fs')
-const { loadFiles, info, refreshFissures } = require('./scripts/utility.js')
-const { loadAllRelics, getAllClanData, getAllUserData } = require('./scripts/dbcreate.js')
+const { loadFiles, info, refreshFissures,warn } = require('./scripts/utility.js')
+const { loadAllRelics, getAllClanData, getAllUserData } = require('./scripts/dbcreate.js');
+
+process.on('uncaughtException', (err) => {
+	warn(`anti crash`, err.stack, err)
+});
 
 // Initialize client
 const client = new Client({
@@ -53,6 +57,6 @@ for (const file of eventFiles) {
 ;(async () => {
 	await client.login(process.env.TOKEN);
 	await client.guilds.fetch();
-	refreshFissures(client)
 	info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.\n-----`);
+	refreshFissures(client)
 })();

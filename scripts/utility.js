@@ -5,6 +5,11 @@ const chalk = require("chalk");
 const { fissureChannel } = require('../data/config.json')
 const axios = require('axios')
 
+/**
+ * Logs as [txt] msg
+ * 
+ * err
+ */
 const warn = (txt, msg, err) => { 
     console.log(chalk.red(`[${txt}]`), `${msg}`);
     console.error(err);
@@ -96,35 +101,39 @@ async function relicExists(relic) {
  * Utility function to cycle and display current fissures
  */
 async function refreshFissures(client) {
-    const channel = await client.channels.cache.get(fissureChannel).messages.fetch({ limit: 2 })
-    const missions = ['Extermination', 'Capture', 'Sabotage', 'Rescue']
-    const response = (await axios.get("https://api.warframestat.us/pc/fissures")).data.filter(
-      (f) => !f["isStorm"] && missions.includes(f["missionType"]) && f['active'] && f['tier'] != 'Requiem'
-    )
+    try {
+        const channel = await client.channels.cache.get(fissureChannel).messages.fetch({ limit: 2 })
+        const missions = ['Extermination', 'Capture', 'Sabotage', 'Rescue']
+        const response = (await axios.get("https://api.warframestat.us/pc/fissures")).data.filter(
+          (f) => !f["isStorm"] && missions.includes(f["missionType"]) && f['active'] && f['tier'] != 'Requiem'
+        )
     
-    const fissures = response.map(fis => [titleCase(fis['tier']), `${fis['missionType']} - ${fis['node']} - Ends <t:${new Date(fis['expiry']).getTime()/1000 | 0}:R>\n`, fis['isHard']])
-    const [N_Embed, S_Embed] = Object.entries(fissures.reduce((acc, fissure) => {
-      let currentEmbed = fissure[2] ? acc.S_Embed : acc.N_Embed
-  
-      currentEmbed[fissure[0]]
-      ? currentEmbed[fissure[0]].value += fissure[1]
-      : currentEmbed[fissure[0]] = { name: fissure[0], value: fissure[1] }
-  
-      return acc;
-    }, {
-      N_Embed: {},
-      S_Embed: {}
-    }))
-  
-    const NormEmbed = new EmbedBuilder()
-     .setTitle('Normal Fissures')
-     .setFields(Object.values(N_Embed[1]).sort((a, b) => b.name.localeCompare(a.name)));
-    const SPEmbed = new EmbedBuilder()
-     .setTitle('Steel Path Fissures')
-     .setFields(Object.values(S_Embed[1]).sort((a, b) => b.name.localeCompare(a.name)))
-     .setTimestamp();
-  
-    await channel.forEach(async (msg) => msg.author.id == client.user.id ? (await msg.edit({ embeds: [NormEmbed, SPEmbed] })) : null)
+        const fissures = response.map(fis => [titleCase(fis['tier']), `${fis['missionType']} - ${fis['node']} - Ends <t:${new Date(fis['expiry']).getTime()/1000 | 0}:R>\n`, fis['isHard']])
+        const [N_Embed, S_Embed] = Object.entries(fissures.reduce((acc, fissure) => {
+          let currentEmbed = fissure[2] ? acc.S_Embed : acc.N_Embed
+      
+          currentEmbed[fissure[0]]
+          ? currentEmbed[fissure[0]].value += fissure[1]
+          : currentEmbed[fissure[0]] = { name: fissure[0], value: fissure[1] }
+      
+          return acc;
+        }, {
+          N_Embed: {},
+          S_Embed: {}
+        }))
+      
+        const NormEmbed = new EmbedBuilder()
+         .setTitle('Normal Fissures')
+         .setFields(Object.values(N_Embed[1]).sort((a, b) => b.name.localeCompare(a.name)));
+        const SPEmbed = new EmbedBuilder()
+         .setTitle('Steel Path Fissures')
+         .setFields(Object.values(S_Embed[1]).sort((a, b) => b.name.localeCompare(a.name)))
+         .setTimestamp();
+      
+        await channel.forEach(async (msg) => msg.author.id == client.user.id ? (await msg.edit({ embeds: [NormEmbed, SPEmbed] })) : null)
+    } catch (error) {
+        info('INTRLV' ,'Failed to refresh fissures')
+    }
 }
 
 module.exports = { warn, alert, info, loadFiles, titleCase, filterRelic, relicExists, refreshFissures }
