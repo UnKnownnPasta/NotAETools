@@ -21,7 +21,7 @@ setInterval(async () => {
 	await getAllUserData();
 	await refreshFissures(client);
 	intrv_count++
-	if (intrv_count%20 == 0) info(`${intrv_count} intervals done.`)
+	if (intrv_count%20 == 0) info(`INTRVL`, `${intrv_count} intervals done.`)
 }, 300_000);
 setInterval(async () => {
 	await getAllClanData();
