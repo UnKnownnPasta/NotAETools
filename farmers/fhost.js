@@ -122,7 +122,7 @@ module.exports = {
 
         const buildBtn = (frame, type) => {
             return new ButtonBuilder()
-            .setCustomId(`fhost-${frame.toLowerCase()}`)
+            .setCustomId(`fhost-${frame.toLowerCase().replace(' ', '_')}`)
             .setLabel(frame)
             .setStyle(type);
         }
@@ -144,7 +144,7 @@ module.exports = {
         const framesButtons = new ActionRowBuilder().addComponents(nekrosBtn, khoraBtn, nekros2Btn, novaBtn, wispBtn)
         const optionBtn = new ActionRowBuilder().addComponents(anyBtn, cancelBtn)
 
-        i.reply({ embeds: [farmEmbed], components: [framesButtons, optionBtn] })
+        i.reply({ content: `<@${i.user.id}>`, embeds: [farmEmbed], components: [framesButtons, optionBtn] })
     },
     async autocomplete(i) {
 		const focusedValue = i.options.getFocused();
