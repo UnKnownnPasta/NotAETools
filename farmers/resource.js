@@ -8,7 +8,7 @@ const {
 const fs = require("node:fs");
 const { titleCase } = require("../scripts/utility");
 
-const resources = [
+const resourceList = [
     { name: 'Credits', value: 'credits' },
     { name: 'Alloy Plate', value: 'alloy_plate' },
     { name: 'Asterite', value: 'asterite' },
@@ -56,9 +56,9 @@ const resources = [
   
 
 module.exports = {
-    name: "resouce",
+    name: "resource",
     data: new SlashCommandBuilder()
-    .setName('resouce')
+    .setName('resource')
     .setDescription('View resources for a specific clan')
     .addStringOption((option) =>
     option
@@ -68,7 +68,7 @@ module.exports = {
         .setAutocomplete(true)
     ),
     /**
-     * Command to retrieve resources of a specific clan
+     * Command to retrieve clan wise resources
      * @param {Client} client 
      * @param {CommandInteraction} i 
      */
@@ -76,27 +76,30 @@ module.exports = {
         const resources = (await JSON.parse(fs.readFileSync('./data/clandata.json'))).resources
         const resrc = i.options.getString('resource', true)
 
+        if (!resourceList.map(x => x.name).includes(resrc.replace('_', ' '))) 
+            return i.reply({ content: `Invalid resource, choose from autofill instead`, ephemeral: true });
+
         function toggleToName(text) {
             let formattedText = text.replace(/_/g, ' ');
             return titleCase(formattedText);
         }
         
         const clanEmbed = new EmbedBuilder()
-        .setTitle(`Resource overview of ${resrc}`);
+        .setTitle(`Resource overview of ${resrc.replace('_', ' ')}`);
 
         await resources.slice(0, -1).map(r => {
             const res = r.resources.filter(x => x.name == toggleToName(resrc))[0]
-            clanEmbed.addFields({ name: r.clan, value: `**Amt:** ${`\`${res.amt}\``.padEnd(20)} |  **Short:** \`${res.short}\`` })
+            clanEmbed.addFields({ name: r.clan, value: `**Amt:** \`${res.amt}\` | **Short:** \`${res.short}\`` })
         });
 
         await i.reply({ embeds: [clanEmbed] })
     },
     async autocomplete(i) {
 		const focusedValue = i.options.getFocused();
-		const choices = [...resources.map(x => x.name.toLowerCase())];
-		const filtered = choices.filter(choice => choice.startsWith(focusedValue));
+		const choices = [...resourceList.map(x => x.name.toLowerCase())];
+		const filtered = choices.filter(choice => choice.startsWith(focusedValue)).slice(0, 25);
 		await i.respond(
-			filtered.map(choice => ({ name: choice, value: choice.replace(' ', '_') })),
+			filtered.map(choice => ({ name: titleCase(choice), value: titleCase(choice).replace(' ', '_') })),
 		);
     }
 };
