@@ -11,50 +11,29 @@ const {
 const fs = require("node:fs");
 const { titleCase } = require('../scripts/utility')
 
-const resourceList = [
-    { name: 'Credits', value: 'credits' },
-    { name: 'Alloy Plate', value: 'alloy_plate' },
-    { name: 'Asterite', value: 'asterite' },
-    { name: 'Aucrux Capacitors', value: 'aucrux_capacitors' },
-    { name: 'Bracoid', value: 'bracoid' },
-    { name: 'Carbides', value: 'carbides' },
-    { name: 'Circuits', value: 'circuits' },
-    { name: 'Control Module', value: 'control_module' },
-    { name: 'Copernics', value: 'copernics' },
-    { name: 'Cryotic', value: 'cryotic' },
-    { name: 'Cubic Diodes', value: 'cubic_diodes' },
-    { name: 'Detonite Ampule', value: 'detonite_ampule' },
-    { name: 'Ferrite', value: 'ferrite' },
-    { name: 'Fieldron Sample', value: 'fieldron_sample' },
-    { name: 'Forma', value: 'forma' },
-    { name: 'Fresnels', value: 'fresnels' },
-    { name: 'Gallium', value: 'gallium' },
-    { name: 'Gallos Rods', value: 'gallos_rods' },
-    { name: 'Hexenon', value: 'hexenon' },
-    { name: 'Isos', value: 'isos' },
-    { name: 'Kesslers', value: 'kesslers' },
-    { name: 'Komms', value: 'komms' },
-    { name: 'Morphics', value: 'morphics' },
-    { name: 'Mutagen Sample', value: 'mutagen_sample' },
-    { name: 'Nano Spores', value: 'nano_spores' },
-    { name: 'Neural Sensors', value: 'neural_sensors' },
-    { name: 'Neurodes', value: 'neurodes' },
-    { name: 'Nitain Extract', value: 'nitain_extract' },
-    { name: 'Nullstones', value: 'nullstones' },
-    { name: 'Orokin Cell', value: 'orokin_cell' },
-    { name: 'Oxium', value: 'oxium' },
-    { name: 'Plastids', value: 'plastids' },
-    { name: 'Polymer Bundle', value: 'polymer_bundle' },
-    { name: 'Pustrels', value: 'pustrels' },
-    { name: 'Rubedo', value: 'rubedo' },
-    { name: 'Salvage', value: 'salvage' },
-    { name: 'Tellurium', value: 'tellurium' },
-    { name: 'Ticor Plate', value: 'ticor_plate' },
-    { name: 'Titanium', value: 'titanium' },
-    { name: 'Trachons', value: 'trachons' },
-    { name: 'Detonite Injector', value: 'detonite_injector' },
-    { name: 'Fieldron', value: 'fieldron' },
-    { name: 'Mutagen Mass', value: 'mutagen_mass' }
+const resourceNames = [
+    'Credits',             'Alloy Plate',
+    'Asterite',            'Aucrux Capacitors',
+    'Bracoid',             'Carbides',
+    'Circuits',            'Control Module',
+    'Copernics',           'Cryotic',
+    'Cubic Diodes',        'Detonite Ampule',
+    'Ferrite',             'Fieldron Sample',
+    'Forma',               'Fresnels',
+    'Gallium',             'Gallos Rods',
+    'Hexenon',             'Isos',
+    'Kesslers',            'Komms',
+    'Morphics',            'Mutagen Sample',
+    'Nano Spores',         'Neural Sensors',
+    'Neurodes',            'Nitain Extract',
+    'Nullstones',          'Orokin Cell',
+    'Oxium',               'Plastids',
+    'Polymer Bundle',      'Pustrels',
+    'Rubedo',              'Salvage',
+    'Tellurium',           'Ticor Plate',
+    'Titanium',            'Trachons',
+    'Detonite Injector',   'Fieldron',
+    'Mutagen Mass'
   ];
 
 module.exports = {
@@ -148,8 +127,7 @@ module.exports = {
     },
     async autocomplete(i) {
 		const focusedValue = i.options.getFocused();
-		const choices = [...resourceList.map(x => x.name.toLowerCase())];
-		const filtered = choices.filter(choice => choice.startsWith(focusedValue)).slice(0, 25);
+		const filtered = resourceNames.filter(choice => choice.startsWith(focusedValue)).slice(0, 25);
 		await i.respond(
 			filtered.map(choice => ({ name: titleCase(choice), value: titleCase(choice).replace(' ', '_') })),
 		);

@@ -1,12 +1,12 @@
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
 require('dotenv').config()
 const path = require('node:path')
 const fs = require('node:fs')
 const { loadFiles, info, refreshFissures,warn } = require('./scripts/utility.js')
-const { loadAllRelics, getAllClanData, getAllUserData } = require('./scripts/dbcreate.js');
+const { loadAllRelics, getAllClanData, getAllUserData, sqlInit } = require('./scripts/dbcreate.js');
 
 process.on('uncaughtException', (err) => {
-	warn(`anti crash`, err.stack, err)
+	warn(`anti crash`, err.name, err)
 });
 
 // Initialize client
@@ -21,18 +21,15 @@ const client = new Client({
 
 let intrv_count = 0
 setInterval(async () => {
-	await loadAllRelics();
-	await getAllUserData();
+	await loadAllRelics(client);
+	await getAllUserData(client);
 	await refreshFissures(client);
+	await getAllClanData(client);
 	intrv_count++
-	if (intrv_count%20 == 0) info(`INTRVL`, `${intrv_count} intervals done.`)
-}, 300_000);
-setInterval(async () => {
-	await getAllClanData();
-	intrv_count++
-}, 250_000);
+	if (intrv_count%12 == 0) info(`INTRVL`, `${intrv_count} intervals done.`)
+}, 50_000);
 
-// Load all commands	
+// Load all commands
 client.treasury = loadFiles('./treasury');
 client.farmers = loadFiles('./farmers');
 client.buttons = loadFiles('./events/buttons')
@@ -55,8 +52,13 @@ for (const file of eventFiles) {
 
 // Login
 ;(async () => {
+	client.SQL = await sqlInit();
+	await loadAllRelics(client);
+	await getAllUserData(client);
+	await refreshFissures(client);
+	await getAllClanData(client);
 	await client.login(process.env.TOKEN);
 	await client.guilds.fetch();
 	info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.\n-----`);
-	refreshFissures(client)
+	client.user.setPresence({ activities: [{ name: 'my creator 👒', type: ActivityType.Watching }], status: 'dnd' })
 })();

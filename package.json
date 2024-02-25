@@ -16,6 +16,7 @@
     "dotenv": "^16.4.4",
     "googleapis": "^133.0.0",
     "pagination.djs": "^4.0.13",
-    "sequelize": "^6.37.1"
+    "sequelize": "^6.37.1",
+    "sqlite3": "^5.1.7"
   }
 }

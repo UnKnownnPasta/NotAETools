@@ -15,16 +15,17 @@ module.exports = {
      * @param {ButtonInteraction} i 
      */
     async execute(client, i) {
-        const emb = i.message.embeds[0]
-        const title = emb.title, // String
-            frameChoices = emb.fields.map(x => {
-                if (x.name == 'Any') {
-                    return [ x.name, x.value.split(', ').map(x => x.slice(2, -1)) ]
-                } else return [ x.name.replace(' ', '_'), x.value.slice(2, -1) ]
-            }), // [['Nekros', 'n'], ['Khora' '349053045']]
-            squadButtons = i.message.components.map(x => x.components).flat(); // [ Button, Button ]
+        const emb = i.message.embeds[0],
+        title = emb.title,
+        frameChoices = emb.fields
+        .map(x => {
+            x.name == 'Any' ? [ x.name, x.value.split(', ').map(x => x.slice(2, -1)) ] : [ x.name.replace(' ', '_'), x.value.slice(2, -1) ]
+        }),
+        squadButtons = i.message.components
+            .map(x => x.components)
+            .flat();
 
-        const allids = frameChoices.map(x => x[1]).flat()
+        const allids = frameChoices.map(fieldvals => fieldvals[1]).flat();
         if (allids.includes(i.user.id) && i.customId != 'fhost-❌') return i.update({ });
         
         const whatFrame = frameChoices.filter(x => x[0] == titleCase(i.customId.split('-')[1]))
@@ -46,7 +47,19 @@ module.exports = {
                     }
                     return returnedField;
                 })
-                await i.update({ embeds: [new EmbedBuilder().setTitle(title).addFields(newFields)], components: [new ActionRowBuilder().addComponents(squadButtons.slice(0, 5)), new ActionRowBuilder().addComponents(squadButtons.slice(5))] })
+                await i.update({
+                    embeds: [
+                        new EmbedBuilder().setTitle(title).addFields(newFields),
+                    ],
+                    components: [
+                        new ActionRowBuilder().addComponents(
+                            squadButtons.slice(0, 5)
+                        ),
+                        new ActionRowBuilder().addComponents(
+                            squadButtons.slice(5)
+                        ),
+                    ],
+                });
             } else if (i.customId == 'fhost-❌' && i.message.content.slice(2, -1) == i.user.id) {
                 await i.message.delete();
                 await i.channel.send({ embeds: [new  EmbedBuilder()
