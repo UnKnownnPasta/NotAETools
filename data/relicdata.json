@@ -42,26 +42,6 @@
         ],
         [
             {
-                "name": "Neo A4",
-                "tokens": "4",
-                "has": [
-                    "Carrier Carapace",
-                    "For",
-                    "Vauban Chassis",
-                    "Ash Neuro",
-                    "Vectis BP",
-                    "Akstiletto BP"
-                ]
-            },
-            { "name": "Carrier Carapace", "count": "1", "type": "ED" },
-            { "name": "Forma", "count": "", "type": "" },
-            { "name": "Vauban Chassis", "count": "9", "type": "RED" },
-            { "name": "Ash Neuro", "count": "41", "type": "YELLOW" },
-            { "name": "Vectis BP", "count": "27", "type": "ORANGE" },
-            { "name": "Akstiletto BP", "count": "4", "type": "ED" }
-        ],
-        [
-            {
                 "name": "Meso E1",
                 "tokens": "10",
                 "has": [
@@ -119,26 +99,6 @@
             { "name": "Orthos BP", "count": "41", "type": "YELLOW" },
             { "name": "Forma", "count": "", "type": "" },
             { "name": "Cernos Lower Limb", "count": "7", "type": "ED" }
-        ],
-        [
-            {
-                "name": "Lith V10",
-                "tokens": "3",
-                "has": [
-                    "Burston Receiver",
-                    "Fang Blade x2",
-                    "For",
-                    "Carrier Carapace",
-                    "Panthera Stock",
-                    "Vectis Receiver"
-                ]
-            },
-            { "name": "Burston Receiver", "count": "32", "type": "YELLOW" },
-            { "name": "Fang Blade x2", "count": "37", "type": "YELLOW" },
-            { "name": "Forma", "count": "", "type": "" },
-            { "name": "Carrier Carapace", "count": "1", "type": "ED" },
-            { "name": "Panthera Stock", "count": "29", "type": "ORANGE" },
-            { "name": "Vectis Receiver", "count": "6", "type": "ED" }
         ],
         [
             {
@@ -319,6 +279,26 @@
             { "name": "Nezha Neuro", "count": "7", "type": "ED" },
             { "name": "Pandero Barrel", "count": "12", "type": "RED" },
             { "name": "Tenora Receiver", "count": "10", "type": "RED" }
+        ],
+        [
+            {
+                "name": "Neo A4",
+                "tokens": "4",
+                "has": [
+                    "Carrier Carapace",
+                    "For",
+                    "Vauban Chassis",
+                    "Ash Neuro",
+                    "Vectis BP",
+                    "Akstiletto BP"
+                ]
+            },
+            { "name": "Carrier Carapace", "count": "13", "type": "RED" },
+            { "name": "Forma", "count": "", "type": "" },
+            { "name": "Vauban Chassis", "count": "9", "type": "RED" },
+            { "name": "Ash Neuro", "count": "41", "type": "YELLOW" },
+            { "name": "Vectis BP", "count": "27", "type": "ORANGE" },
+            { "name": "Akstiletto BP", "count": "4", "type": "ED" }
         ],
         [
             {
@@ -1578,6 +1558,26 @@
         ],
         [
             {
+                "name": "Lith V10",
+                "tokens": "3",
+                "has": [
+                    "Burston Receiver",
+                    "Fang Blade x2",
+                    "For",
+                    "Carrier Carapace",
+                    "Panthera Stock",
+                    "Vectis Receiver"
+                ]
+            },
+            { "name": "Burston Receiver", "count": "32", "type": "YELLOW" },
+            { "name": "Fang Blade x2", "count": "37", "type": "YELLOW" },
+            { "name": "Forma", "count": "", "type": "" },
+            { "name": "Carrier Carapace", "count": "13", "type": "RED" },
+            { "name": "Panthera Stock", "count": "29", "type": "ORANGE" },
+            { "name": "Vectis Receiver", "count": "6", "type": "ED" }
+        ],
+        [
+            {
                 "name": "Meso A1",
                 "tokens": "3",
                 "has": [
@@ -2350,26 +2350,6 @@
         ],
         [
             {
-                "name": "Axi N2",
-                "tokens": "7",
-                "has": [
-                    "Carrier Carapace",
-                    "Lex Receiver",
-                    "Bronco BP",
-                    "For",
-                    "Ash Neuro",
-                    "Nikana Hilt"
-                ]
-            },
-            { "name": "Carrier Carapace", "count": "1", "type": "ED" },
-            { "name": "Lex Receiver", "count": "25", "type": "ORANGE" },
-            { "name": "Bronco BP", "count": "31", "type": "ORANGE" },
-            { "name": "Forma", "count": "", "type": "" },
-            { "name": "Ash Neuro", "count": "41", "type": "YELLOW" },
-            { "name": "Nikana Hilt", "count": "18", "type": "ORANGE" }
-        ],
-        [
-            {
                 "name": "Lith M1",
                 "tokens": "5",
                 "has": [
@@ -2590,26 +2570,6 @@
         ],
         [
             {
-                "name": "Lith S5",
-                "tokens": "3",
-                "has": [
-                    "Carrier Carapace",
-                    "Burston Receiver",
-                    "Fang Blade x2",
-                    "Akbronco Link",
-                    "Galatine Handle",
-                    "Spira Blade x2"
-                ]
-            },
-            { "name": "Carrier Carapace", "count": "1", "type": "ED" },
-            { "name": "Burston Receiver", "count": "32", "type": "YELLOW" },
-            { "name": "Fang Blade x2", "count": "37", "type": "YELLOW" },
-            { "name": "Akbronco Link", "count": "36", "type": "YELLOW" },
-            { "name": "Galatine Handle", "count": "32", "type": "YELLOW" },
-            { "name": "Spira Blade x2", "count": "28", "type": "ORANGE" }
-        ],
-        [
-            {
                 "name": "Meso C3",
                 "tokens": "5",
                 "has": [
@@ -2791,26 +2751,6 @@
             { "name": "Soma Receiver", "count": "21", "type": "ORANGE" },
             { "name": "Kavasa Collar BP", "count": "32", "type": "YELLOW" },
             { "name": "Nyx Chassis", "count": "38", "type": "YELLOW" }
-        ],
-        [
-            {
-                "name": "Neo S1",
-                "tokens": "3",
-                "has": [
-                    "Carrier Carapace",
-                    "Lex Barrel",
-                    "Soma BP",
-                    "Trinity Chassis",
-                    "For",
-                    "Saryn BP"
-                ]
-            },
-            { "name": "Carrier Carapace", "count": "1", "type": "ED" },
-            { "name": "Lex Barrel", "count": "16", "type": "ORANGE" },
-            { "name": "Soma BP", "count": "34", "type": "YELLOW" },
-            { "name": "Trinity Chassis", "count": "29", "type": "ORANGE" },
-            { "name": "Forma", "count": "", "type": "" },
-            { "name": "Saryn BP", "count": "38", "type": "YELLOW" }
         ],
         [
             {
@@ -6930,6 +6870,26 @@
         ],
         [
             {
+                "name": "Axi N2",
+                "tokens": "7",
+                "has": [
+                    "Carrier Carapace",
+                    "Lex Receiver",
+                    "Bronco BP",
+                    "For",
+                    "Ash Neuro",
+                    "Nikana Hilt"
+                ]
+            },
+            { "name": "Carrier Carapace", "count": "13", "type": "RED" },
+            { "name": "Lex Receiver", "count": "25", "type": "ORANGE" },
+            { "name": "Bronco BP", "count": "31", "type": "ORANGE" },
+            { "name": "Forma", "count": "", "type": "" },
+            { "name": "Ash Neuro", "count": "41", "type": "YELLOW" },
+            { "name": "Nikana Hilt", "count": "18", "type": "ORANGE" }
+        ],
+        [
+            {
                 "name": "Lith M6",
                 "tokens": "3",
                 "has": [
@@ -7287,6 +7247,26 @@
             { "name": "Destreza BP", "count": "36", "type": "YELLOW" },
             { "name": "Stradavar Barrel", "count": "67", "type": "GREEN" },
             { "name": "Mesa Neuro", "count": "13", "type": "RED" }
+        ],
+        [
+            {
+                "name": "Lith S5",
+                "tokens": "3",
+                "has": [
+                    "Carrier Carapace",
+                    "Burston Receiver",
+                    "Fang Blade x2",
+                    "Akbronco Link",
+                    "Galatine Handle",
+                    "Spira Blade x2"
+                ]
+            },
+            { "name": "Carrier Carapace", "count": "13", "type": "RED" },
+            { "name": "Burston Receiver", "count": "32", "type": "YELLOW" },
+            { "name": "Fang Blade x2", "count": "37", "type": "YELLOW" },
+            { "name": "Akbronco Link", "count": "36", "type": "YELLOW" },
+            { "name": "Galatine Handle", "count": "32", "type": "YELLOW" },
+            { "name": "Spira Blade x2", "count": "28", "type": "ORANGE" }
         ],
         [
             {
@@ -7751,6 +7731,26 @@
             { "name": "Baza Barrel", "count": "18", "type": "ORANGE" },
             { "name": "Sybaris Receiver", "count": "31", "type": "ORANGE" },
             { "name": "Ivara Chassis", "count": "9", "type": "RED" }
+        ],
+        [
+            {
+                "name": "Neo S1",
+                "tokens": "3",
+                "has": [
+                    "Carrier Carapace",
+                    "Lex Barrel",
+                    "Soma BP",
+                    "Trinity Chassis",
+                    "For",
+                    "Saryn BP"
+                ]
+            },
+            { "name": "Carrier Carapace", "count": "13", "type": "RED" },
+            { "name": "Lex Barrel", "count": "16", "type": "ORANGE" },
+            { "name": "Soma BP", "count": "34", "type": "YELLOW" },
+            { "name": "Trinity Chassis", "count": "29", "type": "ORANGE" },
+            { "name": "Forma", "count": "", "type": "" },
+            { "name": "Saryn BP", "count": "38", "type": "YELLOW" }
         ],
         [
             {
@@ -11540,11 +11540,9 @@
     "relicNames": [
         "Meso V6",
         "Lith B1",
-        "Neo A4",
         "Meso E1",
         "Lith V7",
         "Axi C1",
-        "Lith V10",
         "Meso G6",
         "Meso K1",
         "Meso P1",
@@ -11554,6 +11552,7 @@
         "Meso B2",
         "Neo E1",
         "Neo T8",
+        "Neo A4",
         "Neo A1",
         "Neo N14",
         "Axi K5",
@@ -11616,6 +11615,7 @@
         "Axi H1",
         "Lith A5",
         "Neo K7",
+        "Lith V10",
         "Meso A1",
         "Axi G1",
         "Lith M8",
@@ -11654,7 +11654,6 @@
         "Lith N6",
         "Meso B3",
         "Meso P12",
-        "Axi N2",
         "Lith M1",
         "Lith A1",
         "Axi G12",
@@ -11666,7 +11665,6 @@
         "Axi A9",
         "Meso A5",
         "Neo N22",
-        "Lith S5",
         "Meso C3",
         "Neo H2",
         "Neo L1",
@@ -11676,7 +11674,6 @@
         "Lith O3",
         "Lith G8",
         "Neo N1",
-        "Neo S1",
         "Lith C1",
         "Neo A5",
         "Meso S9",
@@ -11881,6 +11878,7 @@
         "Lith B7",
         "Lith R1",
         "Lith O1",
+        "Axi N2",
         "Lith M6",
         "Lith G3",
         "Lith D5",
@@ -11899,6 +11897,7 @@
         "Axi O2",
         "Axi A1",
         "Lith M4",
+        "Lith S5",
         "Axi A14",
         "Meso M2",
         "Meso S7",
@@ -11922,6 +11921,7 @@
         "Lith B3",
         "Neo D1",
         "Neo I3",
+        "Neo S1",
         "Axi G10",
         "Meso V7",
         "Neo T1",
@@ -12123,11 +12123,6 @@
         "Rhino Neuro",
         "Boltor Receiver",
         "Boar Stock",
-        "Carrier Carapace",
-        "Vauban Chassis",
-        "Ash Neuro",
-        "Vectis BP",
-        "Akstiletto BP",
         "Bo Ornament",
         "Frost Chassis",
         "Latron Barrel",
@@ -12143,9 +12138,6 @@
         "Lex Receiver",
         "Orthos BP",
         "Cernos Lower Limb",
-        "Burston Receiver",
-        "Fang Blade",
-        "Panthera Stock",
         "Burston Stock",
         "Tatsu BP",
         "Paris Grip",
@@ -12165,6 +12157,7 @@
         "Burston BP",
         "Titania Chassis",
         "Nezha BP",
+        "Panthera Stock",
         "Magnus Barrel",
         "Aksomati Receiver",
         "Inaros Systems",
@@ -12172,6 +12165,7 @@
         "Magnus Receiver",
         "Tenora Barrel",
         "Pandero BP",
+        "Fang Blade",
         "Hystrix Barrel",
         "Gara BP",
         "Braton BP",
@@ -12188,6 +12182,11 @@
         "Nezha Neuro",
         "Pandero Barrel",
         "Tenora Receiver",
+        "Carrier Carapace",
+        "Vauban Chassis",
+        "Ash Neuro",
+        "Vectis BP",
+        "Akstiletto BP",
         "Carrier Systems",
         "Cernos String",
         "Braton Receiver",
@@ -12229,6 +12228,7 @@
         "Kavasa Collar Band",
         "Trinity Chassis",
         "Limbo Chassis",
+        "Burston Receiver",
         "Zhuge String",
         "Pangolin Blade",
         "Wukong Systems",
@@ -12423,7 +12423,6 @@
         "Soma BP",
         "Mag Chassis",
         "Panthera Barrel",
-        "Nikana Hilt",
         "Boar Receiver",
         "Revenant Chassis",
         "Garuda Neuro",
@@ -12497,6 +12496,7 @@
         "Volt Neuro",
         "Pangolin BP",
         "Hydroid Neuro",
+        "Nikana Hilt",
         "Tekko Blade",
         "Loki BP",
         "Kogake Boot",

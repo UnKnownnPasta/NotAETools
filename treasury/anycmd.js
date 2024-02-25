@@ -97,7 +97,7 @@ module.exports = {
                     })
                     .filter((x) => x !== undefined);
 
-                parts = parts.map((x) => `${x.count.padEnd(2)} | ${x.name}`);
+                parts = parts.map((x) => `${x.count.padEnd(2)} | ${x.name} {${x.type}}`);
                 parts = [...new Set(parts)];
 
                 const embds = [
