@@ -13,8 +13,9 @@ The bot is Discord.js v14 compatible - yet it still depends on message command, 
 # Running the project
 Clone the project and install necessary packages, then run it:
 ```
-git clone https://github.com/UnKnownnPasta/NotAETools.git
+git clone -b master https://github.com/UnKnownnPasta/NotAETools.git
 npm i --save
+node scripts/deploy.js
 node .
 ```
 
