@@ -83,8 +83,7 @@ module.exports = {
                     }
                 }
 
-                await i.update({ })
-                await i.user.send({ embeds: [new EmbedBuilder().setTitle(`[ ${relicName} ]`).setDescription(codeBlock('ml', embedDesc)).setTimestamp()] })
+                await i.reply({ embeds: [new EmbedBuilder().setTitle(`[ ${relicName} ]`).setDescription(codeBlock('ml', embedDesc)).setTimestamp()], ephemeral: true })
                     .catch((error) => { return; })
         }
     },

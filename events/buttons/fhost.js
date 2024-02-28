@@ -6,6 +6,7 @@ const {
     ActionRowBuilder,
 } = require("discord.js");
 const { titleCase } = require("../../scripts/utility");
+const fs = require('node:fs/promises')
 
 module.exports = {
     name: "fhost",
@@ -16,6 +17,7 @@ module.exports = {
      */
     async execute(client, i) {
         const emb = i.message.embeds[0]
+        let globalNewEmbed;
         const title = emb.title, // String
             frameChoices = emb.fields.map(x => {
                 if (x.name == 'Any') {
@@ -25,7 +27,7 @@ module.exports = {
             squadButtons = i.message.components.map(x => x.components).flat(); // [ Button, Button ]
 
         const allids = frameChoices.map(x => x[1]).flat()
-        if (allids.includes(i.user.id) && i.customId != 'fhost-❌') return i.update({ });
+        // if (allids.includes(i.user.id) && i.customId != 'fhost-❌') return i.update({ });
         
         const whatFrame = frameChoices.filter(x => x[0] == titleCase(i.customId.split('-')[1]))
         if (whatFrame.length == 0) {
@@ -46,7 +48,8 @@ module.exports = {
                     }
                     return returnedField;
                 })
-                await i.update({ embeds: [new EmbedBuilder().setTitle(title).addFields(newFields)], components: [new ActionRowBuilder().addComponents(squadButtons.slice(0, 5)), new ActionRowBuilder().addComponents(squadButtons.slice(5))] })
+                globalNewEmbed = new EmbedBuilder().setTitle(title).addFields(newFields)
+                await i.update({ embeds: [globalNewEmbed], components: [new ActionRowBuilder().addComponents(squadButtons.slice(0, 5)), new ActionRowBuilder().addComponents(squadButtons.slice(5))] })
             } else if (i.customId == 'fhost-❌' && i.message.content.slice(2, -1) == i.user.id) {
                 await i.message.delete();
                 await i.channel.send({ embeds: [new  EmbedBuilder()
@@ -67,7 +70,8 @@ module.exports = {
             })
 
             allids.push(i.user.id)
-            await i.update({ embeds: [new EmbedBuilder().setTitle(title).addFields(newFields)], components: [new ActionRowBuilder().addComponents(squadButtons.slice(0, 5)), new ActionRowBuilder().addComponents(squadButtons.slice(5))] })
+            globalNewEmbed = new EmbedBuilder().setTitle(title).addFields(newFields)
+            await i.update({ embeds: [globalNewEmbed], components: [new ActionRowBuilder().addComponents(squadButtons.slice(0, 5)), new ActionRowBuilder().addComponents(squadButtons.slice(5))] })
         } else if (frameName == 'Any') {
             const newFields = emb.fields.map(x => { 
                 if (x.name == 'Any')  {
@@ -80,13 +84,22 @@ module.exports = {
             })
             
             allids.push(i.user.id)
-            await i.update({ embeds: [new EmbedBuilder().setTitle(title).addFields(newFields)] })
+            globalNewEmbed = new EmbedBuilder().setTitle(title).addFields(newFields)
+            await i.update({ embeds: [globalNewEmbed] })
         } else {
             await i.update({ });
         }
 
-        if (allids.length == 4) {
-            console.log("squad filled");
+        if (allids.filter(x => !isNaN(x)).length >= 4) {
+            await i.message.delete();
+            let names = await JSON.parse(await fs.readFile('./data/clandata.json'))
+            if (!names.farmerids) return i.channel.send({ content: `<@740536348166848582> oi fhost broke again, keys: ${Object.keys(names)}` });
+            names = names.farmerids
+            const IDList = allids.filter(x => !isNaN(x)).map(x => {
+                const jsofuser = names.find(user => user.id == x)
+                return jsofuser ?  `<@${x}> /inv ${jsofuser?.name}` : `<@${x}> No IGN found`
+            })
+            await i.channel.send({ content: `${IDList.join("\n")}`, embeds: [globalNewEmbed] });
         }
     },
 };

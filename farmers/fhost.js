@@ -118,7 +118,7 @@ module.exports = {
             dura = i.options.getInteger('duration', false) ?? 0;
 
         const farmEmbed = new EmbedBuilder()
-        .setTitle(`${titleCase(mission)} - ${titleCase(mstype)}, ${titleCase(resource.replace('_', ' '))}, for ${!dura ? '20 Waves' : `${dura} mins`}\n`)
+        .setTitle(`${titleCase(mission)} - ${titleCase(mstype)}, Farming ${titleCase(resource.replace('_', ' '))}, for ${!dura ? '20 Waves' : `${dura} mins`}\n`)
 
         const buildBtn = (frame, type) => {
             return new ButtonBuilder()
