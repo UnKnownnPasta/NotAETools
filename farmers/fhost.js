@@ -7,7 +7,6 @@ const {
     ButtonStyle,
     ActionRowBuilder,
 } = require("discord.js");
-const fs = require("node:fs");
 const { titleCase } = require('../scripts/utility')
 
 const resourceNames = [

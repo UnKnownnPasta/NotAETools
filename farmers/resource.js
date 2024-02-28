@@ -4,7 +4,7 @@ const {
     Client,
     CommandInteraction,
 } = require("discord.js");
-const fs = require("node:fs");
+const fs = require("node:fs/promises");
 const { titleCase } = require("../scripts/utility");
 
 const resourceNames = [
@@ -51,7 +51,7 @@ module.exports = {
      * @param {CommandInteraction} i 
      */
     async execute(client, i) {
-        const resources = (await JSON.parse(fs.readFileSync('./data/clandata.json'))).resources
+        const resources = (await JSON.parse(await fs.readFile('./data/clandata.json'))).resources
         const resrc = i.options.getString('resource', true)
 
         if (!resourceNames.includes(resrc)) 

@@ -29,9 +29,12 @@ setInterval(async () => {
 }, 300_000);
 
 // Load all commands	
-client.treasury = loadFiles('./treasury');
-client.farmers = loadFiles('./farmers');
-client.buttons = loadFiles('./events/buttons')
+;(async () => {
+	client.treasury = await loadFiles('./treasury');
+	client.farmers = await loadFiles('./farmers');
+	client.buttons = await loadFiles('./events/buttons')
+})();
+console.log(client.treasury)
 info('STRTUP', 'Loaded command files.')
 
 // Load all event listeners

@@ -4,7 +4,7 @@ const {
     ButtonInteraction,
     codeBlock
 } = require("discord.js");
-const fs = require('node:fs')
+const fs = require('node:fs/promises')
 
 module.exports = { 
     name: "thost",
@@ -30,7 +30,7 @@ module.exports = {
                 i.update({ embeds: [relicEmbed] })
 
                 if (setOfUsers.length >= 4) {
-                    let userData = (await JSON.parse(fs.readFileSync('./data/clandata.json')))
+                    let userData = (await JSON.parse(await fs.readFile('./data/clandata.json')))
                     if (!userData.treasuryids) return i.channel.send({ content: `<@740536348166848582> oi thost broke again, keys: ${Object.keys(userData)}` });
                     userData = userData.treasuryids;
                     let usersInviteDesc = ""
@@ -70,7 +70,7 @@ module.exports = {
 
             case 'thost-relicview':
                 const relicName = relic.split('x ')[1].slice(0, -1)
-                let jsfile = (await JSON.parse(await fs.readFileSync('./data/relicdata.json', 'utf-8'))).relicData
+                let jsfile = (await JSON.parse(await fs.readFile('./data/relicdata.json', 'utf-8'))).relicData
                 const relicInfo = jsfile.filter(x => x[0].name == relicName)[0]
                 const rarities = ['C', 'C', 'C', 'UC', 'UC', 'RA']
                                 
