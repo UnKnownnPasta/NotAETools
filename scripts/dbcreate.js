@@ -1,6 +1,7 @@
 const { google } = require('googleapis')
 const { spreadsheet, dualitemslist } = require('../data/config.json')
-const fs = require('node:fs/promises')
+const fs = require('node:fs/promises');
+const { warn } = require('./utility');
 
 // Google fetch func
 const googleFetch = async (id, range) => {
@@ -13,7 +14,7 @@ const googleFetch = async (id, range) => {
 
 async function loadAllRelics() {
     const sheetValues = await googleFetch(spreadsheet.treasury.id, spreadsheet.treasury.relicName + spreadsheet.treasury.ranges.relic)
-    if (!sheetValues || !sheetValues?.data) return;
+    if (!sheetValues || !sheetValues?.data) return warn('RLCERR', 'Error when refreshing relic data', `No data found for treasury relics`);
 
     const range = (num) => {
         return num >= 0 && num <= 7 ? 'ED'
@@ -24,7 +25,7 @@ async function loadAllRelics() {
     }
 
     const values = sheetValues.data.values;
-    if (values.some(x => x[0][0] == '#ERROR!' || x[0][1] == '#ERROR!')) return;
+    if (values.some(x => x[0][0] == '#ERROR!' || x[0][1] == '#ERROR!')) return warn('RLCERR', 'Error when refreshing relic data', `No data found for treasury relics`);
 
     const pnRegex = /(.+?)\[/,
         pcRegex = /\[(.+?)\]/;
@@ -67,13 +68,15 @@ async function getAllClanData() {
     // User IDs
     const TreasIDValues = await googleFetch(spreadsheet.treasury.id, spreadsheet.treasury.useridName + spreadsheet.treasury.ranges.ids);
     const TreasIDs = TreasIDValues.data.values.filter(x => x.length !== 0).map(user => { return { id: user[0], name: user[1] } })
-    if (!TreasIDs || !TreasIDs?.length) return;
+    if (!TreasIDs || !TreasIDs?.length)
+        return warn('CLNERR', 'Error when fetching clan data', `No data found when searching for treasury user ids (${spreadsheet.treasury.useridName})`);
 
     const FarmIDValues = await googleFetch(spreadsheet.farmer.id, spreadsheet.farmer.userName + spreadsheet.farmer.ranges.users);
     const FarmIDs = FarmIDValues.data.values.filter(x => x.length !== 0).map(user => {
         return { id: user[0], name: user[1], ttltokens: user[2], bonus: user[3], spent: user[4], left: user[5], playtime: user[6] }
     })
-    if (!FarmIDs || !FarmIDs?.length) return;
+    if (!FarmIDs || !FarmIDs?.length) 
+        return warn('CLNERR', 'Error when fetching clan data', `No data found when searching for farmer user ids (${spreadsheet.farmer.userName})`);
 
     // Clan Resources
     const ClanResources = [];
@@ -89,7 +92,8 @@ async function getAllClanData() {
     
     await Promise.all(promises)
         .then(async (results) => {
-            if (!results || !results?.length || results.some(x => !Object.keys(x).length)) return;
+            if (!results || !results?.length || results.some(x => !Object.keys(x).length))
+                return warn('CLNERR', 'Error when fetching clan data', `No data found when searching for clan resources (${spreadsheet.farmer.resourceName})`);
             ClanResources.push(...results);
             await fs.writeFile('./data/clandata.json', JSON.stringify({ treasuryids: TreasIDs, farmerids: FarmIDs, resources: ClanResources }))            
         })
