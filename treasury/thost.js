@@ -32,7 +32,7 @@ module.exports = {
             .setName("type")
             .setDescription("Type of run")
             .setRequired(false)
-            .setChoices({ name: 'Normal', value: 'norm' }, { name: 'Bois Run', value: 'bois' })
+            .setChoices({ name: 'Normal', value: 'Squad' }, { name: 'Bois Run', value: 'Bois Run' }, { name: 'Pre Host', value: 'Pre Host Squad' })
         ),
     /**
      * Treasury exclusive command to host runs; to squad up
@@ -44,7 +44,7 @@ module.exports = {
             runType = interaction.options.getString("type", false) ?? undefined,
             relicCount = interaction.options.getInteger("count", true);
 
-        if (runType == 'norm' || runType == undefined) {
+        if (runType == 'Squad' || runType == undefined || runType == 'Pre Host Squad') {
             if (relicCount%3 != 0 || relicCount < 6) 
                 return interaction.reply({ content: `Relic count must be greater than 6, and a multiple of 3 eg. 12, 18`, ephemeral: true })
         }
@@ -59,7 +59,7 @@ module.exports = {
 
             relicDesc = `\`${relicCount}x ${filterRelic(relic)}\`\n`
             const relicEmbed = new EmbedBuilder()
-                .setTitle(`${runType == 'norm' || !runType ? 'Squad' : 'Bois run'} by ${interaction.member.nickname ?? interaction.member.user.username}`);
+                .setTitle(`${!runType ? 'Squad' : runType} by ${interaction.member.nickname ?? interaction.member.user.username}`);
 
             const confirm = new ButtonBuilder()
                 .setCustomId('thost-join')

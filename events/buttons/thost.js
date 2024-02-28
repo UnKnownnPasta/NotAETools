@@ -29,10 +29,10 @@ module.exports = {
                 relicEmbed.setDescription(relic + '\n' + setOfUsers.map(x => `<@!${x}>`).join('\n'))
                 i.update({ embeds: [relicEmbed] })
 
-                if (setOfUsers.length === 4) {
+                if (setOfUsers.length >= 4) {
                     const userData = (await JSON.parse(fs.readFileSync('./data/clandata.json'))).treasuryids
                     let usersInviteDesc = ""
-                    setOfUsers.forEach(userj => {
+                    setOfUsers.slice(0, 4).forEach(userj => {
                         var index = userData.findIndex(n => n.id == userj)
                         if (index === -1) usersInviteDesc +=  `<@${userj}> - No IGN known\n`
                         else usersInviteDesc +=  `<@${userj}> - /inv ${userData[index].name}\n`
