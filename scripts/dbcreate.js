@@ -13,6 +13,7 @@ const googleFetch = async (id, range) => {
 
 async function loadAllRelics() {
     const sheetValues = await googleFetch(spreadsheet.treasury.id, spreadsheet.treasury.relicName + spreadsheet.treasury.ranges.relic)
+    if (!sheetValues || !sheetValues?.data) return;
 
     const range = (num) => {
         return num >= 0 && num <= 7 ? 'ED'
@@ -66,18 +67,21 @@ async function getAllClanData() {
     // User IDs
     const TreasIDValues = await googleFetch(spreadsheet.treasury.id, spreadsheet.treasury.useridName + spreadsheet.treasury.ranges.ids);
     const TreasIDs = TreasIDValues.data.values.filter(x => x.length !== 0).map(user => { return { id: user[0], name: user[1] } })
+    if (!TreasIDs || !TreasIDs?.length) return;
 
     const FarmIDValues = await googleFetch(spreadsheet.farmer.id, spreadsheet.farmer.userName + spreadsheet.farmer.ranges.users);
     const FarmIDs = FarmIDValues.data.values.filter(x => x.length !== 0).map(user => {
         return { id: user[0], name: user[1], ttltokens: user[2], bonus: user[3], spent: user[4], left: user[5], playtime: user[6] }
     })
+    if (!FarmIDs || !FarmIDs?.length) return;
 
     // Clan Resources
     const ClanResources = [];
 
     const promises = Object.entries(spreadsheet.farmer.ranges.resource).map(async (key) => {
         const clandata = await googleFetch(spreadsheet.farmer.id, spreadsheet.farmer.resourceName + key[1]);
-    
+        if (!clandata) return {}
+
         let localist = [];
         clandata.data.values.forEach(x => localist.push({ name: x[0], amt: x[1], short: x[2] ?? '0' }));
         return { clan: key[0], resources: localist };
@@ -85,6 +89,7 @@ async function getAllClanData() {
     
     await Promise.all(promises)
         .then(async (results) => {
+            if (!results || !results?.length || results.some(x => !Object.keys(x).length)) return;
             ClanResources.push(...results);
             await fs.writeFile('./data/clandata.json', JSON.stringify({ treasuryids: TreasIDs, farmerids: FarmIDs, resources: ClanResources }))            
         })
