@@ -24,13 +24,10 @@ setInterval(async () => {
 	await loadAllRelics();
 	await getAllUserData();
 	await refreshFissures(client);
-	intrv_count++
-	if (intrv_count%20 == 0) info(`INTRVL`, `${intrv_count} intervals done.`)
-}, 300_000);
-setInterval(async () => {
 	await getAllClanData();
 	intrv_count++
-}, 250_000);
+	if (intrv_count%15 == 0) info(`INTRVL`, `${intrv_count} intervals done.`)
+}, 300_000);
 
 // Load all commands	
 client.treasury = loadFiles('./treasury');
