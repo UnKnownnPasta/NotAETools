@@ -108,7 +108,7 @@ async function refreshFissures(client) {
           (f) => !f["isStorm"] && missions.includes(f["missionType"]) && f['active'] && f['tier'] != 'Requiem'
         )
     
-        const fissures = response.map(fis => [titleCase(fis['tier']), `${fis['missionType']} - ${fis['node']} - Ends <t:${new Date(fis['expiry']).getTime()/1000 | 0}:R>\n`, fis['isHard']])
+        const fissures = await response.map(fis => [titleCase(fis['tier']), `${fis['missionType']} - ${fis['node']} - Ends <t:${new Date(fis['expiry']).getTime()/1000 | 0}:R>\n`, fis['isHard']])
         const [N_Embed, S_Embed] = Object.entries(fissures.reduce((acc, fissure) => {
           let currentEmbed = fissure[2] ? acc.S_Embed : acc.N_Embed
       

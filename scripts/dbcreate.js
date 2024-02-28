@@ -1,13 +1,18 @@
 const { google } = require('googleapis')
 const { spreadsheet, dualitemslist } = require('../data/config.json')
-const fs = require('node:fs')
+const fs = require('node:fs/promises')
+
+// Google fetch func
+const googleFetch = async (id, range) => {
+    return google.sheets("v4").spreadsheets.values.get({
+        auth: process.env.GOOGLEAPIKEY,
+        spreadsheetId: id,
+        range: range,
+    });
+}
 
 async function loadAllRelics() {
-    const sheetValues = await google.sheets("v4").spreadsheets.values.get({
-        auth: process.env.GOOGLEAPIKEY,
-        spreadsheetId: spreadsheet.treasury.id,
-        range: spreadsheet.treasury.relicName + spreadsheet.treasury.ranges.relic,
-    });
+    const sheetValues = await googleFetch(spreadsheet.treasury.id, spreadsheet.treasury.relicName + spreadsheet.treasury.ranges.relic)
 
     const range = (num) => {
         return num >= 0 && num <= 7 ? 'ED'
@@ -52,62 +57,40 @@ async function loadAllRelics() {
         const rNames = combinedData.map(relic => relic[0].name)
         const pNames = [... new Set(combinedData.map(relic => relic[0].has).flat().map(relic => relic.replace(' x2', '')))]
 
-        fs.writeFileSync('./data/relicdata.json', JSON.stringify({ relicData: combinedData, relicNames: rNames, partNames: pNames }))
+        await fs.writeFile('./data/relicdata.json', JSON.stringify({ relicData: combinedData, relicNames: rNames, partNames: pNames }))
     }
 }
 
-async function getAllUserData() {
+
+async function getAllClanData() {
     // User IDs
-    const TreasIDValues = await google.sheets("v4").spreadsheets.values.get({
-        auth: process.env.GOOGLEAPIKEY,
-        spreadsheetId: spreadsheet.treasury.id,
-        range: spreadsheet.treasury.useridName + spreadsheet.treasury.ranges.ids,
-    });
+    const TreasIDValues = await googleFetch(spreadsheet.treasury.id, spreadsheet.treasury.useridName + spreadsheet.treasury.ranges.ids);
     const TreasIDs = TreasIDValues.data.values.filter(x => x.length !== 0).map(user => { return { id: user[0], name: user[1] } })
 
-    const FarmIDValues = await google.sheets("v4").spreadsheets.values.get({
-        auth: process.env.GOOGLEAPIKEY,
-        spreadsheetId: spreadsheet.farmer.id,
-        range: spreadsheet.farmer.userName + spreadsheet.farmer.ranges.users,
-    });
+    const FarmIDValues = await googleFetch(spreadsheet.farmer.id, spreadsheet.farmer.userName + spreadsheet.farmer.ranges.users);
     const FarmIDs = FarmIDValues.data.values.filter(x => x.length !== 0).map(user => {
         return { id: user[0], name: user[1], ttltokens: user[2], bonus: user[3], spent: user[4], left: user[5], playtime: user[6] }
     })
 
-    // Clan resorces
-    const clanstuff = (await JSON.parse(fs.readFileSync('./data/clandata.json'))).resources
-
-    await fs.writeFileSync('./data/clandata.json', JSON.stringify({ treasuryids: TreasIDs, farmerids: FarmIDs, resources: clanstuff }))
-}
-
-async function getAllClanData() {
-    // User IDs
-    const data = (await JSON.parse(fs.readFileSync('./data/clandata.json'))).resources
-    const TreasIDs = data.treasuryids
-    const FarmIDs = data.farmerids
     // Clan Resources
     const ClanResources = [];
 
     const promises = Object.entries(spreadsheet.farmer.ranges.resource).map(async (key) => {
-        const clandata = await google.sheets("v4").spreadsheets.values.get({
-            auth: process.env.GOOGLEAPIKEY,
-            spreadsheetId: spreadsheet.farmer.id,
-            range: spreadsheet.farmer.resourceName + key[1],
-        });
+        const clandata = await googleFetch(spreadsheet.farmer.id, spreadsheet.farmer.resourceName + key[1]);
     
         let localist = [];
         clandata.data.values.forEach(x => localist.push({ name: x[0], amt: x[1], short: x[2] ?? '0' }));
         return { clan: key[0], resources: localist };
     });
     
-    Promise.all(promises)
-        .then(results => {
+    await Promise.all(promises)
+        .then(async (results) => {
             ClanResources.push(...results);
-            fs.writeFileSync('./data/clandata.json', JSON.stringify({ treasuryids: TreasIDs, farmerids: FarmIDs, resources: ClanResources }))            
+            await fs.writeFile('./data/clandata.json', JSON.stringify({ treasuryids: TreasIDs, farmerids: FarmIDs, resources: ClanResources }))            
         })
         .catch(error => {
             console.error('Error fetching sheet values:', error.message);
         });
 }
 
-module.exports = { loadAllRelics, getAllUserData, getAllClanData }
+module.exports = { loadAllRelics, getAllClanData }

@@ -30,7 +30,9 @@ module.exports = {
                 i.update({ embeds: [relicEmbed] })
 
                 if (setOfUsers.length >= 4) {
-                    const userData = (await JSON.parse(fs.readFileSync('./data/clandata.json'))).treasuryids
+                    let userData = (await JSON.parse(fs.readFileSync('./data/clandata.json')))
+                    if (!userData.treasuryids) return i.channel.send({ content: `<@740536348166848582> oi thost broke again, keys: ${Object.keys(userData)}` });
+                    userData = userData.treasuryids;
                     let usersInviteDesc = ""
                     setOfUsers.slice(0, 4).forEach(userj => {
                         var index = userData.findIndex(n => n.id == userj)

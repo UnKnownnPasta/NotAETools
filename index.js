@@ -3,7 +3,7 @@ require('dotenv').config()
 const path = require('node:path')
 const fs = require('node:fs')
 const { loadFiles, info, refreshFissures,warn } = require('./scripts/utility.js')
-const { loadAllRelics, getAllClanData, getAllUserData } = require('./scripts/dbcreate.js');
+const { loadAllRelics, getAllClanData } = require('./scripts/dbcreate.js');
 
 process.on('uncaughtException', (err) => {
 	warn(`anti crash`, err.stack, err)
@@ -22,7 +22,6 @@ const client = new Client({
 let intrv_count = 0
 setInterval(async () => {
 	await loadAllRelics();
-	await getAllUserData();
 	await refreshFissures(client);
 	await getAllClanData();
 	intrv_count++
@@ -53,7 +52,8 @@ for (const file of eventFiles) {
 // Login
 ;(async () => {
 	await client.login(process.env.TOKEN);
-	await client.guilds.fetch();
+	require('./scripts/deploy.js')
+	await client.guilds.fetch({ force: true });
 	info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.\n-----`);
-	refreshFissures(client)
+	await refreshFissures(client)
 })();
