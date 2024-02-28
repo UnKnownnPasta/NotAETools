@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
 require('dotenv').config()
 const path = require('node:path')
 const fs = require('node:fs')
@@ -52,8 +52,9 @@ for (const file of eventFiles) {
 // Login
 ;(async () => {
 	await client.login(process.env.TOKEN);
-	require('./scripts/deploy.js')
+	require('./scripts/deploy.js');
 	await client.guilds.fetch({ force: true });
+	client.user.setPresence({ activities: [{ name: 'Zloosh 👒', type: ActivityType.Watching }], status: 'dnd' });
 	info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.\n-----`);
-	await refreshFissures(client)
+	await refreshFissures(client);
 })();

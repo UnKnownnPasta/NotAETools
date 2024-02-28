@@ -1,6 +1,5 @@
 const {
     EmbedBuilder,
-    SlashCommandBuilder,
     Client,
     ButtonInteraction,
     ActionRowBuilder,
@@ -27,7 +26,7 @@ module.exports = {
             squadButtons = i.message.components.map(x => x.components).flat(); // [ Button, Button ]
 
         const allids = frameChoices.map(x => x[1]).flat()
-        // if (allids.includes(i.user.id) && i.customId != 'fhost-❌') return i.update({ });
+        if (allids.includes(i.user.id) && i.customId != 'fhost-❌') return i.update({ });
         
         const whatFrame = frameChoices.filter(x => x[0] == titleCase(i.customId.split('-')[1]))
         if (whatFrame.length == 0) {
@@ -55,7 +54,7 @@ module.exports = {
                 await i.channel.send({ embeds: [new  EmbedBuilder()
                 .setTitle(`Squad for ${title.split(', ').slice(0, 2).join(', ')} is cancelled`)] }).then((x) => setTimeout(async () => {
                     await x.delete();
-                }, 10000))
+                }, 30_000))
             }
         }
         if (i.customId == 'fhost-❌') return;
