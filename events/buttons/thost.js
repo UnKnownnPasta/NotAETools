@@ -27,7 +27,7 @@ module.exports = {
                 setOfUsers.push(i.user.id)
 
                 relicEmbed.setDescription(relic + '\n' + setOfUsers.map(x => `<@!${x}>`).join('\n'))
-                i.update({ embeds: [relicEmbed] })
+                await i.update({ embeds: [relicEmbed] })
 
                 if (setOfUsers.length >= 4) {
                     let userData = (await JSON.parse(await fs.readFile('./data/clandata.json')))
@@ -44,9 +44,12 @@ module.exports = {
                     .setTitle(`Run for [${relic}] filled`)
                     .setDescription(`Invite Others:\n` + usersInviteDesc)
 
-                    i.message.delete()
-                    i.channel.send({ embeds: [filledEmbed], content: `${setOfUsers.map(x => `<@${x}>`).join(" ")}` })
-                    return;
+                    try {
+                        await i.message.delete()
+                        await i.channel.send({ embeds: [filledEmbed], content: `${setOfUsers.slice(0, 4).map(x => `<@${x}>`).join(" ")}` })
+                    } catch (error) {
+                        return i?.followUp({ content: `Could not join run, squad is filled`, ephemeral: true });
+                    } 
                 }
                 break;
 

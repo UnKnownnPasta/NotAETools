@@ -130,7 +130,7 @@ module.exports = {
 		const choices = [...resourceNames.map(x => x.toLowerCase())];
 		const filtered = choices.filter(choice => choice.startsWith(focusedValue)).slice(0, 25);
 		await i.respond(
-			filtered.map(choice => ({ name: titleCase(choice), value: titleCase(choice).replace(' ', '_') })),
+			filtered.map(choice => ({ name: titleCase(choice), value: titleCase(choice) })),
 		);
     }
 };
