@@ -25,7 +25,7 @@ module.exports = {
         })
         let hostComps = i.message.components.map(x => x.components).flat();
         const allIDs = hostFields.map(x => x[1].split('|')).flat()
-        if (allIDs.includes(i.user.id)) return i.update({ });
+        if (allIDs.includes(i.user.id) && i.customId != 'fhost-❌') return i.update({ });
 
         const newRow = (arr) => new ActionRowBuilder().addComponents(arr)
         
@@ -39,7 +39,7 @@ module.exports = {
 
             hostFields = hostFields.map(x => [x[0], x[1].split('|').map(y => y == 'n' || !y ? 'None' : `<@${y}>`).join(', ')])
             globalHostEmbed.addFields(...hostFields.map(x => { return { name: x[0], value: x[1], inline: true } })).setTimestamp()
-            allIDs[clickedButton] = 'n'
+            allIDs[joinedButton] = 'n'
             await i.update({ content: i.message.content, embeds: [globalHostEmbed], components: [newRow(hostComps.slice(0, 5)), newRow(hostComps.slice(5))] })
         } else if (i.customId == 'fhost-❌' && allIDs.includes(i.user.id) && i.message.content.slice(2, -1) == i.user.id) {
             await i.message.delete();
@@ -48,6 +48,7 @@ module.exports = {
             ] })
         } else {
             const getField = hostFields.findIndex(x => x[0] == i.customId.split('-')[1]);
+            if (getField === -1) return i.update({ });
             if (hostFields[getField][1] != 'n' && i.customId != 'fhost-Any') return await i.update({ });
             let currentField = [...hostFields[getField][1].split('|')].filter(x => x != 'n')
             currentField.push(i.user.id)
