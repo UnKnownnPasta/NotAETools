@@ -98,10 +98,11 @@ module.exports = {
 
         const farmEmbed = new EmbedBuilder()
         .setTitle(`${titleCase(mission)} - ${titleCase(mstype)}, Farming ${titleCase(resource.replace('_', ' '))}, for ${!dura ? '20 Waves' : `${dura} mins`}\n`)
+        .setTimestamp()
 
         const buildBtn = (frame, type) => {
             return new ButtonBuilder()
-            .setCustomId(`fhost-${frame.toLowerCase().replace(' ', '_')}`)
+            .setCustomId(`fhost-${frame}`)
             .setLabel(frame)
             .setStyle(type);
         }
@@ -113,9 +114,9 @@ module.exports = {
         const wispBtn = buildBtn('Wisp', ButtonStyle.Success)
         const cancelBtn = buildBtn('❌', ButtonStyle.Danger)
 
-        const possFrames = [anyBtn, nekrosBtn, khoraBtn, wispBtn, novaBtn, nekros2Btn]
+        const possFrames = [nekrosBtn, khoraBtn, wispBtn, novaBtn, nekros2Btn, anyBtn]
         possFrames.forEach(fm => {
-            if (fm.data.custom_id == `fhost-${frame.toLowerCase()}`) fm.setDisabled(true)
+            if (fm.data.custom_id == `fhost-${frame}`) fm.setDisabled(true)
             if (fm.data.custom_id !== 'fhost-❌')
                 farmEmbed.addFields({name: `${fm.data.label}`, value:`${fm.data.disabled ? `<@${i.user.id}>` : 'None'}`, inline: true})
         });
