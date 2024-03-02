@@ -3,7 +3,8 @@ require('dotenv').config()
 const path = require('node:path')
 const fs = require('node:fs')
 const { loadFiles, info, refreshFissures,warn } = require('./scripts/utility.js')
-const { loadAllRelics, getAllClanData } = require('./scripts/dbcreate.js');
+const { loadAllRelics, getAllClanData, getAllUserData } = require('./scripts/sheetFetch.js');
+const database = require('./scripts/database.js')
 
 process.on('uncaughtException', (err) => {
 	warn(`anti crash`, err.name, err)
@@ -21,14 +22,16 @@ const client = new Client({
 
 let intrv_count = 0
 setInterval(async () => {
-	await loadAllRelics();
-	await refreshFissures(client);
-	await getAllClanData();
+	// await loadAllRelics(client);
+	// await refreshFissures(client);
+	await getAllUserData(false);
+	
+	await getAllClanData(false);
 	intrv_count++
-	if (intrv_count%15 == 0) info(`INTRVL`, `${intrv_count} intervals done.`)
-}, 300_000);
+	info(`INTRVL`, `${intrv_count} intervals done.`)
+}, 30_000);
 
-// Load all commands	
+// Load all commands
 ;(async () => {
 	client.treasury = await loadFiles('./treasury');
 	client.farmers = await loadFiles('./farmers');
@@ -53,15 +56,17 @@ for (const file of eventFiles) {
 
 // Login
 ;(async () => {
-	client.SQL = await sqlInit();
-	await loadAllRelics(client);
-	await getAllUserData(client);
-	await refreshFissures(client);
-	await getAllClanData(client);
+	client.SQL = await database.authenticate()
+	database.defineModels()
+	await database.syncDatabase();
+	
+	// await loadAllRelics(client);
+	await getAllUserData(client, true);
+	// await refreshFissures(client);
+	await getAllClanData(client, true);
 	await client.login(process.env.TOKEN);
-	require('./scripts/deploy.js');
-	await client.guilds.fetch({ force: true });
+	// require('./scripts/deploy.js');
+	// await client.guilds.fetch({ force: true });
 	client.user.setPresence({ activities: [{ name: 'Zloosh 👒', type: ActivityType.Watching }], status: 'dnd' });
 	info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.\n-----`);
-	await refreshFissures(client);
 })();

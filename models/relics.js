@@ -13,7 +13,7 @@ module.exports = (sequelizeInstance) => {
             part5: { type: DataTypes.JSON, defaultValue: { "name": "", "count": "", "type": "" } },
             part6: { type: DataTypes.JSON, defaultValue: { "name": "", "count": "", "type": "" } }
         },
-        { sequelize: sequelizeInstance, modelName: 'Relics', createdAt: false }
+        { sequelize: sequelizeInstance, modelName: 'Relics', createdAt: false, updatedAt: false }
     );
 
     return Relics;

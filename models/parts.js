@@ -7,7 +7,7 @@ module.exports = (sequelizeInstance) => {
         {
             part: { type: DataTypes.STRING, defaultValue: "" }
         },
-        { sequelize: sequelizeInstance, modelName: 'Parts', createdAt: false }
+        { sequelize: sequelizeInstance, modelName: 'Parts', createdAt: false, updatedAt: false }
     );
 
     return Parts;
