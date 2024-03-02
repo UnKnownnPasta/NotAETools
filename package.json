@@ -16,7 +16,8 @@
     "dotenv": "^16.4.4",
     "googleapis": "^133.0.0",
     "pagination.djs": "^4.0.13",
+    "pm2": "^5.3.1",
     "sequelize": "^6.37.1",
-    "sqlite3": "^5.1.7"
+    "tesseract.js": "^5.0.4"
   }
 }

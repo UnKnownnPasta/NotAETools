@@ -42,9 +42,9 @@ module.exports = {
             cmdType = "relic";
         }
 
-        info("CMD", `Ran ++${cmdType} command by ${message.member.nickname ?? message.author.username} with arguments: "${word}" @ ${new Date().toLocaleString()}`);
         client.treasury
             .get("anycmd")
-            .execute(client, message, titleCase(word), cmdType);
-    },
+            ?.execute(client, message, titleCase(word), cmdType);
+        info("CMD", `Ran ++${cmdType} command by ${message.member.nickname ?? message.author.username} with arguments: "${word}" @ ${new Date().toLocaleString()}`);
+        },
 };

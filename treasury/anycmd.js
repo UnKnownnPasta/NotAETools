@@ -1,14 +1,12 @@
 const { EmbedBuilder, codeBlock, ButtonStyle } = require("discord.js");
-const fs = require("node:fs");
+const fs = require("node:fs/promises");
 const { Pagination } = require("pagination.djs");
 const { filterRelic } = require("../scripts/utility.js");
 
 module.exports = {
     name: "anycmd",
     async execute(client, message, wd, type) {
-        const allrelics = await JSON.parse(
-            fs.readFileSync("./data/relicdata.json")
-        );
+        const allrelics = await JSON.parse(await fs.readFile("./data/relicdata.json"));
         const word = wd.replace(/--[r]/, "").trim();
 
         switch (type) {
@@ -97,7 +95,7 @@ module.exports = {
                     })
                     .filter((x) => x !== undefined);
 
-                parts = parts.map((x) => `${x.count.padEnd(2)} | ${x.name}`);
+                parts = parts.map((x) => `${x.count.padEnd(2)} | ${x.name} {${x.type}}`);
                 parts = [...new Set(parts)];
 
                 const embds = [

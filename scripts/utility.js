@@ -1,6 +1,6 @@
 const { Collection, EmbedBuilder } = require("discord.js");
 const path = require('node:path')
-const fs = require('node:fs');
+const fs = require('node:fs/promises');
 const chalk = require("chalk");
 const { fissureChannel } = require('../data/config.json')
 const axios = require('axios')
@@ -22,10 +22,11 @@ const info = (type, txt) => { console.log(chalk.bgBlackBright(chalk.black(`[${ty
  * @param {String} dirpath 
  * @returns Collection
  */
-function loadFiles(dirpath) {
+async function loadFiles(dirpath) {
     let clientCollection = new Collection();
     const commandsPath = path.join(process.cwd(), dirpath);
-    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+    const files = await fs.readdir(commandsPath)
+    const commandFiles = files.filter(file => file.endsWith('.js'));
 
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
@@ -93,7 +94,7 @@ function filterRelic(relic) {
  * @returns Boolean
  */
 async function relicExists(relic) {
-    const relicList = (await JSON.parse(fs.readFileSync('./data/relicdata.json'))).relicNames
+    const relicList = (await JSON.parse(await fs.readFile('./data/relicdata.json'))).relicNames
     return relicList.includes(relic)
 }
 
@@ -108,7 +109,7 @@ async function refreshFissures(client) {
           (f) => !f["isStorm"] && missions.includes(f["missionType"]) && f['active'] && f['tier'] != 'Requiem'
         )
     
-        const fissures = response.map(fis => [titleCase(fis['tier']), `${fis['missionType']} - ${fis['node']} - Ends <t:${new Date(fis['expiry']).getTime()/1000 | 0}:R>\n`, fis['isHard']])
+        const fissures = await response.map(fis => [titleCase(fis['tier']), `${fis['missionType']} - ${fis['node']} - Ends <t:${new Date(fis['expiry']).getTime()/1000 | 0}:R>\n`, fis['isHard']])
         const [N_Embed, S_Embed] = Object.entries(fissures.reduce((acc, fissure) => {
           let currentEmbed = fissure[2] ? acc.S_Embed : acc.N_Embed
       

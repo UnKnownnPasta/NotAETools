@@ -5,7 +5,7 @@ const {
     EmbedBuilder,
     codeBlock
 } = require("discord.js");
-const fs = require('node:fs')
+const fs = require('node:fs/promises')
 
 module.exports = {
     name: 'soup',
@@ -36,7 +36,7 @@ module.exports = {
         const relics = i.options.getString('relics', true).split(' '),
             filtertype = i.options.getString('filtertype', false) ?? false;
 
-        const relicsList = (await JSON.parse(await fs.readFileSync('./data/relicdata.json', 'utf-8')));
+        const relicsList = (await JSON.parse(await fs.readFile('./data/relicdata.json', 'utf-8')));
         async function getRelic(name, type=null) {
             for (const relic of relicsList.relicData) {
                 if (relic[0].name == name) {
@@ -67,11 +67,11 @@ module.exports = {
                 rFullName = `${relicEra} ${relicType}`
                 const res = !filtertype ? await getRelic(rFullName) : await getRelic(rFullName, filtertype)
                 if (!res) continue;
-                if (soupedAccepted.includes(short)) {
+                if (soupedAccepted.filter(str => str.includes(short.toLowerCase().slice(letterstart.index))).length) {
                     duplicateStrings.push(short); continue;
                 }
 
-                soupedAccepted.push(short)
+                soupedAccepted.push(short.toLowerCase())
                 const _ = (rarity) => {
                     return `| ${res[1].filter(x => x == rarity).length}`.padEnd(4) + rarity
                 }

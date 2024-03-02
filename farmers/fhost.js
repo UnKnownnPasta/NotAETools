@@ -6,35 +6,34 @@ const {
     ButtonBuilder,
     ButtonStyle,
     ActionRowBuilder,
-    codeBlock
 } = require("discord.js");
-const fs = require("node:fs");
 const { titleCase } = require('../scripts/utility')
 
 const resourceNames = [
-    'Credits',             'Alloy Plate',
-    'Asterite',            'Aucrux Capacitors',
-    'Bracoid',             'Carbides',
-    'Circuits',            'Control Module',
-    'Copernics',           'Cryotic',
-    'Cubic Diodes',        'Detonite Ampule',
-    'Ferrite',             'Fieldron Sample',
-    'Forma',               'Fresnels',
-    'Gallium',             'Gallos Rods',
-    'Hexenon',             'Isos',
-    'Kesslers',            'Komms',
-    'Morphics',            'Mutagen Sample',
-    'Nano Spores',         'Neural Sensors',
-    'Neurodes',            'Nitain Extract',
-    'Nullstones',          'Orokin Cell',
-    'Oxium',               'Plastids',
-    'Polymer Bundle',      'Pustrels',
-    'Rubedo',              'Salvage',
-    'Tellurium',           'Ticor Plate',
-    'Titanium',            'Trachons',
-    'Detonite Injector',   'Fieldron',
+    'Credits', 'Alloy Plate',
+    'Asterite', 'Aucrux Capacitors',
+    'Bracoid', 'Carbides',
+    'Circuits', 'Control Module',
+    'Copernics', 'Cryotic',
+    'Cubic Diodes', 'Detonite Ampule',
+    'Ferrite', 'Fieldron Sample',
+    'Forma', 'Fresnels',
+    'Gallium', 'Gallos Rods',
+    'Hexenon', 'Isos',
+    'Kesslers', 'Komms',
+    'Morphics', 'Mutagen Sample',
+    'Nano Spores', 'Neural Sensors',
+    'Neurodes', 'Nitain Extract',
+    'Nullstones', 'Orokin Cell',
+    'Oxium', 'Plastids',
+    'Polymer Bundle', 'Pustrels',
+    'Rubedo', 'Salvage',
+    'Tellurium', 'Ticor Plate',
+    'Titanium', 'Trachons',
+    'Detonite Injector', 'Fieldron',
     'Mutagen Mass'
   ];
+  
 
 module.exports = {
     name: "fhost",
@@ -95,13 +94,15 @@ module.exports = {
             frame = i.options.getString('frame', true),
             mstype = i.options.getString('missiontype', true),
             dura = i.options.getInteger('duration', false) ?? 0;
+        if (!resourceNames.includes(resource)) return i.reply({ content: `Resource selected is not a valid one, select one from the autocomplete list.`, ephemeral: true })
 
         const farmEmbed = new EmbedBuilder()
-        .setTitle(`${titleCase(mission)} - ${titleCase(mstype)}, ${titleCase(resource.replace('_', ' '))}, for ${!dura ? '20 Waves' : `${dura} mins`}\n`)
+        .setTitle(`${titleCase(mission)} - ${titleCase(mstype)}, Farming ${titleCase(resource.replace('_', ' '))}, for ${!dura ? '20 Waves' : `${dura} mins`}\n`)
+        .setTimestamp()
 
         const buildBtn = (frame, type) => {
             return new ButtonBuilder()
-            .setCustomId(`fhost-${frame.toLowerCase().replace(' ', '_')}`)
+            .setCustomId(`fhost-${frame}`)
             .setLabel(frame)
             .setStyle(type);
         }
@@ -113,9 +114,9 @@ module.exports = {
         const wispBtn = buildBtn('Wisp', ButtonStyle.Success)
         const cancelBtn = buildBtn('❌', ButtonStyle.Danger)
 
-        const possFrames = [anyBtn, nekrosBtn, khoraBtn, wispBtn, novaBtn, nekros2Btn]
+        const possFrames = [nekrosBtn, khoraBtn, wispBtn, novaBtn, nekros2Btn, anyBtn]
         possFrames.forEach(fm => {
-            if (fm.data.custom_id == `fhost-${frame.toLowerCase()}`) fm.setDisabled(true)
+            if (fm.data.custom_id == `fhost-${frame}`) fm.setDisabled(true)
             if (fm.data.custom_id !== 'fhost-❌')
                 farmEmbed.addFields({name: `${fm.data.label}`, value:`${fm.data.disabled ? `<@${i.user.id}>` : 'None'}`, inline: true})
         });
@@ -129,7 +130,7 @@ module.exports = {
 		const focusedValue = i.options.getFocused();
 		const filtered = resourceNames.filter(choice => choice.startsWith(focusedValue)).slice(0, 25);
 		await i.respond(
-			filtered.map(choice => ({ name: titleCase(choice), value: titleCase(choice).replace(' ', '_') })),
+			filtered.map(choice => ({ name: titleCase(choice), value: titleCase(choice) })),
 		);
     }
 };

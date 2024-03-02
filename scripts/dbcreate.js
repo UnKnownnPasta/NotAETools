@@ -1,6 +1,16 @@
 const { google } = require('googleapis')
 const { spreadsheet, dualitemslist } = require('../data/config.json')
-const fs = require('node:fs')
+const fs = require('node:fs/promises');
+const { warn } = require('./utility');
+
+// Google fetch func
+const googleFetch = async (id, range) => {
+    return google.sheets("v4").spreadsheets.values.get({
+        auth: process.env.GOOGLEAPIKEY,
+        spreadsheetId: id,
+        range: range,
+    });
+}
 
 function transformToSequelizeModel(fields) {
     const sequelizeModel = {};
@@ -35,7 +45,7 @@ async function loadAllRelics(client) {
     }
 
     const values = sheetValues.data.values;
-    if (values.some(x => x[0][0] == '#ERROR!' || x[0][1] == '#ERROR!')) return;
+    if (values.some(x => x[0][0] == '#ERROR!' || x[0][1] == '#ERROR!')) return warn('RLCERR', 'Error when refreshing relic data', `No data found for treasury relics`);
 
     const pnRegex = /(.+?)\[/,
         pcRegex = /\[(.+?)\]/;
@@ -116,12 +126,9 @@ async function getAllClanData(client) {
     const ClanResources = [];
 
     const promises = Object.entries(spreadsheet.farmer.ranges.resource).map(async (key) => {
-        const clandata = await google.sheets("v4").spreadsheets.values.get({
-            auth: process.env.GOOGLEAPIKEY,
-            spreadsheetId: spreadsheet.farmer.id,
-            range: spreadsheet.farmer.resourceName + key[1],
-        });
-    
+        const clandata = await googleFetch(spreadsheet.farmer.id, spreadsheet.farmer.resourceName + key[1]);
+        if (!clandata) return {}
+
         let localist = [];
         clandata.data.values.forEach(x => localist.push({ name: x[0], amt: x[1], short: x[2] ?? '0' }));
         return { clan: key[0], ...transformArrayToObject(localist) };
@@ -143,7 +150,6 @@ const { info, warn } = require('./utility');
 async function sqlInit() {
     const sequelize = new Sequelize({
         dialect: 'sqlite',
-        storage: path.join(process.cwd(), 'data/database.sqlite'),
         logging: msg => info('SQL', msg)
         // logging: false
     });

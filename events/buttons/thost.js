@@ -4,7 +4,7 @@ const {
     ButtonInteraction,
     codeBlock
 } = require("discord.js");
-const fs = require('node:fs')
+const fs = require('node:fs/promises')
 
 module.exports = { 
     name: "thost",
@@ -27,12 +27,14 @@ module.exports = {
                 setOfUsers.push(i.user.id)
 
                 relicEmbed.setDescription(relic + '\n' + setOfUsers.map(x => `<@!${x}>`).join('\n'))
-                i.update({ embeds: [relicEmbed] })
+                await i.update({ embeds: [relicEmbed] })
 
-                if (setOfUsers.length === 4) {
-                    const userData = (await JSON.parse(fs.readFileSync('./data/clandata.json'))).treasuryids
+                if (setOfUsers.length >= 4) {
+                    let userData = (await JSON.parse(await fs.readFile('./data/clandata.json')))
+                    if (!userData.treasuryids) return i.channel.send({ content: `<@740536348166848582> oi thost broke again, keys: ${Object.keys(userData)}` });
+                    userData = userData.treasuryids;
                     let usersInviteDesc = ""
-                    setOfUsers.forEach(userj => {
+                    setOfUsers.slice(0, 4).forEach(userj => {
                         var index = userData.findIndex(n => n.id == userj)
                         if (index === -1) usersInviteDesc +=  `<@${userj}> - No IGN known\n`
                         else usersInviteDesc +=  `<@${userj}> - /inv ${userData[index].name}\n`
@@ -42,9 +44,12 @@ module.exports = {
                     .setTitle(`Run for [${relic}] filled`)
                     .setDescription(`Invite Others:\n` + usersInviteDesc)
 
-                    i.message.delete()
-                    i.channel.send({ embeds: [filledEmbed], content: `${setOfUsers.map(x => `<@${x}>`).join(" ")}` })
-                    return;
+                    try {
+                        await i.message.delete()
+                        await i.channel.send({ embeds: [filledEmbed], content: `${setOfUsers.slice(0, 4).map(x => `<@${x}>`).join(" ")}` })
+                    } catch (error) {
+                        return i?.followUp({ content: `Could not join run, squad is filled`, ephemeral: true });
+                    } 
                 }
                 break;
 
@@ -68,7 +73,7 @@ module.exports = {
 
             case 'thost-relicview':
                 const relicName = relic.split('x ')[1].slice(0, -1)
-                let jsfile = (await JSON.parse(await fs.readFileSync('./data/relicdata.json', 'utf-8'))).relicData
+                let jsfile = (await JSON.parse(await fs.readFile('./data/relicdata.json', 'utf-8'))).relicData
                 const relicInfo = jsfile.filter(x => x[0].name == relicName)[0]
                 const rarities = ['C', 'C', 'C', 'UC', 'UC', 'RA']
                                 
@@ -81,8 +86,7 @@ module.exports = {
                     }
                 }
 
-                await i.update({ })
-                await i.user.send({ embeds: [new EmbedBuilder().setTitle(`[ ${relicName} ]`).setDescription(codeBlock('ml', embedDesc)).setTimestamp()] })
+                await i.reply({ embeds: [new EmbedBuilder().setTitle(`[ ${relicName} ]`).setDescription(codeBlock('ml', embedDesc)).setTimestamp()], ephemeral: true })
                     .catch((error) => { return; })
         }
     },

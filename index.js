@@ -3,7 +3,7 @@ require('dotenv').config()
 const path = require('node:path')
 const fs = require('node:fs')
 const { loadFiles, info, refreshFissures,warn } = require('./scripts/utility.js')
-const { loadAllRelics, getAllClanData, getAllUserData, sqlInit } = require('./scripts/dbcreate.js');
+const { loadAllRelics, getAllClanData } = require('./scripts/dbcreate.js');
 
 process.on('uncaughtException', (err) => {
 	warn(`anti crash`, err.name, err)
@@ -21,18 +21,19 @@ const client = new Client({
 
 let intrv_count = 0
 setInterval(async () => {
-	await loadAllRelics(client);
-	await getAllUserData(client);
+	await loadAllRelics();
 	await refreshFissures(client);
-	await getAllClanData(client);
+	await getAllClanData();
 	intrv_count++
-	if (intrv_count%12 == 0) info(`INTRVL`, `${intrv_count} intervals done.`)
-}, 50_000);
+	if (intrv_count%15 == 0) info(`INTRVL`, `${intrv_count} intervals done.`)
+}, 300_000);
 
-// Load all commands
-client.treasury = loadFiles('./treasury');
-client.farmers = loadFiles('./farmers');
-client.buttons = loadFiles('./events/buttons')
+// Load all commands	
+;(async () => {
+	client.treasury = await loadFiles('./treasury');
+	client.farmers = await loadFiles('./farmers');
+	client.buttons = await loadFiles('./events/buttons')
+})();
 info('STRTUP', 'Loaded command files.')
 
 // Load all event listeners
@@ -58,7 +59,9 @@ for (const file of eventFiles) {
 	await refreshFissures(client);
 	await getAllClanData(client);
 	await client.login(process.env.TOKEN);
-	await client.guilds.fetch();
+	require('./scripts/deploy.js');
+	await client.guilds.fetch({ force: true });
+	client.user.setPresence({ activities: [{ name: 'Zloosh 👒', type: ActivityType.Watching }], status: 'dnd' });
 	info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.\n-----`);
-	client.user.setPresence({ activities: [{ name: 'my creator 👒', type: ActivityType.Watching }], status: 'dnd' })
+	await refreshFissures(client);
 })();

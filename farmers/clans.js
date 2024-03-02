@@ -5,7 +5,7 @@ const {
     CommandInteraction,
     codeBlock
 } = require("discord.js");
-const fs = require("node:fs");
+const fs = require("node:fs/promises");
 
 module.exports = {
     name: "clan",
@@ -34,7 +34,7 @@ module.exports = {
      * @param {CommandInteraction} i 
      */
     async execute(client, i) {
-        const resources = (await JSON.parse(fs.readFileSync('./data/clandata.json'))).resources
+        const resources = (await JSON.parse(await fs.readFile('./data/clandata.json'))).resources
         const clan = i.options.getString('clan', true)
         
         let embedDesc = ""
