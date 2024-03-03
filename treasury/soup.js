@@ -57,7 +57,8 @@ module.exports = {
                 var short = r.toLowerCase()
                 var howmany, letterstart, rFullName;
 
-                letterstart = short.match(/[a-zA-Z]/);
+                letterstart = short.match(/[a-zA-Z]/); // for lg1 gives [ 'l', index: 1, input: '6lg1', groups: undefined ]
+
                 if (!letterstart || letterstart?.index == 0) continue;
                 howmany = short.slice(0, letterstart.index)
 
@@ -67,11 +68,11 @@ module.exports = {
                 rFullName = `${relicEra} ${relicType}`
                 const res = !filtertype ? await getRelic(rFullName) : await getRelic(rFullName, filtertype)
                 if (!res) continue;
-                if (soupedAccepted.filter(str => str.includes(short.toLowerCase().slice(letterstart.index))).length) {
+                if (soupedAccepted.filter(str => str === short.toLowerCase().slice(letterstart.index)).length) {
                     duplicateStrings.push(short); continue;
                 }
 
-                soupedAccepted.push(short.toLowerCase())
+                soupedAccepted.push(short.toLowerCase().slice(letterstart.index))
                 const _ = (rarity) => {
                     return `| ${res[1].filter(x => x == rarity).length}`.padEnd(4) + rarity
                 }
