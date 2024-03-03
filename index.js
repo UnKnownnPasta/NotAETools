@@ -29,7 +29,7 @@ setInterval(async () => {
 	await getAllClanData(false);
 	intrv_count++
 	info(`INTRVL`, `${intrv_count} intervals done.`)
-}, 30_000);
+}, 300_000);
 
 // Load all commands
 ;(async () => {
@@ -43,16 +43,13 @@ info('STRTUP', 'Loaded command files.')
 const eventsPath = path.join(__dirname, './events/listeners');
 const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
-for (const file of eventFiles) {
-	const filePath = path.join(eventsPath, file);
-	const event = require(filePath);
-	if (event.once) {
-		client.once(event.name, (...args) => event.listen(client, ...args));
-	} else {
-		client.on(event.name, (...args) => event.listen(client, ...args));
-	}
-	info('STRTUP', `Loaded ${event.name} listener.`)
-}
+eventFiles.forEach(file => {
+	const event = require(path.join(eventsPath, file));
+	const callback = (...args) => event.listen(client, ...args);
+	client[event.once ? 'once' : 'on'](event.name, callback);
+	info('STRTUP', `Loaded ${event.name} listener.`);
+});
+
 
 // Login
 ;(async () => {
@@ -61,9 +58,9 @@ for (const file of eventFiles) {
 	await database.syncDatabase();
 	
 	// await loadAllRelics(client);
-	await getAllUserData(client, true);
+	// await getAllUserData(client, true);
 	// await refreshFissures(client);
-	await getAllClanData(client, true);
+	// await getAllClanData(client, true);
 	await client.login(process.env.TOKEN);
 	// require('./scripts/deploy.js');
 	// await client.guilds.fetch({ force: true });
