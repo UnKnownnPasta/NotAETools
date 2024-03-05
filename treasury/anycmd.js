@@ -94,6 +94,7 @@ module.exports = {
                         if (foundAny) return relic[0];
                     })
                     .filter((x) => x !== undefined);
+                if (!getAllRelics.length) return;
 
                 parts = parts.map((x) => `${x.count.padEnd(2)} | ${x.name} {${x.type}}`);
                 parts = [...new Set(parts)];

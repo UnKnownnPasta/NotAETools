@@ -68,11 +68,11 @@ module.exports = {
                 rFullName = `${relicEra} ${relicType}`
                 const res = !filtertype ? await getRelic(rFullName) : await getRelic(rFullName, filtertype)
                 if (!res) continue;
-                if (soupedAccepted.filter(str => str === short.toLowerCase().slice(letterstart.index)).length) {
+                if (soupedAccepted.filter(str => str.match(/\d+([a-zA-Z]*\d+)/)[1] === short.toLowerCase().slice(letterstart.index)).length) {
                     duplicateStrings.push(short); continue;
                 }
 
-                soupedAccepted.push(short.toLowerCase().slice(letterstart.index))
+                soupedAccepted.push(short)
                 const _ = (rarity) => {
                     return `| ${res[1].filter(x => x == rarity).length}`.padEnd(4) + rarity
                 }
@@ -105,11 +105,11 @@ module.exports = {
         .filter(x => x!==undefined)
         .join('\n\n')
         let codeText =  `*CODE: ${soupedAccepted.join(' ')}*`
-        if (soupedString.length > 4000 || (soupedString + codeText).length > 4000) 
+        if ((soupedString + codeText).length > 4090) 
             return i.reply({ content: `Souped relics is too big to render.`, ephemeral: true })
         
         if (duplicateStrings.length !== 0) {
-            i.reply({ content: `Duplicates found: ${duplicateStrings.join(' ')}`, embeds: [ 
+            i.reply({ content: `Duplicates removed: ${duplicateStrings.join(' ')}`, embeds: [ 
                 new EmbedBuilder()
                 .setTitle('Souped relics')
                 .setDescription(codeBlock('ml', soupedString) + '\n\n' + codeText)
