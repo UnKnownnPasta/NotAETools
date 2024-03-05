@@ -1,8 +1,8 @@
-const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
+const { Client, GatewayIntentBits, ActivityType, Collection } = require('discord.js');
 require('dotenv').config()
 const path = require('node:path')
 const fs = require('node:fs')
-const { loadFiles, info, refreshFissures,warn } = require('./scripts/utility.js')
+const { loadFiles, info, refreshFissures, warn } = require('./scripts/utility.js')
 const { loadAllRelics, getAllClanData } = require('./scripts/dbcreate.js');
 
 process.on('uncaughtException', (err) => {
@@ -40,16 +40,12 @@ info('STRTUP', 'Loaded command files.')
 const eventsPath = path.join(__dirname, './events/listeners');
 const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
-for (const file of eventFiles) {
-	const filePath = path.join(eventsPath, file);
-	const event = require(filePath);
-	if (event.once) {
-		client.once(event.name, (...args) => event.listen(client, ...args));
-	} else {
-		client.on(event.name, (...args) => event.listen(client, ...args));
-	}
-	info('STRTUP', `Loaded ${event.name} listener.`)
-}
+eventFiles.forEach(file => {
+	const event = require(path.join(eventsPath, file));
+	const callback = (...args) => event.listen(client, ...args);
+	client[event.once ? 'once' : 'on'](event.name, callback);
+	info('STRTUP', `Loaded ${event.name} listener.`);
+});
 
 // Login
 ;(async () => {

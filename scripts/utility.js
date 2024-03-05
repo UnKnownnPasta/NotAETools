@@ -1,4 +1,4 @@
-const { Collection, EmbedBuilder } = require("discord.js");
+const { Collection, EmbedBuilder, Client } = require("discord.js");
 const path = require('node:path')
 const fs = require('node:fs/promises');
 const chalk = require("chalk");
@@ -98,16 +98,44 @@ async function relicExists(relic) {
     return relicList.includes(relic)
 }
 
+function findClosestAndAddThreeMinutes(fisTimes) {
+    const currentTime = Math.floor(new Date().getTime() / 1000);
+
+    const closestIndex = fisTimes.reduce((closestIdx, [, expiryTime], currentIndex) => {
+        const currentDiff = Math.abs(expiryTime - currentTime);
+        const closestDiff = Math.abs(fisTimes[closestIdx][1] - currentTime);
+
+        return currentDiff < closestDiff ? currentIndex : closestIdx;
+    }, 0);
+
+    const closestTime = fisTimes[closestIndex][1] + 3 * 60;
+
+    const closestElement = fisTimes.find(([tier, expiryTime]) => {
+        const timeDifference = Math.abs(expiryTime - closestTime);
+        return timeDifference <= 180;
+    });
+
+    return closestElement;
+}
+
 /**
  * Utility function to cycle and display current fissures
+ * @param {Client} client 
  */
 async function refreshFissures(client) {
     try {
-        const channel = await client.channels.cache.get(fissureChannel).messages.fetch({ limit: 2 })
+        let channel = client.channels.cache.get(fissureChannel)
+        let messageToEdit = await channel.messages.fetch({ limit: 1 })
+        if (messageToEdit.size == 0 || messageToEdit?.first()?.author.id != client.user.id) {
+            messageToEdit = await channel.send({ content: 'Updating fissures...' })
+        } else {
+            messageToEdit = messageToEdit.first()
+        }
         const missions = ['Extermination', 'Capture', 'Sabotage', 'Rescue']
-        const response = (await axios.get("https://api.warframestat.us/pc/fissures")).data.filter(
-          (f) => !f["isStorm"] && missions.includes(f["missionType"]) && f['active'] && f['tier'] != 'Requiem'
-        )
+        const fisres = (await axios.get("https://api.warframestat.us/pc/fissures")).data
+        const response = fisres.filter(
+            (f) => !f["isStorm"] && missions.includes(f["missionType"]) && f['active'] && f['tier'] != 'Requiem'
+          )
     
         const fissures = await response.map(fis => [titleCase(fis['tier']), `${fis['missionType']} - ${fis['node']} - Ends <t:${new Date(fis['expiry']).getTime()/1000 | 0}:R>\n`, fis['isHard']])
         const [N_Embed, S_Embed] = Object.entries(fissures.reduce((acc, fissure) => {
@@ -125,15 +153,20 @@ async function refreshFissures(client) {
       
         const NormEmbed = new EmbedBuilder()
          .setTitle('Normal Fissures')
+         .setColor('#2c2c34')
          .setFields(Object.values(N_Embed[1]).sort((a, b) => b.name.localeCompare(a.name)));
         const SPEmbed = new EmbedBuilder()
          .setTitle('Steel Path Fissures')
          .setFields(Object.values(S_Embed[1]).sort((a, b) => b.name.localeCompare(a.name)))
+         .setColor('#2c2c34')
          .setTimestamp();
-      
-        await channel.forEach(async (msg) => msg.author.id == client.user.id ? (await msg.edit({ embeds: [NormEmbed, SPEmbed] })) : null)
+
+        const fisTimes = findClosestAndAddThreeMinutes(fisres.filter(x => x['tier'] != 'Requiem').map(x => [titleCase(x['tier']), new Date(x['expiry']).getTime()/1000 | 0] ))
+        const TimeEmbed = new EmbedBuilder().setDescription(`Next Reset is **${fisTimes[0]}** <t:${fisTimes[1]}:R>`).setColor('#b6a57f')
+
+        await messageToEdit.edit({ content: null, embeds: [NormEmbed, SPEmbed, TimeEmbed] })
     } catch (error) {
-        info('INTRLV' ,'Failed to refresh fissures')
+        warn('INTRLV', 'Failed to refresh fissures', error)
     }
 }
 

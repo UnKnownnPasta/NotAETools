@@ -53,7 +53,7 @@ module.exports = {
 
             case "part":
                 if (!allrelics.partNames.some(x => x.indexOf(word) !== -1) || (word.split(' ').length === 1)) return;
-                if (word.split(' ')[1].length === 1) return;
+                if (word.split(' ')[1].length === 1 && word.split(' ')[1] != '&') return;
                 const scarcity = ["C", "C", "C", "UC", "UC", "RA"];
                 let countOfPart, trueName;
 
