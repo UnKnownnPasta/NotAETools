@@ -38,7 +38,7 @@ class Database {
 
     async syncDatabase() {
         // Sync your models with the database
-        await this.sequelize.sync({ force: true }); // Set force to true for development, use migrations in production
+        await this.sequelize.sync({ force: false }); // Set force to true for development, use migrations in production
     }
 }
 

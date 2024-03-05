@@ -103,33 +103,34 @@ async function getAllUserData(creatdb) {
         if (!tempSet.has(user.uid)) {
             tempSet.add(user.uid);
             return true;
+        } else {            
+            return false;
         }
-        return false;
     });
 
-    const FarmIDValues = await google.sheets("v4").spreadsheets.values.get({
-        auth: process.env.GOOGLEAPIKEY,
-        spreadsheetId: spreadsheet.farmer.id,
-        range: spreadsheet.farmer.userName + spreadsheet.farmer.ranges.users,
-    });
-    const FarmIDs = FarmIDValues.data.values.filter(x => x.length !== 0).map(user => {
-        return { uid: user[0], name: user[1], ttltokens: user[2], bonus: user[3], spent: user[4], left: user[5], playtime: user[6] }
-    })
-    tempSet.clear();
-    const uniqueFarmIDs = FarmIDs.filter(user => {
-        if (!tempSet.has(user.uid)) {
-            tempSet.add(user.uid);
-            return true;
-        }
-        return false;
-    });
+    // const FarmIDValues = await google.sheets("v4").spreadsheets.values.get({
+    //     auth: process.env.GOOGLEAPIKEY,
+    //     spreadsheetId: spreadsheet.farmer.id,
+    //     range: spreadsheet.farmer.userName + spreadsheet.farmer.ranges.users,
+    // });
+    // const FarmIDs = FarmIDValues.data.values.filter(x => x.length !== 0).map(user => {
+    //     return { uid: user[0], name: user[1], ttltokens: user[2], bonus: user[3], spent: user[4], left: user[5], playtime: user[6] }
+    // })
+    // tempSet.clear();
+    // const uniqueFarmIDs = FarmIDs.filter(user => {
+    //     if (!tempSet.has(user.uid)) {
+    //         tempSet.add(user.uid);
+    //         return true;
+    //     }
+    //     return false;
+    // });
 
     if (creatdb) {
         await database.models.TreasIds.bulkCreate(uniqueTreasIDs);
-        await database.models.FarmerIds.bulkCreate(uniqueFarmIDs);
+        // await database.models.FarmerIds.bulkCreate(uniqueFarmIDs);
     } else {
         await database.models.TreasIds.bulkUpdateIDs(uniqueTreasIDs);
-        await database.models.FarmerIds.bulkUpdateFarmInfo(uniqueFarmIDs);
+        // await database.models.FarmerIds.bulkUpdateFarmInfo(uniqueFarmIDs);
     }
 }
 

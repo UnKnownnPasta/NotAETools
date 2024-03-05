@@ -25,11 +25,10 @@ setInterval(async () => {
 	// await loadAllRelics(client);
 	// await refreshFissures(client);
 	await getAllUserData(false);
-	
 	await getAllClanData(false);
 	intrv_count++
 	info(`INTRVL`, `${intrv_count} intervals done.`)
-}, 300_000);
+}, 30_000);
 
 // Load all commands
 ;(async () => {
@@ -58,9 +57,9 @@ eventFiles.forEach(file => {
 	await database.syncDatabase();
 	
 	// await loadAllRelics(client);
-	// await getAllUserData(client, true);
+	await getAllUserData(client, false);
 	// await refreshFissures(client);
-	// await getAllClanData(client, true);
+	await getAllClanData(client, false);
 	await client.login(process.env.TOKEN);
 	// require('./scripts/deploy.js');
 	// await client.guilds.fetch({ force: true });
