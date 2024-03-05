@@ -60,7 +60,7 @@ module.exports = {
             }
             hostFields = hostFields.map(x => [x[0], x[1].split('|').map(y => y == 'n' || !y ? 'None' : `<@${y}>`).join(', ')])
             globalHostEmbed.addFields(...hostFields.map(x => { return { name: x[0], value: x[1], inline: true } })).setTimestamp()
-            allIDs[clickedButton] = i.user.id
+            allIDs.push(i.user.id)
             await i.update({ content: i.message.content, embeds: [globalHostEmbed], components: [newRow(hostComps.slice(0, 5)), newRow(hostComps.slice(5))] })
         }
 

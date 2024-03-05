@@ -116,9 +116,9 @@ module.exports = {
 
         const possFrames = [nekrosBtn, khoraBtn, wispBtn, novaBtn, nekros2Btn, anyBtn]
         possFrames.forEach(fm => {
-            if (fm.data.custom_id == `fhost-${frame}`) fm.setDisabled(true)
+            if (fm.data.custom_id == `fhost-${frame}` && fm.data.custom_id != 'fhost-Any') fm.setDisabled(true)
             if (fm.data.custom_id !== 'fhost-❌')
-                farmEmbed.addFields({name: `${fm.data.label}`, value:`${fm.data.disabled ? `<@${i.user.id}>` : 'None'}`, inline: true})
+                farmEmbed.addFields({name: `${fm.data.label}`, value:`${fm.data.custom_id == `fhost-${frame}` ? `<@${i.user.id}>` : 'None'}`, inline: true})
         });
 
         const framesButtons = new ActionRowBuilder().addComponents(nekrosBtn, khoraBtn, nekros2Btn, novaBtn, wispBtn)
