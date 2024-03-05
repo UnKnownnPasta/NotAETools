@@ -65,13 +65,14 @@ module.exports = {
                         if (!trueName) trueName = relic[item + 1].name;
                         return `${scarcity[item].padEnd(2)} | ${relic[0].name} {${relic[0].tokens}}`;
                     })
-                    .filter((x) => x !== undefined);
+                    .filter((x) => x !== undefined)
+                    .sort((a, b) => b.match(/\{(.+?)\}/)[1] - a.match(/\{(.+?)\}/)[1]);
 
                 await message.reply({
                     embeds: [
                         new EmbedBuilder()
                             .setTitle(`[ ${trueName} ] {x${countOfPart}}`)
-                            .setDescription(codeBlock("ml", relicList.sort((a, b) => b.slice(b.indexOf('{')).localeCompare(a.slice(a.indexOf('{')))).join("\n")))
+                            .setDescription(codeBlock("ml", relicList.join("\n")))
                             .setFooter({ text: `${relicList.length} results` }),
                     ],
                 });
@@ -110,7 +111,7 @@ module.exports = {
                         new EmbedBuilder().setDescription(
                             codeBlock("ml", getAllRelics
                                 .map((x) => `${`{${x.tokens}}`.padEnd(4)} | ${x.name}`)
-                                .sort((a, b) => b.slice(b.indexOf('{')).localeCompare(a.slice(a.indexOf('{'))))
+                                .sort((a, b) => b.match(/\{(.+?)\}/)[1] - a.match(/\{(.+?)\}/)[1])
                                 .join("\n")
                                 )).setFooter({ text: `${getAllRelics.length} results` })
                     );
