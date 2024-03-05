@@ -98,31 +98,41 @@ async function relicExists(relic) {
     return relicList.includes(relic)
 }
 
-function findClosestAndAddThreeMinutes(fisTimes) {
+function getFissureTimings(fisTimes) {
     const currentTime = Math.floor(new Date().getTime() / 1000);
 
-    const closestIndex = fisTimes.reduce((closestIdx, [, expiryTime], currentIndex) => {
+    const tierMap = new Map();
+
+    fisTimes.forEach(([tier, expiryTime]) => {
         const currentDiff = Math.abs(expiryTime - currentTime);
-        const closestDiff = Math.abs(fisTimes[closestIdx][1] - currentTime);
+        const closestTime = tierMap.get(tier);
 
-        return currentDiff < closestDiff ? currentIndex : closestIdx;
-    }, 0);
-
-    const closestTime = fisTimes[closestIndex][1] + 3 * 60;
-
-    const closestElement = fisTimes.find(([tier, expiryTime]) => {
-        const timeDifference = Math.abs(expiryTime - closestTime);
-        return timeDifference <= 180;
+        if (!closestTime || currentDiff < Math.abs(closestTime - currentTime)) {
+            tierMap.set(tier, expiryTime);
+        }
     });
 
-    return closestElement;
+    const updatedTierMap = new Map();
+
+    tierMap.forEach((closestTime, tier) => {
+        const closestExpiryTime = closestTime - 3 * 60;
+        const closestElement = fisTimes.find(([currentTier, expiryTime]) => {
+            return currentTier === tier && Math.abs(expiryTime - closestExpiryTime) <= 180;
+        });
+
+        if (closestElement) {
+            updatedTierMap.set(tier, closestExpiryTime);
+        }
+    });
+
+    return updatedTierMap;
 }
 
 /**
  * Utility function to cycle and display current fissures
  * @param {Client} client 
  */
-async function refreshFissures(client) {
+async function refreshFissures(client) { // channel id: 1192962141205045328
     try {
         let channel = client.channels.cache.get(fissureChannel)
         let messageToEdit = await channel.messages.fetch({ limit: 1 })
@@ -160,9 +170,14 @@ async function refreshFissures(client) {
          .setFields(Object.values(S_Embed[1]).sort((a, b) => b.name.localeCompare(a.name)))
          .setColor('#2c2c34')
          .setTimestamp();
+        let timeDesc = "Next Fissure Reset:\n"
 
-        const fisTimes = findClosestAndAddThreeMinutes(fisres.filter(x => x['tier'] != 'Requiem').map(x => [titleCase(x['tier']), new Date(x['expiry']).getTime()/1000 | 0] ))
-        const TimeEmbed = new EmbedBuilder().setDescription(`Next Reset is **${fisTimes[0]}** <t:${fisTimes[1]}:R>`).setColor('#b6a57f')
+        const fisTimes = getFissureTimings(fisres.filter(x => x['tier'] != 'Requiem').map(x => [x['tier'], new Date(x['expiry']).getTime()/1000 | 0] ))
+        const TimeEmbed = new EmbedBuilder().setColor('#b6a57f');
+        Array.from(fisTimes.entries()).forEach(([key, val], index) => {
+            timeDesc += `\`${titleCase(key).padEnd(4)}\` <t:${val}:R>\n`
+        })
+        TimeEmbed.setDescription(timeDesc)
 
         await messageToEdit.edit({ content: null, embeds: [NormEmbed, SPEmbed, TimeEmbed] })
     } catch (error) {
