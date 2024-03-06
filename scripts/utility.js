@@ -98,6 +98,11 @@ async function relicExists(relic) {
     return relicList.includes(relic)
 }
 
+/**
+ * Gets the next UTC time that a fissure gets created
+ * @param {Array} fisTimes 
+ * @returns {Array}
+ */
 function getFissureTimings(fisTimes) {
     const currentTime = Math.floor(new Date().getTime() / 1000);
 
@@ -187,14 +192,16 @@ async function refreshFissures(client) {
 
         const fisTimes = getFissureTimings(
             fisres
-                .filter((x) => x["tier"] != "Requiem" && x["active"])
+                .filter((x) => x["tier"] != "Requiem" && x["active"] && !x['isStorm'])
                 .map((x) => [
                     x["tier"],
                     (new Date(x["expiry"]).getTime() / 1000) | 0,
                 ])
         );
 
-        Array.from(fisTimes.entries()).forEach(([key, val], index) => {
+        Array.from(fisTimes.entries())
+        .sort((a, b) => b[0].localeCompare(a[0]))
+        .forEach(([key, val], index) => {
             timeDesc += `\`${titleCase(key).padEnd(4)}\` <t:${val}:R>\n`;
         });
         TimeEmbed.setDescription(timeDesc);
