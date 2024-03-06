@@ -97,7 +97,7 @@ module.exports = {
                     .filter((x) => x !== undefined);
                 if (!getAllRelics.length) return;
 
-                parts = parts.map((x) => `${x.count.padEnd(2)} | ${x.name} {${x.type}}`);
+                parts = parts.map((x) => `${x.count.padEnd(3)}| ${x.name} {${x.type}}`);
                 parts = [...new Set(parts)];
 
                 const embds = [
@@ -110,7 +110,7 @@ module.exports = {
                     embds.push(
                         new EmbedBuilder().setDescription(
                             codeBlock("ml", getAllRelics
-                                .map((x) => `${`{${x.tokens}}`.padEnd(4)} | ${x.name}`)
+                                .map((x) => `${`{${x.tokens}}`.padEnd(5)}| ${x.name}`)
                                 .sort((a, b) => b.match(/\{(.+?)\}/)[1] - a.match(/\{(.+?)\}/)[1])
                                 .join("\n")
                                 )).setFooter({ text: `${getAllRelics.length} results` })
