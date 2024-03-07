@@ -57,7 +57,8 @@ module.exports = {
                 var short = r.toLowerCase()
                 var howmany, letterstart, rFullName;
 
-                letterstart = short.match(/[a-zA-Z]/);
+                letterstart = short.match(/[a-zA-Z]/); // for 6lg1 gives [ 'l', index: 1, input: '6lg1', groups: undefined ]
+
                 if (!letterstart || letterstart?.index == 0) continue;
                 howmany = short.slice(0, letterstart.index)
 
@@ -67,15 +68,15 @@ module.exports = {
                 rFullName = `${relicEra} ${relicType}`
                 const res = !filtertype ? await getRelic(rFullName) : await getRelic(rFullName, filtertype)
                 if (!res) continue;
-                if (soupedAccepted.filter(str => str.includes(short.toLowerCase().slice(letterstart.index))).length) {
+                if (soupedAccepted.filter(str => str.match(/\d+([a-zA-Z]*\d+)/)[1] === short.toLowerCase().slice(letterstart.index)).length) {
                     duplicateStrings.push(short); continue;
                 }
 
-                soupedAccepted.push(short.toLowerCase())
+                soupedAccepted.push(short)
                 const _ = (rarity) => {
                     return `| ${res[1].filter(x => x == rarity).length}`.padEnd(4) + rarity
                 }
-                if (res) soupedStrings.push(`${`{${res[0]}}`.padEnd(4)} | ${(howmany+'x').padEnd(4)}| ${rFullName.padEnd(8)} ${_('ED')} ${_('RED')} ${_('ORANGE')}`)
+                if (res) soupedStrings.push(`${`{${res[0]}}`.padEnd(5)}| ${(howmany+'x').padEnd(4)}| ${rFullName.padEnd(8)} ${_('ED')} ${_('RED')} ${_('ORANGE')}`)
             }
             return soupedStrings
         }
@@ -103,18 +104,21 @@ module.exports = {
         })
         .filter(x => x!==undefined)
         .join('\n\n')
+        let codeText =  `*CODE: ${soupedAccepted.join(' ')}*`
+        if ((soupedString + codeText).length > 4090) 
+            return i.reply({ content: `Souped relics is too big to render.`, ephemeral: true })
         
         if (duplicateStrings.length !== 0) {
-            i.reply({ content: `Duplicates found: ${duplicateStrings.join(' ')}`, embeds: [ 
+            i.reply({ content: `Duplicates removed: ${duplicateStrings.join(' ')}`, embeds: [ 
                 new EmbedBuilder()
                 .setTitle('Souped relics')
-                .setDescription(codeBlock('ml', soupedString) + '\n\n' + `*CODE: ${soupedAccepted.join(' ')}*`)
+                .setDescription(codeBlock('ml', soupedString) + '\n\n' + codeText)
              ] })
         } else {
             i.reply({ embeds: [ 
                 new EmbedBuilder()
                 .setTitle('Souped relics')
-                .setDescription(codeBlock('ml', soupedString) + '\n\n' + `*CODE: ${soupedAccepted.join(' ')}*`)
+                .setDescription(codeBlock('ml', soupedString) + '\n\n' + codeText)
              ] })
         }
     }

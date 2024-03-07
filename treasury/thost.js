@@ -72,7 +72,7 @@ module.exports = {
 
             const relicView = new ButtonBuilder()
                 .setCustomId('thost-relicview')
-                .setLabel(filterRelic(relic))
+                .setLabel('View Relic')
                 .setStyle(ButtonStyle.Primary)
 
             relicDesc += `${setOfUsers.map(x => `<@!${x}>`).join("\n")}`

@@ -53,7 +53,7 @@ module.exports = {
 
             case "part":
                 if (!allrelics.partNames.some(x => x.indexOf(word) !== -1) || (word.split(' ').length === 1)) return;
-                if (word.split(' ')[1].length === 1) return;
+                if (word.split(' ')[1].length === 1 && word.split(' ')[1] != '&') return;
                 const scarcity = ["C", "C", "C", "UC", "UC", "RA"];
                 let countOfPart, trueName;
 
@@ -65,13 +65,14 @@ module.exports = {
                         if (!trueName) trueName = relic[item + 1].name;
                         return `${scarcity[item].padEnd(2)} | ${relic[0].name} {${relic[0].tokens}}`;
                     })
-                    .filter((x) => x !== undefined);
+                    .filter((x) => x !== undefined)
+                    .sort((a, b) => b.match(/\{(.+?)\}/)[1] - a.match(/\{(.+?)\}/)[1]);
 
                 await message.reply({
                     embeds: [
                         new EmbedBuilder()
                             .setTitle(`[ ${trueName} ] {x${countOfPart}}`)
-                            .setDescription(codeBlock("ml", relicList.sort((a, b) => b.slice(b.indexOf('{')).localeCompare(a.slice(a.indexOf('{')))).join("\n")))
+                            .setDescription(codeBlock("ml", relicList.join("\n")))
                             .setFooter({ text: `${relicList.length} results` }),
                     ],
                 });
@@ -94,8 +95,9 @@ module.exports = {
                         if (foundAny) return relic[0];
                     })
                     .filter((x) => x !== undefined);
+                if (!getAllRelics.length) return;
 
-                parts = parts.map((x) => `${x.count.padEnd(2)} | ${x.name} {${x.type}}`);
+                parts = parts.map((x) => `${x.count.padEnd(3)}| ${x.name} {${x.type}}`);
                 parts = [...new Set(parts)];
 
                 const embds = [
@@ -108,8 +110,8 @@ module.exports = {
                     embds.push(
                         new EmbedBuilder().setDescription(
                             codeBlock("ml", getAllRelics
-                                .map((x) => `${`{${x.tokens}}`.padEnd(4)} | ${x.name}`)
-                                .sort((a, b) => b.slice(b.indexOf('{')).localeCompare(a.slice(a.indexOf('{'))))
+                                .map((x) => `${`{${x.tokens}}`.padEnd(5)}| ${x.name}`)
+                                .sort((a, b) => b.match(/\{(.+?)\}/)[1] - a.match(/\{(.+?)\}/)[1])
                                 .join("\n")
                                 )).setFooter({ text: `${getAllRelics.length} results` })
                     );

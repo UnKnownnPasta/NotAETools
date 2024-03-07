@@ -1,13 +1,13 @@
 {
   "name": "reworkedaetools",
   "version": "1.0.0",
-  "description": "",
+  "description": "Reimagining A Bot.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "echo Starting Bot... && node index.js NODE_DEBUG=*"
   },
   "keywords": [],
-  "author": "",
+  "author": "dePasta @ GitHub",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.6.7",
