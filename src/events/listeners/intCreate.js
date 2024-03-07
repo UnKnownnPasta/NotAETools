@@ -1,5 +1,5 @@
 const { CommandInteraction, Client, ButtonInteraction } = require('discord.js')
-const config = require('../../data/config.json')
+const config = require('../../../data/config.json')
 const { alert, info } = require('../../scripts/utility');
 
 module.exports = {
