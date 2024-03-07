@@ -6,7 +6,7 @@ module.exports = (sequelizeInstance) => {
         static async bulkUpdateIDs(userinfo) {
             await Promise.all(userinfo.map(async (res) => {
                 // Use await to ensure that the update operation is complete before moving on
-                await this.upsert({ user: res.user }, { where: { uid: `${res.uid}` } });
+                await this.update({ uid: res.uid, user: res.user }, { where: { uid: `${res.uid}` } });
             }));
         }
     }

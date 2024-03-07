@@ -2,6 +2,7 @@ const { google } = require('googleapis')
 const { spreadsheet, dualitemslist } = require('../data/config.json')
 const { info, warn } = require('./utility.js');
 const database = require('../scripts/database.js')
+const fs = require('node:fs/promises')
 
 // Google fetch func
 const googleFetch = async (id, range) => {
@@ -87,7 +88,7 @@ async function loadAllRelics(client) {
     }
 }
 
-async function getAllUserData(creatdb) {
+async function getAllUserData(createdb) {
     // User IDs
     const TreasIDValues = await google.sheets("v4").spreadsheets.values.get({
         auth: process.env.GOOGLEAPIKEY,
@@ -108,24 +109,9 @@ async function getAllUserData(creatdb) {
         }
     });
 
-    // const FarmIDValues = await google.sheets("v4").spreadsheets.values.get({
-    //     auth: process.env.GOOGLEAPIKEY,
-    //     spreadsheetId: spreadsheet.farmer.id,
-    //     range: spreadsheet.farmer.userName + spreadsheet.farmer.ranges.users,
-    // });
-    // const FarmIDs = FarmIDValues.data.values.filter(x => x.length !== 0).map(user => {
-    //     return { uid: user[0], name: user[1], ttltokens: user[2], bonus: user[3], spent: user[4], left: user[5], playtime: user[6] }
-    // })
-    // tempSet.clear();
-    // const uniqueFarmIDs = FarmIDs.filter(user => {
-    //     if (!tempSet.has(user.uid)) {
-    //         tempSet.add(user.uid);
-    //         return true;
-    //     }
-    //     return false;
-    // });
+    await fs.writeFile('./dev/test.json', JSON.stringify(uniqueTreasIDs))
 
-    if (creatdb) {
+    if (createdb) {
         await database.models.TreasIds.bulkCreate(uniqueTreasIDs);
         // await database.models.FarmerIds.bulkCreate(uniqueFarmIDs);
     } else {

@@ -2,7 +2,7 @@ const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
 require('dotenv').config()
 const path = require('node:path')
 const fs = require('node:fs')
-const { loadFiles, info, refreshFissures,warn } = require('./scripts/utility.js')
+const { loadFiles, info, refreshFissures, warn } = require('./scripts/utility.js')
 const { loadAllRelics, getAllClanData, getAllUserData } = require('./scripts/sheetFetch.js');
 const database = require('./scripts/database.js')
 
@@ -57,9 +57,9 @@ eventFiles.forEach(file => {
 	await database.syncDatabase();
 	
 	// await loadAllRelics(client);
-	await getAllUserData(client, false);
+	await getAllUserData(false);
 	// await refreshFissures(client);
-	await getAllClanData(client, false);
+	await getAllClanData(false);
 	await client.login(process.env.TOKEN);
 	// require('./scripts/deploy.js');
 	// await client.guilds.fetch({ force: true });
