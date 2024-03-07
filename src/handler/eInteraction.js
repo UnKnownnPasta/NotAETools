@@ -1,6 +1,6 @@
 const { CommandInteraction, Client, ButtonInteraction } = require('discord.js')
-const config = require('../../data/config.json')
-const { alert, info } = require('../../scripts/utility');
+const config = require("../data/config.json")
+const { alert, info } = require("./bHelper");
 
 module.exports = {
     name: 'interactionCreate', 

@@ -1,11 +1,11 @@
 const { Message, Client } = require("discord.js");
-const config = require("../../data/config.json");
+const config = require("../data/config.json");
 const {
     filterRelic,
     relicExists,
     titleCase,
     info,
-} = require("../../scripts/utility");
+} = require("./bHelper.js");
 
 module.exports = {
     name: "messageCreate",

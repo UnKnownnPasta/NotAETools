@@ -1,15 +1,14 @@
 const { Sequelize } = require("sequelize");
 const path = require("path");
-const { info } = require("../scripts/utility.js");
 
 class Database {
     constructor() {
         this.sequelize = new Sequelize({
             dialect: "sqlite",
-            storage: path.join(process.cwd(), "data/database.sqlite"),
+            storage: path.join(process.cwd(), "src/data/database.sqlite"),
             sync: false,
-            logging: (msg) => info("SQL", msg),
-            // logging: false
+            // logging: (msg) => info("SQL", msg),
+            logging: false
         });
 
         // Define models, associations, etc.
@@ -36,9 +35,9 @@ class Database {
         }
     }
 
-    async syncDatabase() {
+    async syncDatabase(with_force) {
         // Sync your models with the database
-        await this.sequelize.sync({ force: false }); // Set force to true for development, use migrations in production
+        await this.sequelize.sync({ force: with_force }); // Set force to true for development, use migrations in production
     }
 }
 

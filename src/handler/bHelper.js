@@ -1,52 +1,9 @@
-require('dotenv').config()
-const { REST, Routes } = require('discord.js');
 const path = require('node:path');
-const { info, alert } = require('./utility.js')
 const { Collection, EmbedBuilder, Client } = require("discord.js");
-const fs = require('node:fs/promises');
+const fsp = require('node:fs/promises');
 const chalk = require("chalk");
-const { fissureChannel } = require('../data/config.json')
+const { fissureChannel } = require("../data/config.json")
 const axios = require('axios')
-
-async function deployCmds() {
-    const commands = [];
-    const treasuryFolder = path.join(process.cwd(), './treasury');
-
-    for (const file of fs.readdirSync(treasuryFolder)) {
-        const filePath = path.join(treasuryFolder, file);
-        const command = require(filePath);
-        if ('data' in command && 'execute' in command) {
-            commands.push(command.data.toJSON());
-        }
-    }
-
-    const farmerFolder = path.join(process.cwd(), './farmers');
-
-    for (const file of fs.readdirSync(farmerFolder)) {
-        const filePath = path.join(farmerFolder, file);
-        const command = require(filePath);
-        if ('data' in command && 'execute' in command) {
-            commands.push(command.data.toJSON());
-        }
-    }
-
-    const rest = new REST().setToken(process.env.TOKEN);
-
-    (async () => {
-        try {
-            alert(`Started refreshing ${commands.length} application (/) commands.`);
-
-            const data = await rest.put(
-                Routes.applicationGuildCommands(process.env.CLIENTID, process.env.MAINGUILDID),
-                { body: commands },
-            );
-
-            alert(`Successfully reloaded ${data.length} application (/) commands.`);
-        } catch (infoor) {
-            info(infoor.title, 'Deploy js failed')
-        }
-    })();
-}
 
 /**
  * Logs as [txt] msg
@@ -68,7 +25,7 @@ const info = (type, txt) => { console.log(chalk.bgBlackBright(chalk.black(`[${ty
 async function loadFiles(dirpath) {
     let clientCollection = new Collection();
     const commandsPath = path.join(process.cwd(), dirpath);
-    const files = await fs.readdir(commandsPath)
+    const files = await fsp.readdir(commandsPath)
     const commandFiles = files.filter(file => file.endsWith('.js'));
 
     for (const file of commandFiles) {
@@ -137,7 +94,7 @@ function filterRelic(relic) {
  * @returns Boolean
  */
 async function relicExists(relic) {
-    const relicList = (await JSON.parse(await fs.readFile('./data/relicdata.json'))).relicNames
+    const relicList = (await JSON.parse(await fsp.readFile('./data/relicdata.json'))).relicNames
     return relicList.includes(relic)
 }
 
@@ -258,4 +215,4 @@ async function refreshFissures(client) {
     }
 }
 
-module.exports = { warn, alert, info, loadFiles, titleCase, filterRelic, relicExists, refreshFissures, deployCmds }
+module.exports = { warn, alert, info, loadFiles, titleCase, filterRelic, relicExists, refreshFissures }
