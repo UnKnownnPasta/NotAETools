@@ -80,7 +80,7 @@ module.exports = {
 
             case "prime":
                 if (word.replace(/.*Prime/, '').length >= 2) return;
-                const corrWord = word.replace("Prime", "").trim();
+                const corrWord = word.replace("Prime", "").trim() + " ";
                 let parts = [];
 
                 let getAllRelics = allrelics.relicData

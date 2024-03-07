@@ -50,9 +50,9 @@ eventFiles.forEach(file => {
 // Login
 ;(async () => {
 	await client.login(process.env.TOKEN);
-	require('./scripts/deploy.js');
-	await client.guilds.fetch({ force: true });
+	// require('./scripts/deploy.js');
+	// await client.guilds.fetch({ force: true });
 	client.user.setPresence({ activities: [{ name: 'Zloosh 👒', type: ActivityType.Watching }], status: 'dnd' });
 	info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.\n-----`);
-	await refreshFissures(client);
+	// await refreshFissures(client);
 })();
