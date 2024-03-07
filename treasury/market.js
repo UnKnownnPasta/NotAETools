@@ -32,9 +32,7 @@ module.exports = {
         await i.deferReply();
         const image = i.options.getAttachment("image", true)
 
-        const worker = await createWorker('eng', 1, {
-            dataPath: './data/eng.traineddata',
-        });
+        const worker = await createWorker('eng');
         const { data: { text } } = await worker.recognize(image.url);
         await worker.terminate();
 
