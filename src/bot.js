@@ -29,11 +29,12 @@ class AETools {
     }
 
     async start() {
-        if (this.settings.fetch_guilds) await client.guilds.fetch({ force: true });
+        if (this.settings.fetch_guilds) await this.client.guilds.fetch({ force: true });
         if (this.settings.deploy_commands) await this.deploy();
 
         await this.client.login(process.env.TOKEN)
     	this.client.user.setPresence({ activities: [{ name: 'Zloosh 👒', type: ActivityType.Watching }], status: 'dnd' });
+        console.log(`[EVENT] Online.`)
     }
 
     async startDatabase() {
@@ -45,6 +46,7 @@ class AETools {
     async createCommands() {
         this.client.treasury = await loadFiles('src/departments/treasury');
         this.client.farmer = await loadFiles('src/departments/farmer');
+        this.client.button = await loadFiles('src/events', (fl) => fl.startsWith('btn-'));
         console.log(`[EVENT] Loaded all commands`);
     }
 
@@ -52,7 +54,7 @@ class AETools {
         const eventsPath = [path.join(process.cwd(), 'src/handler/eInteraction.js'), path.join(process.cwd(), 'src/handler/eMessage.js')];
         await eventsPath.map(file => {
             const event = require(file);
-            const callback = (...args) => event.listen(client, ...args);
+            const callback = (...args) => event.listen(this.client, ...args);
             this.client[event.once ? 'once' : 'on'](event.name, callback);
             console.log(`[EVENT] Loaded ${event.name} listener.`);
         });
@@ -104,4 +106,4 @@ class AETools {
 
 }
 
-module.exports = { AETools };
+module.exports = new AETools;

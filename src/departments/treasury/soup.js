@@ -36,7 +36,7 @@ module.exports = {
         const relics = i.options.getString('relics', true).split(' '),
             filtertype = i.options.getString('filtertype', false) ?? false;
 
-        const relicsList = (await JSON.parse(await fs.readFile('./data/relicdata.json', 'utf-8')));
+        const relicsList = (await JSON.parse(await fs.readFile('./src/data/relicdata.json', 'utf-8')));
         async function getRelic(name, type=null) {
             for (const relic of relicsList.relicData) {
                 if (relic[0].name == name) {

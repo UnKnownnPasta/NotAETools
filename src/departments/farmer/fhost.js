@@ -7,7 +7,7 @@ const {
     ButtonStyle,
     ActionRowBuilder,
 } = require("discord.js");
-const { titleCase } = require('../scripts/utility')
+const { titleCase } = require("../../handler/bHelper.js")
 
 const resourceNames = [
     'Credits', 'Alloy Plate',

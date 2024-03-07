@@ -1,12 +1,12 @@
 const { EmbedBuilder, codeBlock, ButtonStyle } = require("discord.js");
 const fs = require("node:fs/promises");
 const { Pagination } = require("pagination.djs");
-const { filterRelic } = require("../scripts/utility.js");
+const { filterRelic } = require("../../handler/bHelper.js");
 
 module.exports = {
     name: "anycmd",
     async execute(client, message, wd, type) {
-        const allrelics = await JSON.parse(await fs.readFile("./data/relicdata.json"));
+        const allrelics = await JSON.parse(await fs.readFile("./src/data/relicdata.json"));
         const word = wd.replace(/--[r]/, "").trim();
 
         switch (type) {

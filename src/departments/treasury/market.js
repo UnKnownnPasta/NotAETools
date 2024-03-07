@@ -10,7 +10,8 @@ const fs = require("node:fs");
 const { createWorker } = require('tesseract.js')
 const axios = require('axios')
 const { Pagination } = require("pagination.djs");
-const { titleCase } = require("../scripts/utility");
+const config = require('../../data/config.json')
+const { titleCase } = require("../../handler/bHelper.js");
 
 module.exports = {
     name: "market",
@@ -32,11 +33,11 @@ module.exports = {
         await i.deferReply();
         const image = i.options.getAttachment("image", true)
 
-        const worker = await createWorker('eng');
+        const worker = await createWorker('eng', 1, { cachePath: config.tsPath });
         const { data: { text } } = await worker.recognize(image.url);
         await worker.terminate();
 
-        let items = await JSON.parse(fs.readFileSync('./data/wfm.json'))
+        let items = await JSON.parse(fs.readFileSync("../../data/market.json"))
         const itemNames = text.trim().split('\n')
 
         items = items.filter(item => {

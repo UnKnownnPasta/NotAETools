@@ -15,7 +15,7 @@ module.exports = {
         .setDescription('Farmer to view wallet of')
         .setRequired(true)),
     async execute(client, i) {
-        const farmer = (await JSON.parse(await fs.readFile('./data/clandata.json'))).farmerids
+        const farmer = (await JSON.parse(await fs.readFile('./src/data/clandata.json'))).farmerids
         const foundid = farmer.filter(x => x.id == i.options.getUser('user', true).id)
         if (foundid.length == 0) return i.reply({ embeds: [new EmbedBuilder().setTitle(`No Wallet Found`)], ephemeral: true });
         else {

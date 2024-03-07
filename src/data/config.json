@@ -1,5 +1,6 @@
 {
     "prefix": "++",
+    "tsPath": "src/data/eng.traineddata",
     "department": {
         "treasury": {
             "fissureChannel": "1192962141205045328",

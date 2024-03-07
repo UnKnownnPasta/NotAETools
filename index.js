@@ -1,8 +1,7 @@
-const { AETools } = require('./src/bot.js')
+const bot = require('./src/bot.js')
 
-const bot = new AETools();
 bot.settings['deploy_commands'] = false;
-bot.settings['anti_crash'] = false;
+bot.settings['anti_crash'] = true;
 
 ;(async () => {
 	await bot.startDatabase();
