@@ -56,7 +56,6 @@ module.exports = {
             case 'thost-cancel':
                 if (setOfUsers.indexOf(i.user.id) === -1) return i.update({ });
                 else if (i.user.id == setOfUsers[0]) {
-                    await i.update({ content: null });
                     await i.message.delete();
                     await i.channel.send({
                         embeds: [new EmbedBuilder().setTitle(`Run for ${relic} is cancelled`)],

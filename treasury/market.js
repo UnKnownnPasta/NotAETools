@@ -92,8 +92,6 @@ module.exports = {
                 });
             });
             pagination.render();
-
-            // await i.editReply({ embeds: [...embedOfResults.flat().slice(0, 9)] })
         })
     },
 };
