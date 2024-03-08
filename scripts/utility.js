@@ -111,8 +111,8 @@ function getFissureTimings(fisTimes) {
     fisTimes.forEach(([tier, expiryTime]) => {
         const currentDiff = Math.abs(expiryTime - currentTime);
         const closestTime = tierMap.get(tier);
-
-        if (!closestTime || currentDiff < Math.abs(closestTime - currentTime)) {
+        
+        if ((!closestTime) || currentDiff < Math.abs(closestTime - currentTime)) {
             tierMap.set(tier, expiryTime);
         }
     });
@@ -122,7 +122,7 @@ function getFissureTimings(fisTimes) {
     tierMap.forEach((closestTime, tier) => {
         const closestExpiryTime = closestTime - 3 * 60;
         const closestElement = fisTimes.find(([currentTier, expiryTime]) => {
-            return currentTier === tier && Math.abs(expiryTime - closestExpiryTime) <= 180;
+            return currentTier === tier && Math.abs(expiryTime - closestExpiryTime) <= 180 && expiryTime - currentTime > 0;
         });
 
         if (closestElement) {
