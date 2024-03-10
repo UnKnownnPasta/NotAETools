@@ -1,8 +1,8 @@
 const { google } = require('googleapis')
-const { spreadsheet, dualitemslist } = require('../data/config.json')
-const { info, warn } = require('./utility.js');
-const database = require('../scripts/database.js')
-const fs = require('node:fs/promises')
+const { department, dualitemslist } = require('../data/config.json')
+const fsp = require('node:fs/promises')
+const { warn } = require('./bHelper.js')
+const database = require('./cDatabase.js')
 
 // Google fetch func
 const googleFetch = async (id, range) => {
@@ -30,7 +30,7 @@ function transformToSequelizeModel(fields) {
     return sequelizeModel;
 }
 
-async function loadAllRelics(client) {
+async function loadAllRelics() {
     const sheetValues = await google.sheets("v4").spreadsheets.values.get({
         auth: process.env.GOOGLEAPIKEY,
         spreadsheetId: spreadsheet.treasury.id,
@@ -88,19 +88,9 @@ async function loadAllRelics(client) {
     }
 }
 
-async function getAllUserData(createdb) {
-    // User IDs
-    const TreasIDValues = await google.sheets("v4").spreadsheets.values.get({
-        auth: process.env.GOOGLEAPIKEY,
-        spreadsheetId: spreadsheet.treasury.id,
-        range: spreadsheet.treasury.useridName + spreadsheet.treasury.ranges.ids,
-    });
-    const TreasIDs = TreasIDValues.data.values
-    .filter(x => x.length !== 0)
-    .map(user => { return { user: user[1], uid: user[0] } });
-
+function uniquify(arr) {
     const tempSet = new Set();
-    const uniqueTreasIDs = TreasIDs.filter(user => {
+    const newArr = arr.filter(user => {
         if (!tempSet.has(user.uid)) {
             tempSet.add(user.uid);
             return true;
@@ -108,15 +98,29 @@ async function getAllUserData(createdb) {
             return false;
         }
     });
+    return newArr
+}
 
-    await fs.writeFile('./dev/test.json', JSON.stringify(uniqueTreasIDs))
+async function getAllUserData(createdb) {
+    // User IDs
+    const TreasIDValues = await googleFetch(department.treasury.id, department.treasury.useridName + department.treasury.ranges.users);
+    const TreasIDs = TreasIDValues.data.values
+    .filter(x => x.length !== 0)
+    .map(user => { return { uid: user[0], user: user[1] } });
+    const uniqueTreasIDs = uniquify(TreasIDs);
+
+    const FarmerIDValues = await googleFetch(department.farmer.id, department.farmer.useridName + department.farmer.ranges.users);
+    const FarmIDs = FarmerIDValues.data.values
+    .filter(x => x.length !== 0)
+    .map(user => { return { uid: user[0], name: user[1], ttltokens: user[2], bonus: user[3], spent: user[4], left: user[5], playtime: user[6] } });
+    const uniqueFarmIDs = uniquify(FarmIDs);
 
     if (createdb) {
         await database.models.TreasIds.bulkCreate(uniqueTreasIDs);
-        // await database.models.FarmerIds.bulkCreate(uniqueFarmIDs);
+        await database.models.FarmerIds.bulkCreate(uniqueFarmIDs);
     } else {
         await database.models.TreasIds.bulkUpdateIDs(uniqueTreasIDs);
-        // await database.models.FarmerIds.bulkUpdateFarmInfo(uniqueFarmIDs);
+        await database.models.FarmerIds.bulkUpdateFarmInfo(uniqueFarmIDs);
     }
 }
 

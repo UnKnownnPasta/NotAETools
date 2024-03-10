@@ -1,26 +1,27 @@
 const path = require('node:path');
-const { Collection, EmbedBuilder, Client } = require("discord.js");
+const { Collection } = require("discord.js");
 const fsp = require('node:fs/promises');
 const chalk = require("chalk");
-const { fissureChannel } = require("../data/config.json")
-const axios = require('axios')
 
 /**
- * Logs as [txt] msg
- * 
- * err
+ * Logs as [txt] msg, error
  */
 const warn = (txt, msg, err) => { 
     console.log(chalk.red(`[${txt}]`), `${msg}`);
     console.error(err);
  }
-const alert = (alerttxt) => { console.log(chalk.bgRedBright(chalk.black(`[WARNING]`)), `${alerttxt}`); }
-const info = (type, txt) => { console.log(chalk.bgBlackBright(chalk.black(`[${type}]`)), `${txt}`); }
+ /**
+  * Logs as [WARNING] alert text
+  */
+const alert = (alerttxt) => console.log(chalk.bgRedBright(chalk.black(`[WARNING]`)), `${alerttxt}`)
+/**
+ * Custom logs as [type] txt
+ */
+const info = (type, txt) => console.log(chalk.bgBlackBright(chalk.black(`[${type}]`)), `${txt}`)
 
 /**
  * Load all files from a folder and stores them in a map.
- * @param {String} dirpath 
- * @returns Collection
+ * @returns {Collection}
  */
 async function loadFiles(dirpath, condition = null) {
     let clientCollection = new Collection();
@@ -51,13 +52,13 @@ async function loadFiles(dirpath, condition = null) {
  * titleCase('glaive prime') => 'Glaive Prime'
  * titleCase('baRUUk bp') => 'Baruuk BP'
  * @param {String} str 
- * @returns String
+ * @returns {String}
  */
 function titleCase(str) {
     const words = str.split(' ');
 
     for (let i = 0; i < words.length; i++) {
-      if (words[i].toLowerCase() == 'bp') {
+      if (words[i].toLowerCase() == 'bp' || words[i].toLowerCase() == 'blueprint') {
         words[i] = 'BP';
         continue;
       }
@@ -74,7 +75,7 @@ function titleCase(str) {
  * filterRelic('lith g1') => 'Lith G1'
  * filterRelic('mp14') => 'Meso P14'
  * @param {String} relic 
- * @returns String
+ * @returns {String}
  */
 function filterRelic(relic) {
     let relicEra, relicType;
@@ -96,128 +97,11 @@ function filterRelic(relic) {
 /**
  * Checks if given relic is a true relic name.
  * @param {String} relic 
- * @returns Boolean
+ * @returns {Boolean}
  */
 async function relicExists(relic) {
     const relicList = (await JSON.parse(await fsp.readFile('./src/data/relicdata.json'))).relicNames
     return relicList.includes(relic)
 }
 
-/**
- * Gets the next UTC time that a fissure gets created
- * @param {Array} fisTimes 
- * @returns {Array}
- */
-function getFissureTimings(fisTimes) {
-    const currentTime = Math.floor(new Date().getTime() / 1000);
-
-    const tierMap = new Map();
-
-    fisTimes.forEach(([tier, expiryTime]) => {
-        const currentDiff = Math.abs(expiryTime - currentTime);
-        const closestTime = tierMap.get(tier);
-
-        if (!closestTime || currentDiff < Math.abs(closestTime - currentTime)) {
-            tierMap.set(tier, expiryTime);
-        }
-    });
-
-    const updatedTierMap = new Map();
-
-    tierMap.forEach((closestTime, tier) => {
-        const closestExpiryTime = closestTime - 3 * 60;
-        const closestElement = fisTimes.find(([currentTier, expiryTime]) => {
-            return currentTier === tier && Math.abs(expiryTime - closestExpiryTime) <= 180;
-        });
-
-        if (closestElement) {
-            updatedTierMap.set(tier, closestExpiryTime);
-        }
-    });
-
-    return updatedTierMap;
-}
-
-/**
- * Utility function to cycle and display current fissures
- * @param {Client} client 
- */
-async function refreshFissures(client) {
-    try {
-        let channel = client.channels.cache.get(fissureChannel);
-        if (!channel) return alert('No fissure channel found, Is the channel ID wrong?')
-        let messageToEdit = await channel.messages.fetch({ limit: 1 });
-        if (
-            messageToEdit.size == 0 ||
-            messageToEdit?.first()?.author.id != client.user.id
-        ) {
-            messageToEdit = await channel.send({ content: "Updating fissures..." });
-        } else {
-            messageToEdit = messageToEdit.first();
-        }
-        const missions = ["Extermination", "Capture", "Sabotage", "Rescue"];
-        const fisres = (await axios.get("https://api.warframestat.us/pc/fissures")).data;
-        const response = fisres.filter(
-            (f) =>
-                !f["isStorm"] &&
-                missions.includes(f["missionType"]) &&
-                f["active"] &&
-                f["tier"] != "Requiem"
-        );
-
-        const fissures = await response.map((fis) => [
-            titleCase(fis["tier"]), 
-            `${fis["missionType"]} - ${fis["node"]} - Ends <t:${(new Date(fis["expiry"]).getTime() / 1000) | 0}:R>\n`,
-            fis["isHard"],
-        ]);
-        const [N_Embed, S_Embed] = Object.entries(fissures.reduce((acc, fissure) => {
-            let currentEmbed = fissure[2] ? acc.S_Embed : acc.N_Embed;
-
-            currentEmbed[fissure[0]]
-            ? (currentEmbed[fissure[0]].value += fissure[1])
-            : (currentEmbed[fissure[0]] = { name: fissure[0], value: fissure[1] });
-
-            return acc;
-            }, 
-            { N_Embed: {}, S_Embed: {} }
-        ));
-
-        const NormEmbed = new EmbedBuilder()
-            .setTitle("Normal Fissures")
-            .setColor("#2c2c34")
-            .setFields(Object.values(N_Embed[1]).sort((a, b) => b.name.localeCompare(a.name)));
-        const SPEmbed = new EmbedBuilder()
-            .setTitle("Steel Path Fissures")
-            .setFields(Object.values(S_Embed[1]).sort((a, b) => b.name.localeCompare(a.name)))
-            .setColor("#2c2c34")
-            .setTimestamp();
-        const TimeEmbed = new EmbedBuilder()
-            .setColor("#b6a57f");
-        let timeDesc = "Next Fissure Reset:\n";
-
-        const fisTimes = getFissureTimings(
-            fisres
-                .filter((x) => x["tier"] != "Requiem" && x["active"] && !x['isStorm'])
-                .map((x) => [
-                    x["tier"],
-                    (new Date(x["expiry"]).getTime() / 1000) | 0,
-                ])
-        );
-
-        Array.from(fisTimes.entries())
-        .sort((a, b) => b[0].localeCompare(a[0]))
-        .forEach(([key, val], index) => {
-            timeDesc += `\`${titleCase(key).padEnd(4)}\` <t:${val}:R>\n`;
-        });
-        TimeEmbed.setDescription(timeDesc);
-
-        await messageToEdit.edit({
-            content: null,
-            embeds: [NormEmbed, SPEmbed, TimeEmbed],
-        });
-    } catch (error) {
-        warn("INTRLV", "Failed to refresh fissures", error);
-    }
-}
-
-module.exports = { warn, alert, info, loadFiles, titleCase, filterRelic, relicExists, refreshFissures }
+module.exports = { warn, alert, info, loadFiles, titleCase, filterRelic, relicExists }

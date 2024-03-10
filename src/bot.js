@@ -6,6 +6,8 @@ const fsp = require('node:fs/promises')
 const path = require('node:path');
 const database = require('./handler/cDatabase');
 const { loadFiles } = require('./handler/bHelper');
+const { refreshFissures } = require('./handler/cCycles');
+const { getAllUserData, getAllClanData } = require('./handler/cWarframe');
 
 class AETools {
     constructor() {
@@ -50,6 +52,21 @@ class AETools {
         console.log(`[EVENT] Loaded all commands`);
     }
 
+    async refreshDB() {
+        if (!this.settings.cycle_db) return;
+        setInterval(async () => {
+            await refreshFissures(this.client);
+        }, 300_000);
+    }
+
+    async doCycle() {
+        if (!this.settings.cycle_fissure) return;
+        setInterval(async () => {
+            await getAllUserData(false);
+            await getAllClanData(false); 
+        }, 300_000);
+    }
+
     async createListeners() {
         const eventsPath = [path.join(process.cwd(), 'src/handler/eInteraction.js'), path.join(process.cwd(), 'src/handler/eMessage.js')];
         await eventsPath.map(file => {
@@ -60,10 +77,10 @@ class AETools {
         });
 
         if (this.settings.anti_crash) {
+            console.log(`[anti crash] :: Now active`)
             process.on('uncaughtException', (err) => {
                 console.log(`[anti crash] :: ${err.name}\n${err.message}`)
             });
-            console.log(`[anti crash] :: Startup\nNow active`)
         }
     }
 

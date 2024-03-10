@@ -9,13 +9,13 @@
             "useridName": "Directory",
             "ranges": {
                 "relic": "!A2:H",
-                "ids": "!B2:C"
+                "users": "!B2:C"
             }
         },
         "farmer": {
             "sheetId": "18uYn374Y-n_VBX9sQsTLoSRY9-JtgGGLHWihotxjdPY",
             "resourceName": "Main",
-            "userName": "Farmer List",
+            "useridName": "Farmer List",
             "ranges": {
                 "resource": {
                     "AK": "!A30:C72",

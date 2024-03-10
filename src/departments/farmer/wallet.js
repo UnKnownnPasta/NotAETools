@@ -16,7 +16,7 @@ module.exports = {
         .setRequired(true)),
     async execute(client, i) {
         const farmer = (await JSON.parse(await fs.readFile('./src/data/clandata.json'))).farmerids
-        const foundid = farmer.filter(x => x.id == i.options.getUser('user', true).id)
+        const foundid = farmer.filter(x => x.uid == i.options.getUser('user', true).id)
         if (foundid.length == 0) return i.reply({ embeds: [new EmbedBuilder().setTitle(`No Wallet Found`)], ephemeral: true });
         else {
             const uf = foundid[0]
