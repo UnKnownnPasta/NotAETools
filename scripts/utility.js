@@ -52,7 +52,7 @@ function titleCase(str) {
     const words = str.split(' ');
 
     for (let i = 0; i < words.length; i++) {
-      if (words[i].toLowerCase() == 'bp') {
+      if (words[i].toLowerCase() == 'bp' || words[i].toLowerCase() == 'blueprint') {
         words[i] = 'BP';
         continue;
       }
