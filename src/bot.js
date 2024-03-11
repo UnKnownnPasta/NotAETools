@@ -22,17 +22,17 @@ class AETools {
 
         this.settings = {
             sync_with_force: false,
-            deploy_commands: true, // c
-            cycle_fissure: true, // c
-            cycle_db: true, // c
+            deploy_commands: true,
+            cycle_fissure: true,
+            cycle_db: true,
             anti_crash: false, // true in prod
-            fetch_guilds: false, // c
+            fetch_guilds: false,
             log_sql: false,
         }
     }
 
     async start() {
-        console.log(`[EVENT] Logging with following config..`)
+        console.log(`[EVENT] Logging in with following config..`)
         Object.entries(this.settings).forEach(([key, value]) => {
             console.log(`  ${key}: ${value}`);
         });
@@ -43,7 +43,8 @@ class AETools {
 
         await this.client.login(process.env.TOKEN)
     	this.client.user.setPresence({ activities: [{ name: 'Zloosh 👒', type: ActivityType.Watching }], status: 'dnd' });
-        console.log(`[EVENT] Online.`)
+        console.log(`[EVENT] Online.\n  U/N: ${this.client.user.username}\n  ${new Date().toLocaleDateString()}\n  Loaded with ${this.client.guilds.cache.size} guilds active.\n  @ ${new Date().toLocaleString()}\n`)
+        if (!this.settings.fetch_guilds) console.log(`[WARNING] Guilds could potentially be uncached as fetch_guilds is false`);
     }
 
     async startDatabase() {
@@ -72,7 +73,7 @@ class AETools {
             await getAllUserData();
             await getAllClanData();
             await getAllRelicData();
-        }, 10_000);
+        }, 60_000);
     }
 
     async createListeners() {

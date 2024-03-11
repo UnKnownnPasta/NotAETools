@@ -12,7 +12,7 @@ module.exports = {
         if (interaction.isChatInputCommand()) {
             client.treasury.get(interaction.commandName)?.execute(client, interaction)
             client.farmer.get(interaction.commandName)?.execute(client, interaction)
-            info('CMD', `"${interaction.user.username}" Ran interaction command "${interaction.commandName}" with arguments: ${interaction.options.data.map(x=>`"${x.name}": ${x.value}`).join(', ')}`)
+            info('CMD', `"${interaction.user.username}" Ran interaction command "${interaction.commandName}" with arguments: ${interaction.options.data.map(x=>`"${x.name}": ${x.value}`).join(', ')} @ ${new Date().toLocaleString()}`)
         } else if (interaction.isButton()) {
             if (interaction.customId.startsWith('paginate')) return;
             client.button?.get(interaction.customId.split('-')[0])?.execute(client, interaction)

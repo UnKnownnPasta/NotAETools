@@ -7,12 +7,9 @@ module.exports = (sequelizeInstance) => {
             const uniqueParts = [...new Set(relicData.map(res => res.part))];
 
             await this.sequelize.transaction(async (t) => {
-                // Iterate over unique parts and perform bulk update
                 await Promise.all(uniqueParts.map(async (part) => {
-                    // Find all records with the given part
                     const recordsToUpdate = relicData.filter(res => res.part === part);
         
-                    // Use bulkCreate with the updateOnDuplicate option for efficient bulk updates
                     await this.bulkCreate(recordsToUpdate, {
                         updateOnDuplicate: ['part'],
                         transaction: t
@@ -23,7 +20,7 @@ module.exports = (sequelizeInstance) => {
     }
     Parts.init(
         {
-            part: { type: DataTypes.STRING, defaultValue: "" }
+            part: { type: DataTypes.STRING, defaultValue: "", primaryKey: true }
         },
         { sequelize: sequelizeInstance, modelName: 'Parts', createdAt: false, updatedAt: false }
     );
