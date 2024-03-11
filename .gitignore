@@ -1,4 +1,4 @@
 .env
 dev/
 node_modules
-*.sqlite
+*.sqlite*

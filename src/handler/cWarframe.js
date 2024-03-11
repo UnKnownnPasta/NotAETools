@@ -30,12 +30,8 @@ function transformToSequelizeModel(fields) {
     return sequelizeModel;
 }
 
-async function loadAllRelics() {
-    const sheetValues = await google.sheets("v4").spreadsheets.values.get({
-        auth: process.env.GOOGLEAPIKEY,
-        spreadsheetId: spreadsheet.treasury.id,
-        range: spreadsheet.treasury.relicName + spreadsheet.treasury.ranges.relic,
-    });
+async function getAllRelicData() {
+    const sheetValues = await googleFetch(department.treasury.sheetId, department.treasury.relicName + department.treasury.ranges.relic)
 
     const range = (num) => {
         return num >= 0 && num <= 7 ? 'ED'
@@ -82,9 +78,10 @@ async function loadAllRelics() {
         const pNames = [... new Set(combinedData.map(relic => relic[0].has).flat())].map(relic => { return { part: relic.replace(' x2', '') } })
 
         const combedRelicData = combinedData.map(x => transformToSequelizeModel(x))
-        await database.models.Relics.bulkCreate(combedRelicData);
-        await database.models.Parts.bulkCreate(pNames);
-        await database.models.RelicNames.bulkCreate(rNames);
+
+        await database.models.Relics.bulkUpdateRelics(combedRelicData);
+        await database.models.Parts.bulkUpdateParts(pNames);
+        await database.models.RelicNames.bulkUpdateRelics(rNames);
     }
 }
 
@@ -101,32 +98,27 @@ function uniquify(arr) {
     return newArr
 }
 
-async function getAllUserData(createdb) {
+async function getAllUserData() {
     // User IDs
-    const TreasIDValues = await googleFetch(department.treasury.id, department.treasury.useridName + department.treasury.ranges.users);
+    const TreasIDValues = await googleFetch(department.treasury.sheetId, department.treasury.useridName + department.treasury.ranges.users);
     const TreasIDs = TreasIDValues.data.values
     .filter(x => x.length !== 0)
     .map(user => { return { uid: user[0], user: user[1] } });
     const uniqueTreasIDs = uniquify(TreasIDs);
 
-    const FarmerIDValues = await googleFetch(department.farmer.id, department.farmer.useridName + department.farmer.ranges.users);
+    const FarmerIDValues = await googleFetch(department.farmer.sheetId, department.farmer.useridName + department.farmer.ranges.users);
     const FarmIDs = FarmerIDValues.data.values
     .filter(x => x.length !== 0)
     .map(user => { return { uid: user[0], name: user[1], ttltokens: user[2], bonus: user[3], spent: user[4], left: user[5], playtime: user[6] } });
     const uniqueFarmIDs = uniquify(FarmIDs);
 
-    if (createdb) {
-        await database.models.TreasIds.bulkCreate(uniqueTreasIDs);
-        await database.models.FarmerIds.bulkCreate(uniqueFarmIDs);
-    } else {
-        await database.models.TreasIds.bulkUpdateIDs(uniqueTreasIDs);
-        await database.models.FarmerIds.bulkUpdateFarmInfo(uniqueFarmIDs);
-    }
+    await database.models.TreasIds.bulkUpdateIDs(uniqueTreasIDs);
+    await database.models.FarmerIds.bulkUpdateFarmInfo(uniqueFarmIDs);
 }
 
-async function getAllClanData(createdb) {
-    const promises = Object.entries(spreadsheet.farmer.ranges.resource).map(async (key) => {
-        const clandata = await googleFetch(spreadsheet.farmer.id, spreadsheet.farmer.resourceName + key[1]);
+async function getAllClanData() {
+    const promises = Object.entries(department.farmer.ranges.resource).map(async (key) => {
+        const clandata = await googleFetch(department.farmer.sheetId, department.farmer.resourceName + key[1]);
         if (!clandata) return {}
 
         let localist = {};
@@ -137,15 +129,11 @@ async function getAllClanData(createdb) {
     
     await Promise.all(promises)
         .then(async (results) => {
-            if (createdb) {
-                await database.models.Resources.bulkCreate(results);
-            } else {
-                await database.models.Resources.bulkUpdateResources(results);
-            }
+            await database.models.Resources.bulkUpdateResources(results);
         })
         .catch(error => {
             console.error('Error fetching sheet values:', error.message);
         });
 }
 
-module.exports = { loadAllRelics, getAllUserData, getAllClanData }
+module.exports = { getAllRelicData, getAllUserData, getAllClanData }

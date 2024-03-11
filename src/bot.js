@@ -7,7 +7,7 @@ const path = require('node:path');
 const database = require('./handler/cDatabase');
 const { loadFiles } = require('./handler/bHelper');
 const { refreshFissures } = require('./handler/cCycles');
-const { getAllUserData, getAllClanData } = require('./handler/cWarframe');
+const { getAllUserData, getAllClanData, getAllRelicData } = require('./handler/cWarframe');
 
 class AETools {
     constructor() {
@@ -21,20 +21,25 @@ class AETools {
         });
 
         this.settings = {
-            reset_db: false, // c
+            sync_with_force: false,
             deploy_commands: true, // c
-            cycle_fissure: false, // c
-            cycle_db: false, // c
-            anti_crash: true, // c
-            fetch_guilds: true, // c
+            cycle_fissure: true, // c
+            cycle_db: true, // c
+            anti_crash: false, // true in prod
+            fetch_guilds: false, // c
+            log_sql: false,
         }
     }
 
     async start() {
+        console.log(`[EVENT] Logging with following config..`)
+        Object.entries(this.settings).forEach(([key, value]) => {
+            console.log(`  ${key}: ${value}`);
+        });
         if (this.settings.fetch_guilds) await this.client.guilds.fetch({ force: true });
         if (this.settings.deploy_commands) await this.deploy();
-        if (this.settings.cycle_db) await this.startDatabase();
         if (this.settings.cycle_fissure) await this.cycleFissures();
+        await this.refreshDB();
 
         await this.client.login(process.env.TOKEN)
     	this.client.user.setPresence({ activities: [{ name: 'Zloosh 👒', type: ActivityType.Watching }], status: 'dnd' });
@@ -42,9 +47,9 @@ class AETools {
     }
 
     async startDatabase() {
-        await database.authenticate();
+        await database.authenticate(this.settings.log_sql);
         database.defineModels();
-        await database.syncDatabase(this.reset_db);
+        await database.syncDatabase(this.settings.sync_with_force);
     }
 
     async createCommands() {
@@ -62,15 +67,12 @@ class AETools {
     }
 
     async refreshDB() {
-        if (this.settings.reset_db) {
-            await getAllUserData(true);
-            await getAllClanData(true);
-        }
         if (!this.settings.cycle_db) return;
         setInterval(async () => {
-            await getAllUserData(false);
-            await getAllClanData(false); 
-        }, 300_000);
+            await getAllUserData();
+            await getAllClanData();
+            await getAllRelicData();
+        }, 10_000);
     }
 
     async createListeners() {
@@ -85,7 +87,8 @@ class AETools {
         if (this.settings.anti_crash) {
             console.log(`[anti crash] :: Now active`)
             process.on('uncaughtException', (err) => {
-                console.log(`[anti crash] :: ${err.name}\n${err.message}`)
+                console.log(`[anti crash] :: ${err.message}\n${err.stack}`)
+                console.error(err)
             });
         }
     }

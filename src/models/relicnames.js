@@ -2,14 +2,14 @@ const { Sequelize, DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelizeInstance) => {
     class RelicNames extends Model {
-        // Class-level method
-        static async findByName(relic_name) {
-            return this.findOne({ where: { name: relic_name } });
-        }
-
-        // Instance-level method
-        getDisplayName() {
-            return `Relic: ${this.name}`;
+        // Accepts { name: String } type data
+        static async bulkUpdateRelics(relicData) {
+            const records = relicData.map(res => ({ name: res.name }));
+        
+            // Assuming your model has a unique constraint on the 'name' column
+            const uniqueKeys = ['name'];
+        
+            await this.bulkCreate(records, { updateOnDuplicate: uniqueKeys, ignoreDuplicates: true });
         }
     }
     RelicNames.init(

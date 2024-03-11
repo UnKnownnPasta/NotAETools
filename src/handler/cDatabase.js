@@ -7,8 +7,6 @@ class Database {
             dialect: "sqlite",
             storage: path.join(process.cwd(), "src/data/database.sqlite"),
             sync: false,
-            // logging: (msg) => info("SQL", msg),
-            logging: false
         });
 
         // Define models, associations, etc.
@@ -26,9 +24,9 @@ class Database {
         };
     }
 
-    async authenticate() {
+    async authenticate(logOp) {
         try {
-            await this.sequelize.authenticate();
+            await this.sequelize.authenticate({ logging: logOp ?? false });
             console.log("[EVENT] Connection has been established successfully.");
         } catch (error) {
             console.error("[ERROR] Unable to connect to the database:", error);

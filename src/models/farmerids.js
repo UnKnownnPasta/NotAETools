@@ -4,13 +4,31 @@ module.exports = (sequelizeInstance) => {
     class FarmIDs extends Model {
         // Accepts { name: String, uid: String, etc } type data
         static async bulkUpdateFarmInfo(userinfo) {
-            await Promise.all(userinfo.map(async (res) => {
-                // Use await to ensure that the update operation is complete before moving on
-                await this.upsert({
-                    uid: res.uid, name: res.name, ttltokens: res.ttltokens, bonus: res.bonus, spent: res.spent, left: res.left, playtime: res.playtime
-                 }, { where: { uid: res.uid } }, { ignoreDuplicates: true });
-            }));
+            // Extract unique UID values from userinfo
+            const uniqueUIDs = [...new Set(userinfo.map((res) => res.uid))];
+        
+            // Use transaction to ensure atomicity of the updates
+            await this.sequelize.transaction(async (t) => {
+                // Iterate over unique UID values
+                for (const uid of uniqueUIDs) {
+                    const userToUpdate = userinfo.find((res) => res.uid === uid);
+        
+                    // Use update with where clause for efficient updates
+                    await this.update(
+                        {
+                            name: userToUpdate.name,
+                            ttltokens: userToUpdate.ttltokens,
+                            bonus: userToUpdate.bonus,
+                            spent: userToUpdate.spent,
+                            left: userToUpdate.left,
+                            playtime: userToUpdate.playtime,
+                        },
+                        { where: { uid }, transaction: t }
+                    );
+                }
+            });
         }
+        
     }
     FarmIDs.init(
         {

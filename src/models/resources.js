@@ -4,11 +4,21 @@ module.exports = (sequelizeInstance) => {
     class Resources extends Model {
         // Accepts { clan: String, resource: {} } type data
         static async bulkUpdateResources(claninfo) {
-            await Promise.all(claninfo.map(async (res) => {
-                // Use await to ensure that the update operation is complete before moving on
-                await this.update({ resource: res.resource }, { where: { clan: res.clan } });
-            }));
+            // Extract unique clan values from claninfo
+            const uniqueClans = [...new Set(claninfo.map((res) => res.clan))];
+        
+            // Use transaction to ensure atomicity of the updates
+            await this.sequelize.transaction(async (t) => {
+                // Iterate over unique clan values
+                for (const clan of uniqueClans) {
+                    const resToUpdate = claninfo.find((res) => res.clan === clan);
+        
+                    // Use update with where clause for efficient updates
+                    await this.update({ resource: resToUpdate.resource }, { where: { clan }, transaction: t });
+                }
+            });
         }
+        
     }
     Resources.init(
         {
