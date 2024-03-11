@@ -56,6 +56,10 @@ function titleCase(str) {
         words[i] = 'BP';
         continue;
       }
+      if (words[i].toLowerCase().startsWith('neuroptic')) {
+        words[i] = 'Neuro';
+        continue;
+      }
       words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1).toLowerCase();
     }
     return words.join(' ');
