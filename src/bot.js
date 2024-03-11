@@ -23,16 +23,18 @@ class AETools {
         this.settings = {
             reset_db: false, // c
             deploy_commands: true, // c
-            cycle_fissure: false,
-            cycle_db: false,
+            cycle_fissure: false, // c
+            cycle_db: false, // c
             anti_crash: true, // c
-            fetch_guilds: false, // c
+            fetch_guilds: true, // c
         }
     }
 
     async start() {
         if (this.settings.fetch_guilds) await this.client.guilds.fetch({ force: true });
         if (this.settings.deploy_commands) await this.deploy();
+        if (this.settings.cycle_db) await this.startDatabase();
+        if (this.settings.cycle_fissure) await this.cycleFissures();
 
         await this.client.login(process.env.TOKEN)
     	this.client.user.setPresence({ activities: [{ name: 'Zloosh 👒', type: ActivityType.Watching }], status: 'dnd' });
@@ -52,15 +54,19 @@ class AETools {
         console.log(`[EVENT] Loaded all commands`);
     }
 
-    async refreshDB() {
-        if (!this.settings.cycle_db) return;
+    async cycleFissures() {
+        if (!this.settings.cycle_fissure) return;
         setInterval(async () => {
             await refreshFissures(this.client);
         }, 300_000);
     }
 
-    async doCycle() {
-        if (!this.settings.cycle_fissure) return;
+    async refreshDB() {
+        if (this.settings.reset_db) {
+            await getAllUserData(true);
+            await getAllClanData(true);
+        }
+        if (!this.settings.cycle_db) return;
         setInterval(async () => {
             await getAllUserData(false);
             await getAllClanData(false); 
@@ -116,7 +122,7 @@ class AETools {
     
                 console.log(`Successfully reloaded ${data.length} application (/) commands.`);
             } catch (err) {
-                // deployment error
+                console.error(err)
             }
         })();
     }
