@@ -1,5 +1,6 @@
 const { Sequelize } = require("sequelize");
 const path = require("path");
+const logger = require('./bLog.js')
 
 class Database {
     constructor() {
@@ -7,6 +8,7 @@ class Database {
             dialect: "sqlite",
             storage: path.join(process.cwd(), "src/data/database.sqlite"),
             sync: false,
+            logging: false,
         });
 
         // Define models, associations, etc.
@@ -24,12 +26,12 @@ class Database {
         };
     }
 
-    async authenticate(logOp) {
+    async authenticate() {
         try {
-            await this.sequelize.authenticate({ logging: logOp ?? false });
-            console.log("[EVENT] Connection has been established successfully.");
+            await this.sequelize.authenticate();
+            logger.event("Connection has been established successfully.");
         } catch (error) {
-            console.error("[ERROR] Unable to connect to the database:", error);
+            logger.error("Unable to connect to the database:" + error.stack);
         }
     }
 

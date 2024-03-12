@@ -8,6 +8,7 @@ const database = require('./handler/cDatabase');
 const { loadFiles } = require('./handler/bHelper');
 const { refreshFissures } = require('./handler/cCycles');
 const { getAllUserData, getAllClanData, getAllRelicData } = require('./handler/cWarframe');
+const logger = require('./handler/bLog.js')
 
 class AETools {
     constructor() {
@@ -25,55 +26,71 @@ class AETools {
             deploy_commands: true,
             cycle_fissure: true,
             cycle_db: true,
-            anti_crash: false, // true in prod
+            anti_crash: false,
             fetch_guilds: false,
-            log_sql: false,
+            fissure_interval: 300_000,
+            update_interval: 600_000,
         }
     }
 
     async start() {
-        console.log(`[EVENT] Logging in with following config..`)
+        logger.event("Logging in with following config..");
         Object.entries(this.settings).forEach(([key, value]) => {
             console.log(`  ${key}: ${value}`);
         });
-        if (this.settings.fetch_guilds) await this.client.guilds.fetch({ force: true });
+
+        await this.startDatabase();
+        await this.createListeners();
+        await this.createCommands();
+
         if (this.settings.deploy_commands) await this.deploy();
         if (this.settings.cycle_fissure) await this.cycleFissures();
         await this.refreshDB();
 
         await this.client.login(process.env.TOKEN)
+        if (this.settings.fetch_guilds) await this.client.guilds.fetch({ force: true });
     	this.client.user.setPresence({ activities: [{ name: 'Zloosh 👒', type: ActivityType.Watching }], status: 'dnd' });
-        console.log(`[EVENT] Online.\n  U/N: ${this.client.user.username}\n  ${new Date().toLocaleDateString()}\n  Loaded with ${this.client.guilds.cache.size} guilds active.\n  @ ${new Date().toLocaleString()}\n`)
-        if (!this.settings.fetch_guilds) console.log(`[WARNING] Guilds could potentially be uncached as fetch_guilds is false`);
+        logger.info(`Online.\n  U/N: ${this.client.user.username}\n  ${new Date().toLocaleDateString()}\n  Loaded with ${this.client.guilds.cache.size} guilds active.\n  @ ${new Date().toLocaleString()}\n`)
+        if (!this.settings.fetch_guilds) logger.warn(`Guilds could potentially be uncached as fetch_guilds is false`);
     }
 
     async startDatabase() {
-        await database.authenticate(this.settings.log_sql);
+        logger.info("  [.] Starting up sequelize..")
+        await database.authenticate();
+        logger.info("  [-] Authenticated")
         database.defineModels();
         await database.syncDatabase(this.settings.sync_with_force);
+        logger.info("  [✔] Database up to date!")
     }
 
     async createCommands() {
         this.client.treasury = await loadFiles('src/departments/treasury');
         this.client.farmer = await loadFiles('src/departments/farmer');
         this.client.button = await loadFiles('src/events', (fl) => fl.startsWith('btn-'));
-        console.log(`[EVENT] Loaded all commands`);
+        logger.info("Loaded commands")
     }
 
     async cycleFissures() {
         if (!this.settings.cycle_fissure) return;
         setInterval(async () => {
             await refreshFissures(this.client);
-        }, 300_000);
+        }, this.settings.fissure_interval);
+        logger.event("Fissure cycle active!")
     }
 
     async refreshDB() {
         if (!this.settings.cycle_db) return;
         setInterval(async () => {
-            await getAllUserData();
-            await getAllClanData();
-            await getAllRelicData();
-        }, 60_000);
+            try {
+                await getAllUserData();
+                await getAllClanData();
+                await getAllRelicData();
+            } catch (error) {
+                logger.error(error.stack)
+            }
+            logger.event("Interval: Updated database")
+        }, this.settings.update_interval);
+        logger.event("Database refreshing every interval now.")
     }
 
     async createListeners() {
@@ -82,13 +99,13 @@ class AETools {
             const event = require(file);
             const callback = (...args) => event.listen(this.client, ...args);
             this.client[event.once ? 'once' : 'on'](event.name, callback);
-            console.log(`[EVENT] Loaded ${event.name} listener.`);
+            logger.info(`Loaded ${event.name} listener.`);
         });
 
         if (this.settings.anti_crash) {
-            console.log(`[anti crash] :: Now active`)
+            logger.log('anti crash', `active`)
             process.on('uncaughtException', (err) => {
-                console.log(`[anti crash] :: ${err.message}\n${err.stack}`)
+                logger.anticrash(`${err.message}`)
                 console.error(err)
             });
         }
@@ -106,10 +123,9 @@ class AETools {
             for (const file of commandFiles) {
                 const filePath = path.join(commandsPath, file);
                 const command = require(filePath);
-                if ('execute' in command) {
+                if (!('execute' in command)) logger.warn(`The command at ${filePath} is missing a required "execute" property.`);
+                if ('data' in command) {
                     commands.push(command.data.toJSON());
-                } else {
-                    console.log(`[WARNING] The command at ${filePath} is missing a required "execute" property.`);
                 }
             }
         }
@@ -117,14 +133,14 @@ class AETools {
     
         (async () => {
             try {
-                console.log(`Started refreshing ${commands.length} application (/) commands.`);
+                logger.event(`Started refreshing ${commands.length} application (/) commands.`);
     
                 const data = await rest.put(
                     Routes.applicationGuildCommands(process.env.CLIENTID, process.env.GUILDID),
                     { body: commands },
                 );
     
-                console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+                logger.event(`Successfully reloaded ${data.length} application (/) commands.`);
             } catch (err) {
                 console.error(err)
             }
