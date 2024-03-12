@@ -7,23 +7,24 @@ module.exports = (sequelizeInstance) => {
             const uniqueUIDs = [...new Set(userinfo.map((res) => res.uid))];
         
             await this.sequelize.transaction(async (t) => {
-                for (const uid of uniqueUIDs) {
-                    const userToUpdate = userinfo.find((res) => res.uid === uid);
-                    
-                    await this.upsert(
-                        {
-                            uid: userToUpdate.uid,
-                            name: userToUpdate.name,
-                            ttltokens: userToUpdate.ttltokens,
-                            bonus: userToUpdate.bonus,
-                            spent: userToUpdate.spent,
-                            left: userToUpdate.left,
-                            playtime: userToUpdate.playtime,
-                        },
-                        { where: { uid }, transaction: t }
-                    );
-                }
+                const bulkUpsertData = userinfo
+                    .filter((user) => uniqueUIDs.includes(user.uid))
+                    .map((user) => ({
+                        uid: user.uid,
+                        name: user.name,
+                        ttltokens: user.ttltokens,
+                        bonus: user.bonus,
+                        spent: user.spent,
+                        left: user.left,
+                        playtime: user.playtime,
+                    }));
+            
+                await this.bulkCreate(bulkUpsertData, {
+                    updateOnDuplicate: ['name', 'ttltokens', 'bonus', 'spent', 'left', 'playtime'],
+                    transaction: t,
+                });
             });
+            
         }
         
     }

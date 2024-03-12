@@ -23,7 +23,6 @@ module.exports = (sequelizeInstance) => {
                 }
             });
         }
-        
     }
     Relics.init(
         {

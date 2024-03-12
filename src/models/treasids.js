@@ -21,7 +21,7 @@ module.exports = (sequelizeInstance) => {
             user: { type: DataTypes.STRING, defaultValue: "" },
             uid: { type: DataTypes.STRING, defaultValue: "", primaryKey: true },
         },
-        { sequelize: sequelizeInstance, modelName: 'TreasIDs' }
+        { sequelize: sequelizeInstance, modelName: 'TreasIDs', createdAt: false, updatedAt: false }
     );
 
     return TreasIDs;

@@ -29,7 +29,7 @@ class AETools {
             anti_crash: false,
             fetch_guilds: false,
             fissure_interval: 300_000,
-            update_interval: 600_000,
+            update_interval: 60_000,
         }
     }
 
@@ -80,6 +80,14 @@ class AETools {
 
     async refreshDB() {
         if (!this.settings.cycle_db) return;
+        if (this.settings.sync_with_force) {
+            logger.warn("Resetting Tables \`FarmIDs\` \`TreasIDs\`")
+            await getAllUserData();
+            logger.warn("Resetting Tables \`Resources\`")
+            await getAllClanData();
+            logger.warn("Resetting Tables \`RelicNames\` \`Relics\` \`Parts\`")
+            await getAllRelicData();
+        }
         setInterval(async () => {
             try {
                 await getAllUserData();
