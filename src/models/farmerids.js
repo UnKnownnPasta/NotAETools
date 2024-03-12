@@ -12,6 +12,7 @@ module.exports = (sequelizeInstance) => {
                     
                     await this.upsert(
                         {
+                            uid: userToUpdate.uid,
                             name: userToUpdate.name,
                             ttltokens: userToUpdate.ttltokens,
                             bonus: userToUpdate.bonus,

@@ -10,7 +10,7 @@ module.exports = (sequelizeInstance) => {
                 for (const clan of uniqueClans) {
                     const resToUpdate = claninfo.find((res) => res.clan === clan);
         
-                    await this.upsert({ resource: resToUpdate.resource }, { where: { clan }, transaction: t });
+                    await this.upsert({ clan: resToUpdate.clan, resource: resToUpdate.resource }, { where: { clan }, transaction: t });
                 }
             });
         }

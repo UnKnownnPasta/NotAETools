@@ -10,7 +10,7 @@ module.exports = (sequelizeInstance) => {
                 for (const uid of uniqueUIDs) {
                     const userToUpdate = userinfo.find((res) => res.uid === uid);
         
-                    await this.upsert({ user: userToUpdate.user }, { where: { uid }, transaction: t });
+                    await this.upsert({ uid: userToUpdate.uid, user: userToUpdate.user }, { where: { uid }, transaction: t });
                 }
             });
         }
