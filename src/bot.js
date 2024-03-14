@@ -29,7 +29,7 @@ class AETools {
             anti_crash: false,
             fetch_guilds: false,
             fissure_interval: 300_000,
-            update_interval: 60_000,
+            update_interval: 600_000,
         }
     }
 
