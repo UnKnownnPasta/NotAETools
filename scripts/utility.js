@@ -197,10 +197,9 @@ async function refreshFissures(client) {
         let timeArrOfObj = [];
         const fisTimes = getFissureTimings(
             fisres
-                .filter((x) => x["tier"] != "Requiem" && x["active"] && !x['isStorm'] && !x['expired'])
-                .map((x) => [
-                    x["isHard"] + " " + x["tier"],
-                    (new Date(x["expiry"]).getTime() / 1000) | 0,
+                .filter(({ tier, isStorm, expired, active }) => tier != "Requiem" && !isStorm && !expired && active)
+                .map(({ isHard, tier, expiry }) => [
+                    isHard + " " + tier, (new Date(expiry).getTime() / 1000) | 0
                 ])
         );
 
@@ -214,19 +213,19 @@ async function refreshFissures(client) {
             const [ status, erra ] = era.split(' ')
             let currentEmbed = acc[`${erra}desc`];
 
-            if (currentEmbed.norm == '' && status == 'false') currentEmbed.norm = time;
-            else if (currentEmbed.sp == '' && status == 'true') currentEmbed.sp = time;
+            if (!currentEmbed.norm && status == 'false') currentEmbed.norm = time;
+            else if (!currentEmbed.sp && status == 'true') currentEmbed.sp = time;
 
             return acc;
         }, {
-            Lithdesc: { norm: '', sp: '' },
-            Mesodesc: { norm: '', sp: '' },
-            Neodesc: { norm: '', sp: '' },
-            Axidesc: { norm: '', sp: '' },
+            Lithdesc: { norm: undefined, sp: undefined },
+            Mesodesc: { norm: undefined, sp: undefined },
+            Neodesc: { norm: undefined, sp: undefined },
+            Axidesc: { norm: undefined, sp: undefined },
         }));
 
         const timeDesc = allDesc.sort((a, b) => b[0] - a[0]).map(x => {
-            return `\`${`${x[0].replace('desc', '')}`.padEnd(4)}\` - Normal: ${x[1].norm} SP: ${x[1].sp}`
+            return `\`${`${x[0].replace('desc', '')}`.padEnd(4)}\` - Normal: ${x[1].norm ?? 'in ???'} SP: ${x[1].sp ?? 'in ???'}`
         })
 
         TimeEmbed.setDescription(timeDesc.join('\n'));
