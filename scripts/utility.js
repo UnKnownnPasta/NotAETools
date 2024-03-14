@@ -191,7 +191,7 @@ async function refreshFissures(client) {
             .setTimestamp();
 
         const TimeEmbed = new EmbedBuilder()
-            .setTitle("Next fissure resets:")
+            .setTitle("Next fissure resets")
             .setColor("#b6a57f");
 
         let timeArrOfObj = [];
@@ -224,7 +224,7 @@ async function refreshFissures(client) {
             Axidesc: { norm: undefined, sp: undefined },
         }));
 
-        const timeDesc = allDesc.sort((a, b) => b[0] - a[0]).map(x => {
+        const timeDesc = allDesc.sort((a, b) => b[0].replace('desc', '').localeCompare(a[0].replace('desc', ''))).map(x => {
             return `\`${`${x[0].replace('desc', '')}`.padEnd(4)}\` - Normal: ${x[1].norm ?? 'in ???'} SP: ${x[1].sp ?? 'in ???'}`
         })
 
