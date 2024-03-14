@@ -191,7 +191,7 @@ async function refreshFissures(client) {
             .setTimestamp();
 
         const TimeEmbed = new EmbedBuilder()
-            .setTitle("Next fissure resets")
+            .setTitle("Next fissure resets:")
             .setColor("#b6a57f");
 
         let timeArrOfObj = [];
