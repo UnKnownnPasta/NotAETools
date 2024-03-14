@@ -158,14 +158,15 @@ async function refreshFissures(client) {
         const fisres = (await axios.get("https://api.warframestat.us/pc/fissures")).data;
 
         const response = fisres.filter(({ tier, missionType, active, expired, isStorm }) =>
-                !isStorm && missions.includes(missionType) && active && tier != "Requiem" && !expired
+            !isStorm && missions.includes(missionType) && active && tier != "Requiem" && !expired
         );
 
         const fissures = await response.map(({ tier, missionType, node, expiry, isHard }) => [
-            titleCase(tier), 
+            titleCase(tier),
             `${missionType} - ${node} - Ends <t:${(new Date(expiry).getTime() / 1000) | 0}:R>\n`,
             isHard,
         ]);
+
         const [N_Embed, S_Embed] = Object.entries(fissures.reduce((acc, fissure) => {
             let currentEmbed = fissure[2] ? acc.S_Embed : acc.N_Embed;
 
@@ -190,6 +191,7 @@ async function refreshFissures(client) {
             .setTimestamp();
 
         const TimeEmbed = new EmbedBuilder()
+            .setTitle("Next fissure resets:")
             .setColor("#b6a57f");
 
         let timeArrOfObj = [];
@@ -204,7 +206,7 @@ async function refreshFissures(client) {
 
         Array.from(fisTimes.entries())
         .sort((a, b) => b[0].localeCompare(a[0]))
-        .forEach(([key, val], index) => {
+        .forEach(([key, val]) => {
             timeArrOfObj.push({ era: key, time: `<t:${val}:R>` })
         });
         
@@ -222,11 +224,12 @@ async function refreshFissures(client) {
             Neodesc: { norm: '', sp: '' },
             Axidesc: { norm: '', sp: '' },
         }));
+
         const timeDesc = allDesc.sort((a, b) => b[0] - a[0]).map(x => {
-            return `\`${`${x[0].replace('desc', '')}`.padEnd(4)}\`   Norm: ${x[1].norm}, SP: ${x[1].sp}`
+            return `\`${`${x[0].replace('desc', '')}`.padEnd(4)}\` - Normal: ${x[1].norm} SP: ${x[1].sp}`
         })
 
-        TimeEmbed.setDescription("Next fissure resets: \n" + timeDesc.join('\n'));
+        TimeEmbed.setDescription(timeDesc.join('\n'));
 
         await messageToEdit.edit({
             content: null,
