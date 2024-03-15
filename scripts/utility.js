@@ -194,6 +194,9 @@ async function refreshFissures(client) {
             .setTitle("Next fissure resets:")
             .setColor("#b6a57f");
 
+        if (NormEmbed.data.fields.length == 0) NormEmbed.setDescription(`No ideal fissures`);
+        if (SPEmbed.data.fields.length == 0) SPEmbed.setDescription(`No ideal fissures`);
+
         let timeArrOfObj = [];
         const fisTimes = getFissureTimings(
             fisres
