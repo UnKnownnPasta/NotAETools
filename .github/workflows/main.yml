@@ -1,0 +1,16 @@
+name: DBH
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    - name: Git pull
+      run: |
+        cd
+        git init
+        git pull https://github.com/UnKnownnPasta/NotAETools
+        npm i
