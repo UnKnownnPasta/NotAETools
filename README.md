@@ -37,11 +37,11 @@ Being used since 2022, the bot has many functions which are used constantly, eve
 
 # Commands
 
-**\*IMPORTANT\*** To preface, all commands are used in discord by prefacing them with a Slash ("/"), and typing required otions in given choice boxes. This is shown in the examples aswell.
+**\*IMPORTANT\*** To preface, all commands are used in discord by prefacing them with a Slash ("/"), and typing required options in given choice boxes. This is shown in the examples aswell.
 
 The only exception to this is the "++" commands; which are used to check relics, status and prime frames/weapons/etc
 
-Parts with **x2** next to them require 2 of the part to count for 1 stock.
+Command arguments with \`*\` in front are optional arguments. Ones without are compulsory.
 
 ## Relic viewing
 
@@ -60,9 +60,13 @@ Example:
 
 **\*NOTE\***: The blue text is the stock of the part in the relic, C/UC/RA means COMMON/UNCOMMON/RARE and the number in **{}** is the token value of the relic.
 
+Parts with **x2** next to them require 2 of the part to count for 1 stock.
+
 ORANGE/etc means the same as it does in [here](https://docs.google.com/document/d/1syjdKLIhfIoAvNFwHtO4yBQjSZTOe869az9xaMBPQrc/edit#heading=h.vfg2mm7li9ri)
 
 ## Squad Hosting
+
+### 1. Treasury
 
 Command Syntax: `/thost count:NUMBER relic:RELIC *type:TYPE`
 
@@ -74,13 +78,28 @@ Here:
 
 Example:
 
-<div><img src='blob/squadexample.png'></div>
+<div><img src='blob/squadtreexample.png'></div>
 
 The bot will host a squad as:
 
-<div><img src='blob/squadhostedex.png'></div>
+<div><img src='blob/squadtrehostedex.png'></div>
 
 And after getting 4 members, the bot will ping all squad members. The host then invites them and runs the relic.
+
+### 2. Farmer
+
+Command Syntax: `/fhost mission:TEXT resource:RESOURCE frame:FRAME missiontype:TYPE *duration:TIME`
+
+Here:
+- `TEXT` is the description of the mission being run. Eg. For a run in void survival on ani, you'd write `Ani - void`
+- `RESOURCE` is the resource being farmed, selected from the autofill choice that pops up on typing the resource name.
+- `FRAME` is the selected frame that the host (you) will be using.
+- `TYPE` is the mission type from the available choices: DEFENSE/SURVIVAL/EXCAVATION
+- `TIME` is the duration of the run in minutes, as a number eg. 180
+
+Example:
+
+<div><img src='blob/farmerrunex.png'></div>
 
 ## Part Availability
 
@@ -169,3 +188,35 @@ For farmers, it is necessary to see what resources are in low stock for their cl
 2. `/clan clan:NAME`
     - NAME is any choice from the choices list, shown in example
     - Example: <div><img src='blob/clanex.png'></div>
+
+<br />
+
+# Contributing to the bot
+
+Are you well versed in Javascript and want to help develop the bot? Here's how you can do it.
+
+## Pre-requisites
+
+To work on the bot, make sure you have the following:
+
+- Node.js - version ^18.x.x
+- Git - latest
+
+## Working on the bot
+
+BEFORE you run this, do make sure you have up-to-date tools to work with:
+
+- `node --version` says a version greater than or equal to 18.x.x
+- `git --version` says a verion greater than or equal to 2.4x.x
+
+Clone the project:
+
+```shell
+git clone https://github.com/UnKnownnPasta/NotAETools && cd NotAETools && touch .env && npm install
+```
+
+And you can now test and work on the project!
+
+**Notes**: You'll need to add the following variables into your `.env`: `TOKEN`, `GOOGLEAPIKEY`, `MAINGUILDID`, `CLIENTID`
+
+The names are self-explanatory.
