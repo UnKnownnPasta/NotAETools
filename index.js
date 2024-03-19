@@ -4,6 +4,7 @@ const path = require('node:path')
 const fs = require('node:fs')
 const { loadFiles, info, refreshFissures, warn } = require('./scripts/utility.js')
 const { loadAllRelics, getAllClanData } = require('./scripts/dbcreate.js');
+const { updateRuns, Runs } = require('./scripts/sequelize.js')
 
 process.on('uncaughtException', (err) => {
 	warn(`anti crash`, err.stack, err)
@@ -49,8 +50,10 @@ eventFiles.forEach(file => {
 
 // Login
 ;(async () => {
+	await Runs.sync();
+	await updateRuns(true);
 	await client.login(process.env.TOKEN);
-	require('./scripts/deploy.js');
+	// require('./scripts/deploy.js');
 	await client.guilds.fetch({ force: true });
 	client.user.setPresence({ activities: [{ name: 'Zloosh 👒', type: ActivityType.Watching }], status: 'dnd' });
 	info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.\n-----`);

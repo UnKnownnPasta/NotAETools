@@ -4,7 +4,8 @@ const {
     ButtonInteraction,
     codeBlock
 } = require("discord.js");
-const fs = require('node:fs/promises')
+const fs = require('node:fs/promises');
+const { Runs } = require("../../scripts/sequelize");
 
 module.exports = { 
     name: "thost",
@@ -23,7 +24,7 @@ module.exports = {
         switch (i.customId) {
 
             case 'thost-join':
-                if (setOfUsers.indexOf(i.user.id) !== -1) return i.update({ });
+                // if (setOfUsers.indexOf(i.user.id) !== -1) return i.update({ });
                 setOfUsers.push(i.user.id)
 
                 relicEmbed.setDescription(relic + '\n' + setOfUsers.map(x => `<@!${x}>`).join('\n'))
@@ -43,6 +44,18 @@ module.exports = {
                     const filledEmbed = new EmbedBuilder()
                     .setTitle(`Run for [${relic}] filled`)
                     .setDescription(`Invite Others:\n` + usersInviteDesc)
+
+                    try {
+                        console.log(setOfUsers[0])
+                        const a = await Runs.increment({ run_count: 1 }, { where: { UID: setOfUsers[0] } });
+                        if (a[0][0] == undefined) {
+                            await Runs.create({
+                                UID: setOfUsers[0]
+                            })
+                        }
+                    } catch (error) {
+                        console.log('Sequelize error:', error)
+                    }
 
                     try {
                         await i.message.delete()
