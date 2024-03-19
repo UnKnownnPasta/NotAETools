@@ -68,7 +68,7 @@ module.exports = {
         await i.reply({ embeds: [clanEmbed] })
     },
     async autocomplete(i) {
-		const focusedValue = i.options.getFocused();
+		const focusedValue = i.options.getFocused().toLowerCase();
 		const choices = [...resourceNames.map(x => x.toLowerCase())];
 		const filtered = choices.filter(choice => choice.startsWith(focusedValue)).slice(0, 25);
 		await i.respond(
