@@ -5,6 +5,7 @@ const path = require('node:path');
 const { info, alert } = require('./utility.js')
 
 const parentDirPath = path.join(__dirname, '..');
+require('dotenv').config({ path: path.resolve(parentDirPath, '.env') });
 
 const commands = [];
 const treasuryFolder = path.join(parentDirPath, './treasury');

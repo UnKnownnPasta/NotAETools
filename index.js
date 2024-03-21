@@ -1,6 +1,6 @@
 const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
-require('dotenv').config()
 const path = require('node:path')
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 const fs = require('node:fs')
 const { loadFiles, info, refreshFissures, warn } = require('./scripts/utility.js')
 const { loadAllRelics, getAllClanData } = require('./scripts/dbcreate.js');
