@@ -33,8 +33,9 @@ module.exports = {
         await i.deferReply();
         const image = i.options.getAttachment("image", true)
 
+        const parentDirPath = path.join(__dirname, '..');
         const worker = await createWorker('eng', 1, {
-            cachePath: path.join(process.cwd(), 'data')
+            cachePath: path.join(parentDirPath, 'data')
         });
         const { data: { text } } = await worker.recognize(image.url);
         await worker.terminate();

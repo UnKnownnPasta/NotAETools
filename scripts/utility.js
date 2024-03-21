@@ -24,7 +24,8 @@ const info = (type, txt) => { console.log(chalk.bgBlackBright(chalk.black(`[${ty
  */
 async function loadFiles(dirpath) {
     let clientCollection = new Collection();
-    const commandsPath = path.join(process.cwd(), dirpath);
+    const parentDirPath = path.join(__dirname, '..');
+    const commandsPath = path.join(parentDirPath, dirpath);
     const files = await fs.readdir(commandsPath)
     const commandFiles = files.filter(file => file.endsWith('.js'));
 

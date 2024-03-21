@@ -4,8 +4,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { info, alert } = require('./utility.js')
 
+const parentDirPath = path.join(__dirname, '..');
+
 const commands = [];
-const treasuryFolder = path.join(process.cwd(), './treasury');
+const treasuryFolder = path.join(parentDirPath, './treasury');
 
 for (const file of fs.readdirSync(treasuryFolder)) {
 	const filePath = path.join(treasuryFolder, file);
@@ -15,7 +17,7 @@ for (const file of fs.readdirSync(treasuryFolder)) {
 	}
 }
 
-const farmerFolder = path.join(process.cwd(), './farmers');
+const farmerFolder = path.join(parentDirPath, './farmers');
 
 for (const file of fs.readdirSync(farmerFolder)) {
 	const filePath = path.join(farmerFolder, file);
