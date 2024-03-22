@@ -13,11 +13,18 @@ module.exports = {
         switch (type) {
             case "status":
                 let edlist = [];
+                let statusRelics = [];
                 allrelics.relicData.forEach((part) => {
+                    let pFoundStats = 0;
                     part.slice(1, 7).forEach((p) => {
-                        if (p.type === word.toUpperCase())
-                            edlist.push(`${`[${p.count}]`.padEnd(3)} | ${p.name}`);
+                        if (p.type === word.toUpperCase()) {
+                            edlist.push(`${`[${p.count}]`.padEnd(5)}| ${p.name}`);
+                            pFoundStats++
+                        }
                     });
+                    if (pFoundStats) {
+                        statusRelics.push([`${`${pFoundStats}`.padEnd(2)}| ${`{${part[0].tokens}}`.padEnd(6)}| ${part[0].name}`, pFoundStats])
+                    }
                 });
 
                 edlist = [...new Set(edlist)].sort(
@@ -25,26 +32,46 @@ module.exports = {
                         a.split("|")[0].match(/\[(.+?)\]/)[1] -
                         b.split("|")[0].match(/\[(.+?)\]/)[1]
                 );
-                const embedOfParts = [];
-                for (let i = 0; i < edlist.length; i += 15) {
-                    embedOfParts.push(
-                        new EmbedBuilder()
-                            .setTitle(`[ ${word.toUpperCase()} ]`)
-                            .setDescription(codeBlock("ml", edlist.slice(i, i + 15).join("\n")))
+                
+                const arrayOfEmbeds = [];
+                if (wd.match(/--[r]/, "") !== null) {
+                    statusRelics = statusRelics.sort(
+                        (a, b) => 
+                            parseInt(`${b[1]}${b[0].match(/\{(.+?)\}/)[1]}`) -
+                            parseInt(`${a[1]}${a[0].match(/\{(.+?)\}/)[1]}`)
                     );
-                }
 
+                    for (let i = 0; i < statusRelics.length; i += 15) {
+                        arrayOfEmbeds.push(
+                            new EmbedBuilder()
+                                .setTitle(`[ ${word.toUpperCase()} DIFF ]`)
+                                .setDescription(codeBlock("ml", statusRelics.slice(i, i + 15).map(x => x[0]).join("\n")))
+                        )
+                    }
+                } else {
+                    for (let i = 0; i < edlist.length; i += 15) {
+                        arrayOfEmbeds.push(
+                            new EmbedBuilder()
+                                .setTitle(`[ ${word.toUpperCase()} ]`)
+                                .setDescription(codeBlock("ml", edlist.slice(i, i + 15).join("\n")))
+                        );
+                    }
+                }
+                
                 const pagination = new Pagination(message, {
                     firstEmoji: "⏮",
                     prevEmoji: "◀️",
                     nextEmoji: "▶️",
                     lastEmoji: "⏭",
-                    idle: 60000,
+                    idle: 90000,
                     buttonStyle: ButtonStyle.Secondary,
                     loop: true,
                 });
 
-                pagination.setEmbeds(embedOfParts, (embed, index, array) => {
+                pagination.setEmbeds(arrayOfEmbeds, (embed, index, array) => {
+                    if (wd.match(/--[r]/, "") !== null) {
+                        embed.setDescription(`Format:\n${codeBlock(`ml`, `COUNT | {TOKEN} | RELIC`)}` + embed.data.description);
+                    }
                     return embed.setFooter({
                         text: `Page ${index + 1}/${array.length}`,
                     });
@@ -101,14 +128,14 @@ module.exports = {
                 parts = parts.map((x) => `${x.count.padEnd(3)}| ${x.name} {${x.type}}`);
                 parts = [...new Set(parts)];
 
-                const embds = [
+                const embedArray = [
                     new EmbedBuilder()
                         .setTitle(`[ ${word} ]`)
                         .setDescription(codeBlock("ml", parts.join("\n"))),
                 ];
 
                 if (wd.match(/--[r]/, "") !== null) {
-                    embds.push(
+                    embedArray.push(
                         new EmbedBuilder().setDescription(
                             codeBlock("ml", getAllRelics
                                 .map((x) => `${`{${x.tokens}}`.padEnd(5)}| ${x.name}`)
@@ -118,7 +145,7 @@ module.exports = {
                     );
                 }
 
-                message.reply({ embeds: [...embds] });
+                message.reply({ embeds: [...embedArray] });
                 break;
 
             case "relic":
