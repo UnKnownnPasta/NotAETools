@@ -1,15 +1,10 @@
 const { Sequelize } = require("sequelize");
-const path = require("path");
+// const path = require("path");
 const logger = require('./bLog.js')
 
 class Database {
     constructor() {
-        this.sequelize = new Sequelize({
-            dialect: "sqlite",
-            storage: path.join(process.cwd(), "src/data/database.sqlite"),
-            sync: false,
-            logging: false,
-        });
+        this.sequelize = new Sequelize('postgres://user:pass@example.com:5432/aetools')
 
         // Define models, associations, etc.
         this.defineModels();
@@ -29,7 +24,7 @@ class Database {
     async authenticate() {
         try {
             await this.sequelize.authenticate();
-            logger.event("Connection has been established successfully.");
+            logger.info("Connection has been established successfully.");
         } catch (error) {
             logger.error("Unable to connect to the database:" + error.stack);
         }

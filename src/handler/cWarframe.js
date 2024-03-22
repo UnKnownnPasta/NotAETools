@@ -7,7 +7,7 @@ const database = require('./cDatabase.js')
 // Google fetch func
 const googleFetch = async (id, range) => {
     return google.sheets("v4").spreadsheets.values.get({
-        auth: process.env.GOOGLEAPIKEY,
+        auth: process.env.GOOGLE_API_KEY,
         spreadsheetId: id,
         range: range,
     });

@@ -1,3 +1,7 @@
+const axios = require('axios')
+const { Client, EmbedBuilder } = require('discord.js')
+const logger = require('../handler/bLog.js')
+
 /**
  * Gets the next UTC time that a fissure gets created
  * @param {Array} fisTimes 
@@ -111,7 +115,7 @@ async function refreshFissures(client) {
             embeds: [NormEmbed, SPEmbed, TimeEmbed],
         });
     } catch (error) {
-        warn("INTRLV", "Failed to refresh fissures", error);
+        logger.error("Failed to refresh fissures");
     }
 }
 

@@ -1,12 +1,18 @@
 const bot = require('./src/bot.js')
 
-bot.settings['anti_crash'] = false;
-bot.settings['fetch_guilds'] = false;
-bot.settings['deploy_commands'] = false;
-bot.settings['sync_with_force'] = false;
-bot.settings['cycle_fissure'] = false;
+// Setup the bot
+bot.settings = {
+	sync_with_force: false,
+	deploy_commands: false,
+	cycle_fissure: false,
+	cycle_db: true,
+	anti_crash: false,
+	fetch_guilds: false,
+	fissure_interval: 300_000,
+	update_interval: 300_000,
+}
 
+// Start the bot
 ;(async () => {
-	// Start the bot
 	await bot.start();
 })();

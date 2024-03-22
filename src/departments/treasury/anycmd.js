@@ -1,28 +1,37 @@
 const { EmbedBuilder, codeBlock, ButtonStyle } = require("discord.js");
 const fs = require("node:fs/promises");
 const { Pagination } = require("pagination.djs");
-const { filterRelic } = require("../../handler/bHelper.js");
+const { filterRelic, titleCase } = require("../../handler/bHelper.js");
+const database = require('../../handler/cDatabase.js')
+const { Op } = require('sequelize');
+const logger = require("../../handler/bLog.js");
 
 module.exports = {
     name: "anycmd",
     async execute(client, message, wd, type) {
-        const allrelics = await JSON.parse(await fs.readFile("./src/data/relicdata.json"));
+        // Received in TitleCase
         const word = wd.replace(/--[r]/, "").trim();
 
         switch (type) {
             case "status":
                 let edlist = [];
-                allrelics.relicData.forEach((part) => {
-                    part.slice(1, 7).forEach((p) => {
-                        if (p.type === word.toUpperCase())
-                            edlist.push(`${`[${p.count}]`.padEnd(3)} | ${p.name}`);
-                    });
-                });
+                const relicData = await database.models.Relics.findAll({ attributes: [
+                    'part1', 'part2', 'part3', 'part4', 'part5', 'part6' 
+                ] });
+                for (const part of relicData) {
+                    const only_parts = part.get()
+                    for (let i = 1; i < 7; i++) {
+                        let current_part = only_parts[`part${i}`]
+                        if (current_part.type === word.toUpperCase()) {
+                            edlist.push(`${`[${current_part.count}]`.padEnd(4)}| ${current_part.name}`);
+                        }
+                    }
+                }
 
                 edlist = [...new Set(edlist)].sort(
                     (a, b) =>
-                        a.split("|")[0].match(/\[(.+?)\]/)[1] -
-                        b.split("|")[0].match(/\[(.+?)\]/)[1]
+                        a.match(/\[(.+?)\]/)[1] -
+                        b.match(/\[(.+?)\]/)[1]
                 );
                 const embedOfParts = [];
                 for (let i = 0; i < edlist.length; i += 15) {
@@ -34,10 +43,6 @@ module.exports = {
                 }
 
                 const pagination = new Pagination(message, {
-                    firstEmoji: "⏮",
-                    prevEmoji: "◀️",
-                    nextEmoji: "▶️",
-                    lastEmoji: "⏭",
                     idle: 60000,
                     buttonStyle: ButtonStyle.Secondary,
                     loop: true,
@@ -52,18 +57,26 @@ module.exports = {
                 break;
 
             case "part":
-                if (!allrelics.partNames.some(x => x.indexOf(word) !== -1) || (word.split(' ').length === 1)) return;
+                if (word.split(' ').length === 1) return;
+
+                const partExists = await database.models.Relics.findAll({ where: { 
+                     "relic.has": { [Op.contains]: [word] },
+                   }
+                });
+                logger.info(partExists)
+                if (!partExists.length) return;
+
                 if (word.split(' ')[1].length === 1 && word.split(' ')[1] != '&') return;
                 const scarcity = ["C", "C", "C", "UC", "UC", "RA"];
                 let countOfPart, trueName;
 
-                const relicList = allrelics.relicData
+                const relicList = (await database.models.Relics.findAll({ attributes: ['relic'] }))
                     .map((relic) => {
-                        const item = relic[0].has.findIndex((x) => x.indexOf(word) !== -1);
+                        const item = relic.get().relic.has.findIndex((x) => x.indexOf(titleCase(word)) !== -1);
                         if (item === -1) return;
-                        if (!countOfPart) countOfPart = relic[item + 1].count;
-                        if (!trueName) trueName = relic[item + 1].name;
-                        return `${scarcity[item].padEnd(2)} | ${relic[0].name} {${relic[0].tokens}}`;
+                        if (!countOfPart) countOfPart = relic.get().relic.has[item].count;
+                        if (!trueName) trueName = relic.get().relic.has[item].name;
+                        return `${scarcity[item].padEnd(2)} | ${relic.get().relic.has[0].name} {${relic.get().relic.has[0].tokens}}`;
                     })
                     .filter((x) => x !== undefined)
                     .sort((a, b) => b.match(/\{(.+?)\}/)[1] - a.match(/\{(.+?)\}/)[1]);

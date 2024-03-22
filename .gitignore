@@ -1,4 +1,11 @@
+# Folders
 .env
 dev/
-node_modules
+node_modules/
+
+# Other files
 *.sqlite*
+
+# JSON Files
+relicdata.json
+clandata.json
