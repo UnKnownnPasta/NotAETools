@@ -24,9 +24,7 @@ module.exports = {
 
         let isPrime = word.split(" ").includes("prime");
         let isRelic = await relicExists(filterRelic(word));
-        let isStatus = ["ed", "red", "orange", "green", "yellow"].some(
-            (x) => word.indexOf(x) != -1
-        );
+        let isStatus = /^(ed|red|orange|green|yellow)( --r)?$/.test(word);
 
         // 1st check: not relic not prime and is ed
         // 2nd check: not relic not ed not prime
