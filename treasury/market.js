@@ -33,14 +33,13 @@ module.exports = {
         await i.deferReply();
         const image = i.options.getAttachment("image", true)
 
-        const parentDirPath = path.join(__dirname, '..');
         const worker = await createWorker('eng', 1, {
-            cachePath: path.join(parentDirPath, 'data')
+            cachePath: path.join(__dirname, '..', 'data')
         });
         const { data: { text } } = await worker.recognize(image.url);
         await worker.terminate();
 
-        let items = await JSON.parse(fs.readFileSync('./data/wfm.json'))
+        let items = await JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data/wfm.json')))
         const itemNames = text.trim().split('\n')
 
         items = items.filter(item => {

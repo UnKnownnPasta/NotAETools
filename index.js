@@ -37,7 +37,7 @@ setInterval(async () => {
 info('STRTUP', 'Loaded command files.')
 
 // Load all event listeners
-const eventsPath = path.join(__dirname, './events/listeners');
+const eventsPath = path.join(__dirname, 'events/listeners');
 const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
 eventFiles.forEach(file => {

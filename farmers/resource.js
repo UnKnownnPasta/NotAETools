@@ -6,6 +6,7 @@ const {
 } = require("discord.js");
 const fs = require("node:fs/promises");
 const { titleCase } = require("../scripts/utility");
+const path = require("node:path");
 
 const resourceNames = [
     'Credits', 'Alloy Plate',
@@ -30,8 +31,7 @@ const resourceNames = [
     'Titanium', 'Trachons',
     'Detonite Injector', 'Fieldron',
     'Mutagen Mass'
-  ];  
-  
+  ];
 
 module.exports = {
     name: "resource",
@@ -51,7 +51,7 @@ module.exports = {
      * @param {CommandInteraction} i 
      */
     async execute(client, i) {
-        const resources = (await JSON.parse(await fs.readFile('./data/clandata.json'))).resources
+        const resources = (await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/clandata.json')))).resources
         const resrc = i.options.getString('resource', true)
 
         if (!resourceNames.includes(resrc)) 

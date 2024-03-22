@@ -4,11 +4,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { info, alert } = require('./utility.js')
 
-const parentDirPath = path.join(__dirname, '..');
-require('dotenv').config({ path: path.resolve(parentDirPath, '.env') });
+require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') });
 
 const commands = [];
-const treasuryFolder = path.join(parentDirPath, './treasury');
+const treasuryFolder = path.join(__dirname, '..', 'treasury');
 
 for (const file of fs.readdirSync(treasuryFolder)) {
 	const filePath = path.join(treasuryFolder, file);
@@ -18,7 +17,7 @@ for (const file of fs.readdirSync(treasuryFolder)) {
 	}
 }
 
-const farmerFolder = path.join(parentDirPath, './farmers');
+const farmerFolder = path.join(__dirname, '..', 'farmers');
 
 for (const file of fs.readdirSync(farmerFolder)) {
 	const filePath = path.join(farmerFolder, file);

@@ -5,7 +5,8 @@ const {
     EmbedBuilder,
     codeBlock
 } = require("discord.js");
-const fs = require('node:fs/promises')
+const fs = require('node:fs/promises');
+const path = require("node:path");
 
 module.exports = {
     name: 'resoup',
@@ -56,7 +57,7 @@ module.exports = {
             relics.push(`${souptext[index].trim().replace('x', '')}${toShort(souptext[index+1].trim())}`)
         }
 
-        const relicsList = (await JSON.parse(await fs.readFile('./data/relicdata.json', 'utf-8')));
+        const relicsList = (await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/relicdata.json'), 'utf-8')));
         async function getRelic(name, type=null) {
             for (const relic of relicsList.relicData) {
                 if (relic[0].name == name) {

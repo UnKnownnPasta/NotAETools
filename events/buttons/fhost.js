@@ -4,8 +4,8 @@ const {
     ButtonInteraction,
     ActionRowBuilder,
 } = require("discord.js");
-const { titleCase } = require("../../scripts/utility");
-const fs = require('node:fs/promises')
+const fs = require('node:fs/promises');
+const path = require("node:path");
 
 module.exports = {
     name: "fhost",
@@ -66,7 +66,7 @@ module.exports = {
 
         if (allIDs.filter(x => x != 'n').length >= 4) {
             await i.message.delete();
-            let names = await JSON.parse(await fs.readFile('./data/clandata.json'))
+            let names = await JSON.parse(await fs.readFile(path.join(__dirname, '..', '..', 'data/clandata.json')))
             if (!names.farmerids) return i.channel.send({ content: `<@740536348166848582> oi fhost broke again, keys: ${Object.keys(names)}` });
             names = names.farmerids;
 

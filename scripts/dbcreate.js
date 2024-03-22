@@ -2,6 +2,7 @@ const { google } = require('googleapis')
 const { spreadsheet, dualitemslist } = require('../data/config.json')
 const fs = require('node:fs/promises');
 const { warn } = require('./utility');
+const path = require('node:path');
 
 // Google fetch func
 const googleFetch = async (id, range) => {
@@ -59,7 +60,7 @@ async function loadAllRelics() {
         const rNames = combinedData.map(relic => relic[0].name)
         const pNames = [... new Set(combinedData.map(relic => relic[0].has).flat().map(relic => relic.replace(' x2', '')))]
 
-        await fs.writeFile('./data/relicdata.json', JSON.stringify({ relicData: combinedData, relicNames: rNames, partNames: pNames }))
+        await fs.writeFile(path.join(__dirname, '..', 'data/relicdata.json'), JSON.stringify({ relicData: combinedData, relicNames: rNames, partNames: pNames }))
     }
 }
 
@@ -95,7 +96,7 @@ async function getAllClanData() {
             if (!results || !results?.length || results.some(x => !Object.keys(x).length))
                 return warn('CLNERR', 'Error when fetching clan data', `No data found when searching for clan resources (${spreadsheet.farmer.resourceName})`);
             ClanResources.push(...results);
-            await fs.writeFile('./data/clandata.json', JSON.stringify({ treasuryids: TreasIDs, farmerids: FarmIDs, resources: ClanResources }))            
+            await fs.writeFile(path.join(__dirname, '..', 'data/clandata.json'), JSON.stringify({ treasuryids: TreasIDs, farmerids: FarmIDs, resources: ClanResources }))            
         })
         .catch(error => {
             console.error('Error fetching sheet values:', error.message);

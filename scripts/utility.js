@@ -24,8 +24,7 @@ const info = (type, txt) => { console.log(chalk.bgBlackBright(chalk.black(`[${ty
  */
 async function loadFiles(dirpath) {
     let clientCollection = new Collection();
-    const parentDirPath = path.join(__dirname, '..');
-    const commandsPath = path.join(parentDirPath, dirpath);
+    const commandsPath = path.join(__dirname, '..', dirpath);
     const files = await fs.readdir(commandsPath)
     const commandFiles = files.filter(file => file.endsWith('.js'));
 
@@ -99,7 +98,7 @@ function filterRelic(relic) {
  * @returns Boolean
  */
 async function relicExists(relic) {
-    const relicList = (await JSON.parse(await fs.readFile('./data/relicdata.json'))).relicNames
+    const relicList = (await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/relicdata.json')))).relicNames
     return relicList.includes(relic)
 }
 
