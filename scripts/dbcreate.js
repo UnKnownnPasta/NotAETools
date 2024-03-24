@@ -3,7 +3,7 @@ const { spreadsheet, dualitemslist, collectionBox } = require('../data/config.js
 const fs = require('node:fs/promises');
 const { warn, titleCase } = require('./utility');
 const path = require('node:path');
-const { Client, ThreadChannel } = require('discord.js');
+const { Client, ThreadChannel, codeBlock } = require('discord.js');
 
 // Google fetch func
 const googleFetch = async (id, range) => {
@@ -108,10 +108,10 @@ async function getAllClanData() {
  * @param {Client} client 
  */
 async function getAllBoxData(client) {
-    const boxChannel =  await client.channels.cache.get(collectionBox.id).threads;
+    const boxChannel =  await client.channels.cache.get(collectionBox.testid).threads;
     const boxStock = {}
 
-    const promises = Object.entries(collectionBox.channels).map(async ([chnl, cid]) => {
+    const promises = Object.entries(collectionBox.testchannels).map(async ([chnl, cid]) => {
 
         await boxChannel.fetch(cid).then(/*** @param {ThreadChannel} thread */ async (thread) => {
 
@@ -121,8 +121,14 @@ async function getAllBoxData(client) {
                     .toLowerCase()
                     .replace(/\s*prime\s*/, ' ')
                     .replace(/\b(\d+)\s*x?\s*\b/g, '$1x ')
-                    .split(/(?:(?:, )|(?:\n)|(?:\s(?=\b\d+x?\b)))/);
-                
+                    .replace(/\b(\d+)\s*x?\b\s*(.*?),\s*/g, '$1x $2, ')
+                    .split(/(?:(?:, )|(?:\n)|(?:\s(?=\b\d+x\b)))/);
+
+                console.log(msg.content.toLowerCase()
+                .replace(/\s*prime\s*/, ' ')
+                .replace(/\b(\d+)\s*x?\s*\b/g, '$1x ')
+                .replace(/\b(\d+)\s*x?\b\s*(.*?),\s*/g, '$1x $2, '));
+
                 let newParts = []
                 for (let i = 0; i < parts.length; i++) {
                     if (i < parts.length - 1 && parts[i + 1].endsWith('x ')) {
@@ -133,9 +139,9 @@ async function getAllBoxData(client) {
                     }
                 }
 
-                parts = newParts.filter(x => x).filter(x => /\dx/.test(x) && !/[^\w\s]/.test(x))
+                parts = newParts.filter(x => /\dx/.test(x) && !/[^\w\s]/.test(x))
                 if (!parts.length) return;
-                const splitByStock = parts.filter(x => x).map(part => part.split(/(\b\d+\s*x\b|\bx\d+\b)\s*(.*)/).filter(x => x).map(x => {
+                const splitByStock = parts.filter(x => x).map(part => part.split(/(\b\d+\s*x\b|\bx\d+\b)\s*(.*)/).map(x => {
                     let y = x
                     if (/\d/.test(x)) {
                         y = parseInt(x.replace(/(\d+)x/, '$1'))
@@ -145,9 +151,10 @@ async function getAllBoxData(client) {
                 }));
 
                 await splitByStock.map((part) => {
+                    part = part.filter(x => x)
                     let nmIndex = part.indexOf(part.find(element => typeof element === 'number'));
 
-                    if (nmIndex == -1 || part.length < 2 || part.some(x => typeof x == 'string')) { return; }
+                    if (nmIndex == -1 || part.length < 2 || !part.some(x => typeof x == 'string')) { return; }
 
                     let updatedAny = false;
                     const boxObj = Object.entries(boxStock);
@@ -159,7 +166,7 @@ async function getAllBoxData(client) {
                         let partText = curPartName.split(' ').filter(x => x)
 
                         const matchAny = (a, b) => a.startsWith(b) || b.startsWith(a)
-                        
+
                         if (partText.slice(0, -1).some(n => matchAny(n, x))) {
                             if (partText[0] == 'magnus' && ['bp', 'receiver', 'reciever', 'barrel'].some(nx => nx.startsWith(partText.at(-1)))) {
                                 updatedAny = true
@@ -189,12 +196,6 @@ async function getAllBoxData(client) {
     await Promise.all(promises)
     console.log(boxStock)
 
-    /**
-     * @TODO
-     * Retreive all relics.has, uniquify, then match against boxStock
-     * update all names accordingly
-     * write boxStock to ../data/boxdata.json
-     */
 }
 
 module.exports = { loadAllRelics, getAllClanData, getAllBoxData }
