@@ -1,8 +1,9 @@
 const { google } = require('googleapis')
-const { spreadsheet, dualitemslist } = require('../data/config.json')
+const { spreadsheet, dualitemslist, collectionBox } = require('../data/config.json')
 const fs = require('node:fs/promises');
-const { warn } = require('./utility');
+const { warn, titleCase } = require('./utility');
 const path = require('node:path');
+const { Client, ThreadChannel } = require('discord.js');
 
 // Google fetch func
 const googleFetch = async (id, range) => {
@@ -103,4 +104,97 @@ async function getAllClanData() {
         });
 }
 
-module.exports = { loadAllRelics, getAllClanData }
+/**
+ * @param {Client} client 
+ */
+async function getAllBoxData(client) {
+    const boxChannel =  await client.channels.cache.get(collectionBox.id).threads;
+    const boxStock = {}
+
+    const promises = Object.entries(collectionBox.channels).map(async ([chnl, cid]) => {
+
+        await boxChannel.fetch(cid).then(/*** @param {ThreadChannel} thread */ async (thread) => {
+
+            await thread.messages.fetch({ limit: thread.messageCount, cache: false }).then((messages) => { messages.map(async (msg) => {
+
+                let parts = msg.content
+                    .toLowerCase()
+                    .replace(/\s*prime\s*/, ' ')
+                    .replace(/\b(\d+)\s*x?\s*\b/g, '$1x ')
+                    .split(/(?:(?:, )|(?:\n)|(?:\s(?=\b\d+x?\b)))/);
+                
+                let newParts = []
+                for (let i = 0; i < parts.length; i++) {
+                    if (i < parts.length - 1 && parts[i + 1].endsWith('x ')) {
+                        newParts.push(parts[i + 1] + parts[i]);
+                        i++;
+                    } else {
+                        newParts.push(parts[i]);
+                    }
+                }
+
+                parts = newParts.filter(x => x).filter(x => /\dx/.test(x) && !/[^\w\s]/.test(x))
+                if (!parts.length) return;
+                const splitByStock = parts.filter(x => x).map(part => part.split(/(\b\d+\s*x\b|\bx\d+\b)\s*(.*)/).filter(x => x).map(x => {
+                    let y = x
+                    if (/\d/.test(x)) {
+                        y = parseInt(x.replace(/(\d+)x/, '$1'))
+                        if (isNaN(y)) y = x.replace(/(\d+)x/, '$1');
+                    }
+                    return y;
+                }));
+
+                await splitByStock.map((part) => {
+                    let nmIndex = part.indexOf(part.find(element => typeof element === 'number'));
+
+                    if (nmIndex == -1 || part.length < 2 || part.some(x => typeof x == 'string')) { return; }
+
+                    let updatedAny = false;
+                    const boxObj = Object.entries(boxStock);
+                    let curPartName = part[~nmIndex & 1].trim()
+
+                    for (const [key, val] of boxObj) {
+                        let words = key.split(" ")
+                        let x = words[0], y = words.at(-1);
+                        let partText = curPartName.split(' ').filter(x => x)
+
+                        const matchAny = (a, b) => a.startsWith(b) || b.startsWith(a)
+                        
+                        if (partText.slice(0, -1).some(n => matchAny(n, x))) {
+                            if (partText[0] == 'magnus' && ['bp', 'receiver', 'reciever', 'barrel'].some(nx => nx.startsWith(partText.at(-1)))) {
+                                updatedAny = true
+                                boxStock[curPartName] = (boxStock[curPartName] ?? 0) + part[nmIndex]
+                                return;
+                            }
+                            else if (partText[0] == 'mag' && ['bp', 'neuroptics', 'blueprint', 'systems', 'chassis'].some(nx => nx.startsWith(partText.at(-1)))) {
+                                updatedAny = true
+                                boxStock[curPartName] = (boxStock[curPartName] ?? 0) + part[nmIndex]
+                                return;
+                            }
+                            else if (matchAny(y, partText.at(-1))) {
+                                updatedAny = true
+                                boxStock[key] += part[nmIndex]
+                                return;
+                            }
+                        }
+                    }
+
+                    if (!updatedAny) { boxStock[curPartName] = part[nmIndex] }
+                })
+            })
+        })
+        })
+    })
+
+    await Promise.all(promises)
+    console.log(boxStock)
+
+    /**
+     * @TODO
+     * Retreive all relics.has, uniquify, then match against boxStock
+     * update all names accordingly
+     * write boxStock to ../data/boxdata.json
+     */
+}
+
+module.exports = { loadAllRelics, getAllClanData, getAllBoxData }

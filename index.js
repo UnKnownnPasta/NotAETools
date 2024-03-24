@@ -3,7 +3,7 @@ const path = require('node:path')
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 const fs = require('node:fs')
 const { loadFiles, info, refreshFissures, warn } = require('./scripts/utility.js')
-const { loadAllRelics, getAllClanData } = require('./scripts/dbcreate.js');
+const { loadAllRelics, getAllClanData, getAllBoxData } = require('./scripts/dbcreate.js');
 
 process.on('uncaughtException', (err) => {
 	warn(`anti crash`, err.stack, err)
@@ -50,9 +50,11 @@ eventFiles.forEach(file => {
 // Login
 ;(async () => {
 	await client.login(process.env.TOKEN);
-	require('./scripts/deploy.js');
 	await client.guilds.fetch({ force: true });
-	client.user.setPresence({ activities: [{ name: 'Zloosh 👒', type: ActivityType.Watching }], status: 'dnd' });
+	require('./scripts/deploy.js');
+
+	client.user.setPresence({ activities: [{ name: 'Ya mom 👒', type: ActivityType.Watching }], status: 'dnd' });
 	info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.\n-----`);
+
 	await refreshFissures(client);
 })();

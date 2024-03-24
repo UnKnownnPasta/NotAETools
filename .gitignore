@@ -1,6 +1,12 @@
-.env
+# Folders
 dev/
 node_modules
+
+# JSONs
 clandata.json
 relicdata.json
+boxdata.json
+
+# Other
 *.traineddata
+.env
