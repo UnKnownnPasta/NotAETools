@@ -211,10 +211,18 @@ async function getAllBoxData(client) {
             else if (splitnm[0] == 'Magnus') return x.startsWith('Magnus')
             else return x.startsWith(splitnm[0])
         })
-        .filter(y => y.replace('Limb', '').trim().split(' ').slice(1).some(
+        .filter(y => y.split(' ').slice(1).some(
             z => splitnm.slice(1).some(p => z.startsWith(p == 'bp' ? 'BP' : p.slice(0, -1)))))
+            
         if (pind.length > 1) {
-            pind = [ pind.find(x => x.split(' ')[0] == splitnm[0]) ]
+            let numMatch = 0;
+            pind.map(x => {
+                x.split(' ').some(y => splitnm.includes(y) ? numMatch++ : false)
+                if (numMatch == splitnm.length) {
+                    pind = [ x ]
+                    return;
+                }
+            })
         }
 
         if (!pind.length) return console.log(part, pind);
