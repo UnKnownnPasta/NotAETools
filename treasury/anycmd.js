@@ -1,7 +1,7 @@
 const { EmbedBuilder, codeBlock, ButtonStyle } = require("discord.js");
 const fs = require("node:fs/promises");
 const { Pagination } = require("pagination.djs");
-const { filterRelic } = require("../scripts/utility.js");
+const { filterRelic, titleCase } = require("../scripts/utility.js");
 const path = require("node:path");
 
 const range = (num) => {
@@ -16,20 +16,35 @@ module.exports = {
     name: "anycmd",
     async execute(client, message, wd, type) {
         const allrelics = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/relicdata.json')));
-        const word = wd.replace(/--[rb]/g, "").trim();
-        const collectionBox = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/boxdata.json')));
+        const word = wd.replace(/ --[rb].*$/, "");
         let hasdashb = wd.match(/--[b]/, "") !== null
+        let hasdashr = wd.match(/--[r]/, "") !== null
+        let collectionBox;
+        if (hasdashb) {
+            collectionBox = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/boxdata.json')));
+        }
 
         switch (type) {
             case "status":
                 let edlist = [];
                 let statusRelics = [];
+                let lastword = titleCase(wd.split(/\s+/g).at(-1).trim())
+
+                const lastisdash = lastword == '--r' || lastword == '--b'
                 allrelics.relicData.forEach((part) => {
                     let pFoundStats = 0;
                     part.slice(1, 7).forEach((p) => {
-                        if (p.type === word.toUpperCase()) {
-                            edlist.push(`${`[${p.count}]`.padEnd(5)}| ${p.name}`);
-                            pFoundStats++
+                        if (hasdashr && !part[0].name.startsWith(lastword) && !lastisdash) return;
+                        if (hasdashb) {
+                            if (range(parseInt(p.count) + (collectionBox[p.name] ?? 0)) === word.toUpperCase()) {
+                                edlist.push(`${`[${p.count}]`.padEnd(5)}| ${p.name}`);
+                                pFoundStats++
+                            }
+                        } else {
+                            if (p.type === word.toUpperCase()) {
+                                edlist.push(`${`[${p.count}]`.padEnd(5)}| ${p.name}`);
+                                pFoundStats++
+                            }
                         }
                     });
                     if (pFoundStats) {
@@ -44,7 +59,7 @@ module.exports = {
                 );
                 
                 const arrayOfEmbeds = [];
-                if (wd.match(/--[r]/, "") !== null) {
+                if (hasdashr) {
                     statusRelics = statusRelics.sort(
                         (a, b) => 
                             parseInt(`${b[1]}${b[0].match(/\{(.+?)\}/)[1]}`) -
