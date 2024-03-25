@@ -21,9 +21,12 @@ const client = new Client({
 
 let intrv_count = 0
 setInterval(async () => {
-	await loadAllRelics();
 	await refreshFissures(client);
+}, 180_000);
+setInterval(async () => {
+	await loadAllRelics();
 	await getAllClanData();
+	await getAllBoxData(client);
 	intrv_count++
 	if (intrv_count%15 == 0) info(`INTRVL`, `${intrv_count} intervals done.`)
 }, 300_000);
@@ -53,11 +56,11 @@ eventFiles.forEach(file => {
 	// await client.guilds.fetch({ force: true });
 	// require('./scripts/deploy.js');
 
-	client.user.setPresence({ activities: [{ name: 'Ya mom 👒', type: ActivityType.Watching }], status: 'dnd' });
-	info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.\n-----`);
-
 	client.on('ready', async () => {
+		client.user.setPresence({ activities: [{ name: 'Ya mom 👒', type: ActivityType.Watching }], status: 'dnd' });
+		info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.\n-----`);
+
 		await getAllBoxData(client);
+		// await refreshFissures(client);
 	})
-	// await refreshFissures(client);
 })();

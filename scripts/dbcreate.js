@@ -3,7 +3,7 @@ const { spreadsheet, dualitemslist, collectionBox } = require('../data/config.js
 const fs = require('node:fs/promises');
 const { warn, titleCase } = require('./utility');
 const path = require('node:path');
-const { Client, ThreadChannel, codeBlock } = require('discord.js');
+const { Client, ThreadChannel } = require('discord.js');
 
 // Google fetch func
 const googleFetch = async (id, range) => {
@@ -108,10 +108,10 @@ async function getAllClanData() {
  * @param {Client} client 
  */
 async function getAllBoxData(client) {
-    const boxChannel =  await client.channels.cache.get(collectionBox.testid).threads;
+    const boxChannel =  await client.channels.cache.get(collectionBox.id).threads;
     const boxStock = {}
 
-    const promises = Object.entries(collectionBox.testchannels).map(async ([chnl, cid]) => {
+    const promises = Object.entries(collectionBox.channels).map(async ([chnl, cid]) => {
 
         await boxChannel.fetch(cid).then(/*** @param {ThreadChannel} thread */ async (thread) => {
 
@@ -202,6 +202,7 @@ async function getAllBoxData(client) {
     const fixedBoxStock = {}
     const jsfile = await JSON.parse( await fs.readFile(path.join(__dirname, '..', 'data/relicdata.json')) )
     const partNames = [... new Set(jsfile.relicData.map(x => x[0].has).flat())]
+
     const fixpromises = Object.entries(boxStock).map(async ([part, stock]) => {
         const splitnm = titleCase(part).split(" ")
         let pind = partNames.filter(x => {
@@ -209,13 +210,13 @@ async function getAllBoxData(client) {
             else if (splitnm[0] == 'Magnus') return x.startsWith('Magnus')
             else return x.startsWith(splitnm[0])
         })
-        .filter(y => y.split(' ').some(
-            z => splitnm.slice(1).some(p => z.startsWith(p.slice(0, -1)))))
+        .filter(y => y.split(' ').slice(1).some(
+            z => splitnm.slice(1).some(p => z.startsWith(p == 'bp' ? 'BP' : p.slice(0, -1)))))
         if (pind.length > 1) {
             pind = [ pind.find(x => x.split(' ')[0] == splitnm[0]) ]
         }
 
-        if (!pind.length) return console.log('no', part)
+        if (!pind.length) return console.log(part, pind);
         fixedBoxStock[pind.join(" ")] = stock
     })
 

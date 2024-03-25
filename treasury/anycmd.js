@@ -4,11 +4,21 @@ const { Pagination } = require("pagination.djs");
 const { filterRelic } = require("../scripts/utility.js");
 const path = require("node:path");
 
+const range = (num) => {
+    return num >= 0 && num <= 7 ? 'ED'
+           : num > 7 && num <= 15 ? 'RED'
+           : num > 15 && num <=31 ? 'ORANGE'
+           : num > 31 && num <=64 ? 'YELLOW'
+           : 'GREEN'
+}
+
 module.exports = {
     name: "anycmd",
     async execute(client, message, wd, type) {
         const allrelics = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/relicdata.json')));
-        const word = wd.replace(/--[r]/, "").trim();
+        const word = wd.replace(/--[rb]/g, "").trim();
+        const collectionBox = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/boxdata.json')));
+        let hasdashb = wd.match(/--[b]/, "") !== null
 
         switch (type) {
             case "status":
@@ -63,7 +73,7 @@ module.exports = {
                     prevEmoji: "◀️",
                     nextEmoji: "▶️",
                     lastEmoji: "⏭",
-                    idle: 90000,
+                    idle: 240_000,
                     buttonStyle: ButtonStyle.Secondary,
                     loop: true,
                 });
@@ -96,10 +106,12 @@ module.exports = {
                     .filter((x) => x !== undefined)
                     .sort((a, b) => b.match(/\{(.+?)\}/)[1] - a.match(/\{(.+?)\}/)[1]);
 
+                let extraCount = '';
+                if (hasdashb) extraCount = `(+${collectionBox[trueName] ?? 0})`;
                 await message.reply({
                     embeds: [
                         new EmbedBuilder()
-                            .setTitle(`[ ${trueName} ] {x${countOfPart}}`)
+                            .setTitle(`[ ${trueName} ] {x${countOfPart}${extraCount}}`)
                             .setDescription(codeBlock("ml", relicList.join("\n")))
                             .setFooter({ text: `${relicList.length} results` }),
                     ],
@@ -125,7 +137,16 @@ module.exports = {
                     .filter((x) => x !== undefined);
                 if (!getAllRelics.length) return;
 
-                parts = parts.map((x) => `${x.count.padEnd(3)}| ${x.name} {${x.type}}`);
+                
+                parts = parts.map((x) => {
+                    let extraCount = '';
+                    let color = x.type === "" ? "" : `{${x.type}}`
+                    if (hasdashb) {
+                        extraCount = `(${collectionBox[x.name] ?? 0})`;
+                        color = x.type === "" ? "" : `{${ range(parseInt(x.count) + (collectionBox[x.name] ?? 0)) }}`;
+                    }
+                    return `${hasdashb ? `${x.count}${extraCount}`.padEnd(6) : `${x.count}`.padEnd(3)}| ${x.name} ${color}`;
+                });
                 parts = [...new Set(parts)];
 
                 const embedArray = [
@@ -154,10 +175,18 @@ module.exports = {
                 )[0];
 
                 const rarties = ["C", "C", "C", "UC", "UC", "RA"];
-                let emstr = frelic
+                let emstr = await frelic
                     .slice(1, 7)
-                    .map((x, i) => `${rarties[i].padEnd(2)} | ${x.count.padEnd(2)} | ${x.name} ${x.type === "" ? "" : `{${x.type}}`}`);
-                message.reply({
+                    .map((x, i) => {
+                        let extraCount = '';
+                        let color = x.type === "" ? "" : `{${x.type}}`
+                        if (hasdashb) {
+                            extraCount = `(${collectionBox[x.name] ?? 0})`;
+                            color = x.type === "" ? "" : `{${ range(parseInt(x.count) + (collectionBox[x.name] ?? 0)) }}`;
+                        }
+                        return `${rarties[i].padEnd(2)} | ${hasdashb ? `${x.count}${extraCount}`.padEnd(6) : `${x.count}`.padEnd(2)} | ${x.name} ${color}`
+                    });
+                await message.reply({
                     embeds: [
                         new EmbedBuilder()
                             .setTitle(`[ ${frelic[0].name} ] {${frelic[0].tokens}}`)
