@@ -121,27 +121,32 @@ async function getAllBoxData(client) {
                     .toLowerCase()
                     .replace(/\s*prime\s*/, ' ')
                     .replace(/\b(\d+)\s*x?\s*\b/g, '$1x ')
-                    .replace(/\b(\d+)\s*x?\b\s*(.*?),\s*/g, '$1x $2, ')
-                    .split(/(?:(?:, )|(?:\n)|(?:\s(?=\b\d+x\b)))/);
+                    .replace(/\b(\d+)\s*x?\b\s*(.*?)\s*/g, '$1x $2, ')
+                    .split(/(?:(?:, )|(?:\n)|(?:\s(?=\b\d+x?\b)))/);
 
-                console.log(msg.content.toLowerCase()
-                .replace(/\s*prime\s*/, ' ')
-                .replace(/\b(\d+)\s*x?\s*\b/g, '$1x ')
-                .replace(/\b(\d+)\s*x?\b\s*(.*?),\s*/g, '$1x $2, '));
 
-                let newParts = []
+                let newParts = [];
                 for (let i = 0; i < parts.length; i++) {
-                    if (i < parts.length - 1 && parts[i + 1].endsWith('x ')) {
+                    if (/\d+x/.test(parts[i]) && i < parts.length - 1) {
+                        newParts.push(parts[i] + parts[i + 1]);
+                        i++; // Skip the next element since it has been joined with the current one
+                    } else if (i < parts.length - 1 && parts[i + 1].endsWith('x ')) {
                         newParts.push(parts[i + 1] + parts[i]);
-                        i++;
+                        i++; // Skip the next element since it has been joined with the current one
                     } else {
                         newParts.push(parts[i]);
                     }
                 }
 
-                parts = newParts.filter(x => /\dx/.test(x) && !/[^\w\s]/.test(x))
+                parts = newParts.filter(x => /\dx/.test(x) && !/[^\w\s]/.test(x));
+                console.log(msg.content, parts);
+
                 if (!parts.length) return;
-                const splitByStock = parts.filter(x => x).map(part => part.split(/(\b\d+\s*x\b|\bx\d+\b)\s*(.*)/).map(x => {
+                const splitByStock = parts
+                    .filter(x => x)
+                    .map(part => part
+                        .split(/(\b\d+\s*x\b|\bx\s*\d+\b)\s*(.*)/)
+                        .map(x => {
                     let y = x
                     if (/\d/.test(x)) {
                         y = parseInt(x.replace(/(\d+)x/, '$1'))
