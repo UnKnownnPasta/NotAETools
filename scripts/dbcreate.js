@@ -108,10 +108,10 @@ async function getAllClanData() {
  * @param {Client} client 
  */
 async function getAllBoxData(client) {
-    const boxChannel =  await client.channels.cache.get(collectionBox.id).threads;
+    const boxChannel =  await client.channels.cache.get(collectionBox.testid).threads;
     const boxStock = {}
 
-    const promises = Object.entries(collectionBox.channels).map(async ([chnl, cid]) => {
+    const promises = Object.entries(collectionBox.testchannels).map(async ([chnl, cid]) => {
 
         await boxChannel.fetch(cid).then(/*** @param {ThreadChannel} thread */ async (thread) => {
 
@@ -119,6 +119,7 @@ async function getAllBoxData(client) {
 
                 let parts = msg.content
                     .toLowerCase()
+                    .replace(/\s+/g, ' ')
                     .replace(/\s*prime\s*/, ' ')
                     .replace(/\b(\d+)\s*x?\s*\b/g, '$1x ')
                     .replace(/\b(\d+)\s*x?\b\s*(.*?)\s*/g, '$1x $2, ')
@@ -210,7 +211,7 @@ async function getAllBoxData(client) {
             else if (splitnm[0] == 'Magnus') return x.startsWith('Magnus')
             else return x.startsWith(splitnm[0])
         })
-        .filter(y => y.split(' ').slice(1).some(
+        .filter(y => y.replace('Limb', '').trim().split(' ').slice(1).some(
             z => splitnm.slice(1).some(p => z.startsWith(p == 'bp' ? 'BP' : p.slice(0, -1)))))
         if (pind.length > 1) {
             pind = [ pind.find(x => x.split(' ')[0] == splitnm[0]) ]
