@@ -129,17 +129,16 @@ async function getAllBoxData(client) {
                 for (let i = 0; i < parts.length; i++) {
                     if (/\d+x/.test(parts[i]) && i < parts.length - 1) {
                         newParts.push(parts[i] + parts[i + 1]);
-                        i++; // Skip the next element since it has been joined with the current one
+                        i++;
                     } else if (i < parts.length - 1 && parts[i + 1].endsWith('x ')) {
                         newParts.push(parts[i + 1] + parts[i]);
-                        i++; // Skip the next element since it has been joined with the current one
+                        i++;
                     } else {
                         newParts.push(parts[i]);
                     }
                 }
 
                 parts = newParts.filter(x => /\dx/.test(x) && !/[^\w\s]/.test(x));
-                console.log(msg.content, parts);
 
                 if (!parts.length) return;
                 const splitByStock = parts
@@ -198,9 +197,30 @@ async function getAllBoxData(client) {
         })
     })
 
-    await Promise.all(promises)
-    console.log(boxStock)
+    await Promise.all(promises);
 
+    const fixedBoxStock = {}
+    const jsfile = await JSON.parse( await fs.readFile(path.join(__dirname, '..', 'data/relicdata.json')) )
+    const partNames = [... new Set(jsfile.relicData.map(x => x[0].has).flat())]
+    const fixpromises = Object.entries(boxStock).map(async ([part, stock]) => {
+        const splitnm = titleCase(part).split(" ")
+        let pind = partNames.filter(x => {
+            if (splitnm[0] == 'Mag') return x.startsWith('Mag')
+            else if (splitnm[0] == 'Magnus') return x.startsWith('Magnus')
+            else return x.startsWith(splitnm[0])
+        })
+        .filter(y => y.split(' ').some(
+            z => splitnm.slice(1).some(p => z.startsWith(p.slice(0, -1)))))
+        if (pind.length > 1) {
+            pind = [ pind.find(x => x.split(' ')[0] == splitnm[0]) ]
+        }
+
+        if (!pind.length) return console.log('no', part)
+        fixedBoxStock[pind.join(" ")] = stock
+    })
+
+    await Promise.all(fixpromises);
+    await fs.writeFile(path.join(__dirname, '..', 'data/boxdata.json'), JSON.stringify(fixedBoxStock))
 }
 
 module.exports = { loadAllRelics, getAllClanData, getAllBoxData }
