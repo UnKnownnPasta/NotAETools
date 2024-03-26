@@ -108,10 +108,12 @@ async function getAllClanData() {
  * @param {Client} client 
  */
 async function getAllBoxData(client) {
-    const boxChannel =  await client.channels.cache.get(collectionBox.id).threads;
+    const boxChannel =  await client.channels.cache.get(collectionBox.testid).threads;
     const boxStock = {}
 
-    const promises = Object.entries(collectionBox.channels).map(async ([chnl, cid]) => {
+    const matchAny = (a, b) => a.startsWith(b) || b.startsWith(a)
+    
+    const promises = Object.entries(collectionBox.testchannels).map(async ([chnl, cid]) => {
 
         await boxChannel.fetch(cid).then(/*** @param {ThreadChannel} thread */ async (thread) => {
 
@@ -169,8 +171,6 @@ async function getAllBoxData(client) {
                         let words = key.split(" ")
                         let x = words[0], y = words.at(-1);
                         let partText = curPartName.split(' ').filter(x => x)
-
-                        const matchAny = (a, b) => a.startsWith(b) || b.startsWith(a)
 
                         if (partText.slice(0, -1).some(n => matchAny(n, x))) {
                             if (partText[0] == 'magnus' && ['bp', 'receiver', 'reciever', 'barrel'].some(nx => nx.startsWith(partText.at(-1)))) {
