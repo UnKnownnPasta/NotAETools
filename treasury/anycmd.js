@@ -37,12 +37,12 @@ module.exports = {
                         if (hasdashr && !part[0].name.startsWith(lastword) && !lastisdash) return;
                         if (hasdashb) {
                             if (range(parseInt(p.count) + (collectionBox[p.name] ?? 0)) === word.toUpperCase()) {
-                                edlist.push(`${`[${p.count}]`.padEnd(5)}| ${p.name}`);
+                                edlist.push(`${`[${parseInt(p.count) + (collectionBox[p.name] ?? 0)}]`.padEnd(5)}| ${p.name}`);
                                 pFoundStats++
                             }
                         } else {
                             if (p.type === word.toUpperCase()) {
-                                edlist.push(`${`[${p.count}]`.padEnd(5)}| ${p.name}`);
+                                edlist.push(`${`[${parseInt(p.count) + (collectionBox[p.name] ?? 0)}]`.padEnd(5)}| ${p.name}`);
                                 pFoundStats++
                             }
                         }
