@@ -19,10 +19,7 @@ module.exports = {
         const word = wd.replace(/ --[rb].*$/, "");
         let hasdashb = wd.match(/--[b]/, "") !== null
         let hasdashr = wd.match(/--[r]/, "") !== null
-        let collectionBox;
-        if (hasdashb) {
-            collectionBox = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/boxdata.json')));
-        }
+        let collectionBox = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/boxdata.json')));
 
         switch (type) {
             case "status":

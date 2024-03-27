@@ -60,7 +60,7 @@ eventFiles.forEach(file => {
 		client.user.setPresence({ activities: [{ name: 'Ya mom 👒', type: ActivityType.Watching }], status: 'dnd' });
 		info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.\n-----`);
 
-		await getAllBoxData(client);
 		await refreshFissures(client);
+		await getAllBoxData(client);
 	})
 })();
