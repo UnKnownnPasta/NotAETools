@@ -98,7 +98,7 @@ module.exports = {
             return finishedSoup.filter(x => x.split('|')[2].trim().indexOf(rname) !== -1);
         }
 
-        const soupedString = ['Axi', 'Neo', 'Meso', 'Lith'].map(x => {
+        const soupedString = ["Lith", "Meso", "Neo", "Axi"].map(x => {
             let isempty = filterRelics(x)
             if (isempty.length != 0) return isempty.sort(sortFunction).join('\n')
             else return undefined
