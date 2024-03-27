@@ -18,7 +18,7 @@ module.exports = {
         const allrelics = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/relicdata.json')));
         let collectionBox = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/boxdata.json')));
 
-        const word = wd.replace(/\s*-(r|b|box)\s*.*?$/, "");
+        const word = titleCase(wd.replace(/\s*-(r|b|box)\s*.*?$/, ""));
         let hasdashb = wd.match(/-(?:b|box)/, "") !== null
         let hasdashr = wd.match(/-(?:r)/, "") !== null
 
@@ -50,6 +50,7 @@ module.exports = {
                         statusRelics.push([`${`${pFoundStats}`.padEnd(2)}| ${`{${part[0].tokens}}`.padEnd(6)}| ${part[0].name}`, pFoundStats])
                     }
                 });
+                if (!edlist.length || !statusRelics.length) return;
 
                 edlist = [...new Set(edlist)].sort(
                     (a, b) =>
@@ -134,6 +135,7 @@ module.exports = {
 
             case "prime":
                 const corrWord = word.replace("Prime", "").trim() + " ";
+                console.log(word);
                 let parts = [];
 
                 let getAllRelics = allrelics.relicData
