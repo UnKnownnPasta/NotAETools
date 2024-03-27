@@ -16,18 +16,20 @@ module.exports = {
     name: "anycmd",
     async execute(client, message, wd, type) {
         const allrelics = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/relicdata.json')));
-        const word = wd.replace(/ --[rb].*$/, "");
-        let hasdashb = wd.match(/--[b]/, "") !== null
-        let hasdashr = wd.match(/--[r]/, "") !== null
         let collectionBox = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/boxdata.json')));
+
+        const word = wd.replace(/\s*-(r|b|box)\s*.*?$/, "");
+        let hasdashb = wd.match(/-(?:b|box)/, "") !== null
+        let hasdashr = wd.match(/-(?:r)/, "") !== null
 
         switch (type) {
             case "status":
                 let edlist = [];
                 let statusRelics = [];
-                let lastword = titleCase(wd.split(/\s+/g).at(-1).trim())
 
-                const lastisdash = lastword == '--r' || lastword == '--b'
+                let lastword = titleCase(wd.split(/\s+/g).at(-1).trim())
+                const lastisdash = lastword == '-r' || lastword == '-b' || lastword == '-box'
+
                 allrelics.relicData.forEach((part) => {
                     let pFoundStats = 0;
                     part.slice(1, 7).forEach((p) => {
@@ -91,7 +93,7 @@ module.exports = {
                 });
 
                 pagination.setEmbeds(arrayOfEmbeds, (embed, index, array) => {
-                    if (wd.match(/--[r]/, "") !== null) {
+                    if (hasdashr) {
                         embed.setDescription(`Format:\n${codeBlock(`ml`, `COUNT | {TOKEN} | RELIC`)}` + embed.data.description);
                     }
                     return embed.setFooter({
@@ -131,7 +133,6 @@ module.exports = {
                 break;
 
             case "prime":
-                if (word.replace(/.*Prime/, '').length >= 2) return;
                 const corrWord = word.replace("Prime", "").trim() + " ";
                 let parts = [];
 
@@ -167,7 +168,7 @@ module.exports = {
                         .setDescription(codeBlock("ml", parts.join("\n"))),
                 ];
 
-                if (wd.match(/--[r]/, "") !== null) {
+                if (hasdashr) {
                     embedArray.push(
                         new EmbedBuilder().setDescription(
                             codeBlock("ml", getAllRelics

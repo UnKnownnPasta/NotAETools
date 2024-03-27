@@ -23,8 +23,8 @@ module.exports = {
         let cmdType = "";
 
         let isPrime = word.split(/\s+/g).includes("prime");
-        let isRelic = await relicExists(filterRelic(word.replace(/--[rb]/g, "").trim()));
-        let isStatus = /^(ed|red|orange|green|yellow)(\s+--[r])?(.*)?$/g.test(word);
+        let isRelic = await relicExists(filterRelic(word.toLowerCase().replace(/\b\s*[-]?(r|b|box)\s*.*?$/, "").trim()));
+        let isStatus = /^(ed|red|orange|green|yellow)(\b\s+[-]?(?:r|b|box))?(.*)?$/g.test(word);
 
         // 1st check: not relic not prime and is ed
         // 2nd check: not relic not ed not prime
@@ -42,7 +42,7 @@ module.exports = {
 
         client.treasury
             .get("anycmd")
-            ?.execute(client, message, titleCase(word), cmdType);
+            ?.execute(client, message, word.toLowerCase(), cmdType);
         info("CMD", `Ran ++${cmdType} command by ${message.member.nickname ?? message.author.username} with arguments: "${word}" @ ${new Date().toLocaleString()}`);
         },
 };

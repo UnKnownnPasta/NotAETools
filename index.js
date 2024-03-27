@@ -22,13 +22,14 @@ const client = new Client({
 let intrv_count = 0
 setInterval(async () => {
 	await refreshFissures(client);
+	await getAllBoxData(client);
 }, 180_000);
+
 setInterval(async () => {
 	await loadAllRelics();
 	await getAllClanData();
-	await getAllBoxData(client);
 	intrv_count++
-	if (intrv_count%15 == 0) info(`INTRVL`, `${intrv_count} intervals done.`)
+	if (intrv_count%30 == 0) info(`INTRVL`, `${intrv_count} intervals done.`)
 }, 300_000);
 
 // Load all commands	

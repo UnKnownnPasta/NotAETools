@@ -145,6 +145,7 @@ async function refreshFissures(client) {
     try {
         let channel = client.channels.cache.get(fissureChannel);
         if (!channel) return alert('No fissure channel found, Is the channel ID wrong?')
+        
         let messageToEdit = await channel.messages.fetch({ limit: 1 });
         if (
             messageToEdit.size == 0 ||
@@ -154,11 +155,13 @@ async function refreshFissures(client) {
         } else {
             messageToEdit = messageToEdit.first();
         }
+
         const missions = ["Extermination", "Capture", "Sabotage", "Rescue"];
+        const tiers = ["Lith", "Meso", "Neo", "Axi"]
         const fisres = (await axios.get("https://api.warframestat.us/pc/fissures")).data;
 
         const response = fisres.filter(({ tier, missionType, active, expired, isStorm }) =>
-            !isStorm && missions.includes(missionType) && active && tier != "Requiem" && !expired
+            !isStorm && missions.includes(missionType) && active && tiers.includes(tier) && !expired
         );
 
         const fissures = await response.map(({ tier, missionType, node, expiry, isHard }) => [
@@ -182,11 +185,11 @@ async function refreshFissures(client) {
         const NormEmbed = new EmbedBuilder()
             .setTitle("Normal Fissures")
             .setColor("#2c2c34")
-            .setFields(Object.values(N_Embed[1]).sort((a, b) => b.name.localeCompare(a.name)));
+            .setFields(Object.values(N_Embed[1]).sort((a, b) => tiers.indexOf(a.name) - tiers.indexOf(b.name)));
 
         const SPEmbed = new EmbedBuilder()
             .setTitle("Steel Path Fissures")
-            .setFields(Object.values(S_Embed[1]).sort((a, b) => b.name.localeCompare(a.name)))
+            .setFields(Object.values(S_Embed[1]).sort((a, b) => tiers.indexOf(a.name) - tiers.indexOf(b.name)))
             .setColor("#2c2c34")
             .setTimestamp();
 
@@ -200,7 +203,7 @@ async function refreshFissures(client) {
         let timeArrOfObj = [];
         const fisTimes = getFissureTimings(
             fisres
-                .filter(({ tier, isStorm, expired, active }) => tier != "Requiem" && !isStorm && !expired && active)
+                .filter(({ tier, isStorm, expired, active }) => tiers.includes(tier) && !isStorm && !expired && active)
                 .map(({ isHard, tier, expiry }) => [
                     isHard + " " + tier, (new Date(expiry).getTime() / 1000) | 0
                 ])
@@ -227,8 +230,10 @@ async function refreshFissures(client) {
             Axidesc: { norm: undefined, sp: undefined },
         }));
 
-        const timeDesc = allDesc.sort((a, b) => b[0].replace('desc', '').localeCompare(a[0].replace('desc', ''))).map(x => {
-            return `\`${`${x[0].replace('desc', '')}`.padEnd(4)}\` - Normal: ${x[1].norm ?? 'in ???'} SP: ${x[1].sp ?? 'in ???'}`
+        const timeDesc = allDesc
+            .sort((a, b) => tiers.indexOf(a[0].replace('desc', '')) - tiers.indexOf(b[0].replace('desc', '')))
+            .map(x => {
+                return `\`${`${x[0].replace('desc', '')}`.padEnd(4)}\` - Normal: ${x[1].norm ?? 'in ???'} SP: ${x[1].sp ?? 'in ???'}`
         })
 
         TimeEmbed.setDescription(timeDesc.join('\n'));
