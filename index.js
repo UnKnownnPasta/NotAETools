@@ -56,13 +56,13 @@ eventFiles.forEach(file => {
 	await client.login(process.env.TOKEN);
 
 	client.on('ready', async () => {
-		// await client.guilds.fetch({ force: true });
-		// require('./scripts/deploy.js');
+		await client.guilds.fetch({ force: true });
+		require('./scripts/deploy.js');
 
 		client.user.setPresence({ activities: [{ name: 'Ya mom 👒', type: ActivityType.Watching }], status: 'dnd' });
 		info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.\n-----`);
 
-		// await refreshFissures(client);
-		// await getAllBoxData(client);
+		await refreshFissures(client);
+		await getAllBoxData(client);
 	})
 })();
