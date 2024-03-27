@@ -195,7 +195,8 @@ module.exports = {
                     .map((x, i) => {
                         let extraCount = '';
                         let color = x.type === "" ? "" : `{${x.type}}`
-                        if (hasdashb) {
+                        if (color == "") { extraCount == "" }
+                        else if (hasdashb) {
                             extraCount = `(${collectionBox[x.name] ?? 0})`;
                             color = x.type === "" ? "" : `{${ range(parseInt(x.count) + (collectionBox[x.name] ?? 0)) }}`;
                         }
