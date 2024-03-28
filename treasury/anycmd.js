@@ -41,7 +41,7 @@ module.exports = {
                             }
                         } else {
                             if (p.type === word.toUpperCase()) {
-                                edlist.push(`${`[${parseInt(p.count) + (collectionBox[p.name] ?? 0)}]`.padEnd(5)}| ${p.name}`);
+                                edlist.push(`${`[${p.count}]`.padEnd(5)}| ${p.name}`);
                                 pFoundStats++
                             }
                         }
