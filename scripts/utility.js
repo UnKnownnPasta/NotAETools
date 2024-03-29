@@ -13,9 +13,21 @@ const axios = require('axios')
 const warn = (txt, msg, err) => { 
     console.log(chalk.red(`[${txt}]`), `${msg}`);
     console.error(err);
+    writeLog(`[${txt}] ${msg}`)
  }
-const alert = (alerttxt) => { console.log(chalk.bgRedBright(chalk.black(`[WARNING]`)), `${alerttxt}`); }
-const info = (type, txt) => { console.log(chalk.bgBlackBright(chalk.black(`[${type}]`)), `${txt}`); }
+const alert = (alerttxt) => { 
+    console.log(chalk.bgRedBright(chalk.black(`[WARNING]`)), `${alerttxt}`);
+    writeLog(`[WARNING] ${alerttxt}`);
+ }
+const info = (type, txt) => { 
+    console.log(chalk.bgBlackBright(chalk.black(`[${type}]`)), `${txt}`);
+    writeLog(`[${type}] ${txt}`)
+ }
+
+const logFilePath = path.join(__dirname, '..', 'data/logs.txt')
+async function writeLog(log) {
+    await fs.appendFile(logFilePath, log + '\n');
+}
 
 /**
  * Load all files from a folder and stores them in a map.

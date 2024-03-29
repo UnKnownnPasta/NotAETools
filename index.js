@@ -19,6 +19,14 @@ const client = new Client({
     ]
 });
 
+fs.truncate(path.join(__dirname, 'data/logs.txt'), (err) => {
+    if (err) {
+        console.log(`[BOT] Doing fresh start`)
+    } else {
+        console.log('[BOT] Doing clean start');
+    }
+});
+
 let intrv_count = 0
 setInterval(async () => {
 	await refreshFissures(client);
