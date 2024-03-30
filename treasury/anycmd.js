@@ -43,12 +43,18 @@ module.exports = {
      * @param {Message} message 
      */
     async execute(client, message, wd, type) {
-        const allrelics = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/relicdata.json')));
-        let collectionBox = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/boxdata.json')));
+        const [allrelicsData, collectionBoxData] = await Promise.all([
+            fs.readFile(path.join(__dirname, '..', 'data/relicdata.json')),
+            fs.readFile(path.join(__dirname, '..', 'data/boxdata.json'))
+        ]);
+        
+        const allrelics = await JSON.parse(allrelicsData);
+        const collectionBox = await JSON.parse(collectionBoxData);
 
-        const word = titleCase(wd.replace(/\s*-(r|b|box)\s*.*?$/, ""));
+        const word = titleCase(wd.replace(/\s*(-)(r|b|box)?\s*.*?$/, ""));
         let hasdashb = wd.match(/-(?:b|box)/, "") !== null
         let hasdashr = wd.match(/-(?:r)/, "") !== null
+        const wordToUpper = word.toUpperCase()
 
         switch (type) {
             case "status":
@@ -60,16 +66,16 @@ module.exports = {
 
                 allrelics.relicData.forEach((part) => {
                     let pFoundStats = 0;
+                    if (hasdashr && !part[0].name.startsWith(lastword) && !lastisdash) return;
                     part.slice(1, 7).forEach((p) => {
-                        if (hasdashr && !part[0].name.startsWith(lastword) && !lastisdash) return;
                         if (hasdashb) {
                             let newCount = parseInt(p.count) + (collectionBox[p.name] ?? 0);
-                            if (range(newCount) === word.toUpperCase()) {
+                            if (range(newCount) === wordToUpper) {
                                 edlist.push(`${`[${newCount}]`.padEnd(5)}| ${p.name}`);
                                 pFoundStats++
                             }
                         } else {
-                            if (p.type === word.toUpperCase()) {
+                            if (p.type === wordToUpper) {
                                 edlist.push(`${`[${p.count}]`.padEnd(5)}| ${p.name}`);
                                 pFoundStats++
                             }
@@ -79,11 +85,11 @@ module.exports = {
                         statusRelics.push([`${`${pFoundStats}`.padEnd(2)}| ${`{${part[0].tokens}}`.padEnd(6)}| ${part[0].name}`, pFoundStats])
                     }
                 });
-                const statushex = hex[word.toUpperCase()]
+                const statushex = hex[wordToUpper]
                 
                 if (!edlist.length) {
                     return message.reply({ embeds: [
-                        new EmbedBuilder().setTitle(`[ ${word.toUpperCase()} ]`).setTimestamp().setColor(statushex)
+                        new EmbedBuilder().setTitle(`[ ${wordToUpper} ]`).setTimestamp().setColor(statushex)
                     ] })
                 }
                 
@@ -98,7 +104,7 @@ module.exports = {
                     for (let i = 0; i < statusRelics.length; i += 15) {
                         arrayOfEmbeds.push(
                             new EmbedBuilder()
-                                .setTitle(`[ ${word.toUpperCase()} DIFF ]`)
+                                .setTitle(`[ ${wordToUpper} DIFF ]`)
                                 .setDescription(codeBlock("ml", statusRelics.slice(i, i + 15).map(x => x[0]).join("\n")))
                                 .setColor(statushex)
                         )
@@ -112,7 +118,7 @@ module.exports = {
                     for (let i = 0; i < edlist.length; i += 15) {
                         arrayOfEmbeds.push(
                             new EmbedBuilder()
-                                .setTitle(`[ ${word.toUpperCase()} ]`)
+                                .setTitle(`[ ${wordToUpper} ]`)
                                 .setDescription(codeBlock("ml", edlist.slice(i, i + 15).join("\n")))
                                 .setColor(statushex)
                         );
@@ -144,25 +150,25 @@ module.exports = {
                 if (!allrelics.partNames.some(x => x.indexOf(word) !== -1) || (word.split(' ').length === 1)) return;
                 if (word.split(' ')[1].length === 1 && word.split(' ')[1] != '&') return;
                 const scarcity = ["C", "C", "C", "UC", "UC", "RA"];
-                let dataOfPart, trueName;
+                let dataOfPart;
 
                 const relicList = allrelics.relicData
                     .map((relic) => {
                         const item = relic[0].has.findIndex((x) => x.indexOf(word) !== -1);
                         if (item === -1) return;
-                        if (!dataOfPart) dataOfPart = [relic[item + 1].count, relic[item + 1].type];
-                        if (!trueName) trueName = relic[item + 1].name;
+                        if (!dataOfPart) dataOfPart = [relic[item + 1].count, relic[item + 1].type, relic[item + 1].name];
+
                         return `${scarcity[item].padEnd(2)} | ${relic[0].name} {${relic[0].tokens}}`;
                     })
                     .filter((x) => x !== undefined)
                     .sort((a, b) => b.match(/\{(.+?)\}/)[1] - a.match(/\{(.+?)\}/)[1]);
 
                 let extraCount = '';
-                if (hasdashb) extraCount = `(+${collectionBox[trueName] ?? 0})`;
+                if (hasdashb) extraCount = `(+${collectionBox[dataOfPart[2]] ?? 0})`;
                 await message.reply({
                     embeds: [
                         new EmbedBuilder()
-                            .setTitle(`[ ${trueName} ] {${dataOfPart[0]}${extraCount}x}`)
+                            .setTitle(`[ ${dataOfPart[2]} ] {${dataOfPart[0]}${extraCount}x}`)
                             .setDescription(codeBlock("ml", relicList.join("\n")))
                             .setFooter({ text: `${relicList.length} results` })
                             .setColor(hex[dataOfPart[1]]),
