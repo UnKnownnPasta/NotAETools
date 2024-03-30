@@ -51,7 +51,6 @@ module.exports = {
                         statusRelics.push([`${`${pFoundStats}`.padEnd(2)}| ${`{${part[0].tokens}}`.padEnd(6)}| ${part[0].name}`, pFoundStats])
                     }
                 });
-                if (!edlist.length || !statusRelics.length) return;
 
                 edlist = [...new Set(edlist)].sort(
                     (a, b) =>

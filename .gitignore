@@ -10,3 +10,4 @@ boxdata.json
 # Other
 *.traineddata
 .env
+*.txt
