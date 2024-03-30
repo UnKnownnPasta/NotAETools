@@ -162,7 +162,7 @@ module.exports = {
                 await message.reply({
                     embeds: [
                         new EmbedBuilder()
-                            .setTitle(`[ ${trueName} ] {x${dataOfPart[0]}${extraCount}}`)
+                            .setTitle(`[ ${trueName} ] {${dataOfPart[0]}${extraCount}x}`)
                             .setDescription(codeBlock("ml", relicList.join("\n")))
                             .setFooter({ text: `${relicList.length} results` })
                             .setColor(hex[dataOfPart[1]]),
@@ -207,7 +207,7 @@ module.exports = {
                 const countmin = Math.min(...dataOfPartsArr)
                 const embedArray = [
                     new EmbedBuilder()
-                        .setTitle(`[ ${word} ] {x${countmin}}`)
+                        .setTitle(`[ ${word} ] {${countmin}x}`)
                         .setDescription(codeBlock("ml", parts.join("\n")))
                         .setColor(codes),
                 ];
