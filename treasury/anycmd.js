@@ -198,7 +198,10 @@ module.exports = {
                         color = x.type === "" ? "" : `{${range(parseInt(x.count) + (collectionBox[x.name] ?? 0))}}`;
                     }
                     dataOfPartsArr.push(x.count ?? 0)
-                    codes.push(codeObj[color.match(/\{(.*)\}/)[1]])
+                    
+                    if (color != "") codes.push(codeObj[color.match(/\{(.*)\}/)[1]]);
+                    else codes.push(100);
+
                     return `${hasdashb ? `${x.count}${extraCount}`.padEnd(6) : `${x.count}`.padEnd(3)}| ${x.name} ${color}`;
                 });
                 parts = [...new Set(parts)];
