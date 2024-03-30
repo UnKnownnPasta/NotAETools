@@ -152,7 +152,7 @@ module.exports = {
                     .filter((x) => x !== undefined);
                 if (!getAllRelics.length) return;
 
-                
+                let countOfPartsArr = []
                 parts = parts.map((x) => {
                     let extraCount = '';
                     let color = x.type === "" ? "" : `{${x.type}}`
@@ -160,13 +160,15 @@ module.exports = {
                         extraCount = `(${collectionBox[x.name] ?? 0})`;
                         color = x.type === "" ? "" : `{${ range(parseInt(x.count) + (collectionBox[x.name] ?? 0)) }}`;
                     }
+                    countOfPartsArr.push(x.count ?? 0)
                     return `${hasdashb ? `${x.count}${extraCount}`.padEnd(6) : `${x.count}`.padEnd(3)}| ${x.name} ${color}`;
                 });
                 parts = [...new Set(parts)];
 
+                const countmin = Math.min(...countOfPartsArr)
                 const embedArray = [
                     new EmbedBuilder()
-                        .setTitle(`[ ${word} ]`)
+                        .setTitle(`[ ${word} ] {x${countmin}}`)
                         .setDescription(codeBlock("ml", parts.join("\n"))),
                 ];
 
