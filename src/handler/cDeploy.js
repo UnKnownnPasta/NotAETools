@@ -6,7 +6,7 @@ require('dotenv').config();
 
 module.exports = async () => {
     const commands = [];
-    const departmentsFolder = path.join(process.cwd(), 'src/departments');
+    const departmentsFolder = path.join(__dirname, '..', 'departments');
     const commandFolders = fs.readdirSync(departmentsFolder);
     
     for (const dept of commandFolders) {
@@ -34,6 +34,6 @@ module.exports = async () => {
 
         logger.info(`Successfully reloaded ${data.length} application (/) commands.`);
     } catch (err) {
-        console.error(err)
+        logger.error(err)
     }
 }

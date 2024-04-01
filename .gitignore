@@ -5,7 +5,7 @@ node_modules/
 
 # Other files
 *.sqlite*
+*.txt
+*.traineddata
 
 # JSON Files
-relicdata.json
-clandata.json

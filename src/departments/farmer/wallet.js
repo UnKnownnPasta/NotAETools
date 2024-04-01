@@ -22,7 +22,7 @@ module.exports = {
             const uf = foundid[0]
             const fEmbed = new EmbedBuilder().setTitle(`Wallet of: ${uf.name}`)
             .addFields([
-                { name: 'Tokens', value: `${uf.ttltokens} (+${uf.bonus})`, inline: true },
+                { name: 'Tokens', value: `${uf.tokens} (+${uf.bonus})`, inline: true },
                 { name: 'Spent', value: `${uf.spent}`, inline: true },
                 { name: 'Remaining', value: `${uf.left}`, inline: true },
                 { name: 'Playtime', value: `${uf.playtime} minutes` },

@@ -1,10 +1,15 @@
 const { Sequelize } = require("sequelize");
-// const path = require("path");
-const logger = require('./bLog.js')
+const path = require("path");
+const logger = require('./bLog.js');
 
 class Database {
     constructor() {
-        this.sequelize = new Sequelize('postgres://user:pass@example.com:5432/aetools')
+        this.sequelize = new Sequelize({
+            dialect: "sqlite",
+            storage: path.join(__dirname, "..", "data/database.sqlite"),
+            sync: false,
+            logging: (msg) => logger.info(msg)
+        });
 
         // Define models, associations, etc.
         this.defineModels();
@@ -12,12 +17,11 @@ class Database {
 
     defineModels() {
         this.models = {
-            Relics: require("../models/relics.js")(this.sequelize),
-            Parts: require("../models/parts.js")(this.sequelize),
-            RelicNames: require("../models/relicnames.js")(this.sequelize),
-            FarmerIds: require("../models/farmerids.js")(this.sequelize),
+            Relics: require('../models/relics.js')(this.sequelize),
+            Items: require("../models/items.js")(this.sequelize),
             Resources: require("../models/resources.js")(this.sequelize),
-            TreasIds: require("../models/treasids.js")(this.sequelize),
+            Farmers: require("../models/farmers.js")(this.sequelize),
+            Treasurers: require("../models/treasurers.js")(this.sequelize),
         };
     }
 
@@ -31,8 +35,7 @@ class Database {
     }
 
     async syncDatabase(with_force) {
-        // Sync your models with the database
-        await this.sequelize.sync({ force: with_force }); // Set force to true for development, use migrations in production
+        await this.sequelize.sync({ force: with_force });
     }
 }
 

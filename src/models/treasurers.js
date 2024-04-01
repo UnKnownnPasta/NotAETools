@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelizeInstance) => {
-    class TreasIDs extends Model {
+    class Treasurers extends Model {
         // Accepts { user: String, uid: String } type data
         static async bulkUpdateIDs(userinfo) {
             const uniqueUIDs = [...new Set(userinfo.map((res) => res.uid))];
@@ -16,13 +16,13 @@ module.exports = (sequelizeInstance) => {
         }
         
     }
-    TreasIDs.init(
+    Treasurers.init(
         {
-            user: { type: DataTypes.STRING, defaultValue: "" },
             uid: { type: DataTypes.STRING, defaultValue: "", primaryKey: true },
+            name: { type: DataTypes.STRING, defaultValue: "" },
         },
-        { sequelize: sequelizeInstance, modelName: 'TreasIDs', createdAt: false, updatedAt: false }
+        { sequelize: sequelizeInstance, modelName: 'Treasurers', createdAt: false, updatedAt: false }
     );
 
-    return TreasIDs;
+    return Treasurers;
 };

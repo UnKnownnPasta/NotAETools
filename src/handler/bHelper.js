@@ -1,23 +1,7 @@
 const path = require('node:path');
 const { Collection } = require("discord.js");
 const fsp = require('node:fs/promises');
-const chalk = require("chalk");
-
-/**
- * Logs as [txt] msg, error
- */
-const warn = (txt, msg, err) => { 
-    console.log(chalk.red(`[${txt}]`), `${msg}`);
-    console.error(err);
- }
- /**
-  * Logs as [WARNING] alert text
-  */
-const alert = (alerttxt) => console.log(chalk.bgRedBright(chalk.black(`[WARNING]`)), `${alerttxt}`)
-/**
- * Custom logs as [type] txt
- */
-const info = (type, txt) => console.log(chalk.bgBlackBright(chalk.black(`[${type}]`)), `${txt}`)
+const logger = require('./bLog');
 
 /**
  * Load all files from a folder and stores them in a map.
@@ -25,7 +9,7 @@ const info = (type, txt) => console.log(chalk.bgBlackBright(chalk.black(`[${type
  */
 async function loadFiles(dirpath, condition = null) {
     let clientCollection = new Collection();
-    const commandsPath = path.join(process.cwd(), dirpath);
+    const commandsPath = path.join(__dirname, '..', 'departments', dirpath);
     const files = await fsp.readdir(commandsPath)
     let commandFiles;
     if (condition != null) {
@@ -40,7 +24,7 @@ async function loadFiles(dirpath, condition = null) {
         if ('execute' in command) {
             clientCollection.set(command.name, command)
         } else {
-            alert(`The command at ${filePath} is missing a required "execute" property.`);
+            logger.warn(`The command at ${filePath} is missing a required "execute" property.`);
         }
     }
     return clientCollection;
@@ -104,4 +88,4 @@ async function relicExists(relic) {
     return relicList.includes(relic)
 }
 
-module.exports = { warn, alert, info, loadFiles, titleCase, filterRelic, relicExists }
+module.exports = { loadFiles, titleCase, filterRelic, relicExists }
