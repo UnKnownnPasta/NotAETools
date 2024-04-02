@@ -119,12 +119,12 @@ async function getAllClanData() {
  * @param {Client} client 
  */
 async function getAllBoxData(client) {
-    const boxChannel =  await client.channels.cache.get(collectionBox.testid).threads;
+    const boxChannel =  await client.channels.cache.get(collectionBox.id).threads;
     const boxStock = {}
 
     const matchAny = (a, b) => a.startsWith(b) || b.startsWith(a)
     
-    await Promise.all(Object.entries(collectionBox.testchannels).map(async ([chnl, cid]) => {
+    await Promise.all(Object.entries(collectionBox.channels).map(async ([chnl, cid]) => {
 
         await boxChannel.fetch(cid).then(/*** @param {ThreadChannel} thread */ async (thread) => {
 
