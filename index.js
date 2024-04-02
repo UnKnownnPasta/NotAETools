@@ -67,11 +67,11 @@ eventFiles.forEach(file => {
 
 		await client.guilds.fetch({ force: true });
 		await Promise.all([
+			getAllUserData(),
 			getAllClanData(),
 			getAllRelics(),
 			getAllBoxData(client),
 			refreshFissures(client),
-			getAllBoxData(client),
 			require('./scripts/deploy.js'),
 		])
 	})
