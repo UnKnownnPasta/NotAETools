@@ -44,7 +44,7 @@ async function loadAllRelics() {
                     return { name: row[0], tokens: row[7], has: row.slice(1, 7).map(r => {
                         let temp = r.slice(0, r.indexOf('[')-1)
                         if (dualitemslist.includes(temp)) temp += ' x2'
-                        return temp
+                        return temp.replace(" and ", " & ")
                     }) }
                 }
                 if (brckt) {
@@ -55,7 +55,7 @@ async function loadAllRelics() {
                 } else {
                     partName = rw; partCount = ""; partRarity = "";
                 }
-                return { name: partName, count: partCount, type: partRarity }
+                return { name: partName.replace(" and ", " & "), count: partCount, type: partRarity }
             });
         });
         const rNames = combinedData.map(relic => relic[0].name)

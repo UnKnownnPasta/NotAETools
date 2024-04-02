@@ -1,4 +1,4 @@
-const { EmbedBuilder, codeBlock, ButtonStyle, Message } = require("discord.js");
+const { EmbedBuilder, codeBlock, ButtonStyle, Message, AttachmentBuilder } = require("discord.js");
 const fs = require("node:fs/promises");
 const { Pagination } = require("pagination.djs");
 const { filterRelic, titleCase } = require("../scripts/utility.js");
@@ -36,6 +36,14 @@ const colorObj = {
     4: "GREEN"
 }
 
+const stockRanges = {
+    "ED": "0 - 7",
+    "RED": "8 - 15",
+    "ORANGE": "16 - 31",
+    "YELLOW": "32 - 64",
+    "GREEN": "64 - inf",
+}
+
 module.exports = {
     name: "anycmd",
     /**
@@ -44,8 +52,8 @@ module.exports = {
      */
     async execute(client, message, wd, type) {
         const [allrelicsData, collectionBoxData] = await Promise.all([
-            fs.readFile(path.join(__dirname, '..', 'data/relicdata.json')),
-            fs.readFile(path.join(__dirname, '..', 'data/boxdata.json'))
+            fs.readFile(path.join(__dirname, '..', 'data', 'relicdata.json')),
+            fs.readFile(path.join(__dirname, '..', 'data', 'boxdata.json'))
         ]);
         
         const allrelics = await JSON.parse(allrelicsData);
@@ -107,6 +115,7 @@ module.exports = {
                                 .setTitle(`[ ${wordToUpper} DIFF ]`)
                                 .setDescription(codeBlock("ml", statusRelics.slice(i, i + 15).map(x => x[0]).join("\n")))
                                 .setColor(statushex)
+                                .setTimestamp()
                         )
                     }
                 } else {
@@ -121,6 +130,7 @@ module.exports = {
                                 .setTitle(`[ ${wordToUpper} ]`)
                                 .setDescription(codeBlock("ml", edlist.slice(i, i + 15).join("\n")))
                                 .setColor(statushex)
+                                .setTimestamp()
                         );
                     }
                 }
@@ -136,11 +146,8 @@ module.exports = {
                 });
 
                 pagination.setEmbeds(arrayOfEmbeds, (embed, index, array) => {
-                    if (hasdashr) {
-                        embed.setDescription(`Format:\n${codeBlock(`ml`, `COUNT | {TOKEN} | RELIC`)}` + embed.data.description);
-                    }
                     return embed.setFooter({
-                        text: `Page ${index + 1}/${array.length}`,
+                        text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${stockRanges[word.toUpperCase()]} stock  •  Page ${index + 1}/${array.length}  `,
                     });
                 });
                 pagination.render();
@@ -168,9 +175,9 @@ module.exports = {
                 await message.reply({
                     embeds: [
                         new EmbedBuilder()
-                            .setTitle(`[ ${dataOfPart[2]} ] {${dataOfPart[0]}${extraCount}x}`)
+                            .setTitle(`[ ${dataOfPart[2]} ]`)
                             .setDescription(codeBlock("ml", relicList.join("\n")))
-                            .setFooter({ text: `${relicList.length} results` })
+                            .setFooter({ text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${dataOfPart[0]}${extraCount}x of part in stock  •  ${relicList.length} results` })
                             .setColor(hex[dataOfPart[1]]),
                     ],
                 });
@@ -211,14 +218,16 @@ module.exports = {
                     return `${hasdashb ? `${x.count}${extraCount}`.padEnd(6) : `${x.count}`.padEnd(3)}| ${x.name} ${color}`;
                 });
                 parts = [...new Set(parts)];
-                codes = hex[colorObj[Math.min(...codes)]]
+                codes = colorObj[Math.min(...codes)]
 
                 const countmin = Math.min(...dataOfPartsArr)
                 const embedArray = [
                     new EmbedBuilder()
-                        .setTitle(`[ ${word} ] {${countmin}x}`)
+                        .setTitle(`[ ${word} ]`)
+                        .setFooter({ text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${countmin}x of set in stock  •  ${codes} Set  ` })
+                        .setTimestamp()
                         .setDescription(codeBlock("ml", parts.join("\n")))
-                        .setColor(codes),
+                        .setColor(hex[codes]),
                 ];
 
                 if (hasdashr) {
@@ -228,7 +237,7 @@ module.exports = {
                                 .map((x) => `${`{${x.tokens}}`.padEnd(5)}| ${x.name}`)
                                 .sort((a, b) => b.match(/\{(.+?)\}/)[1] - a.match(/\{(.+?)\}/)[1])
                                 .join("\n")
-                                )).setFooter({ text: `${getAllRelics.length} results` }).setColor(codes)
+                                )).setFooter({ text: `Showing Relics for ${word} - ${getAllRelics.length} results` }).setColor(hex[codes])
                     );
                 }
 
@@ -259,13 +268,18 @@ module.exports = {
                         return `${rarties[i].padEnd(2)} | ${hasdashb ? `${x.count}${extraCount}`.padEnd(6) : `${x.count}`.padEnd(2)} | ${x.name} ${color}`
                     });
 
+                const namefromcmd = frelic[0].name
+                const file = new AttachmentBuilder(path.join(__dirname, '..', 'data', `${namefromcmd.split(" ")[0].toLowerCase()}.png`)).setName('relic.png');
                 await message.reply({
                     embeds: [
                         new EmbedBuilder()
-                            .setTitle(`[ ${frelic[0].name} ] {${frelic[0].tokens}}`)
+                            .setTitle(`[ ${namefromcmd} ] {${frelic[0].tokens}}`)
                             .setDescription(codeBlock("ml", emstr.join("\n")))
-                            .setColor(hex[colorObj[Math.min(...codes2)]]),
+                            .setColor(hex[colorObj[Math.min(...codes2)]])
+                            .setFooter({ text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} relic`, iconURL: `attachment://relic.png` })
+                            .setTimestamp(),
                     ],
+                    files: [file]
                 });
                 break;
         }
