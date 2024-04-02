@@ -111,7 +111,7 @@ async function getAllClanData() {
         await fs.writeFile(path.join(__dirname, '..', 'data', 'ClanData.json'), JSON.stringify(results.filter(res => res)))
     })
     .catch(error => {
-        console.error('Error fetching sheet values:', error.message);
+        logger.error(error, 'Error fetching sheet values for clans');
     });
 }
 

@@ -73,7 +73,6 @@ module.exports = {
 
         await resources.slice(0, -1).map(r => {
             const res = Object.entries(r.resource).filter(([ key, value ]) => key == resrc)[0]
-            console.log(res);
             clanEmbed.addFields({ name: reverseClan[r.clan].replace("Kingdom", ""), value: `**Amt:** \`${res[1].amt}\` | **Short:** \`${res[1].short}\`` })
         });
 
