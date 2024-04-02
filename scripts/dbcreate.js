@@ -1,129 +1,143 @@
-const { google } = require('googleapis')
-const { spreadsheet, dualitemslist, collectionBox } = require('../data/config.json')
-const fs = require('node:fs/promises');
-const { warn, titleCase } = require('./utility');
-const path = require('node:path');
+const { google } = require('googleapis');
+const { spreadsheet, collectionBox } = require('../data/config.json');
+const { titleCase } = require('./utility');
 const { Client, ThreadChannel } = require('discord.js');
 
-// Google fetch func
-const googleFetch = async (id, range) => {
+const logger = require('./logger');
+const fs = require('node:fs/promises');
+const path = require('node:path');
+
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') })
+
+const googleSheets = async ({ spreadsheetId, range }) => {
     return google.sheets("v4").spreadsheets.values.get({
         auth: process.env.GOOGLEAPIKEY,
-        spreadsheetId: id,
+        spreadsheetId: spreadsheetId,
         range: range,
     });
 }
 
-async function loadAllRelics() {
-    const sheetValues = await googleFetch(spreadsheet.treasury.id, spreadsheet.treasury.relicName + spreadsheet.treasury.ranges.relic)
-    if (!sheetValues || !sheetValues?.data) return warn('RLCERR', 'Error when refreshing relic data', `No data found for treasury relics`);
+const range = (num) => 
+    num >= 0 && num <= 7 ? 'ED'
+    : num > 7 && num <= 15 ? 'RED'
+    : num > 15 && num <= 31 ? 'ORANGE'
+    : num > 31 && num <= 64 ? 'YELLOW'
+    : num > 64 ? 'GREEN' : '';
 
-    const range = (num) => {
-        return num >= 0 && num <= 7 ? 'ED'
-               : num > 7 && num <= 15 ? 'RED'
-               : num > 15 && num <=31 ? 'ORANGE'
-               : num > 31 && num <=64 ? 'YELLOW'
-               : 'GREEN'
-    }
+async function getAllRelics() {
+    const sheetValues = await googleSheets({ 
+        spreadsheetId: spreadsheet.treasury.id,
+        range: spreadsheet.treasury.relicName + spreadsheet.treasury.ranges.relic,
+    })
+    .catch((err) => {
+        logger.error(err, 'Error fetching items and stock, using google client')
+    })
 
     const values = sheetValues.data.values;
-    if (values.some(x => x[0][0] == '#ERROR!' || x[0][1] == '#ERROR!')) return warn('RLCERR', 'Error when refreshing relic data', `No data found for treasury relics`);
+    if (values.some(x => x[0] == '#ERROR!')) return logger.warn(`Error fetching items: Items have invalid values (#ERROR!)`);
 
-    const pnRegex = /(.+?)\[/,
-        pcRegex = /\[(.+?)\]/;
+    const itemStockRegex = /\[(.+?)\]/;
+    const itemNameRegex = /(.*?)(?:\s+\[)/
 
-    // list is like [ [{}, {}], [{}, {}], ... ]
-    if (values && values.length) {
-        const combinedData = values.map((row, rowIndex) => {
-            return row
-            .slice(0, 7)
-            .map((rw, rwi) => {
-                let partName, partCount, partRarity;
-                const brckt = rw.match(pcRegex)
-                if (rwi == 0) {
-                    return { name: row[0], tokens: row[7], has: row.slice(1, 7).map(r => {
-                        let temp = r.slice(0, r.indexOf('[')-1)
-                        if (dualitemslist.includes(temp)) temp += ' x2'
-                        return temp.replace(" and ", " & ")
-                    }) }
-                }
-                if (brckt) {
-                    partName = rw.match(pnRegex)[1].trim()
-                    if (dualitemslist.includes(partName)) partName += ' x2'
-                    partCount = rw.match(pcRegex)[1]
-                    partRarity = range(parseInt(partCount))
-                } else {
-                    partName = rw; partCount = ""; partRarity = "";
-                }
-                return { name: partName.replace(" and ", " & "), count: partCount, type: partRarity }
-            });
-        });
-        const rNames = combinedData.map(relic => relic[0].name)
-        const pNames = [... new Set(combinedData.map(relic => relic[0].has).flat().map(relic => relic.replace(' x2', '')))]
+    if (values && values?.length) {
+        const allRelicData = []
+        await Promise.all(values.map(async (record) => {
+            const pushObj = { name: record[0], parts: [], rewards: [], tokens: record[7] }
+            await Promise.all(record.slice(1, 7).map((item) => {
+                let itemStock = item.match(itemStockRegex)?.[1]
+                let itemName = item.match(itemNameRegex)?.[1]?.replace(' and ', ' & ')
+                
+                pushObj.parts.push(itemName);
+                pushObj.rewards.push({ item: itemName ?? "Forma", stock: itemStock ?? "", color: range(parseInt(itemStock ?? 100)) });
+                return;
+            }))
+            allRelicData.push(pushObj)
+        }));
 
-        await fs.writeFile(path.join(__dirname, '..', 'data/relicdata.json'), JSON.stringify({ relicData: combinedData, relicNames: rNames, partNames: pNames }))
+        const [onlyRelics, onlyParts] = await Promise.all([
+            [... new Set(allRelicData.map(relic => relic.name).flat())],
+            [... new Set(allRelicData.map(relic => relic.parts).flat())],
+        ])
+        const JSONData = { relicData: allRelicData, relicNames: onlyRelics, partNames: onlyParts.filter(p => p) }
+        
+        await fs.writeFile(path.join(__dirname, '..', 'data', 'RelicData.json'), JSON.stringify(JSONData))
+        // await database.models.Items.bulkCreate(allRelicData, { updateOnDuplicate: ['stock', 'color'] });
     }
 }
 
+async function getAllUserData() {
+    const [TreasIDValues, FarmerIDValues] = await Promise.all([
+        googleSheets({
+            spreadsheetId: spreadsheet.treasury.id,
+            range: spreadsheet.treasury.useridName + spreadsheet.treasury.ranges.ids,
+        }),
+        googleSheets({
+            spreadsheetId: spreadsheet.farmer.id,
+            range: spreadsheet.farmer.userName + spreadsheet.farmer.ranges.users,
+        })
+    ])
+    
+    const [TreasData, FarmData] = await Promise.all([
+        TreasIDValues.data.values.filter(val => val.length).map((data) => {
+            return { uid: data[0], name: data[1] }
+        }),
+        FarmerIDValues.data.values.filter(val => val.length).map((data) => {
+            return { uid: data[0], name: data[1], tokens: data[2], bonus: data[3], spent: data[4], left: data[5], playtime: data[6] }
+        })
+    ])
+
+    await Promise.all([
+        // database.models.Treasurers.bulkCreate(TreasData, { updateOnDuplicate: ['name'] }),
+        // database.models.Farmers.bulkCreate(FarmData, { updateOnDuplicate: ['name', 'tokens', 'bonus', 'spent', 'left', 'playtime'] }),
+        fs.writeFile(path.join(__dirname, '..', 'data', 'TreasuryData.json'), JSON.stringify(TreasData)),
+        fs.writeFile(path.join(__dirname, '..', 'data', 'FarmerData.json'), JSON.stringify(FarmData)),
+    ]);
+}
 
 async function getAllClanData() {
-    // User IDs
-    const TreasIDValues = await googleFetch(spreadsheet.treasury.id, spreadsheet.treasury.useridName + spreadsheet.treasury.ranges.ids);
-    const TreasIDs = TreasIDValues.data.values.filter(x => x.length !== 0).map(user => { return { id: user[0], name: user[1] } })
-    if (!TreasIDs || !TreasIDs?.length)
-        return warn('CLNERR', 'Error when fetching clan data', `No data found when searching for treasury user ids (${spreadsheet.treasury.useridName})`);
-
-    const FarmIDValues = await googleFetch(spreadsheet.farmer.id, spreadsheet.farmer.userName + spreadsheet.farmer.ranges.users);
-    const FarmIDs = FarmIDValues.data.values.filter(x => x.length !== 0).map(user => {
-        return { id: user[0], name: user[1], ttltokens: user[2], bonus: user[3], spent: user[4], left: user[5], playtime: user[6] }
-    })
-    if (!FarmIDs || !FarmIDs?.length) 
-        return warn('CLNERR', 'Error when fetching clan data', `No data found when searching for farmer user ids (${spreadsheet.farmer.userName})`);
-
-    // Clan Resources
-    const ClanResources = [];
-
-    const promises = Object.entries(spreadsheet.farmer.ranges.resource).map(async (key) => {
-        const clandata = await googleFetch(spreadsheet.farmer.id, spreadsheet.farmer.resourceName + key[1]);
+    await Promise.all(Object.entries(spreadsheet.farmer.ranges.resource).map(async (key) => {
+        const clandata = await googleSheets({
+            spreadsheetId: spreadsheet.farmer.id,
+            range: spreadsheet.farmer.resourceName + key[1]
+        })
         if (!clandata) return {}
 
-        let localist = [];
-        clandata.data.values.forEach(x => localist.push({ name: x[0], amt: x[1], short: x[2] ?? '0' }));
-        return { clan: key[0], resources: localist };
+        let localist = {};
+        await Promise.all(clandata.data.values.map(x => localist[x[0]] = { amt: x[1], short: x[2] ?? '0' }))
+        return { clan: key[0], resource: localist };
+    }))
+    .then(async (results) => {
+        // await database.models.Resources.bulkCreate(results.filter(res => res), { updateOnDuplicate: ['resource'] })
+        await fs.writeFile(path.join(__dirname, '..', 'data', 'ClanData.json'), JSON.stringify(results.filter(res => res)))
+    })
+    .catch(error => {
+        console.error('Error fetching sheet values:', error.message);
     });
-    
-    await Promise.all(promises)
-        .then(async (results) => {
-            if (!results || !results?.length || results.some(x => !Object.keys(x).length))
-                return warn('CLNERR', 'Error when fetching clan data', `No data found when searching for clan resources (${spreadsheet.farmer.resourceName})`);
-            ClanResources.push(...results);
-            await fs.writeFile(path.join(__dirname, '..', 'data/clandata.json'), JSON.stringify({ treasuryids: TreasIDs, farmerids: FarmIDs, resources: ClanResources }))            
-        })
-        .catch(error => {
-            console.error('Error fetching sheet values:', error.message);
-        });
 }
 
 /**
  * @param {Client} client 
  */
 async function getAllBoxData(client) {
-    const boxChannel =  await client.channels.cache.get(collectionBox.id).threads;
+    const boxChannel =  await client.channels.cache.get(collectionBox.testid).threads;
     const boxStock = {}
 
     const matchAny = (a, b) => a.startsWith(b) || b.startsWith(a)
     
-    await Promise.all(Object.entries(collectionBox.channels).map(async ([chnl, cid]) => {
+    await Promise.all(Object.entries(collectionBox.testchannels).map(async ([chnl, cid]) => {
 
         await boxChannel.fetch(cid).then(/*** @param {ThreadChannel} thread */ async (thread) => {
 
-            await thread.messages.fetch({ limit: thread.messageCount, cache: false }).then(async (messages) => { 
+            const messages = await thread.messages.fetch({ limit: thread.messageCount, cache: false })
 
                 await Promise.all(messages.map(async (msg) => {
                     let parts = msg.content
                         .toLowerCase()
                         .replace(/\s+/g, ' ')
                         .replace(/\s*prime\s*/, ' ')
+                        .replace(/\(.*?\)/g, "")
+                        .replace(/<@!?[^>]+>/g, "")
+                        .trim()
                         .replace(/\b(\d+)\s*x?\s*\b/g, '$1x ')
                         .replace(/\b(\d+)\s*x?\b\s*(.*?)\s*/g, '$1x $2, ')
                         .split(/(?:(?:, )|(?:\n)|(?:\s(?=\b\d+x?\b)))/);
@@ -195,15 +209,15 @@ async function getAllBoxData(client) {
                         if (!updatedAny) { boxStock[curPartName] = part[nmIndex] }
                     }))
                 }))
-            })
+            //}) // async msg
         })
     }))
 
     const fixedBoxStock = {}
-    const jsfile = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/relicdata.json')))
-    const partNames = [... new Set(jsfile.relicData.map(x => x[0].has).flat())]
+    const jsfile = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json')))
+    const partNames = [... new Set(jsfile.relicData.map(x => x.parts).flat().filter(x => x))]
 
-    await Promise.all(Object.entries(boxStock).map(async ([part, stock]) => { 
+    await Promise.all(Object.entries(boxStock).map(async ([part, stock]) => {
         const splitnm = titleCase(part).split(" ")
         let pind = partNames.filter(x => {
             if (splitnm[0] == 'Mag') return x.startsWith('Mag')
@@ -232,7 +246,7 @@ async function getAllBoxData(client) {
         }
     }))
 
-    await fs.writeFile(path.join(__dirname, '..', 'data/boxdata.json'), JSON.stringify(fixedBoxStock))
+    await fs.writeFile(path.join(__dirname, '..', 'data', 'BoxData.json'), JSON.stringify(fixedBoxStock))
 }
 
-module.exports = { loadAllRelics, getAllClanData, getAllBoxData }
+module.exports = { getAllClanData, getAllUserData, getAllRelics, getAllBoxData }

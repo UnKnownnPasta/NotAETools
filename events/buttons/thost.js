@@ -72,22 +72,26 @@ module.exports = {
                 break;
 
             case 'thost-relicview':
-                const relicName = relic.split('x ')[1].slice(0, -1)
-                let jsfile = (await JSON.parse(await fs.readFile(path.join(__dirname, '..', '..', 'data/relicdata.json'), 'utf-8'))).relicData
-                const relicInfo = jsfile.filter(x => x[0].name == relicName)[0]
-                const rarities = ['C', 'C', 'C', 'UC', 'UC', 'RA']
-                                
-                let embedDesc = ""
-                for (let r=1; r < 7; r++) {
-                    if (relicInfo[r].count == '')
-                        embedDesc += `${rarities[r-1].padEnd(2)} |    | Forma\n`
-                    else {
-                        embedDesc += `${rarities[r-1].padEnd(2)} | ${relicInfo[r].count.padEnd(3)}| ${relicInfo[r].name} {${relicInfo[r].type}}\n`
-                    }
-                }
+                const properRelicName = relic.split('x ')[1].slice(0, -1)
+                let relic_data = await JSON.parse(await fs.readFile(path.join(__dirname, '..', '..', 'data', 'relicdata.json'), 'utf-8'))
 
-                await i.reply({ embeds: [new EmbedBuilder().setTitle(`[ ${relicName} ]`).setDescription(codeBlock('ml', embedDesc)).setTimestamp()], ephemeral: true })
-                    .catch((error) => { return; })
+                const relicToFind = relic_data.relicData.filter((relic) => relic.name === properRelicName)
+                if (relicToFind.length === 0) return;
+                const relicFound = relicToFind[0]
+    
+                const relicDesc = relicFound.rewards.map((part) => {
+                    if (part.item === 'Forma') return `   | Forma`;
+                    let partStock = parseInt(part.stock)
+                    return `${`${partStock}`.padEnd(3)}| ${part.item} {${part.color}}`
+                })
+    
+                i.reply({ embeds: [
+                    new EmbedBuilder()
+                    .setTitle(`[ ${properRelicName} ] {${relicFound.tokens}}`)
+                    .setDescription(codeBlock('ml', relicDesc.join("\n")))
+                    .setFooter({ text: `Showing ${relicFound.name.split(" ")[0]} Void relic  •  Stock from Tracker  •  Host relic  ` })
+                    .setTimestamp()
+                ] })
         }
     },
 }

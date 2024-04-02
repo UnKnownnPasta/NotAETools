@@ -2,7 +2,7 @@ require('dotenv').config()
 const { REST, Routes } = require('discord.js');
 const fs = require('node:fs');
 const path = require('node:path');
-const { info, alert } = require('./utility.js')
+const logger = require('./logger.js');
 
 require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') });
 
@@ -31,15 +31,15 @@ const rest = new REST().setToken(process.env.TOKEN);
 
 (async () => {
 	try {
-		alert(`Started refreshing ${commands.length} application (/) commands.`);
+		logger.info(`Started refreshing ${commands.length} application (/) commands.`);
 
 		const data = await rest.put(
 			Routes.applicationGuildCommands(process.env.CLIENTID, process.env.MAINGUILDID),
 			{ body: commands },
 		);
 
-		alert(`Successfully reloaded ${data.length} application (/) commands.`);
-	} catch (infoor) {
-		info(infoor.title, 'Deploy js failed')
+		logger.info(`Successfully reloaded ${data.length} application (/) commands.`);
+	} catch (err) {
+		logger.info(err.title, 'Deploy js failed')
 	}
 })();

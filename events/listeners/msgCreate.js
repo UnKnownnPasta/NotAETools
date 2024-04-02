@@ -1,13 +1,9 @@
 const { Message, Client, AttachmentBuilder } = require("discord.js");
 const config = require("../../data/config.json");
-const {
-    filterRelic,
-    relicExists,
-    titleCase,
-    info,
-} = require("../../scripts/utility");
+const { filterRelic, relicExists } = require("../../scripts/utility");
 const fs = require('node:fs/promises');
 const path = require("node:path");
+const logger = require("../../scripts/logger");
 
 module.exports = {
     name: "messageCreate",
@@ -49,6 +45,6 @@ module.exports = {
         client.treasury
             .get("anycmd")
             ?.execute(client, message, word.toLowerCase(), cmdType);
-        info("CMD", `Ran ++${cmdType} command by ${message.member.nickname ?? message.author.username} with arguments: "${word}" @ ${new Date().toLocaleString()}`);
+        logger.info(`[CMD] Ran ++${cmdType} command by ${message.member.nickname ?? message.author.username} with arguments: "${word}" @ ${new Date().toLocaleString()}`);
         },
 };

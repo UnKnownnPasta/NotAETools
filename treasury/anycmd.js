@@ -1,4 +1,4 @@
-const { EmbedBuilder, codeBlock, ButtonStyle, Message, AttachmentBuilder } = require("discord.js");
+const { EmbedBuilder, codeBlock, ButtonStyle, Message } = require("discord.js");
 const fs = require("node:fs/promises");
 const { Pagination } = require("pagination.djs");
 const { filterRelic, titleCase } = require("../scripts/utility.js");
@@ -12,14 +12,6 @@ const range = (num) => {
            : 'GREEN'
 }
 
-const hex = {
-    "ED": "#351c75",
-    "RED": "#990000",
-    "ORANGE": "#b45f06",
-    "YELLOW": "#bf9000",
-    "GREEN": "#38761d",
-}
-
 const codeObj = {
     "ED": 0,
     "RED": 1,
@@ -28,12 +20,20 @@ const codeObj = {
     "GREEN": 4,
 }
 
-const colorObj = {
+const uncodeObj = {
     0: "ED",
     1: "RED",
     2: "ORANGE",
     3: "YELLOW",
     4: "GREEN"
+}
+
+const hex = {
+    "ED": "#351c75",
+    "RED": "#990000",
+    "ORANGE": "#b45f06",
+    "YELLOW": "#bf9000",
+    "GREEN": "#38761d",
 }
 
 const stockRanges = {
@@ -47,240 +47,192 @@ const stockRanges = {
 module.exports = {
     name: "anycmd",
     /**
-     * File to manage any ++ command
+     * ++ Commands manager
      * @param {Message} message 
      */
-    async execute(client, message, wd, type) {
-        const [allrelicsData, collectionBoxData] = await Promise.all([
-            fs.readFile(path.join(__dirname, '..', 'data', 'relicdata.json')),
-            fs.readFile(path.join(__dirname, '..', 'data', 'boxdata.json'))
+    async execute(client, message, msg_unfiltered, command_type) {
+        const [fetchRelicData, fetchCollectionBox] = await Promise.all([
+            fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json')),
+            fs.readFile(path.join(__dirname, '..', 'data', 'BoxData.json'))
         ]);
-        
-        const allrelics = await JSON.parse(allrelicsData);
-        const collectionBox = await JSON.parse(collectionBoxData);
 
-        const word = titleCase(wd.replace(/\s*(-)(r|b|box)?\s*.*?$/, ""));
-        let hasdashb = wd.match(/-(?:b|box)/, "") !== null
-        let hasdashr = wd.match(/-(?:r)/, "") !== null
+        const [relic_data, collection_box] = await Promise.all([
+            JSON.parse(fetchRelicData), JSON.parse(fetchCollectionBox)
+        ])
+
+        const word = titleCase(msg_unfiltered.replace(/\s*(-)(b|box)?\s*.*?$/, ""));
+        let hasdashb = msg_unfiltered.match(/-(?:b|box)/, "") !== null
+        // let hasdashr = msg_unfiltered.match(/-(?:r)/, "") !== null
         const wordToUpper = word.toUpperCase()
 
-        switch (type) {
+        switch (command_type) {
             case "status":
-                let edlist = [];
-                let statusRelics = [];
+            const statusParts = []
 
-                let lastword = titleCase(wd.split(/\s+/g).at(-1).trim())
-                const lastisdash = lastword == '-r' || lastword == '-b' || lastword == '-box'
-
-                allrelics.relicData.forEach((part) => {
-                    let pFoundStats = 0;
-                    if (hasdashr && !part[0].name.startsWith(lastword) && !lastisdash) return;
-                    part.slice(1, 7).forEach((p) => {
-                        if (hasdashb) {
-                            let newCount = parseInt(p.count) + (collectionBox[p.name] ?? 0);
-                            if (range(newCount) === wordToUpper) {
-                                edlist.push(`${`[${newCount}]`.padEnd(5)}| ${p.name}`);
-                                pFoundStats++
-                            }
-                        } else {
-                            if (p.type === wordToUpper) {
-                                edlist.push(`${`[${p.count}]`.padEnd(5)}| ${p.name}`);
-                                pFoundStats++
-                            }
-                        }
-                    });
-                    if (pFoundStats) {
-                        statusRelics.push([`${`${pFoundStats}`.padEnd(2)}| ${`{${part[0].tokens}}`.padEnd(6)}| ${part[0].name}`, pFoundStats])
+            await Promise.all(relic_data.relicData.map(async (relic) => {
+                const relicRewards = relic.rewards;
+                await Promise.all(relicRewards.map((part) => {
+                    if (part.item === "Forma") return;
+                    let partStock = parseInt(part.stock)
+                    let partColor = part.color
+                    if (hasdashb) {
+                        partStock = partStock + (collection_box[part.item] ?? 0)
+                        partColor = range(partStock)
                     }
-                });
-                const statushex = hex[wordToUpper]
-                
-                if (!edlist.length) {
-                    return message.reply({ embeds: [
-                        new EmbedBuilder().setTitle(`[ ${wordToUpper} ]`).setTimestamp().setColor(statushex)
-                    ] })
-                }
-                
-                const arrayOfEmbeds = [];
-                if (hasdashr) {
-                    statusRelics = statusRelics.sort(
-                        (a, b) => 
-                            parseInt(`${b[1]}${b[0].match(/\{(.+?)\}/)[1]}`) -
-                            parseInt(`${a[1]}${a[0].match(/\{(.+?)\}/)[1]}`)
-                    );
-
-                    for (let i = 0; i < statusRelics.length; i += 15) {
-                        arrayOfEmbeds.push(
-                            new EmbedBuilder()
-                                .setTitle(`[ ${wordToUpper} DIFF ]`)
-                                .setDescription(codeBlock("ml", statusRelics.slice(i, i + 15).map(x => x[0]).join("\n")))
-                                .setColor(statushex)
-                                .setTimestamp()
-                        )
+                    if (partColor === wordToUpper) {
+                        statusParts.push({ s: partStock, i: part.item })
                     }
-                } else {
-                    edlist = [...new Set(edlist)].sort(
-                        (a, b) =>
-                            a.split("|")[0].match(/\[(.+?)\]/)[1] -
-                            b.split("|")[0].match(/\[(.+?)\]/)[1]
-                    );
-                    for (let i = 0; i < edlist.length; i += 15) {
-                        arrayOfEmbeds.push(
-                            new EmbedBuilder()
-                                .setTitle(`[ ${wordToUpper} ]`)
-                                .setDescription(codeBlock("ml", edlist.slice(i, i + 15).join("\n")))
-                                .setColor(statushex)
-                                .setTimestamp()
-                        );
-                    }
-                }
-                
-                const pagination = new Pagination(message, {
-                    firstEmoji: "⏮",
-                    prevEmoji: "◀️",
-                    nextEmoji: "▶️",
-                    lastEmoji: "⏭",
-                    idle: 240_000,
-                    buttonStyle: ButtonStyle.Secondary,
-                    loop: true,
-                });
+                }))
+            }))
 
-                pagination.setEmbeds(arrayOfEmbeds, (embed, index, array) => {
-                    return embed.setFooter({
-                        text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${stockRanges[word.toUpperCase()]} stock  •  Page ${index + 1}/${array.length}  `,
-                    });
+            const sortedParts = [... new Set(statusParts.sort((a, b) => a.s - b.s).map((part) => {
+                return `${`[${part.s}]`.padEnd(5)}| ${part.i}`
+                })
+            )]
+
+            const embedsArrStatus = []
+            for (let i = 0; i < sortedParts.length; i += 15) {
+                embedsArrStatus.push(
+                    new EmbedBuilder()
+                    .setTitle(`[ ${wordToUpper} ]`)
+                    .setDescription(codeBlock('ml', sortedParts.slice(i, i + 15).join('\n')))
+                    .setColor(hex[wordToUpper])
+                    .setTimestamp()
+                )
+            }
+
+            const statusPagination = new Pagination(message, {
+                firstEmoji: "⏮",
+                prevEmoji: "◀️",
+                nextEmoji: "▶️",
+                lastEmoji: "⏭",
+                idle: 240_000,
+                buttonStyle: ButtonStyle.Secondary,
+                loop: true,
+            });
+
+            statusPagination.setEmbeds(embedsArrStatus, (embed, index, array) => {
+                return embed.setFooter({
+                    text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${stockRanges[word.toUpperCase()]} stock  •  Page ${index + 1}/${array.length}  `,
                 });
-                pagination.render();
+            });
+            statusPagination.render();
                 break;
-
+        
             case "part":
-                if (!allrelics.partNames.some(x => x.indexOf(word) !== -1) || (word.split(' ').length === 1)) return;
-                if (word.split(' ')[1].length === 1 && word.split(' ')[1] != '&') return;
-                const scarcity = ["C", "C", "C", "UC", "UC", "RA"];
-                let dataOfPart;
+            if (!relic_data.partNames.some(part => part.startsWith(word))) return;
 
-                const relicList = allrelics.relicData
-                    .map((relic) => {
-                        const item = relic[0].has.findIndex((x) => x.indexOf(word) !== -1);
-                        if (item === -1) return;
-                        if (!dataOfPart) dataOfPart = [relic[item + 1].count, relic[item + 1].type, relic[item + 1].name];
+            const partRarities = ["C", "C", "C", "UC", "UC", "RA"];
+            const partRelics = [];
+            let realName = ""
+            let realStock = 0
+            let realColor = ""
+            let extraCount = ""
 
-                        return `${scarcity[item].padEnd(2)} | ${relic[0].name} {${relic[0].tokens}}`;
-                    })
-                    .filter((x) => x !== undefined)
-                    .sort((a, b) => b.match(/\{(.+?)\}/)[1] - a.match(/\{(.+?)\}/)[1]);
+            await Promise.all(relic_data.relicData.map((relic) => {
+                const partIndex = relic.parts.findIndex((part) => part?.startsWith(word))
+                if (partIndex === -1) return;
+                realName = relic.rewards[partIndex].item
+                realStock = relic.rewards[partIndex].stock
+                realColor = relic.rewards[partIndex].color
+                if (hasdashb) extraCount = `(+${collection_box[realName] ?? 0})`;
+                partRelics.push({ r: relic.name, t: relic.tokens, c: partRarities[partIndex] })
+            }))
 
-                let extraCount = '';
-                if (hasdashb) extraCount = `(+${collectionBox[dataOfPart[2]] ?? 0})`;
-                await message.reply({
-                    embeds: [
-                        new EmbedBuilder()
-                            .setTitle(`[ ${dataOfPart[2]} ]`)
-                            .setDescription(codeBlock("ml", relicList.join("\n")))
-                            .setFooter({ text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${dataOfPart[0]}${extraCount}x of part in stock  •  ${relicList.length} results` })
-                            .setColor(hex[dataOfPart[1]]),
-                    ],
-                });
+            const sortedRelics = partRelics.sort((a, b) => parseInt(b.t) - parseInt(a.t)).map((part) => {
+                return `${part.c.padEnd(2)} | ${part.r} {${part.t}}`
+            })
+
+            const embedsParts = new EmbedBuilder()
+                .setTitle(`[ ${realName} ]`)
+                .setDescription(codeBlock('ml', sortedRelics.join('\n')))
+                .setColor(hex[realColor])
+                .setFooter({ 
+                    text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${realStock}${extraCount}x of part in stock  •  ${sortedRelics.length} results`
+                })
+
+            await message.reply({ embeds: [embedsParts] })
                 break;
 
             case "prime":
-                const corrWord = word.replace("Prime", "").trim() + " ";
-                let parts = [];
-                let codes = [];
+            const setName = word.replace("Prime", "").trim() + " ";
 
-                let getAllRelics = allrelics.relicData
-                    .map((relic) => {
-                        let foundAny = false;
-                        relic[0].has.forEach((part, i) => {
-                            if (part.indexOf(corrWord) !== -1) {
-                                parts.push(relic[i + 1]);
-                                foundAny = true;
-                            }
-                        });
-                        if (foundAny) return relic[0];
-                    })
-                    .filter((x) => x !== undefined);
-                if (!getAllRelics.length) return;
+            const setParts = []
+            await Promise.all(relic_data.relicData.map((relic) => {
+                const partExistsIndex = relic.parts.findIndex(part => part?.startsWith(setName))
+                if (partExistsIndex === -1) return;
 
-                let dataOfPartsArr = []
-                parts = parts.map((x) => {
-                    let extraCount = '';
-                    let color = x.type === "" ? "" : `{${x.type}}`
-                    if (hasdashb) {
-                        extraCount = `(${collectionBox[x.name] ?? 0})`;
-                        color = x.type === "" ? "" : `{${range(parseInt(x.count) + (collectionBox[x.name] ?? 0))}}`;
-                    }
-                    dataOfPartsArr.push(x.count ?? 0)
-                    
-                    if (color != "") codes.push(codeObj[color.match(/\{(.*)\}/)[1]]);
-                    else codes.push(100);
+                const partOfSet = relic.rewards[partExistsIndex]
+                if (setParts.some((rec) => rec.n === partOfSet.item)) return;
 
-                    return `${hasdashb ? `${x.count}${extraCount}`.padEnd(6) : `${x.count}`.padEnd(3)}| ${x.name} ${color}`;
-                });
-                parts = [...new Set(parts)];
-                codes = colorObj[Math.min(...codes)]
-
-                const countmin = Math.min(...dataOfPartsArr)
-                const embedArray = [
-                    new EmbedBuilder()
-                        .setTitle(`[ ${word} ]`)
-                        .setFooter({ text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${countmin}x of set in stock  •  ${codes} Set  ` })
-                        .setTimestamp()
-                        .setDescription(codeBlock("ml", parts.join("\n")))
-                        .setColor(hex[codes]),
-                ];
-
-                if (hasdashr) {
-                    embedArray.push(
-                        new EmbedBuilder().setDescription(
-                            codeBlock("ml", getAllRelics
-                                .map((x) => `${`{${x.tokens}}`.padEnd(5)}| ${x.name}`)
-                                .sort((a, b) => b.match(/\{(.+?)\}/)[1] - a.match(/\{(.+?)\}/)[1])
-                                .join("\n")
-                                )).setFooter({ text: `Showing Relics for ${word} - ${getAllRelics.length} results` }).setColor(hex[codes])
-                    );
+                let stockOfSetPart = parseInt(partOfSet.stock);
+                let extraStock = 0;
+                let colorOfPart = partOfSet.color
+                if (hasdashb) {
+                    extraStock = collection_box[partOfSet.item] ?? 0
+                    colorOfPart = range(stockOfSetPart + extraStock)
                 }
 
-                message.reply({ embeds: [...embedArray] });
+                setParts.push({ s: stockOfSetPart, ex: extraStock, n: partOfSet.item, c: colorOfPart })
+            }))
+
+            let colorOfParts = []
+            let stockOfParts = []
+            const setPartsText = setParts.map((part) => {
+                colorOfParts.push(part.c)
+                stockOfParts.push(part.s + part.ex)
+                if (hasdashb) {
+                    return `${`${part.s}(${part.ex})`.padEnd(7)}| ${part.n} {${part.c}}`
+                } else {
+                    return `${`${part.s}`.padEnd(3)}| ${part.n} {${part.c}}`
+                }
+            })
+            colorOfParts = uncodeObj[Math.min(...colorOfParts.map(color => codeObj[color]))]
+            stockOfParts = Math.min(...stockOfParts)
+
+            message.reply({ embeds: [
+                new EmbedBuilder()
+                .setTitle(`[ ${word} ]`)
+                .setFooter({ text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${stockOfParts}x of set in stock  •  ${colorOfParts} Set  ` })
+                .setTimestamp()
+                .setDescription(codeBlock("ml", setPartsText.join("\n")))
+                .setColor(hex[colorOfParts])
+            ] })
                 break;
 
             case "relic":
-                let frelic = allrelics.relicData.filter(
-                    (x) => x[0].name === filterRelic(word.toLowerCase())
-                )[0];
+            const properRelicName = filterRelic(word.toLowerCase())
+            const relicToFind = relic_data.relicData.filter((relic) => relic.name === properRelicName)
+            if (relicToFind.length === 0) return;
+            const relicFound = relicToFind[0]
+            let allStocks = []
 
-                const rarties = ["C", "C", "C", "UC", "UC", "RA"];
-                let codes2 = [];
+            const relicDesc = relicFound.rewards.map((part) => {
+                if (part.item === 'Forma') {
+                    if (hasdashb) return `       | Forma`;
+                    else return `   | Forma`;
+                }
+                let partStock = parseInt(part.stock)
+                let extraStock = ""
+                if (hasdashb) {
+                    extraStock = `(${collection_box[part.item] ?? 0})`
+                }
+                allStocks.push(partStock + (collection_box[part.item] ?? 0))
+                return `${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 7)}| ${part.item} {${part.color}}`
+            })
+            allStocks = range(Math.min(...allStocks))
 
-                let emstr = await frelic
-                    .slice(1, 7)
-                    .map((x, i) => {
-                        let extraCount = '';
-                        let color = x.type === "" ? "" : `{${x.type}}`
-                        if (color != "") codes2.push(codeObj[color.match(/\{(.*)\}/)[1]])
-                        if (color == "") { 
-                            extraCount == ""; codes2.push(100)
-                        }
-                        else if (hasdashb) {
-                            extraCount = `(${collectionBox[x.name] ?? 0})`;
-                            color = x.type === "" ? "" : `{${range(parseInt(x.count) + (collectionBox[x.name] ?? 0))}}`;
-                        }
-                        return `${rarties[i].padEnd(2)} | ${hasdashb ? `${x.count}${extraCount}`.padEnd(6) : `${x.count}`.padEnd(2)} | ${x.name} ${color}`
-                    });
+            message.reply({ embeds: [
+                new EmbedBuilder()
+                .setTitle(`[ ${properRelicName} ] {${relicFound.tokens}}`)
+                .setDescription(codeBlock('ml', relicDesc.join("\n")))
+                .setFooter({ text: `Showing ${relicFound.name.split(" ")[0]} Void relic  •  ${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${allStocks} relic  ` })
+                .setColor(hex[allStocks])
+                .setTimestamp()
+            ] })
+                break;
 
-                const namefromcmd = frelic[0].name
-                const file = new AttachmentBuilder(path.join(__dirname, '..', 'data', `${namefromcmd.split(" ")[0].toLowerCase()}.png`)).setName('relic.png');
-                await message.reply({
-                    embeds: [
-                        new EmbedBuilder()
-                            .setTitle(`[ ${namefromcmd} ] {${frelic[0].tokens}}`)
-                            .setDescription(codeBlock("ml", emstr.join("\n")))
-                            .setColor(hex[colorObj[Math.min(...codes2)]])
-                            .setFooter({ text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} relic`, iconURL: `attachment://relic.png` })
-                            .setTimestamp(),
-                    ],
-                    files: [file]
-                });
+            default:
                 break;
         }
     },

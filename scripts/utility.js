@@ -1,33 +1,9 @@
 const { Collection, EmbedBuilder, Client } = require("discord.js");
 const path = require('node:path')
 const fs = require('node:fs/promises');
-const chalk = require("chalk");
 const { fissureChannel } = require('../data/config.json')
-const axios = require('axios')
-
-/**
- * Logs as [txt] msg
- * 
- * err
- */
-const warn = (txt, msg, err) => { 
-    console.log(chalk.red(`[${txt}]`), `${msg}`);
-    console.error(err);
-    writeLog(`[${txt}] ${msg}`)
- }
-const alert = (alerttxt) => { 
-    console.log(chalk.bgRedBright(chalk.black(`[WARNING]`)), `${alerttxt}`);
-    writeLog(`[WARNING] ${alerttxt}`);
- }
-const info = (type, txt) => { 
-    console.log(chalk.bgBlackBright(chalk.black(`[${type}]`)), `${txt}`);
-    writeLog(`[${type}] ${txt}`)
- }
-
-const logFilePath = path.join(__dirname, '..', 'data/logs.txt')
-async function writeLog(log) {
-    await fs.appendFile(logFilePath, log + '\n');
-}
+const axios = require('axios');
+const logger = require("./logger");
 
 /**
  * Load all files from a folder and stores them in a map.
@@ -46,7 +22,7 @@ async function loadFiles(dirpath) {
         if ('execute' in command) {
             clientCollection.set(command.name, command)
         } else {
-            alert(`The command at ${filePath} is missing a required "execute" property.`);
+            logger.info(`The command at ${filePath} is missing a required "execute" property.`);
         }
     }
     return clientCollection;
@@ -156,7 +132,7 @@ function getFissureTimings(fisTimes) {
 async function refreshFissures(client) {
     try {
         let channel = client.channels.cache.get(fissureChannel);
-        if (!channel) return alert('No fissure channel found, Is the channel ID wrong?')
+        if (!channel) return logger.info('No fissure channel found, Is the channel ID wrong?')
         
         let messageToEdit = await channel.messages.fetch({ limit: 1 });
         if (
@@ -255,8 +231,8 @@ async function refreshFissures(client) {
             embeds: [NormEmbed, SPEmbed, TimeEmbed],
         });
     } catch (error) {
-        warn("INTRLV", "Failed to refresh fissures", error);
+        logger.warn("INTRLV", "Failed to refresh fissures", error);
     }
 }
 
-module.exports = { warn, alert, info, loadFiles, titleCase, filterRelic, relicExists, refreshFissures }
+module.exports = { loadFiles, titleCase, filterRelic, relicExists, refreshFissures }

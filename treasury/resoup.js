@@ -57,13 +57,13 @@ module.exports = {
             relics.push(`${souptext[index].trim().replace('x', '')}${toShort(souptext[index+1].trim())}`)
         }
 
-        const relicsList = (await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/relicdata.json'), 'utf-8')));
+        const relicsList = (await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json'), 'utf-8')));
         async function getRelic(name, type=null) {
             for (const relic of relicsList.relicData) {
-                if (relic[0].name == name) {
-                    let statuses = relic.slice(1, 7).map(rt => rt.type);
+                if (relic.name == name) {
+                    let statuses = relic.rewards.map(part => part.color);
                     if (type && !statuses.includes(type.toUpperCase())) return null;
-                    return [relic[0].tokens, statuses];
+                    return [relic.tokens, statuses];
                 }
             }
             return null

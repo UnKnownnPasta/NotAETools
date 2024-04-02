@@ -4,7 +4,8 @@
   "description": "Reimagining A Bot.",
   "main": "index.js",
   "scripts": {
-    "start": "echo Starting Bot... && node index.js NODE_DEBUG=*"
+    "start": "echo Starting Bot... && node index.js NODE_DEBUG=*",
+    "dev": "node . | pino-pretty -i pid,hostname -t mm-dd@HH:MM:ss"
   },
   "keywords": [],
   "author": "dePasta @ GitHub",

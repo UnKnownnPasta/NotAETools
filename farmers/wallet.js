@@ -16,14 +16,14 @@ module.exports = {
         .setDescription('Farmer to view wallet of')
         .setRequired(true)),
     async execute(client, i) {
-        const farmer = (await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/clandata.json')))).farmerids
-        const foundid = farmer.filter(x => x.id == i.options.getUser('user', true).id)
+        const farmer = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'FarmerData.json')))
+        const foundid = farmer.filter(x => x.uid == i.options.getUser('user', true).id)
         if (foundid.length == 0) return i.reply({ embeds: [new EmbedBuilder().setTitle(`No Wallet Found`)], ephemeral: true });
         else {
             const uf = foundid[0]
-            const fEmbed = new EmbedBuilder().setTitle(`Wallet of: ${uf.name}`)
+            const fEmbed = new EmbedBuilder().setTitle(`Farmer Wallet of: ${uf.name}`)
             .addFields([
-                { name: 'Tokens', value: `${uf.ttltokens} (+${uf.bonus})`, inline: true },
+                { name: 'Tokens', value: `${uf.tokens} (+${uf.bonus})`, inline: true },
                 { name: 'Spent', value: `${uf.spent}`, inline: true },
                 { name: 'Remaining', value: `${uf.left}`, inline: true },
                 { name: 'Playtime', value: `${uf.playtime} minutes` },

@@ -1,12 +1,13 @@
-const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
+const { Client, GatewayIntentBits, ActivityType, EmbedBuilder } = require('discord.js');
 const path = require('node:path')
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 const fs = require('node:fs')
-const { loadFiles, info, refreshFissures, warn } = require('./scripts/utility.js')
-const { loadAllRelics, getAllClanData, getAllBoxData } = require('./scripts/dbcreate.js');
+const { loadFiles, refreshFissures } = require('./scripts/utility.js')
+const { getAllBoxData, getAllClanData, getAllRelics, getAllUserData } = require('./scripts/dbcreate.js');
+const logger = require('./scripts/logger.js');
 
 process.on('uncaughtException', (err) => {
-	warn(`anti crash`, err.stack, err)
+	logger.error(err, `anti crash :: uncaughtException`)
 });
 
 // Initialize client
@@ -19,34 +20,31 @@ const client = new Client({
     ]
 });
 
-fs.truncate(path.join(__dirname, 'data/logs.txt'), (err) => {
-    if (err) {
-        console.log(`[BOT] Doing fresh start`)
-    } else {
-        console.log('[BOT] Doing clean start');
-    }
-});
-
 let intrv_count = 0
 setInterval(async () => {
-	await refreshFissures(client);
-	await getAllBoxData(client);
+	await Promise.all([
+		refreshFissures(client),
+		getAllBoxData(client)
+	])
 }, 180_000);
 
 setInterval(async () => {
-	await loadAllRelics();
-	await getAllClanData();
+	await Promise.all([
+		getAllRelics(),
+		getAllClanData(),
+		getAllUserData(),
+	])
 	intrv_count++
-	if (intrv_count%30 == 0) info(`INTRVL`, `${intrv_count} intervals done.`)
+	if (intrv_count%30 == 0) logger.info(`[INTRVL] ${intrv_count} intervals done.`)
 }, 300_000);
 
 // Load all commands	
 ;(async () => {
-	client.treasury = await loadFiles('./treasury');
-	client.farmers = await loadFiles('./farmers');
-	client.buttons = await loadFiles('./events/buttons')
+	[client.treasury, client.farmers, client.buttons] = await Promise.all([
+		loadFiles('treasury'), loadFiles('farmers'), loadFiles('events/buttons')
+	])
 })();
-info('STRTUP', 'Loaded command files.')
+logger.info('[STRTUP] Loaded command files.')
 
 // Load all event listeners
 const eventsPath = path.join(__dirname, 'events/listeners');
@@ -56,7 +54,7 @@ eventFiles.forEach(file => {
 	const event = require(path.join(eventsPath, file));
 	const callback = (...args) => event.listen(client, ...args);
 	client[event.once ? 'once' : 'on'](event.name, callback);
-	info('STRTUP', `Loaded ${event.name} listener.`);
+	logger.info(`[STRTUP] Loaded ${event.name} listener.`);
 });
 
 // Login
@@ -64,14 +62,17 @@ eventFiles.forEach(file => {
 	await client.login(process.env.TOKEN);
 
 	client.on('ready', async () => {
-		// await client.guilds.fetch({ force: true });
-		// require('./scripts/deploy.js');
-
 		client.user.setPresence({ activities: [{ name: 'Ya mom 👒', type: ActivityType.Watching }], status: 'dnd' });
-		info(`${client.user.username}`, `Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.\n-----`);
+		logger.info(`[${client.user.username}] Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.`);
 
-		// await loadAllRelics()
-		// await refreshFissures(client);
-		// await getAllBoxData(client);
+		await client.guilds.fetch({ force: true });
+		await Promise.all([
+			getAllClanData(),
+			getAllRelics(),
+			getAllBoxData(client),
+			refreshFissures(client),
+			getAllBoxData(client),
+			require('./scripts/deploy.js'),
+		])
 	})
 })();

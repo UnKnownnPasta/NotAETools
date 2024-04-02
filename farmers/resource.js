@@ -33,6 +33,17 @@ const resourceNames = [
     'Mutagen Mass'
   ];
 
+const reverseClan = {
+    IK: "Imouto Kingdom",
+    WK: "Waifu Kingdom",
+    MK: "Manga Kingdom",
+    YK: "Yuri Kingdom",
+    CK: "Cowaii Kingdom",
+    TK: "Tsuki Kingdom",
+    HK: "Heavens Kingdom",
+    AK: "Andromeda Kingdom"
+};
+
 module.exports = {
     name: "resource",
     data: new SlashCommandBuilder()
@@ -51,7 +62,7 @@ module.exports = {
      * @param {CommandInteraction} i 
      */
     async execute(client, i) {
-        const resources = (await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/clandata.json')))).resources
+        const resources = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'ClanData.json')))
         const resrc = i.options.getString('resource', true)
 
         if (!resourceNames.includes(resrc)) 
@@ -61,8 +72,9 @@ module.exports = {
         .setTitle(`Resource overview of ${resrc}`);
 
         await resources.slice(0, -1).map(r => {
-            const res = r.resources.filter(x => x.name == resrc)[0]
-            clanEmbed.addFields({ name: r.clan, value: `**Amt:** \`${res.amt}\` | **Short:** \`${res.short}\`` })
+            const res = Object.entries(r.resource).filter(([ key, value ]) => key == resrc)[0]
+            console.log(res);
+            clanEmbed.addFields({ name: reverseClan[r.clan].replace("Kingdom", ""), value: `**Amt:** \`${res[1].amt}\` | **Short:** \`${res[1].short}\`` })
         });
 
         await i.reply({ embeds: [clanEmbed] })

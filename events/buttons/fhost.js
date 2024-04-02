@@ -66,12 +66,10 @@ module.exports = {
 
         if (allIDs.filter(x => x != 'n').length >= 4) {
             await i.message.delete();
-            let names = await JSON.parse(await fs.readFile(path.join(__dirname, '..', '..', 'data/clandata.json')))
-            if (!names.farmerids) return i.channel.send({ content: `<@740536348166848582> oi fhost broke again, keys: ${Object.keys(names)}` });
-            names = names.farmerids;
+            let names = await JSON.parse(await fs.readFile(path.join(__dirname, '..', '..', 'data', 'FarmerData.json')))
 
             const IDList = allIDs.filter(x => x != 'n').slice(0, 4).map(ids => {
-                const jsofuser = names.find(user => user.id == ids)
+                const jsofuser = names.find(user => user.uid == ids)
                 return jsofuser ?  `<@${ids}> /inv ${jsofuser?.name}` : `<@${ids}> No IGN found`
             })
             await i.channel.send({ content: `${IDList.join("\n")}`, embeds: [globalHostEmbed] });

@@ -6,6 +6,9 @@ node_modules
 clandata.json
 relicdata.json
 boxdata.json
+farmerdata.json
+treasurydata.json
+*.log
 
 # Other
 *.traineddata
