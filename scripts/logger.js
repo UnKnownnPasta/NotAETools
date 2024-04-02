@@ -26,7 +26,7 @@ const pinoLogger = pino(
     },
     timestamp: pino.stdTimeFunctions.isoTime,
   },
-  // fileTransport
+  fileTransport
 );
 
 
