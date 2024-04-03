@@ -86,7 +86,7 @@ function filterRelic(relic) {
  * @returns Boolean
  */
 async function relicExists(relic) {
-    const relicList = (await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/relicdata.json')))).relicNames
+    const relicList = (await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json')))).relicNames
     return relicList.includes(relic)
 }
 
