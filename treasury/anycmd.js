@@ -69,10 +69,10 @@ module.exports = {
             case "status":
             const statusParts = []
 
-            await Promise.all(relic_data.relicData.map(async (relic) => {
+            for (const relic of relic_data.relicData) {
                 const relicRewards = relic.rewards;
-                await Promise.all(relicRewards.map((part) => {
-                    if (part.item === "Forma") return;
+                for (const part of relicRewards) {
+                    if (part.item === "Forma") continue;
                     let partStock = parseInt(part.stock)
                     let partColor = part.color
                     if (hasdashb) {
@@ -82,8 +82,8 @@ module.exports = {
                     if (partColor === wordToUpper) {
                         statusParts.push({ s: partStock, i: part.item })
                     }
-                }))
-            }))
+                }
+            }
 
             const sortedParts = [... new Set(statusParts.sort((a, b) => a.s - b.s).map((part) => {
                 return `${`[${part.s}]`.padEnd(5)}| ${part.i}`
@@ -129,15 +129,16 @@ module.exports = {
             let realColor = ""
             let extraCount = ""
 
-            await Promise.all(relic_data.relicData.map((relic) => {
+            for (const relic of relic_data.relicData) {
                 const partIndex = relic.parts.findIndex((part) => part?.startsWith(word))
-                if (partIndex === -1) return;
+                if (partIndex === -1) continue;
+
                 realName = relic.rewards[partIndex].item
                 realStock = relic.rewards[partIndex].stock
                 realColor = relic.rewards[partIndex].color
                 if (hasdashb) extraCount = `(+${collection_box[realName] ?? 0})`;
                 partRelics.push({ r: relic.name, t: relic.tokens, c: partRarities[partIndex] })
-            }))
+            }
 
             const sortedRelics = partRelics.sort((a, b) => parseInt(b.t) - parseInt(a.t)).map((part) => {
                 return `${part.c.padEnd(2)} | ${part.r} {${part.t}}`
@@ -158,12 +159,12 @@ module.exports = {
             const setName = word.replace("Prime", "").trim() + " ";
 
             const setParts = []
-            await Promise.all(relic_data.relicData.map((relic) => {
+            for (const relic of relic_data.relicData) {
                 const partExistsIndex = relic.parts.findIndex(part => part?.startsWith(setName))
-                if (partExistsIndex === -1) return;
+                if (partExistsIndex === -1) continue;
 
                 const partOfSet = relic.rewards[partExistsIndex]
-                if (setParts.some((rec) => rec.n === partOfSet.item)) return;
+                if (setParts.some((rec) => rec.n === partOfSet.item)) continue;
 
                 let stockOfSetPart = parseInt(partOfSet.stock);
                 let extraStock = 0;
@@ -174,7 +175,7 @@ module.exports = {
                 }
 
                 setParts.push({ s: stockOfSetPart, ex: extraStock, n: partOfSet.item, c: colorOfPart })
-            }))
+            }
 
             let colorOfParts = []
             let stockOfParts = []
@@ -206,11 +207,17 @@ module.exports = {
             if (relicToFind.length === 0) return;
             const relicFound = relicToFind[0]
             let allStocks = []
+            const relicDesc = Array.from({ length: 6 })
 
-            const relicDesc = relicFound.rewards.map((part) => {
+            for (const part of relicFound.rewards) {
                 if (part.item === 'Forma') {
-                    if (hasdashb) return `       | Forma`;
-                    else return `   | Forma`;
+                    if (hasdashb) {
+                        relicDesc[relicFound.rewards.indexOf(part)] =  `       | Forma`;
+                        continue
+                    } else {
+                        relicDesc[relicFound.rewards.indexOf(part)] =  `   | Forma`;
+                        continue;
+                    }
                 }
                 let partStock = parseInt(part.stock)
                 let extraStock = ""
@@ -218,8 +225,9 @@ module.exports = {
                     extraStock = `(${collection_box[part.item] ?? 0})`
                 }
                 allStocks.push(partStock + (collection_box[part.item] ?? 0))
-                return `${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 7)}| ${part.item} {${part.color}}`
-            })
+                relicDesc[relicFound.rewards.indexOf(part)] = `${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 7)}| ${part.item} {${part.color}}`
+            }
+            
             allStocks = range(Math.min(...allStocks))
 
             message.reply({ embeds: [

@@ -55,7 +55,7 @@ module.exports = {
         const clanResources = await resources.filter(clans => clans.clan == clan)[0].resource;
         
         await Promise.all(Object.entries(clanResources).map(([ key, { amt, short } ]) => {
-            embedDesc.push(`${key.padEnd(17)} | Amt: ${amt.padEnd(11)} (+${short})`)
+            embedDesc.push(`${key.padEnd(17)} | Amt: ${amt} (+${short})`)
         }));
 
         const clanEmbed = new EmbedBuilder()
