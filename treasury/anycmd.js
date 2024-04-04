@@ -74,12 +74,13 @@ module.exports = {
                     for (const part of relic.rewards) {
                         if (part.item === "Forma") continue;
                         let partColor = part.color
-                        if (partColor === wordToUpper) {
+                        if (partColor === wordToUpper) { // just to early skip parts that dont match the color
                             let partStock = parseInt(part.stock)
                             if (hasdashb) {
                                 partStock = partStock + (collection_box[part.item] ?? 0)
                                 partColor = range(partStock)
                             }
+                            if (partColor !== wordToUpper) continue;
                             statusParts.push({ s: partStock, i: part.item })
                         }
                     }
