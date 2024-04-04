@@ -55,6 +55,7 @@ module.exports = {
             fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json')),
             fs.readFile(path.join(__dirname, '..', 'data', 'BoxData.json'))
         ]);
+        const partRarities = ["C", "C", "C", "UC", "UC", "RA"];
 
         const [relic_data, collection_box] = await Promise.all([
             JSON.parse(fetchRelicData), JSON.parse(fetchCollectionBox)
@@ -70,16 +71,15 @@ module.exports = {
             const statusParts = []
 
             for (const relic of relic_data.relicData) {
-                const relicRewards = relic.rewards;
-                for (const part of relicRewards) {
+                for (const part of relic.rewards) {
                     if (part.item === "Forma") continue;
-                    let partStock = parseInt(part.stock)
                     let partColor = part.color
-                    if (hasdashb) {
-                        partStock = partStock + (collection_box[part.item] ?? 0)
-                        partColor = range(partStock)
-                    }
                     if (partColor === wordToUpper) {
+                        let partStock = parseInt(part.stock)
+                        if (hasdashb) {
+                            partStock = partStock + (collection_box[part.item] ?? 0)
+                            partColor = range(partStock)
+                        }
                         statusParts.push({ s: partStock, i: part.item })
                     }
                 }
@@ -120,9 +120,6 @@ module.exports = {
                 break;
         
             case "part":
-            if (!relic_data.partNames.some(part => part.startsWith(word))) return;
-
-            const partRarities = ["C", "C", "C", "UC", "UC", "RA"];
             const partRelics = [];
             let realName = ""
             let realStock = 0
@@ -133,12 +130,15 @@ module.exports = {
                 const partIndex = relic.parts.findIndex((part) => part?.startsWith(word))
                 if (partIndex === -1) continue;
 
-                realName = relic.rewards[partIndex].item
-                realStock = relic.rewards[partIndex].stock
-                realColor = relic.rewards[partIndex].color
+                if (!realName) {
+                    realName = relic.rewards[partIndex].item
+                    realStock = relic.rewards[partIndex].stock
+                    realColor = relic.rewards[partIndex].color
+                }
                 if (hasdashb) extraCount = `(+${collection_box[realName] ?? 0})`;
                 partRelics.push({ r: relic.name, t: relic.tokens, c: partRarities[partIndex] })
             }
+            if (!partRelics.length) return;
 
             const sortedRelics = partRelics.sort((a, b) => parseInt(b.t) - parseInt(a.t)).map((part) => {
                 return `${part.c.padEnd(2)} | ${part.r} {${part.t}}`
@@ -176,6 +176,7 @@ module.exports = {
 
                 setParts.push({ s: stockOfSetPart, ex: extraStock, n: partOfSet.item, c: colorOfPart })
             }
+            if (!setParts.length) return;
 
             let colorOfParts = []
             let stockOfParts = []
@@ -209,13 +210,14 @@ module.exports = {
             let allStocks = []
             const relicDesc = Array.from({ length: 6 })
 
-            for (const part of relicFound.rewards) {
+            for (const [i, part] of Object.entries(relicFound.rewards)) {
+                const indexRarity = partRarities[parseInt(i)]
                 if (part.item === 'Forma') {
                     if (hasdashb) {
-                        relicDesc[relicFound.rewards.indexOf(part)] =  `       | Forma`;
+                        relicDesc[relicFound.rewards.indexOf(part)] =  `${indexRarity.padEnd(2)} |        | Forma`;
                         continue
                     } else {
-                        relicDesc[relicFound.rewards.indexOf(part)] =  `   | Forma`;
+                        relicDesc[relicFound.rewards.indexOf(part)] =  `${indexRarity.padEnd(2)} |    | Forma`;
                         continue;
                     }
                 }
@@ -225,7 +227,7 @@ module.exports = {
                     extraStock = `(${collection_box[part.item] ?? 0})`
                 }
                 allStocks.push(partStock + (collection_box[part.item] ?? 0))
-                relicDesc[relicFound.rewards.indexOf(part)] = `${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 7)}| ${part.item} {${part.color}}`
+                relicDesc[relicFound.rewards.indexOf(part)] = `${indexRarity.padEnd(2)} | ${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 7)}| ${part.item} {${part.color}}`
             }
             
             allStocks = range(Math.min(...allStocks))
@@ -234,7 +236,9 @@ module.exports = {
                 new EmbedBuilder()
                 .setTitle(`[ ${properRelicName} ] {${relicFound.tokens}}`)
                 .setDescription(codeBlock('ml', relicDesc.join("\n")))
-                .setFooter({ text: `Showing ${relicFound.name.split(" ")[0]} Void relic  •  ${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${allStocks} relic  ` })
+                .setFooter({ 
+                    text: `Showing ${relicFound.name.split(" ")[0]} Void relic  •  ${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${allStocks} relic  `
+                })
                 .setColor(hex[allStocks])
                 .setTimestamp()
             ] })

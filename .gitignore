@@ -1,6 +1,7 @@
 # Folders
 dev/
 node_modules
+src
 
 # JSONs
 clandata.json
