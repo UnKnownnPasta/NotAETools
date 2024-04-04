@@ -131,12 +131,16 @@ module.exports = {
                     const partIndex = relic.parts.findIndex((part) => part?.startsWith(word))
                     if (partIndex === -1) continue;
 
+                    const relicIndexOfReward = relic.rewards[partIndex]
                     if (!realName) {
-                        realName = relic.rewards[partIndex].item
-                        realStock = relic.rewards[partIndex].stock
-                        realColor = relic.rewards[partIndex].color
+                        realName = relicIndexOfReward.item
+                        realStock = relicIndexOfReward.stock
+                        realColor = relicIndexOfReward.color
                     }
-                    if (hasdashb) extraCount = `(+${collection_box[realName] ?? 0})`;
+                    if (hasdashb) {
+                        extraCount = `(+${collection_box[realName] ?? 0})`;
+                        realColor = range((collection_box[realName] ?? 0) + parseInt(relicIndexOfReward.stock))
+                    }
                     partRelics.push({ r: relic.name, t: relic.tokens, c: partRarities[partIndex] })
                 }
                 if (!partRelics.length) return;
@@ -211,14 +215,15 @@ module.exports = {
                 let allStocks = []
                 const relicDesc = Array.from({ length: 6 })
 
-                for (const [i, part] of Object.entries(relicFound.rewards)) {
+                const relicRewards = relicFound.rewards;
+                for (const [i, part] of Object.entries(relicRewards)) {
                     const indexRarity = partRarities[parseInt(i)]
                     if (part.item === 'Forma') {
                         if (hasdashb) {
-                            relicDesc[relicFound.rewards.indexOf(part)] =  `${indexRarity.padEnd(2)} |         | Forma`;
+                            relicDesc[relicRewards.indexOf(part)] =  `${indexRarity.padEnd(2)} |         | Forma`;
                             continue
                         } else {
-                            relicDesc[relicFound.rewards.indexOf(part)] =  `${indexRarity.padEnd(2)} |    | Forma`;
+                            relicDesc[relicRewards.indexOf(part)] =  `${indexRarity.padEnd(2)} |    | Forma`;
                             continue;
                         }
                     }
@@ -226,9 +231,10 @@ module.exports = {
                     let extraStock = ""
                     if (hasdashb) {
                         extraStock = `(+${collection_box[part.item] ?? 0})`
+                        partStock += collection_box[part.item] ?? 0
                     }
                     allStocks.push(partStock + (collection_box[part.item] ?? 0))
-                    relicDesc[relicFound.rewards.indexOf(part)] = `${indexRarity.padEnd(2)} | ${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 8)}| ${part.item} {${part.color}}`
+                    relicDesc[relicRewards.indexOf(part)] = `${indexRarity.padEnd(2)} | ${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 8)}| ${part.item} {${range(partStock)}}`
                 }
                 
                 allStocks = range(Math.min(...allStocks))
