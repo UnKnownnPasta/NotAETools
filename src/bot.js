@@ -3,10 +3,11 @@ const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
 const path = require('node:path');
 const database = require('./handler/cDatabase');
 const { loadFiles } = require('./handler/bHelper');
-const { refreshFissures } = require('./handler/cCycles');
-const { getAllUserData, getAllClanData, getAllRelicData } = require('./handler/cWarframe');
+const FissureManager = require('./handler/cFissures.js')
+const { getAllPartsStock, getAllUserData, getAllClanData, updateAllRelics } = require('./handler/cGoogle.js')
 const logger = require('./handler/bLog.js');
 const cDeploy = require('./handler/cDeploy.js');
+const { resetDB } = require('./handler/cGoogle.js');
 
 class AETools {
     constructor() {
@@ -43,23 +44,24 @@ class AETools {
             await this.createListeners();
             await this.createCommands();
 
-            if (this.settings.deploy_commands) await this.deploy();
-            if (this.settings.cycle_fissure) await this.cycleFissures();
             await this.refreshDB();
 
             await this.client.login(process.env.DISCORD_TOKEN)
+
             if (this.settings.fetch_guilds) await this.client.guilds.fetch({ force: true });
+            if (this.settings.cycle_fissure) await this.cycleFissures();
+            if (this.settings.deploy_commands) await this.deploy();
 
             this.client.user.setPresence({
                 activities: [{ name: "Zloosh 👒", type: ActivityType.Watching }],
                 status: "dnd",
             });
 
-            logger.info(`Logged in to Discord\n  U/N: ${this.client.user?.tag ?? this.client.user.username}\n  @ ${new Date().toLocaleString()}\n`)
+            logger.info(`Logged in to Discord\n  U/N: ${this.client.user?.tag ?? this.client.user.username}\n  @ ${new Date()}\n`)
             
-            if (!this.settings.fetch_guilds) logger.warn(`Guilds could potentially be uncached as fetch_guilds is false`);
+            if (!this.settings.fetch_guilds) logger.warn(`Guilds could potentially be uncached as fetch_guilds is false; This may conflict with Fissures not being able to load the channel to send fissures in.`);
             else logger.warn(`Recached all Guilds. Current cache size: ${this.client.guilds.cache.size}`);
-        }, 2000);
+        }, 2500);
     }
 
     async startDatabase() {
@@ -73,17 +75,19 @@ class AETools {
     }
 
     async createCommands() {
-        this.client.treasury = await loadFiles('src/departments/treasury');
-        this.client.farmer = await loadFiles('src/departments/farmer');
-        this.client.button = await loadFiles('src/events', (fl) => fl.startsWith('btn-'));
+        this.client.treasury = loadFiles('departments/treasury');
+        this.client.farmer = loadFiles('departments/farmer');
+        this.client.button = loadFiles('events', (fl) => fl.startsWith('btn-'));
         logger.info("Loaded commands")
     }
 
     async cycleFissures() {
         if (!this.settings.cycle_fissure) return;
+        const fissureInstance = new FissureManager(this.client);
+        await fissureInstance.updateFissure()
 
         setInterval(async () => {
-            await refreshFissures(this.client);
+            await fissureInstance.updateFissure()
         }, this.settings.fissure_interval);
 
         logger.info("Fissure cycle active!")
@@ -94,22 +98,19 @@ class AETools {
 
         if (this.settings.sync_with_force) {
             logger.warn("Resetting Tables \`FarmIDs\` \`TreasIDs\`")
-            await getAllUserData();
             logger.warn("Resetting Tables \`Resources\`")
-            await getAllClanData();
             logger.warn("Resetting Tables \`RelicNames\` \`Relics\` \`Parts\`")
-            await getAllRelicData();
+            await resetDB();
         }
 
         setInterval(async () => {
             try {
-                await getAllUserData();
-                await getAllClanData();
-                await getAllRelicData();
+                await Promise.all([getAllPartsStock(), getAllUserData(), getAllClanData(), updateAllRelics()]).then(() => {
+                    logger.info("Interval: Updated database")
+                })
             } catch (error) {
-                logger.error(error.stack)
+                logger.error(error, `bot/database: [Error]: Error on updating database in interval`)
             }
-            logger.info("Interval: Updated database")
         }, this.settings.update_interval);
 
         logger.info("Database refreshing every interval now.")

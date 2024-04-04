@@ -8,7 +8,8 @@ class Database {
             dialect: "sqlite",
             storage: path.join(__dirname, "..", "data/database.sqlite"),
             sync: false,
-            logging: (msg) => logger.info(msg)
+            // logging: (msg) => logger.info(msg),
+            logging: false,
         });
 
         // Define models, associations, etc.

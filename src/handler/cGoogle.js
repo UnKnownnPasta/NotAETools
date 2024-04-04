@@ -97,13 +97,13 @@ async function getAllClanData() {
 
         let localist = {};
         await Promise.all(clandata.data.values.map(x => localist[x[0]] = { amt: x[1], short: x[2] ?? '0' }))
-        return { clan: key[0], resource: JSON.stringify(localist) };
+        return { clan: key[0], resource: localist };
     }))
     .then(async (results) => {
         await database.models.Resources.bulkCreate(results.filter(res => res), { updateOnDuplicate: ['resource'] })
     })
     .catch(error => {
-        console.error('Error fetching sheet values:', error.message);
+        logger.error(error, 'Error fetching clan resources data')
     });
 }
 
@@ -115,7 +115,6 @@ async function updateAllRelics() {
     const getrarity = (percent) => percent == 25.33 ? "Common" : percent == 11 ? "Uncommon" : percent == 2 ? "Rare" : "Unknown"
 
     await Promise.all(relicdata.map((relic) => {
-        logger.info(relic);
         let tempobj = {}
         tempobj["relic"] = relic.name
         tempobj["vaulted"] = relic.vaultInfo.vaulted
@@ -128,15 +127,11 @@ async function updateAllRelics() {
     await database.models.Relics.bulkCreate(allRelicsData, { updateOnDuplicate: ['vaulted', 'rewards'] })
 }
 
-(async () => {
-    await database.authenticate()
-    database.defineModels()
-    await database.syncDatabase(false)
-
+async function resetDB() {
     let start = new Date().getTime()
     await Promise.all([getAllPartsStock(), getAllUserData(), getAllClanData(), updateAllRelics()])
     let end = new Date().getTime()
-    logger.info(end - start);
-})()
+    logger.info(`Database Reset timing: ${end - start}ms`);
+}
 
-module.exports = { getAllPartsStock, getAllUserData, getAllClanData, updateAllRelics }
+module.exports = { getAllPartsStock, getAllUserData, getAllClanData, updateAllRelics, resetDB }

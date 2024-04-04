@@ -9,7 +9,7 @@ const logger = require('./bLog');
  */
 async function loadFiles(dirpath, condition = null) {
     let clientCollection = new Collection();
-    const commandsPath = path.join(__dirname, '..', 'departments', dirpath);
+    const commandsPath = path.join(__dirname, '..', dirpath);
     const files = await fsp.readdir(commandsPath)
     let commandFiles;
     if (condition != null) {
@@ -84,7 +84,7 @@ function filterRelic(relic) {
  * @returns {Boolean}
  */
 async function relicExists(relic) {
-    const relicList = (await JSON.parse(await fsp.readFile('./src/data/relicdata.json'))).relicNames
+    const relicList = (await JSON.parse(await fsp.readFile(path.join(__dirname, '..', 'data', 'RelicData.json')))).relicNames
     return relicList.includes(relic)
 }
 
