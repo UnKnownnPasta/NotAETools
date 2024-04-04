@@ -185,7 +185,7 @@ module.exports = {
                     colorOfParts.push(part.c)
                     stockOfParts.push(part.s + part.ex)
                     if (hasdashb) {
-                        return `${`${part.s}(${part.ex})`.padEnd(7)}| ${part.n} {${part.c}}`
+                        return `${`${part.s}(+${part.ex})`.padEnd(8)}| ${part.n} {${part.c}}`
                     } else {
                         return `${`${part.s}`.padEnd(3)}| ${part.n} {${part.c}}`
                     }
@@ -215,7 +215,7 @@ module.exports = {
                     const indexRarity = partRarities[parseInt(i)]
                     if (part.item === 'Forma') {
                         if (hasdashb) {
-                            relicDesc[relicFound.rewards.indexOf(part)] =  `${indexRarity.padEnd(2)} |        | Forma`;
+                            relicDesc[relicFound.rewards.indexOf(part)] =  `${indexRarity.padEnd(2)} |         | Forma`;
                             continue
                         } else {
                             relicDesc[relicFound.rewards.indexOf(part)] =  `${indexRarity.padEnd(2)} |    | Forma`;
@@ -225,10 +225,10 @@ module.exports = {
                     let partStock = parseInt(part.stock)
                     let extraStock = ""
                     if (hasdashb) {
-                        extraStock = `(${collection_box[part.item] ?? 0})`
+                        extraStock = `(+${collection_box[part.item] ?? 0})`
                     }
                     allStocks.push(partStock + (collection_box[part.item] ?? 0))
-                    relicDesc[relicFound.rewards.indexOf(part)] = `${indexRarity.padEnd(2)} | ${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 7)}| ${part.item} {${part.color}}`
+                    relicDesc[relicFound.rewards.indexOf(part)] = `${indexRarity.padEnd(2)} | ${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 8)}| ${part.item} {${part.color}}`
                 }
                 
                 allStocks = range(Math.min(...allStocks))
