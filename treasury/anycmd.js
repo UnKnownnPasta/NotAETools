@@ -231,7 +231,6 @@ module.exports = {
                     let extraStock = ""
                     if (hasdashb) {
                         extraStock = `(+${collection_box[part.item] ?? 0})`
-                        partStock += collection_box[part.item] ?? 0
                     }
                     allStocks.push(partStock + (collection_box[part.item] ?? 0))
                     relicDesc[relicRewards.indexOf(part)] = `${indexRarity.padEnd(2)} | ${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 8)}| ${part.item} {${range(partStock)}}`
