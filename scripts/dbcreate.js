@@ -137,6 +137,7 @@ async function getAllBoxData(client) {
                         .replace(/\s*prime\s*/, ' ')
                         .replace(/\(.*?\)/g, "")
                         .replace(/<@!?[^>]+>/g, "")
+                        .replace(/x(\d+)/, '$1x')
                         .trim()
                         .replace(/\b(\d+)\s*x?\s*\b/g, '$1x ')
                         .replace(/\b(\d+)\s*x?\b\s*(.*?)\s*/g, '$1x $2, ')
