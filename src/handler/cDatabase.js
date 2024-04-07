@@ -1,6 +1,6 @@
 const { Sequelize } = require("sequelize");
 const path = require("path");
-const logger = require('./bLog.js');
+const logger = require("../utility/bLog.js");
 
 class Database {
     constructor() {
@@ -12,17 +12,17 @@ class Database {
             logging: false,
         });
 
-        // Define models, associations, etc.
         this.defineModels();
     }
 
     defineModels() {
         this.models = {
-            Relics: require('../models/relics.js')(this.sequelize),
+            Relics: require("../models/relics.js")(this.sequelize),
             Items: require("../models/items.js")(this.sequelize),
             Resources: require("../models/resources.js")(this.sequelize),
             Farmers: require("../models/farmers.js")(this.sequelize),
             Treasurers: require("../models/treasurers.js")(this.sequelize),
+            Box: require("../models/box.js")(this.sequelize),
         };
     }
 

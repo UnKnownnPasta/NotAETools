@@ -1,7 +1,7 @@
 const axios = require('axios')
 const { Client, EmbedBuilder } = require('discord.js')
-const logger = require('./bLog.js')
-const { titleCase } = require('./bHelper.js')
+const logger = require('../utility/bLog.js')
+const { titleCase } = require('../utility/bHelper.js')
 class FissureManager {
     /**
      * A Manager for Latest Fissures from Warframe

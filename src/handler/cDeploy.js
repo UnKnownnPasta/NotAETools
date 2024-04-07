@@ -1,4 +1,4 @@
-const logger = require("./bLog");
+const logger = require("../utility/bLog.js");
 const { REST, Routes } = require('discord.js');
 const fs = require('node:fs');
 const path = require('node:path');

@@ -5,7 +5,9 @@ const {
     relicExists,
     titleCase,
     info,
-} = require("./bHelper.js");
+} = require("../utility/bHelper.js");
+const bot = require('../bot.js');
+const logger = require("../utility/bLog.js");
 
 module.exports = {
     name: "messageCreate",
@@ -42,9 +44,9 @@ module.exports = {
             cmdType = "relic";
         }
 
-        client.treasury
+        bot.deps.treasury
             .get("anycmd")
             ?.execute(client, message, titleCase(word), cmdType);
-        info("CMD", `Ran ++${cmdType} command by ${message.member.nickname ?? message.author.username} with arguments: "${word}" @ ${new Date().toLocaleString()}`);
+        logger.info("CMD", `Ran ++${cmdType} command by ${message.member.nickname ?? message.author.username} with arguments: "${word}" @ ${new Date().toLocaleString()}`);
         },
 };

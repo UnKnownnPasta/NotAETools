@@ -1,7 +1,8 @@
 const path = require('node:path');
 const { Collection } = require("discord.js");
 const fsp = require('node:fs/promises');
-const logger = require('./bLog');
+const logger = require("./bLog.js");
+const database = require('../handler/cDatabase.js');
 
 /**
  * Load all files from a folder and stores them in a map.
@@ -84,8 +85,8 @@ function filterRelic(relic) {
  * @returns {Boolean}
  */
 async function relicExists(relic) {
-    const relicList = (await JSON.parse(await fsp.readFile(path.join(__dirname, '..', 'data', 'RelicData.json')))).relicNames
-    return relicList.includes(relic)
+    const wasfound = await database.models.Relics.findOne({ where: { relic: relic } });
+    return wasfound ?? false
 }
 
 module.exports = { loadFiles, titleCase, filterRelic, relicExists }

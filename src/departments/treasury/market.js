@@ -11,7 +11,7 @@ const { createWorker } = require('tesseract.js')
 const axios = require('axios')
 const { Pagination } = require("pagination.djs");
 const config = require('../../data/config.json')
-const { titleCase } = require("../../handler/bHelper.js");
+const { titleCase } = require("../../utility/bLog");
 
 module.exports = {
     name: "market",

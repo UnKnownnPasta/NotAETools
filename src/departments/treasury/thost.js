@@ -7,7 +7,7 @@ const {
     ButtonStyle,
     ActionRowBuilder
 } = require("discord.js");
-const { filterRelic, relicExists } = require("../../handler/bHelper.js");
+const { filterRelic, relicExists } = require("../../utility/bHelper.js");
 
 module.exports = {
     name: "thost",

@@ -5,7 +5,7 @@ const {
     CommandInteraction,
 } = require("discord.js");
 const fs = require("node:fs/promises");
-const { titleCase } = require("../../handler/bHelper.js");
+const { titleCase } = require("../../utility/bLog");
 
 const resourceNames = [
     'Credits', 'Alloy Plate',
