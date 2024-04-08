@@ -219,6 +219,7 @@ module.exports = {
                 const relicRewards = relicFound.rewards;
                 for (const [i, part] of Object.entries(relicRewards)) {
                     const indexRarity = partRarities[parseInt(i)]
+                    partItem = part.item.replace(" x2", "")
                     if (partItem === 'Forma') {
                         if (hasdashb) {
                             relicDesc[relicRewards.indexOf(part)] =  `${indexRarity.padEnd(2)} |         | Forma`;
