@@ -1,5 +1,5 @@
 const { google } = require('googleapis');
-const { spreadsheet, collectionBox } = require('../data/config.json');
+const { spreadsheet, collectionBox, dualitemslist } = require('../data/config.json');
 const { titleCase } = require('./utility');
 const { Client, ThreadChannel } = require('discord.js');
 
@@ -46,6 +46,7 @@ async function getAllRelics() {
             await Promise.all(record.slice(1, 7).map((item) => {
                 let itemStock = item.match(itemStockRegex)?.[1]
                 let itemName = item.match(itemNameRegex)?.[1]?.replace(' and ', ' & ')
+                if (dualitemslist.includes(itemName)) itemName += " x2"
                 
                 pushObj.parts.push(itemName);
                 pushObj.rewards.push({ item: itemName ?? "Forma", stock: itemStock ?? "", color: range(parseInt(itemStock ?? 100)) });
@@ -56,7 +57,7 @@ async function getAllRelics() {
 
         const [onlyRelics, onlyParts] = await Promise.all([
             [... new Set(allRelicData.map(relic => relic.name).flat())],
-            [... new Set(allRelicData.map(relic => relic.parts).flat())],
+            [... new Set(allRelicData.map(relic => relic.parts).flat().map(part => part?.replace(" x2", "")))],
         ])
         const JSONData = { relicData: allRelicData, relicNames: onlyRelics, partNames: onlyParts.filter(p => p) }
         
@@ -181,7 +182,7 @@ async function getAllBoxData(client) {
 
                         let updatedAny = false;
                         const boxObj = Object.entries(boxStock);
-                        let curPartName = part[~nmIndex & 1].trim()
+                        let curPartName = part[~nmIndex & 1].trim().replace(" x2", "")
 
                         for (const [key, val] of boxObj) {
                             let words = key.split(" ")
@@ -199,7 +200,7 @@ async function getAllBoxData(client) {
                                     boxStock[curPartName] = (boxStock[curPartName] ?? 0) + part[nmIndex]
                                     return;
                                 }
-                                else if (matchAny(y, partText.at(-1))) {
+                                else if (partText.length <= 2 ? matchAny(y, partText.at(-1) ?? "00") : (matchAny(x.at(-1) ?? "00", partText.at(-1)) && matchAny(x.at(-2) ?? "00", partText.at(-2)) && matchAny(x.at(-3) ?? "00", partText.at(-3)))) {
                                     updatedAny = true
                                     boxStock[key] += part[nmIndex]
                                     return;
@@ -223,7 +224,7 @@ async function getAllBoxData(client) {
         let pind = partNames.filter(x => {
             if (splitnm[0] == 'Mag') return x.startsWith('Mag')
             else if (splitnm[0] == 'Magnus') return x.startsWith('Magnus')
-            else return x.startsWith(splitnm[0])
+            else return splitnm.length > 2 ? (x.startsWith(splitnm[0]) && matchAny(x.split(" ")[1], splitnm[1]) && matchAny(x.split(" ")[2], splitnm[2])) : x.startsWith(splitnm[0])
         })
         .filter(y => y.split(' ').slice(1).some(
             z => splitnm.slice(1).some(p => z.startsWith(p == 'bp' ? 'BP' : p.slice(0, -1)))))

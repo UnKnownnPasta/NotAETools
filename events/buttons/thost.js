@@ -73,16 +73,17 @@ module.exports = {
 
             case 'thost-relicview':
                 const properRelicName = relic.split('x ')[1].slice(0, -1)
-                let relic_data = await JSON.parse(await fs.readFile(path.join(__dirname, '..', '..', 'data', 'relicdata.json'), 'utf-8'))
+                let relic_data = await JSON.parse(await fs.readFile(path.join(__dirname, '..', '..', 'data', 'RelicData.json'), 'utf-8'))
 
                 const relicToFind = relic_data.relicData.filter((relic) => relic.name === properRelicName)
                 if (relicToFind.length === 0) return;
                 const relicFound = relicToFind[0]
     
-                const relicDesc = relicFound.rewards.map((part) => {
-                    if (part.item === 'Forma') return `   | Forma`;
+                const rarities = ['C ', 'C ', 'C ', 'UC', 'UC', 'RA']
+                const relicDesc = relicFound.rewards.map((part, i) => {
+                    if (part.item === 'Forma') return `${rarities[i]} |    | Forma`;
                     let partStock = parseInt(part.stock)
-                    return `${`${partStock}`.padEnd(3)}| ${part.item} {${part.color}}`
+                    return `${rarities[i]} | ${`${partStock}`.padEnd(3)}| ${part.item} {${part.color}}`
                 })
     
                 i.reply({ embeds: [

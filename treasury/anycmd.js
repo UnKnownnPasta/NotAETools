@@ -72,12 +72,13 @@ module.exports = {
 
                 for (const relic of relic_data.relicData) {
                     for (const part of relic.rewards) {
-                        if (part.item === "Forma") continue;
+                        partItem = part.item.replace(" x2", "")
+                        if (partItem === "Forma") continue;
                         let partColor = part.color
                         if (partColor === wordToUpper) { // just to early skip parts that dont match the color
                             let partStock = parseInt(part.stock)
                             if (hasdashb) {
-                                partStock = partStock + (collection_box[part.item] ?? 0)
+                                partStock = partStock + (collection_box[partItem] ?? 0)
                                 partColor = range(partStock)
                             }
                             if (partColor !== wordToUpper) continue;
@@ -128,7 +129,7 @@ module.exports = {
                 let extraCount = ""
 
                 for (const relic of relic_data.relicData) {
-                    const partIndex = relic.parts.findIndex((part) => part?.startsWith(word))
+                    const partIndex = relic.parts.findIndex((part) => part?.replace(" x2", "").startsWith(word))
                     if (partIndex === -1) continue;
 
                     const relicIndexOfReward = relic.rewards[partIndex]
@@ -218,7 +219,7 @@ module.exports = {
                 const relicRewards = relicFound.rewards;
                 for (const [i, part] of Object.entries(relicRewards)) {
                     const indexRarity = partRarities[parseInt(i)]
-                    if (part.item === 'Forma') {
+                    if (partItem === 'Forma') {
                         if (hasdashb) {
                             relicDesc[relicRewards.indexOf(part)] =  `${indexRarity.padEnd(2)} |         | Forma`;
                             continue
@@ -230,10 +231,10 @@ module.exports = {
                     let partStock = parseInt(part.stock)
                     let extraStock = ""
                     if (hasdashb) {
-                        extraStock = `(+${collection_box[part.item] ?? 0})`
+                        extraStock = `(+${collection_box[partItem] ?? 0})`
                     }
-                    allStocks.push(partStock + (collection_box[part.item] ?? 0))
-                    relicDesc[relicRewards.indexOf(part)] = `${indexRarity.padEnd(2)} | ${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 8)}| ${part.item} {${range(partStock)}}`
+                    allStocks.push(partStock + (collection_box[partItem] ?? 0))
+                    relicDesc[relicRewards.indexOf(part)] = `${indexRarity.padEnd(2)} | ${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 8)}| ${partItem} {${range(partStock)}}`
                 }
                 
                 allStocks = range(Math.min(...allStocks))
