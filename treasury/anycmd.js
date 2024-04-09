@@ -122,6 +122,7 @@ module.exports = {
                 break;
         
             case "part":
+                if (word.split(/\s+/g).length === 1) return;
                 const partRelics = [];
                 let realName = ""
                 let realStock = 0

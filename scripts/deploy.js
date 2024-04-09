@@ -11,6 +11,7 @@ const treasuryFolder = path.join(__dirname, '..', 'treasury');
 
 for (const file of fs.readdirSync(treasuryFolder)) {
 	const filePath = path.join(treasuryFolder, file);
+	if (!filePath.endsWith(".js")) continue;
 	const command = require(filePath);
 	if ('data' in command && 'execute' in command) {
 		commands.push(command.data.toJSON());
@@ -21,6 +22,7 @@ const farmerFolder = path.join(__dirname, '..', 'farmers');
 
 for (const file of fs.readdirSync(farmerFolder)) {
 	const filePath = path.join(farmerFolder, file);
+	if (!filePath.endsWith(".js")) continue;
 	const command = require(filePath);
 	if ('data' in command && 'execute' in command) {
 		commands.push(command.data.toJSON());

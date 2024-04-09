@@ -38,7 +38,7 @@ setInterval(async () => {
 	if (intrv_count%30 == 0) logger.info(`[INTRVL] ${intrv_count} intervals done.`)
 }, 300_000);
 
-// Load all commands	
+// Load all commands
 ;(async () => {
 	[client.treasury, client.farmers, client.buttons] = await Promise.all([
 		loadFiles('treasury'), loadFiles('farmers'), loadFiles('events/buttons')
