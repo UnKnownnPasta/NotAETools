@@ -26,6 +26,7 @@ module.exports = {
                 { name: 'ED', value: 'ed' },
                 { name: 'RED', value: 'red' },
                 { name: 'ORANGE', value: 'orange' },
+                { name: 'BOX', value: 'box' },
             )
             .setRequired(false)),
     /**
@@ -36,14 +37,32 @@ module.exports = {
     async execute(client, i) {
         const relics = i.options.getString('relics', true).split(' '),
             filtertype = i.options.getString('filtertype', false) ?? false;
+        
+        const [relicsList, boxlist] = await Promise.all([
+            JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json'), 'utf-8')),
+            JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'BoxData.json'), 'utf-8'))
+        ])
+        
+        const range = (num) => {
+            return num >= 0 && num <= 7 ? 'ED'
+                : num > 7 && num <= 15 ? 'RED'
+                : num > 15 && num <=31 ? 'ORANGE'
+                : num > 31 && num <=64 ? 'YELLOW'
+                : 'GREEN'
+        }
 
-        const relicsList = (await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json'), 'utf-8')));
         async function getRelic(name, type=null) {
             for (const relic of relicsList.relicData) {
                 if (relic.name == name) {
-                    let statuses = relic.rewards.map(part => part.color);
-                    if (type && !statuses.includes(type.toUpperCase())) return null;
-                    return [relic.tokens, statuses];
+                    let StatusArr = relic.rewards.map(part => {
+                        let returnrange = range(parseInt(part.stock));
+                        if (filtertype == "box") {
+                            returnrange = range((boxlist[part.item] ?? 0) + (parseInt(part.stock)))
+                        }
+                        return returnrange;
+                    });
+                    if (type && type !== "box" && !StatusArr.includes(type.toUpperCase())) return null;
+                    return [relic.tokens, StatusArr];
                 }
             }
             return null
