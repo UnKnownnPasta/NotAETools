@@ -177,7 +177,7 @@ module.exports = {
                         let extraStock = 0;
                         let colorOfPart = partOfSet.color
                         if (hasdashb) {
-                            extraStock = collection_box[partOfSet.item] ?? 0
+                            extraStock = collection_box[partOfSet.item.replace(" x2", "")] ?? 0
                             colorOfPart = range(stockOfSetPart + extraStock)
                         }
     
@@ -237,8 +237,8 @@ module.exports = {
                         extraStock = `(+${collection_box[partItem] ?? 0})`
                     }
                     let totalStock = partStock + (collection_box[partItem] ?? 0)
-                    allStocks.push(totalStock)
-                    relicDesc[relicRewards.indexOf(part)] = `${indexRarity.padEnd(2)} | ${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 8)}| ${partItem} {${range(totalStock)}}`
+                    allStocks.push(hasdashb ? totalStock : partStock)
+                    relicDesc[relicRewards.indexOf(part)] = `${indexRarity.padEnd(2)} | ${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 8)}| ${part.item} {${range(hasdashb ? totalStock : partStock)}}`
                 }
                 
                 allStocks = range(Math.min(...allStocks))
