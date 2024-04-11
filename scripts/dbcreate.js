@@ -123,7 +123,7 @@ async function getAllBoxData(client) {
     const boxChannel =  await client.channels.cache.get(collectionBox.id).threads;
     const boxStock = {}
 
-    const matchAny = (a, b) => a.startsWith(b) || b.startsWith(a)
+    const matchAny = (a, b) => (a??"").startsWith(b??"") || (b??"").startsWith(a??"")
     
     await Promise.all(Object.entries(collectionBox.channels).map(async ([chnl, cid]) => {
 
@@ -139,6 +139,7 @@ async function getAllBoxData(client) {
                         .replace(/\(.*?\)/g, "")
                         .replace(/<@!?[^>]+>/g, "")
                         .replace(/x(\d+)/, '$1x')
+                        .replace(" and ", " & ")
                         .trim()
                         .replace(/\b(\d+)\s*x?\s*\b/g, '$1x ')
                         .replace(/\b(\d+)\s*x?\b\s*(.*?)\s*/g, '$1x $2, ')
@@ -157,7 +158,7 @@ async function getAllBoxData(client) {
                         }
                     }
 
-                    parts = newParts.filter(x => /\dx/.test(x) && !/[^\w\s]/.test(x));
+                    parts = newParts.filter(x => /\dx/.test(x));
 
                     if (!parts.length) return;
                     const splitByStock = parts
@@ -224,7 +225,7 @@ async function getAllBoxData(client) {
         let pind = partNames.filter(x => {
             if (splitnm[0] == 'Mag') return x.startsWith('Mag')
             else if (splitnm[0] == 'Magnus') return x.startsWith('Magnus')
-            else return splitnm.length > 2 ? (x.startsWith(splitnm[0]) && matchAny(x.split(" ")[1], splitnm[1]) && matchAny(x.split(" ")[2], splitnm[2])) : x.startsWith(splitnm[0])
+            else return splitnm.length > 2 ? (x.startsWith(splitnm[0]) && matchAny(x.split(" ")[1], splitnm[1]) && matchAny(x.split(" ")[2], splitnm[2]) && matchAny(x.split(" ")[3], splitnm[3])) : x.startsWith(splitnm[0])
         })
         .filter(y => y.split(' ').slice(1).some(
             z => splitnm.slice(1).some(p => z.startsWith(p == 'bp' ? 'BP' : p.slice(0, -1)))))
@@ -242,7 +243,7 @@ async function getAllBoxData(client) {
 
         if (!pind.length) return;
         if (pind[0].includes('x2')) {
-            fixedBoxStock[pind.join(" ")] = Math.floor(stock/2);
+            fixedBoxStock[pind.join(" ").replace(" x2", "")] = Math.floor(stock/2);
         } else {
             fixedBoxStock[pind.join(" ")] = stock;
         }
