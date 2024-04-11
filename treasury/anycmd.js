@@ -167,21 +167,22 @@ module.exports = {
 
                 const setParts = []
                 for (const relic of relic_data.relicData) {
-                    const partExistsIndex = relic.parts.findIndex(part => part?.startsWith(setName))
-                    if (partExistsIndex === -1) continue;
+                    relic.parts.map((p, partExistsIndex) => {
+                        if (!p?.startsWith(setName)) return;
 
-                    const partOfSet = relic.rewards[partExistsIndex]
-                    if (setParts.some((rec) => rec.n === partOfSet.item)) continue;
-
-                    let stockOfSetPart = parseInt(partOfSet.stock);
-                    let extraStock = 0;
-                    let colorOfPart = partOfSet.color
-                    if (hasdashb) {
-                        extraStock = collection_box[partOfSet.item] ?? 0
-                        colorOfPart = range(stockOfSetPart + extraStock)
-                    }
-
-                    setParts.push({ s: stockOfSetPart, ex: extraStock, n: partOfSet.item, c: colorOfPart })
+                        const partOfSet = relic.rewards[partExistsIndex]
+                        if (setParts.some((rec) => rec.n === partOfSet.item)) return;
+    
+                        let stockOfSetPart = parseInt(partOfSet.stock);
+                        let extraStock = 0;
+                        let colorOfPart = partOfSet.color
+                        if (hasdashb) {
+                            extraStock = collection_box[partOfSet.item] ?? 0
+                            colorOfPart = range(stockOfSetPart + extraStock)
+                        }
+    
+                        setParts.push({ s: stockOfSetPart, ex: extraStock, n: partOfSet.item, c: colorOfPart })
+                    })
                 }
                 if (!setParts.length) return;
 
@@ -235,8 +236,9 @@ module.exports = {
                     if (hasdashb) {
                         extraStock = `(+${collection_box[partItem] ?? 0})`
                     }
-                    allStocks.push(partStock + (collection_box[partItem] ?? 0))
-                    relicDesc[relicRewards.indexOf(part)] = `${indexRarity.padEnd(2)} | ${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 8)}| ${partItem} {${range(partStock)}}`
+                    let totalStock = partStock + (collection_box[partItem] ?? 0)
+                    allStocks.push(totalStock)
+                    relicDesc[relicRewards.indexOf(part)] = `${indexRarity.padEnd(2)} | ${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 8)}| ${partItem} {${range(totalStock)}}`
                 }
                 
                 allStocks = range(Math.min(...allStocks))
