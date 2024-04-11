@@ -35,14 +35,22 @@ module.exports = {
 
         await axios.get(file.url).then(async (res) => {
             const filecontents = res.data
-            const fpath = path.join(__dirname, "..", filename.endsWith(".js") ? filename : filename + ".js")
-            delete require.cache[require.resolve(fpath)];
-            await fs.writeFile(fpath, filecontents);    
+            const fpath = path.resolve(__dirname, "..", filename.endsWith(".js") ? filename : filename + ".js")
             
-            [client.treasury, client.farmers, client.buttons] = await Promise.all([
-                loadFiles('treasury'), loadFiles('farmers'), loadFiles('events/buttons')
-            ]);
-            await i.reply({ content: "Completed refresh!" })
+            try {
+                await fs.access(fpath, fs.constants.F_OK);
+                delete require.cache[require.resolve(fpath)];
+                await fs.writeFile(fpath, filecontents);
+                require('../scripts/deploy.js');
+                [client.treasury, client.farmers, client.buttons] = await Promise.all([
+                    loadFiles('treasury'),
+                    loadFiles('farmers'),
+                    loadFiles('events/buttons')
+                ]);
+                await i.reply({ content: 'Completed refresh!' });
+            } catch (err) {
+                await i.reply({ content: "Path doesn't exist." });
+            }
         })
     },
 };
