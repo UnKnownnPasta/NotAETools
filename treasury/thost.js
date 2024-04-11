@@ -5,9 +5,12 @@ const {
     EmbedBuilder,
     ButtonBuilder,
     ButtonStyle,
-    ActionRowBuilder
+    ActionRowBuilder,
+    codeBlock
 } = require("discord.js");
 const { filterRelic, relicExists } = require("../scripts/utility");
+const fs = require('node:fs/promises');
+const path = require("node:path");
 
 module.exports = {
     name: "thost",
@@ -70,16 +73,34 @@ module.exports = {
                 .setLabel('❌')
                 .setStyle(ButtonStyle.Danger);
 
-            const relicView = new ButtonBuilder()
-                .setCustomId('thost-relicview')
-                .setLabel('View Relic')
-                .setStyle(ButtonStyle.Primary)
-
             relicDesc += `${setOfUsers.map(x => `<@!${x}>`).join("\n")}`
 
-            const hostButtons = new ActionRowBuilder().addComponents(confirm, cancel, relicView)
+            const hostButtons = new ActionRowBuilder().addComponents(confirm, cancel)
 
             relicEmbed.setDescription(relicDesc)
+
+            // field
+            const properRelicName = filterRelic(relic)
+            let relic_data = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json'), 'utf-8'))
+
+            const relicToFind = relic_data.relicData.filter((relic) => relic.name === properRelicName)
+            if (relicToFind.length === 0) return;
+            const relicFound = relicToFind[0]
+
+            const rarities = ['C ', 'C ', 'C ', 'UC', 'UC', 'RA']
+            const relicFieldDesc = relicFound.rewards.map((part, i) => {
+                if (part.item === 'Forma') return `${rarities[i]} |    | Forma`;
+                let partStock = parseInt(part.stock)
+                return `${rarities[i]} | ${`${partStock}`.padEnd(3)}| ${part.item} {${part.color}}`
+            })
+
+            relicEmbed.addFields([
+                { name: `[ ${properRelicName} ] {${relicFound.tokens}}`, value: codeBlock('ml', relicFieldDesc.join("\n")) }
+            ])
+            .setFooter({ text: `Showing ${relicFound.name.split(" ")[0]} Void relic  •  Stock from Tracker  •  Host relic  ` })
+            .setTimestamp()
+        
+
             interaction.reply({ content: `Successfully hosted a run for ${filterRelic(relic)}`, ephemeral: true });
             await interaction.channel.send({ embeds: [relicEmbed], components: [hostButtons] });
         }

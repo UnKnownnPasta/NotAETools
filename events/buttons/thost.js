@@ -31,12 +31,11 @@ module.exports = {
                 await i.update({ embeds: [relicEmbed] })
 
                 if (setOfUsers.length >= 4) {
-                    let userData = (await JSON.parse(await fs.readFile(path.join(__dirname, '..', '..', 'data/clandata.json'))))
-                    if (!userData.treasuryids) return i.channel.send({ content: `<@740536348166848582> oi thost broke again, keys: ${Object.keys(userData)}` });
-                    userData = userData.treasuryids;
+                    let userData = (await JSON.parse(await fs.readFile(path.join(__dirname, '..', '..', 'data/TreasuryData.json'))))
+                    if (!userData) return i.channel.send({ content: `<@740536348166848582> oi thost broke again, keys: ${Object.keys(userData)}` });
                     let usersInviteDesc = ""
                     setOfUsers.slice(0, 4).forEach(userj => {
-                        var index = userData.findIndex(n => n.id == userj)
+                        var index = userData.findIndex(n => n.uid == userj)
                         if (index === -1) usersInviteDesc +=  `<@${userj}> - No IGN known\n`
                         else usersInviteDesc +=  `<@${userj}> - /inv ${userData[index].name}\n`
                     })
@@ -72,27 +71,7 @@ module.exports = {
                 break;
 
             case 'thost-relicview':
-                const properRelicName = relic.split('x ')[1].slice(0, -1)
-                let relic_data = await JSON.parse(await fs.readFile(path.join(__dirname, '..', '..', 'data', 'RelicData.json'), 'utf-8'))
-
-                const relicToFind = relic_data.relicData.filter((relic) => relic.name === properRelicName)
-                if (relicToFind.length === 0) return;
-                const relicFound = relicToFind[0]
-    
-                const rarities = ['C ', 'C ', 'C ', 'UC', 'UC', 'RA']
-                const relicDesc = relicFound.rewards.map((part, i) => {
-                    if (part.item === 'Forma') return `${rarities[i]} |    | Forma`;
-                    let partStock = parseInt(part.stock)
-                    return `${rarities[i]} | ${`${partStock}`.padEnd(3)}| ${part.item} {${part.color}}`
-                })
-    
-                i.reply({ embeds: [
-                    new EmbedBuilder()
-                    .setTitle(`[ ${properRelicName} ] {${relicFound.tokens}}`)
-                    .setDescription(codeBlock('ml', relicDesc.join("\n")))
-                    .setFooter({ text: `Showing ${relicFound.name.split(" ")[0]} Void relic  •  Stock from Tracker  •  Host relic  ` })
-                    .setTimestamp()
-                ] })
+                i.reply({ content: `not supported`, ephemeral: true });
         }
     },
 }
