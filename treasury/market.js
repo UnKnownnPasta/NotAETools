@@ -72,7 +72,7 @@ module.exports = {
                         .setDescription("**>> Sell**\n" + codeBlock('ml', orderOneText) + "\n\n" + "**>> Buy**\n" + codeBlock('ml', orderTwoText));
                     return embed;
                 };
-                embedOfResults.push(createEmbed(sellords, buyords, `Orders | ${customCase(items[0])}`).setColor('#AFE1AF'))
+                embedOfResults.push(createEmbed(sellords, buyords, `Orders │ ${customCase(items[0])}`).setColor('#AFE1AF'))
                 items = items.slice(1)
             })
 

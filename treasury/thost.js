@@ -89,9 +89,9 @@ module.exports = {
 
             const rarities = ['C ', 'C ', 'C ', 'UC', 'UC', 'RA']
             const relicFieldDesc = relicFound.rewards.map((part, i) => {
-                if (part.item === 'Forma') return `${rarities[i]} |    | Forma`;
+                if (part.item === 'Forma') return `${rarities[i]} │    │ Forma`;
                 let partStock = parseInt(part.stock)
-                return `${rarities[i]} | ${`${partStock}`.padEnd(3)}| ${part.item} {${part.color}}`
+                return `${rarities[i]} │ ${`${partStock}`.padEnd(3)}│ ${part.item} {${part.color}}`
             })
 
             relicEmbed.addFields([

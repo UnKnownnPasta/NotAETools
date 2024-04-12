@@ -88,7 +88,7 @@ module.exports = {
                 }
 
                 const sortedParts = [... new Set(statusParts.sort((a, b) => a.s - b.s).map((part) => {
-                    return `${`[${part.s}]`.padEnd(5)}| ${part.i}`
+                    return `${`[${part.s}]`.padEnd(5)}│ ${part.i}`
                     })
                 )]
 
@@ -148,7 +148,7 @@ module.exports = {
                 if (!partRelics.length) return;
 
                 const sortedRelics = partRelics.sort((a, b) => parseInt(b.t) - parseInt(a.t)).map((part) => {
-                    return `${part.c.padEnd(2)} | ${part.r} {${part.t}}`
+                    return `${part.c.padEnd(2)} │ ${part.r} {${part.t}}`
                 })
 
                 const embedsParts = new EmbedBuilder()
@@ -192,9 +192,9 @@ module.exports = {
                     colorOfParts.push(part.c)
                     stockOfParts.push(part.s + part.ex)
                     if (hasdashb) {
-                        return `${`${part.s}(+${part.ex})`.padEnd(8)}| ${part.n} {${part.c}}`
+                        return `${`${part.s}(+${part.ex})`.padEnd(8)}│ ${part.n} {${part.c}}`
                     } else {
-                        return `${`${part.s}`.padEnd(3)}| ${part.n} {${part.c}}`
+                        return `${`${part.s}`.padEnd(3)}│ ${part.n} {${part.c}}`
                     }
                 })
                 colorOfParts = uncodeObj[Math.min(...colorOfParts.map(color => codeObj[color]))]
@@ -224,10 +224,10 @@ module.exports = {
                     partItem = part.item.replace(" x2", "")
                     if (partItem === 'Forma') {
                         if (hasdashb) {
-                            relicDesc[relicRewards.indexOf(part)] =  `${indexRarity.padEnd(2)} |         | Forma`;
+                            relicDesc[relicRewards.indexOf(part)] =  `${indexRarity.padEnd(2)} │         │ Forma`;
                             continue
                         } else {
-                            relicDesc[relicRewards.indexOf(part)] =  `${indexRarity.padEnd(2)} |    | Forma`;
+                            relicDesc[relicRewards.indexOf(part)] =  `${indexRarity.padEnd(2)} │    │ Forma`;
                             continue;
                         }
                     }
@@ -238,7 +238,7 @@ module.exports = {
                     }
                     let totalStock = partStock + (collection_box[partItem] ?? 0)
                     allStocks.push(hasdashb ? totalStock : partStock)
-                    relicDesc[relicRewards.indexOf(part)] = `${indexRarity.padEnd(2)} | ${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 8)}| ${part.item} {${range(hasdashb ? totalStock : partStock)}}`
+                    relicDesc[relicRewards.indexOf(part)] = `${indexRarity.padEnd(2)} │ ${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 8)}│ ${part.item} {${range(hasdashb ? totalStock : partStock)}}`
                 }
                 
                 allStocks = range(Math.min(...allStocks))
