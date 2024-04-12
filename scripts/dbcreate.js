@@ -120,12 +120,12 @@ async function getAllClanData() {
  * @param {Client} client 
  */
 async function getAllBoxData(client) {
-    const boxChannel =  await client.channels.cache.get(collectionBox.id).threads;
+    const boxChannel =  await client.channels.cache.get(collectionBox.testid).threads;
     const boxStock = {}
 
     const matchAny = (a, b) => (a??"").startsWith(b??"") || (b??"").startsWith(a??"")
     
-    await Promise.all(Object.entries(collectionBox.channels).map(async ([chnl, cid]) => {
+    await Promise.all(Object.entries(collectionBox.testchannels).map(async ([chnl, cid]) => {
 
         await boxChannel.fetch(cid).then(/*** @param {ThreadChannel} thread */ async (thread) => {
 
@@ -135,11 +135,11 @@ async function getAllBoxData(client) {
                     let parts = msg.content
                         .toLowerCase()
                         .replace(/\s+/g, ' ')
-                        .replace(/\s*prime\s*/, ' ')
+                        .replace(/\s*prime\s*/g, ' ')
                         .replace(/\(.*?\)/g, "")
                         .replace(/<@!?[^>]+>/g, "")
-                        .replace(/x(\d+)/, '$1x')
-                        .replace(" and ", " & ")
+                        .replace(/x(\d+)/g, '$1x')
+                        .replace(/ and /g, " & ")
                         .trim()
                         .replace(/\b(\d+)\s*x?\s*\b/g, '$1x ')
                         .replace(/\b(\d+)\s*x?\b\s*(.*?)\s*/g, '$1x $2, ')
@@ -159,8 +159,8 @@ async function getAllBoxData(client) {
                     }
 
                     parts = newParts.filter(x => /\dx/.test(x));
-
                     if (!parts.length) return;
+
                     const splitByStock = parts
                         .filter(x => x)
                         .map(part => part
@@ -173,7 +173,8 @@ async function getAllBoxData(client) {
                             if (isNaN(y)) y = x_replaced;
                         }
                         return y;
-                    }));
+                        }))
+                        .map(x => x.filter(y => y))
 
                     await Promise.all(splitByStock.map((part) => {
                         part = part.filter(x => x)
@@ -187,10 +188,10 @@ async function getAllBoxData(client) {
 
                         for (const [key, val] of boxObj) {
                             let words = key.split(" ")
-                            let x = words[0], y = words.at(-1);
+                            let x = words, y = words.at(-1);
                             let partText = curPartName.split(' ').filter(x => x)
 
-                            if (partText.slice(0, -1).some(n => matchAny(n, x))) {
+                            if (partText.slice(0, -1).some(n => matchAny(n, words[0]))) {
                                 if (partText[0] == 'magnus' && ['bp', 'receiver', 'reciever', 'barrel'].some(nx => nx.startsWith(partText.at(-1)))) {
                                     updatedAny = true
                                     boxStock[curPartName] = (boxStock[curPartName] ?? 0) + part[nmIndex]
@@ -201,7 +202,7 @@ async function getAllBoxData(client) {
                                     boxStock[curPartName] = (boxStock[curPartName] ?? 0) + part[nmIndex]
                                     return;
                                 }
-                                else if (partText.length <= 2 ? matchAny(y, partText.at(-1) ?? "00") : (matchAny(x.at(-1) ?? "00", partText.at(-1)) && matchAny(x.at(-2) ?? "00", partText.at(-2)) && matchAny(x.at(-3) ?? "00", partText.at(-3)))) {
+                                else if (partText.length <= 2 ? matchAny(y, partText.at(-1) ?? "00") : (matchAny(x.at(-1) ?? "00", partText.at(-1)) && matchAny(x.at(-2) ?? "00", partText.at(-2)) && matchAny(x.at(-3) ?? "00", partText.at(-3) ?? "00") && matchAny(x.at(-4) ?? "00", partText.at(-4) ?? "00"))) {
                                     updatedAny = true
                                     boxStock[key] += part[nmIndex]
                                     return;
@@ -215,6 +216,7 @@ async function getAllBoxData(client) {
             //}) // async msg
         })
     }))
+    console.log(boxStock);
 
     const fixedBoxStock = {}
     const jsfile = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json')))
