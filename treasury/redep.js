@@ -37,20 +37,33 @@ module.exports = {
             const filecontents = res.data
             const fpath = path.resolve(__dirname, "..", filename.endsWith(".js") ? filename : filename + ".js")
             
-            try {
+
                 await fs.access(fpath, fs.constants.F_OK);
                 delete require.cache[require.resolve(fpath)];
                 await fs.writeFile(fpath, filecontents);
                 require('../scripts/deploy.js');
+
+                const eventsPath = path.join(__dirname, '..', 'events/listeners');
+                const eventFiles = (await fs.readdir(eventsPath)).filter(file => file.endsWith('.js'));
+                
+                eventFiles.forEach(file => {
+                    const event = require(path.join(eventsPath, file));
+                    client.removeAllListeners(event.name);
+                    delete require.cache[require.resolve(path.join(eventsPath, file))];
+                });
+                
+                eventFiles.forEach(file => {
+                    const event = require(path.join(eventsPath, file));
+                    const callback = (...args) => event.listen(client, ...args);
+                    client[event.once ? 'once' : 'on'](event.name, callback);
+                });
+
                 [client.treasury, client.farmers, client.buttons] = await Promise.all([
                     loadFiles('treasury'),
                     loadFiles('farmers'),
                     loadFiles('events/buttons')
                 ]);
                 await i.reply({ content: 'Completed refresh!' });
-            } catch (err) {
-                await i.reply({ content: "Path doesn't exist." });
-            }
         })
     },
 };
