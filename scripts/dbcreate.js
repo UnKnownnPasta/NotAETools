@@ -83,7 +83,7 @@ async function getAllUserData() {
             return { uid: data[0], name: data[1] }
         }),
         FarmerIDValues.data.values.filter(val => val.length).map((data) => {
-            return { uid: data[0], name: data[1], tokens: data[2], bonus: data[3], spent: data[4], left: data[5], playtime: data[6] }
+            return { uid: data[0], name: data[1], tokens: data[2], bonus: data[3], spent: data[4], left: data[5], playtime: (data.at(7) ? `${data[7]} (${data[6]})` : data[6]) }
         })
     ])
 

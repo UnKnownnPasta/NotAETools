@@ -94,15 +94,15 @@ module.exports = {
 
                 soupedAccepted.push(short)
                 const _ = (rarity) => {
-                    return `| ${res[1].filter(x => x == rarity).length}`.padEnd(4) + rarity
+                    return `│ ${res[1].filter(x => x == rarity).length}`.padEnd(4) + rarity
                 }
-                if (res) soupedStrings.push(`${`{${res[0]}}`.padEnd(5)}| ${(howmany+'x').padEnd(4)}| ${rFullName.padEnd(8)} ${_('ED')} ${_('RED')} ${_('ORANGE')}`)
+                if (res) soupedStrings.push(`${`{${res[0]}}`.padEnd(5)}│ ${(howmany+'x').padEnd(4)}│ ${rFullName.padEnd(8)} ${_('ED')} ${_('RED')} ${_('ORANGE')}`)
             }
             return soupedStrings
         }
 
         const splitFunc = (r) => {
-            let l = r.split('|').map(x => x.trim()) // 3, 4, 5
+            let l = r.split('│').map(x => x.trim()) // 3, 4, 5
             let ED = l[3].split()[0], RED = l[4].split()[0], ORG = l[5].split()[0]
             return `${ED}${RED}${ORG}`
         }
@@ -114,7 +114,7 @@ module.exports = {
 
         const finishedSoup = (await soupedRelics(relics));
         const filterRelics = (rname) => {
-            return finishedSoup.filter(x => x.split('|')[2].trim().indexOf(rname) !== -1);
+            return finishedSoup.filter(x => x.split('│')[2].trim().indexOf(rname) !== -1);
         }
 
         const soupedString = ["Lith", "Meso", "Neo", "Axi"].map(x => {

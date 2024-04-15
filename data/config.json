@@ -22,10 +22,7 @@
             "id": "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY",
             "relicName": "Tracker - LIVE",
             "useridName": "Directory",
-            "ranges": {
-                "relic": "!A2:H",
-                "ids": "!B2:C"
-            }
+            "ranges": { "relic": "!A2:H", "ids": "!B2:C" }
         },
         "farmer": {
             "id": "18uYn374Y-n_VBX9sQsTLoSRY9-JtgGGLHWihotxjdPY",
@@ -42,12 +39,11 @@
                     "MK": "!G78:I120",
                     "WK": "!J78:L120"
                 },
-                "users": "!A3:G"
+                "users": "!A3:H"
             }
         }
-
     },
-    "byhex": { 
+    "byhex": {
         "#150b2e": "ED",
         "#3c0000": "RED",
         "#472502": "ORANGE",
@@ -55,6 +51,47 @@
         "#162e0b": "GREEN",
         "#282828": ""
     },
-    "dualitemslist": ["Afuris Barrel","Afuris Receiver","Akarius Barrel","Akarius Receiver","Akbolto Barrel","Akbolto Receiver","Akjagara Barrel","Akjagara Receiver","Aksomati Barrel","Aksomati Receiver","Akstiletto Barrel","Akstiletto Receiver","Hikou Pouch","Spira Pouch","Spira Blade","Ankyros Gauntlet","Ankyros Blade","Bo Ornament","Dual Kamas Handle","Dual Kamas Blade","Dual Keres Handle","Dual Keres Blade","Fang Handle","Fang Blade","Glaive Blade","Guandao Blade","Gunsen Handle","Gunsen Blade","Kogake Boot","Kogake Gauntlet","Kronen Handle","Kronen Blade","Nami Skyla Handle","Nami Skyla Blade","Ninkondi Handle","Orthos Blade","Tekko Gauntlet","Tekko Blade","Tipedo Ornament","Venka Gauntlet","Venka Blade"]
-    
+    "dualitemslist": [
+        "Afuris Barrel",
+        "Afuris Receiver",
+        "Akarius Barrel",
+        "Akarius Receiver",
+        "Akbolto Barrel",
+        "Akbolto Receiver",
+        "Akjagara Barrel",
+        "Akjagara Receiver",
+        "Aksomati Barrel",
+        "Aksomati Receiver",
+        "Akstiletto Barrel",
+        "Akstiletto Receiver",
+        "Hikou Pouch",
+        "Spira Pouch",
+        "Spira Blade",
+        "Ankyros Gauntlet",
+        "Ankyros Blade",
+        "Bo Ornament",
+        "Dual Kamas Handle",
+        "Dual Kamas Blade",
+        "Dual Keres Handle",
+        "Dual Keres Blade",
+        "Fang Handle",
+        "Fang Blade",
+        "Glaive Blade",
+        "Guandao Blade",
+        "Gunsen Handle",
+        "Gunsen Blade",
+        "Kogake Boot",
+        "Kogake Gauntlet",
+        "Kronen Handle",
+        "Kronen Blade",
+        "Nami Skyla Handle",
+        "Nami Skyla Blade",
+        "Ninkondi Handle",
+        "Orthos Blade",
+        "Tekko Gauntlet",
+        "Tekko Blade",
+        "Tipedo Ornament",
+        "Venka Gauntlet",
+        "Venka Blade"
+    ]
 }

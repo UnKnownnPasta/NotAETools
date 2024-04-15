@@ -18,8 +18,7 @@ module.exports = {
         const embedDesc = i.message.embeds[0].description.split('\n')
         let setOfUsers = embedDesc.slice(1).map(x => x.slice(3, -1))
         const relic = embedDesc[0]
-        const relicEmbed = new EmbedBuilder()
-            .setTitle(`${i.message.embeds[0].title}`);
+        const relicEmbed = new EmbedBuilder(i.message.embeds[0]);
 
         switch (i.customId) {
 
