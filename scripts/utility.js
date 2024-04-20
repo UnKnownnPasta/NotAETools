@@ -231,7 +231,7 @@ async function refreshFissures(client) {
             embeds: [NormEmbed, SPEmbed, TimeEmbed],
         });
     } catch (error) {
-        logger.warn("INTRLV", "Failed to refresh fissures", error);
+        logger.error("[INTRLV] Failed to refresh fissures", error);
     }
 }
 

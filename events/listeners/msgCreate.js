@@ -16,6 +16,7 @@ module.exports = {
     async listen(client, message) {
         if (message.content == '++dump' && (message.author.id == '740536348166848582' || message.author.id == '498993740715917312')) {
             const logfile = await fs.readFile(path.join(__dirname, '..', '..', 'data', 'app.log'))
+            await message.delete();
             return await message.author.send({ files: [new AttachmentBuilder(Buffer.from(logfile, 'utf-8'), { name: 'dump.txt' })] })
         }
         if (!message.content.startsWith(config.prefix) || message.author.bot)
