@@ -1,28 +1,35 @@
 {
   "name": "aetools",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "2.0.1",
+  "description": "Helper bot for Warframe clan alliance \"Anime Empire\".",
+  "main": "bot.js",
   "scripts": {
-    "main": "node index.js --trace-warnings",
-    "dev": "node . | pino-pretty -i pid,hostname -t mm-dd@HH:MM:ss"
+    "lint": "npx eslint . --ignore-pattern node_modules/ --ignore-pattern dev/ --ignore-pattern OLD/",
+    "lint-fix": "npx eslint . --ignore-pattern node_modules/ --ignore-pattern dev/ --ignore-pattern OLD/ --fix",
+    "start": "node src/bot.js",
+    "dev": "node src/bot.js | pino-pretty -i pid,hostname -t mm-dd@HH:MM:ss"
   },
   "keywords": [],
   "author": "dePasta @ GitHub",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.6.7",
-    "chalk": "^4.1.2",
-    "discord.js": "^14.12.1",
-    "dotenv": "^16.4.4",
-    "googleapis": "^133.0.0",
-    "pagination.djs": "^4.0.13",
-    "pg": "^8.11.3",
-    "pg-hstore": "^2.3.4",
-    "pino": "^8.19.0",
-    "pino-pretty": "^11.0.0",
-    "sequelize": "^6.37.1",
-    "sqlite3": "^5.1.7",
-    "tesseract.js": "^5.0.4"
+    "axios": "^1.6.8",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.5",
+    "googleapis": "^134.0.0",
+    "hot-esm": "^1.6.0",
+    "sequelize": "^6.37.3",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.0.2",
+    "@eslint/js": "^9.1.1",
+    "@stylistic/eslint-plugin-js": "^1.7.2",
+    "eslint": "^8.57.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.1.1",
+    "globals": "^15.0.0"
   }
 }
