@@ -1,8 +1,6 @@
 const { Client } = require('discord.js');
 const { departments } = require('../../configs/config.json');
-const fs = require('node:fs/promises');
-const path = require('node:path');
-// const database = require('../../database/init.js');
+const database = require('../../database/init.js');
 const { titleCase } = require('../../utils/generic.js');
 
 /** * @param {Client} client */
@@ -58,8 +56,7 @@ module.exports = async (client) => {
                         })
                     );
 
-                const splitStock = await Promise.all(splitByStock.map())
-                splitStock.then((part) => {
+                await Promise.all(splitByStock.map((part) => {
                     part = part.filter(x => x)
                     const nmIndex = part.indexOf(part.find(element => typeof element === 'number'));
 
@@ -93,17 +90,17 @@ module.exports = async (client) => {
                     }
 
                     if (!updatedAny) { boxStock[curPartName] = part[nmIndex] }
-                })
+                }))
             }))
         })
     }))
 
     const fixedBoxStock = {}
-    const jsfile = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json')))
-    const partNames = [...new Set(jsfile.relicData.map(x => x.parts).flat().filter(x => x))]
+    const jsfile = (await database.models.Parts.findAll({ attributes: ['name'] })).map(part => part.dataValues.name)
+    if (!jsfile.length) return null;
+    const partNames = [...new Set(jsfile)]
 
-    const objEntries = await Promise.all(Object.entries(boxStock).map())
-    objEntries.then(([part, stock]) => {
+    await Promise.all(Object.entries(boxStock).map(([part, stock]) => {
         const splitnm = titleCase(part).split(' ')
         let pind = partNames.filter(x => {
             if (splitnm[0] === 'Mag') return x.startsWith('Mag')
@@ -132,12 +129,12 @@ module.exports = async (client) => {
         } else {
             fixedBoxStock[pind.join(' ')] = stock;
         }
-    })
+    }))
 
-    // const newObject = []
-    // for (const [key, value] of Object.entries(fixedBoxStock)) {
-    //     newObject.push({ name: key, stock: parseInt(value) })
-    // }
+    const newObject = []
+    for (const [key, value] of Object.entries(fixedBoxStock)) {
+        newObject.push({ name: key, stock: parseInt(value) })
+    }
 
-    await fs.writeFile(path.join(__dirname, '..', 'data', 'BoxData.json'), JSON.stringify(fixedBoxStock))
+    await database.models.Box.bulkCreate(newObject, { updateOnDuplicate: ['stock'] })
 }

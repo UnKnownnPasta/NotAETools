@@ -1,4 +1,5 @@
 const { Sequelize } = require('sequelize');
+const logger = require('../utils/logger.js');
 
 class Database {
     constructor() {
@@ -6,7 +7,7 @@ class Database {
             dialect: 'sqlite',
             storage: require('path').resolve(__dirname, '..', 'storage/database.sqlite'),
             sync: false,
-            logging: (msg) => console.log(msg)
+            logging: false// (msg) => console.log(msg)
         });
 
         this.defineModels();
@@ -25,9 +26,9 @@ class Database {
     async authenticate() {
         try {
             await this.sequelize.authenticate();
-            console.log('Connection has been established successfully.');
+            logger.info('SQL Connection has been established successfully.');
         } catch (error) {
-            console.log(error);
+            logger.error(error)
         }
     }
 

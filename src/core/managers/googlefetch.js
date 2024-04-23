@@ -1,12 +1,11 @@
 const path = require('node:path');
-require('dotenv').config({ path: path.join(__dirname, '..', '..', '..', '.env') })
-
 const { google } = require('googleapis');
 const auth = require('google-auth-library');
 const { departments } = require('../../configs/config.json');
 const fs = require('node:fs/promises');
 const database = require('../../database/init.js');
 const { stockRanges } = require('../../utils/generic.js');
+const logger = require('../../utils/logger.js');
 
 class GoogleSheetFetcher {
     constructor() {
@@ -108,7 +107,14 @@ class GoogleSheetFetcher {
     }
 
     async startAsync() {
-        return await Promise.all([this.getAllRelics(), this.getClanResources(), this.getPrimeParts()])
+        const start = new Date().getTime()
+        return Promise.allSettled([this.getAllRelics(), this.getClanResources(), this.getPrimeParts()])
+        .then((results) => {
+            const end = new Date().getTime()
+            const resolvedCount = results.filter(result => result.status === 'fulfilled').length;
+            const rejectedCount = results.filter(result => result.status === 'rejected').length;
+            logger.info(`Finished Calls in ${end - start}ms - Resolved: ${resolvedCount}, Rejected: ${rejectedCount}`);
+        });
     }
 }
 

@@ -3,8 +3,13 @@ require('dotenv').config({ path: require('path').resolve(__dirname, '..', '.env'
 const { InteractionCreateListener, MessageCreateListener } = require('./core/managers/discordEvents.js')
 const GoogleSheetManager = require('./core/managers/googleFetch.js')
 const Database = require('./database/init.js')
+// Circular dependency, has to be fetched seperately
+const CollectionBoxFetcher = require('./core/managers/boxFetch.js')
 
-const { GatewayIntentBits, Client } = require('discord.js')
+const { GatewayIntentBits, Client, Events, ActivityType } = require('discord.js')
+const logger = require('./utils/logger.js')
+const fs = require('node:fs/promises')
+const path = require('node:path')
 
 class AETools {
     constructor() {
@@ -17,6 +22,7 @@ class AETools {
             ]
         });
 
+        this.clearLogs()
         this.constructManagers()
     }
 
@@ -24,18 +30,29 @@ class AETools {
         // Creating database
         await Database.authenticate();
         Database.defineModels();
-        await Database.syncDatabase(true);
+        await Database.syncDatabase(false);
 
         // Logging in
-        this.client.login(process.env.TOKEN)
-        console.log('logged in')
+        await this.client.login(process.env.TOKEN)
+        logger.info({ message: 'logged in as ' + this.client.user.username })
 
         // Event Listeners
         this.intListen = new InteractionCreateListener(this.client)
         this.msgListen = new MessageCreateListener(this.client)
 
         // Updating database
-        await GoogleSheetManager.startAsync();
+        this.client.once(Events.ClientReady, async () => {
+            client.user.setPresence({ activities: [{ name: 'The Future 🌌', type: ActivityType.Watching }], status: 'dnd' });
+            // await GoogleSheetManager.startAsync();
+            // await CollectionBoxFetcher(this.client);
+        })
+    }
+
+    async clearLogs() {
+        await Promise.all([
+            fs.truncate(path.join(__dirname, 'storage', 'combined.log'), 0),
+            fs.truncate(path.join(__dirname, 'storage', 'error.log'), 0)
+        ])
     }
 }
 

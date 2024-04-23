@@ -2,12 +2,12 @@
     "departments": {
         "treasury": {
             "fissureChannel": "1172943281571762308",
-            "soupstoreThreadID": "1193067569301684256",
+            "soupstoreThreadID": "1221032022919872572",
             "soupstoreChannels": {
-                "n_to_z": "1193449757683757147",
-                "a_to_m": "1193449882044858428",
-                "pri_sec": "1193449436207124490",
-                "mel_oth": "1193449614758662255"
+                "n_to_z": "1221388067806384168",
+                "a_to_m": "1221032209893294101",
+                "pri_sec": "1221695831875256441",
+                "mel_oth": "1221695851231973386"
             },
             "google": {
                 "sheetId": "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY",
@@ -37,5 +37,29 @@
                 }
             }
         }
-    }
+    },
+    "dualitemslist": [
+        "Afuris Barrel",      "Afuris Receiver",
+        "Akarius Barrel",     "Akarius Receiver",
+        "Akbolto Barrel",     "Akbolto Receiver",
+        "Akjagara Barrel",    "Akjagara Receiver",
+        "Aksomati Barrel",    "Aksomati Receiver",
+        "Akstiletto Barrel",  "Akstiletto Receiver",
+        "Ankyros Blade",      "Ankyros Gauntlet",
+        "Bo Ornament",        "Dual Kamas Blade",
+        "Dual Kamas Handle",  "Dual Keres Blade",
+        "Dual Keres Handle",  "Fang Blade",
+        "Fang Handle",        "Glaive Blade",
+        "Guandao Blade",      "Gunsen Blade",
+        "Gunsen Handle",      "Hikou Pouch",
+        "Hikou Stars",        "Kogake Boot",
+        "Kogake Gauntlet",    "Kronen Blade",
+        "Kronen Handle",      "Nami Skyla Blade",
+        "Nami Skyla Handle",  "Ninkondi Handle",
+        "Orthos Blade",       "Spira Blade",
+        "Spira Pouch",        "Tekko Blade",
+        "Tekko Gauntlet",     "Tipedo Ornament",
+        "Venka Blades",       "Venka Gauntlet"
+    ]
+
 }
