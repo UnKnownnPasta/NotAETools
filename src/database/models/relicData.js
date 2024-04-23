@@ -1,8 +1,7 @@
 const { DataTypes, Model } = require('sequelize')
 
 module.exports = (sequelizeInstance) => {
-    class relicData extends Model {
-    }
+    class relicData extends Model {}
     relicData.init(
         {
             relic: { type: DataTypes.STRING, defaultValue: '', primaryKey: true },

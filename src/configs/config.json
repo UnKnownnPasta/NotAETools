@@ -1,0 +1,41 @@
+{
+    "departments": {
+        "treasury": {
+            "fissureChannel": "1172943281571762308",
+            "soupstoreThreadID": "1193067569301684256",
+            "soupstoreChannels": {
+                "n_to_z": "1193449757683757147",
+                "a_to_m": "1193449882044858428",
+                "pri_sec": "1193449436207124490",
+                "mel_oth": "1193449614758662255"
+            },
+            "google": {
+                "sheetId": "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY",
+                "relicSheetName": "Tracker - LIVE",
+                "usersSheetName": "Directory",
+                "ranges": {
+                    "relic": "!A2:H",
+                    "users": "!B2:C"
+                }
+            }
+        },
+        "farmer": {
+            "google": {
+                "sheetId": "18uYn374Y-n_VBX9sQsTLoSRY9-JtgGGLHWihotxjdPY",
+                "resourceSheetName": "Main",
+                "ranges": {
+                    "resource": {
+                        "AK": "!A30:C72",
+                        "CK": "!D30:F72",
+                        "HK": "!G30:I72",
+                        "TK": "!J30:L72",
+                        "YK": "!A78:C120",
+                        "IK": "!D78:F120",
+                        "MK": "!G78:I120",
+                        "WK": "!J78:L120"
+                    }
+                }
+            }
+        }
+    }
+}
