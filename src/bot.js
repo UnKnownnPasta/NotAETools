@@ -1,9 +1,10 @@
-const path = require('path')
-require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') })
-const { GatewayIntentBits, Client } = require('discord.js')
+require('dotenv').config({ path: require('path').resolve(__dirname, '..', '.env') })
+
 const { InteractionCreateListener, MessageCreateListener } = require('./core/managers/discordEvents.js')
 const GoogleSheetManager = require('./core/managers/googleFetch.js')
 const Database = require('./database/init.js')
+
+const { GatewayIntentBits, Client } = require('discord.js')
 
 class AETools {
     constructor() {
@@ -12,8 +13,8 @@ class AETools {
                 GatewayIntentBits.Guilds,
                 GatewayIntentBits.MessageContent,
                 GatewayIntentBits.GuildMessages,
-                GatewayIntentBits.GuildMembers,
-            ],
+                GatewayIntentBits.GuildMembers
+            ]
         });
 
         this.constructManagers()
@@ -30,8 +31,8 @@ class AETools {
         console.log('logged in')
 
         // Event Listeners
-        new InteractionCreateListener(this.client)
-        new MessageCreateListener(this.client)
+        this.intListen = new InteractionCreateListener(this.client)
+        this.msgListen = new MessageCreateListener(this.client)
 
         // Updating database
         await GoogleSheetManager.startAsync();

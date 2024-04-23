@@ -23,7 +23,7 @@ export default [
     rules: {
       indent: ['error', 4],
       'no-useless-escape': 0,
-      'semi': 0,
+      semi: 0,
       'space-before-function-paren': 0
     }
   }
