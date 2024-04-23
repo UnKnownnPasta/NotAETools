@@ -1,13 +1,12 @@
 {
   "name": "aetools",
-  "version": "2.0.1",
+  "version": "2.0.3",
   "description": "Helper bot for Warframe clan alliance \"Anime Empire\".",
   "main": "bot.js",
   "scripts": {
-    "lint": "npx eslint . --ignore-pattern node_modules/ --ignore-pattern dev/ --ignore-pattern OLD/",
-    "lint-fix": "npx eslint . --ignore-pattern node_modules/ --ignore-pattern dev/ --ignore-pattern OLD/ --fix",
-    "start": "node src/bot.js",
-    "dev": "node src/bot.js | pino-pretty -i pid,hostname -t mm-dd@HH:MM:ss"
+    "lint": "npx eslint . --ignore-pattern node_modules/ --ignore-pattern _dev/ --ignore-pattern OLD/",
+    "lint-fix": "npx eslint . --ignore-pattern node_modules/ --ignore-pattern _dev/ --ignore-pattern OLD/ --fix",
+    "start": "node src/bot.js"
   },
   "keywords": [],
   "author": "dePasta @ GitHub",
@@ -19,6 +18,7 @@
     "events": "^3.3.0",
     "googleapis": "^134.0.0",
     "hot-esm": "^1.6.0",
+    "pagination.djs": "^4.0.14",
     "sequelize": "^6.37.3",
     "sqlite3": "^5.1.7",
     "winston": "^3.13.0"

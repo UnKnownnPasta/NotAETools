@@ -37,29 +37,5 @@
                 }
             }
         }
-    },
-    "dualitemslist": [
-        "Afuris Barrel",      "Afuris Receiver",
-        "Akarius Barrel",     "Akarius Receiver",
-        "Akbolto Barrel",     "Akbolto Receiver",
-        "Akjagara Barrel",    "Akjagara Receiver",
-        "Aksomati Barrel",    "Aksomati Receiver",
-        "Akstiletto Barrel",  "Akstiletto Receiver",
-        "Ankyros Blade",      "Ankyros Gauntlet",
-        "Bo Ornament",        "Dual Kamas Blade",
-        "Dual Kamas Handle",  "Dual Keres Blade",
-        "Dual Keres Handle",  "Fang Blade",
-        "Fang Handle",        "Glaive Blade",
-        "Guandao Blade",      "Gunsen Blade",
-        "Gunsen Handle",      "Hikou Pouch",
-        "Hikou Stars",        "Kogake Boot",
-        "Kogake Gauntlet",    "Kronen Blade",
-        "Kronen Handle",      "Nami Skyla Blade",
-        "Nami Skyla Handle",  "Ninkondi Handle",
-        "Orthos Blade",       "Spira Blade",
-        "Spira Pouch",        "Tekko Blade",
-        "Tekko Gauntlet",     "Tipedo Ornament",
-        "Venka Blades",       "Venka Gauntlet"
-    ]
-
+    }
 }
