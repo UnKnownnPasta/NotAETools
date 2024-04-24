@@ -9,6 +9,7 @@ const fs = require('node:fs/promises')
 
 module.exports = {
     name: 'clan',
+    type: 'slash',
     data: new SlashCommandBuilder()
         .setName('clan')
         .setDescription('View resources for a specific clan')

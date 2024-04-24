@@ -9,6 +9,7 @@ const fs = require('node:fs/promises')
 
 module.exports = {
     name: 'soup',
+    type: 'slash',
     data: new SlashCommandBuilder()
         .setName('soup')
         .setDescription('Soup formatted relics')

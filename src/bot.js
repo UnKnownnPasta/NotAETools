@@ -1,10 +1,11 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '..', '.env') })
 
+// Circular dependency, has to be fetched seperately
+const CollectionBoxFetcher = require('./core/managers/boxFetch.js')
 const { InteractionCreateListener, MessageCreateListener } = require('./core/managers/discordEvents.js')
 const GoogleSheetManager = require('./core/managers/googleFetch.js')
 const Database = require('./database/init.js')
-// Circular dependency, has to be fetched seperately
-const CollectionBoxFetcher = require('./core/managers/boxFetch.js')
+const CommandHandler = require('./core/managers/fileHandler.js')
 
 const { GatewayIntentBits, Client, Events, ActivityType } = require('discord.js')
 const logger = require('./utils/logger.js')
@@ -34,7 +35,10 @@ class AETools {
 
         // Logging in
         await this.client.login(process.env.TOKEN)
-        logger.info({ message: 'logged in as ' + this.client.user.username })
+
+        // Commands
+        CommandHandler.setClient(this.client)
+        CommandHandler.loadAll()
 
         // Event Listeners
         this.intListen = new InteractionCreateListener(this.client)
@@ -42,7 +46,8 @@ class AETools {
 
         // Updating database
         this.client.once(Events.ClientReady, async () => {
-            client.user.setPresence({ activities: [{ name: 'The Future 🌌', type: ActivityType.Watching }], status: 'dnd' });
+            this.client.user.setPresence({ activities: [{ name: 'The Future 🌌', type: ActivityType.Watching }], status: 'dnd' });
+            logger.info({ message: 'logged in as ' + this.client.user.username })
             // await GoogleSheetManager.startAsync();
             // await CollectionBoxFetcher(this.client);
         })

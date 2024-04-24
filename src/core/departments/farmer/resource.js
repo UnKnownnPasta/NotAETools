@@ -10,6 +10,7 @@ const { resourceNames } = require('../../../configs/commondata.json')
 
 module.exports = {
     name: 'resource',
+    type: 'slash',
     data: new SlashCommandBuilder()
         .setName('resource')
         .setDescription('View resources for a specific clan')

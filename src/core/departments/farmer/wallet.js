@@ -6,6 +6,7 @@ const fs = require('node:fs/promises')
 
 module.exports = {
     name: 'wallet',
+    type: 'slash',
     data: new SlashCommandBuilder()
         .setName('wallet')
         .setDescription('View farmer wallet')

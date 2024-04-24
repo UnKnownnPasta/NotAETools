@@ -6,6 +6,7 @@ const fs = require('node:fs/promises')
 
 module.exports = {
     name: 'ign',
+    type: 'slash',
     data: new SlashCommandBuilder()
         .setName('ign')
         .setDescription('Get ign of a user')

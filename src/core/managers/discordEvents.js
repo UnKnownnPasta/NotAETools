@@ -1,5 +1,6 @@
-const { Events, Client, CommandInteraction, Message, ButtonInteraction } = require('discord.js')
+const { Events, Client, CommandInteraction, Message, ButtonInteraction, Collection } = require('discord.js')
 const { EventEmitter } = require('events')
+const CommandHandler = require('./fileHandler')
 
 class DiscordEventEmitter extends EventEmitter {
     /** * @param {Client} client */
@@ -26,7 +27,13 @@ class MessageCreateListener extends DiscordEventEmitter {
 
     /** * @param {Message} message */
     async handleMessageCreate(message) {
-        console.log(`${message.content}`)
+        if (message.content.startsWith("++")) {
+            const command = message.content.split(/\s+/g)[0].slice(2)
+            const testcmdDept = CommandHandler.getDepartment(command)
+            if (!testcmdDept || testcmdDept?.get(command).type !== 'message') return null;
+
+            testcmdDept.get(command).execute(this.client, )
+        }
     }
 }
 

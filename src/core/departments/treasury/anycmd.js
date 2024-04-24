@@ -2,12 +2,13 @@ const { EmbedBuilder, codeBlock, ButtonStyle, Message } = require('discord.js')
 const fs = require('node:fs/promises')
 const { Pagination } = require('pagination.djs')
 const path = require('node:path')
-const cutils = require('../../utility/codes.js')
+const cutils = {}
 const database = require('../../../database/init.js')
 const { titleCase, filterRelic } = require('../../../utils/generic.js')
 
 module.exports = {
     name: 'anycmd',
+    type: 'message',
     /**
      * ++ Commands manager
      * @param {Message} message
@@ -17,7 +18,7 @@ module.exports = {
         const models = database.models
 
         const [item_data, relic_data, collection_box] = await Promise.all([
-            models.Items.findAll(),
+            models.Parts.findAll(),
             models.Relics.findAll(),
             fs.readFile(path.join(__dirname, '..', '..', 'data', 'BoxData.json'))
         ])

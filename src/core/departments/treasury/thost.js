@@ -11,6 +11,7 @@ const { filterRelic, relicExists } = require('../../../utils/generic')
 
 module.exports = {
     name: 'thost',
+    type: 'slash',
     data: new SlashCommandBuilder()
         .setName('thost')
         .setDescription('Hosts a treasury run')

@@ -1,7 +1,8 @@
 const path = require('node:path');
 const { Collection } = require('discord.js');
 const fsp = require('node:fs/promises');
-// const database = require('../database/init.js');
+const logger = require('./logger');
+const database = require('../database/init.js');
 
 /**
  * Load all files from a folder and stores them in a map.
@@ -22,9 +23,16 @@ async function loadFiles(dirpath, condition = null) {
         const filePath = path.join(commandsPath, file);
         const command = require(filePath);
         if ('execute' in command) {
+            // if (Array.isArray(command.name)) { // is an array
+            //     command.name.forEach(name => {
+            //         clientCollection.set(name, command)
+            //     })
+            // } else {
+            //     clientCollection.set(command.name, command)
+            // }
             clientCollection.set(command.name, command)
         } else {
-            console.log(`The command at ${filePath} is missing a required 'execute' property.`);
+            logger.info(`The command at ${filePath} is missing a required 'execute' property.`);
         }
     }
     return clientCollection;
@@ -90,4 +98,46 @@ const range = (num) => {
                     : 'GREEN'
 }
 
-module.exports = { loadFiles, titleCase, filterRelic, stockRanges: range }
+const codeObj = {
+    ED: 0,
+    RED: 1,
+    ORANGE: 2,
+    YELLOW: 3,
+    GREEN: 4,
+}
+
+const uncodeObj = {
+    0: "ED",
+    1: "RED",
+    2: "ORANGE",
+    3: "YELLOW",
+    4: "GREEN"
+}
+
+const hex = {
+    ED: "#351c75",
+    RED: "#990000",
+    ORANGE: "#b45f06",
+    YELLOW: "#bf9000",
+    GREEN: "#38761d",
+}
+
+const stockRanges = {
+    ED: "0 - 7",
+    RED: "8 - 15",
+    ORANGE: "16 - 31",
+    YELLOW: "32 - 64",
+    GREEN: "64 - inf",
+}
+
+/**
+ * Checks if given relic is a true relic name.
+ * @param {String} relic 
+ * @returns {Boolean}
+ */
+async function relicExists(relic) {
+    const wasfound = await database.models.Relics.findOne({ where: { relic: relic } });
+    return wasfound ?? false
+}
+
+module.exports = { loadFiles, titleCase, filterRelic, stockRanges: range, codeObj, uncodeObj, hex, stockRanges, relicExists }

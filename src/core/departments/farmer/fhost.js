@@ -12,6 +12,7 @@ const { titleCase } = require('../../../utils/generic')
 
 module.exports = {
     name: 'fhost',
+    type: 'slash',
     data: new SlashCommandBuilder()
         .setName('fhost')
         .setDescription('Hosts a farmers run')
