@@ -22,14 +22,8 @@ async function loadFiles(dirpath, condition = null) {
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
         const command = require(filePath);
+        if (!command) logger.warn(`Command at ${filePath} has no data in its files`)
         if ('execute' in command) {
-            // if (Array.isArray(command.name)) { // is an array
-            //     command.name.forEach(name => {
-            //         clientCollection.set(name, command)
-            //     })
-            // } else {
-            //     clientCollection.set(command.name, command)
-            // }
             clientCollection.set(command.name, command)
         } else {
             logger.info(`The command at ${filePath} is missing a required 'execute' property.`);

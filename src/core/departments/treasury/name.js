@@ -5,11 +5,11 @@ const {
 const fs = require('node:fs/promises')
 
 module.exports = {
-    name: 'ign',
+    name: 'name',
     type: 'slash',
     data: new SlashCommandBuilder()
-        .setName('ign')
-        .setDescription('Get ign of a user')
+        .setName('user')
+        .setDescription('Get the In-Game-Name of a user')
         .addUserOption((option) =>
             option
                 .setName('user')

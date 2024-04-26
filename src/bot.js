@@ -22,6 +22,7 @@ class AETools {
                 GatewayIntentBits.GuildMembers
             ]
         });
+        this.resetDB = false;
 
         this.clearLogs()
         this.constructManagers()
@@ -31,7 +32,7 @@ class AETools {
         // Creating database
         await Database.authenticate();
         Database.defineModels();
-        await Database.syncDatabase(false);
+        await Database.syncDatabase(this.resetDB);
 
         // Logging in
         await this.client.login(process.env.TOKEN)
@@ -39,6 +40,7 @@ class AETools {
         // Commands
         CommandHandler.setClient(this.client)
         CommandHandler.loadAll()
+        await CommandHandler.deployCommands();
 
         // Event Listeners
         this.intListen = new InteractionCreateListener(this.client)
@@ -48,15 +50,18 @@ class AETools {
         this.client.once(Events.ClientReady, async () => {
             this.client.user.setPresence({ activities: [{ name: 'The Future 🌌', type: ActivityType.Watching }], status: 'dnd' });
             logger.info({ message: 'logged in as ' + this.client.user.username })
-            // await GoogleSheetManager.startAsync();
-            // await CollectionBoxFetcher(this.client);
+            if (this.resetDB) {
+                await Promise.all([GoogleSheetManager.startAsync(), CollectionBoxFetcher(this.client)])
+            }
         })
     }
 
     async clearLogs() {
         await Promise.all([
-            fs.truncate(path.join(__dirname, 'storage', 'combined.log'), 0),
-            fs.truncate(path.join(__dirname, 'storage', 'error.log'), 0)
+            fs.truncate(path.join(__dirname, 'storage', 'combined.log'), 0,
+                (err, d) => { if (err) logger.error('Unexpected error when clearing Logs') }),
+            fs.truncate(path.join(__dirname, 'storage', 'error.log'), 0,
+                (err, d) => { if (err) logger.error('Unexpected error when clearing Error Logs') })
         ])
     }
 }

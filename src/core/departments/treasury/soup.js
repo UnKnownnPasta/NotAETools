@@ -5,7 +5,7 @@ const {
     EmbedBuilder,
     codeBlock
 } = require('discord.js')
-const fs = require('node:fs/promises')
+const database = require('../../../database/init')
 
 module.exports = {
     name: 'soup',
@@ -37,9 +37,10 @@ module.exports = {
         const relics = i.options.getString('relics', true).split(' ')
         const filtertype = i.options.getString('filtertype', false) ?? false
 
-        const relicsList = (await JSON.parse(await fs.readFile('./src/data/relicdata.json', 'utf-8')))
+        const relicsList = await database.models.Relics.findAll()
         async function getRelic (name, type = null) {
-            for (const relic of relicsList.relicData) {
+            for (const r of relicsList) {
+                const relic = r.dataValues
                 if (relic[0].name == name) {
                     const statuses = relic.slice(1, 7).map(rt => rt.type)
                     if (type && !statuses.includes(type.toUpperCase())) return null
