@@ -44,8 +44,8 @@ function titleCase(str) {
     const words = str.split(' ');
 
     for (let i = 0; i < words.length; i++) {
-        if (words[i].toLowerCase() === 'bp' || words[i].toLowerCase() === 'blueprint') {
-            words[i] = 'BP';
+        if (words[i].toLowerCase() === 'bp') {
+            words[i] = 'Blueprint';
             continue;
         }
         words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1).toLowerCase();
@@ -134,4 +134,4 @@ async function relicExists(relic) {
     return wasfound ?? false
 }
 
-module.exports = { loadFiles, titleCase, filterRelic, stockRanges: range, codeObj, uncodeObj, hex, stockRanges, relicExists }
+module.exports = { loadFiles, titleCase, filterRelic, range, codeObj, uncodeObj, hex, stockRanges, relicExists }

@@ -1,10 +1,10 @@
 const { EmbedBuilder, codeBlock, ButtonStyle, Message } = require('discord.js')
-const fs = require('node:fs/promises')
+// const fs = require('node:fs/promises')
 const { Pagination } = require('pagination.djs')
 const path = require('node:path')
-const cutils = {}
 const database = require('../../../database/init.js')
-const { titleCase, filterRelic } = require('../../../utils/generic.js')
+const { titleCase, filterRelic, codeObj, uncodeObj, hex, range, stockRanges } = require('../../../utils/generic.js')
+const { QueryTypes } = require('sequelize')
 
 module.exports = {
     name: 'anycmd',
@@ -17,11 +17,14 @@ module.exports = {
         const partRarities = ['C', 'C', 'C', 'UC', 'UC', 'RA']
         const models = database.models
 
-        const [item_data, relic_data, collection_box] = await Promise.all([
+        const [item_data, relicData, boxFetch] = await Promise.all([
             models.Parts.findAll(),
             models.Relics.findAll(),
-            fs.readFile(path.join(__dirname, '..', '..', 'data', 'BoxData.json'))
+            models.Box.findAll()
         ])
+
+        const collection_box = {}
+        boxFetch.map(p => collection_box[p.dataValues.name] = p.dataValues.stock)
 
         const word = titleCase(msg_unfiltered.replace(/\s*(-)(b|box)?\s*.*?$/, ''))
         const hasdashb = msg_unfiltered.match(/-(?:b|box)/, '') !== null
@@ -40,7 +43,7 @@ module.exports = {
                     let partStock = parseInt(item.stock)
                     if (hasdashb) {
                         partStock = partStock + (collection_box[item.name] ?? 0)
-                        partColor = cutils.range(partStock)
+                        partColor = range(partStock)
                     }
                     if (partColor !== wordToUpper) continue
                     statusParts.push({ s: partStock, i: item.name })
@@ -58,7 +61,7 @@ module.exports = {
                     new EmbedBuilder()
                         .setTitle(`[ ${wordToUpper} ]`)
                         .setDescription(codeBlock('ml', sortedParts.slice(i, i + 15).join('\n')))
-                        .setColor(cutils.hex[wordToUpper])
+                        .setColor(hex[wordToUpper])
                         .setTimestamp()
                 )
             }
@@ -75,57 +78,42 @@ module.exports = {
 
             statusPagination.setEmbeds(embedsArrStatus, (embed, index, array) => {
                 return embed.setFooter({
-                    text: `${hasdashb ? 'Updated from box  • ' : 'Stock from Tracker  • '} ${cutils.stockRanges[word.toUpperCase()]} stock  •  Page ${index + 1}/${array.length}  `
+                    text: `${hasdashb ? 'Updated from box  • ' : 'Stock from Tracker  • '} ${stockRanges[word.toUpperCase()]} stock  •  Page ${index + 1}/${array.length}  `
                 })
             })
             statusPagination.render()
             break
 
         case 'part':
-            const partRelics = []
-            let realName = ''
-            let realStock = 0
-            let realColor = ''
-            let extraCount = ''
-
-            for (const relic of relic_data.relicData) {
-                const partIndex = relic.parts.findIndex((part) => part?.startsWith(word))
-                if (partIndex === -1) continue
-
-                const relicIndexOfReward = relic.rewards[partIndex]
-                if (!realName) {
-                    realName = relicIndexOfReward.item
-                    realStock = relicIndexOfReward.stock
-                    realColor = relicIndexOfReward.color
-                }
-                if (hasdashb) {
-                    extraCount = `(+${collection_box[realName] ?? 0})`
-                    realColor = cutils.range((collection_box[realName] ?? 0) + parseInt(relicIndexOfReward.stock))
-                }
-                partRelics.push({ r: relic.name, t: relic.tokens, c: partRarities[partIndex] })
-            }
-            if (!partRelics.length) return
-
-            const sortedRelics = partRelics.sort((a, b) => parseInt(b.t) - parseInt(a.t)).map((part) => {
-                return `${part.c.padEnd(2)} | ${part.r} {${part.t}}`
+            const findPart = await database.sequelize.query(`SELECT * FROM primeParts WHERE name LIKE :search_part`, {
+                replacements: { search_part: `${titleCase(word)}%` },
+                type: QueryTypes.SELECT
             })
-
-            const embedsParts = new EmbedBuilder()
-                .setTitle(`[ ${realName} ]`)
-                .setDescription(codeBlock('ml', sortedRelics.join('\n')))
-                .setColor(cutils.hex[realColor])
-                .setFooter({
-                    text: `${hasdashb ? 'Updated from box  • ' : 'Stock from Tracker  • '} ${realStock}${extraCount}x of part in stock  •  ${sortedRelics.length} results`
+            if (!findPart.length) return;
+            const part = findPart[0]
+            const relics = relicData.filter(relic => {
+                return relic.dataValues.rewards.some(rw => {
+                    return rw.part === part.name
                 })
-
-            await message.reply({ embeds: [embedsParts] })
+            })
+            const relicToString = await Promise.all(relics.map(async (relic) => {
+                const tokens = await database.sequelize.query(`SELECT tokens FROM relicTokens WHERE relic = :relic_name`, {
+                    replacements: { relic_name: relic.dataValues.relic },
+                    type: QueryTypes.SELECT
+                })
+                return `${tokens[0].tokens.padEnd(3)}| ${relic.dataValues.relic} {${relic.dataValues.vaulted ? "V" : "UV"}}`
+            }));
+            
+            message.reply({ embeds: [
+                new EmbedBuilder().setTitle(`[ ${part.name} ]`).setDescription(codeBlock('ml', relicToString.join("\n")))
+            ] })
             break
 
         case 'prime':
             const setName = word.replace('Prime', '').trim() + ' '
 
             const setParts = []
-            for (const relic of relic_data.relicData) {
+            for (const relic of relicData) {
                 const partExistsIndex = relic.parts.findIndex(part => part?.startsWith(setName))
                 if (partExistsIndex === -1) continue
 
@@ -137,7 +125,7 @@ module.exports = {
                 let colorOfPart = partOfSet.color
                 if (hasdashb) {
                     extraStock = collection_box[partOfSet.item] ?? 0
-                    colorOfPart = cutils.range(stockOfSetPart + extraStock)
+                    colorOfPart = range(stockOfSetPart + extraStock)
                 }
 
                 setParts.push({ s: stockOfSetPart, ex: extraStock, n: partOfSet.item, c: colorOfPart })
@@ -155,7 +143,7 @@ module.exports = {
                     return `${`${part.s}`.padEnd(3)}| ${part.n} {${part.c}}`
                 }
             })
-            colorOfParts = cutils.uncodeObj[Math.min(...colorOfParts.map(color => cutils.codeObj[color]))]
+            colorOfParts = uncodeObj[Math.min(...colorOfParts.map(color => codeObj[color]))]
             stockOfParts = Math.min(...stockOfParts)
 
             message.reply({
@@ -165,14 +153,14 @@ module.exports = {
                         .setFooter({ text: `${hasdashb ? 'Updated from box  • ' : 'Stock from Tracker  • '} ${stockOfParts}x of set in stock  •  ${colorOfParts} Set  ` })
                         .setTimestamp()
                         .setDescription(codeBlock('ml', setPartsText.join('\n')))
-                        .setColor(cutils.hex[colorOfParts])
+                        .setColor(hex[colorOfParts])
                 ]
             })
             break
 
         case 'relic':
             const properRelicName = filterRelic(word.toLowerCase())
-            const relicToFind = relic_data.relicData.filter((relic) => relic.name === properRelicName)
+            const relicToFind = relicData.relicData.filter((relic) => relic.name === properRelicName)
             if (relicToFind.length === 0) return
             const relicFound = relicToFind[0]
             let allStocks = []
@@ -196,10 +184,10 @@ module.exports = {
                     extraStock = `(+${collection_box[part.item] ?? 0})`
                 }
                 allStocks.push(partStock + (collection_box[part.item] ?? 0))
-                relicDesc[relicRewards.indexOf(part)] = `${indexRarity.padEnd(2)} | ${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 8)}| ${part.item} {${cutils.range(partStock)}}`
+                relicDesc[relicRewards.indexOf(part)] = `${indexRarity.padEnd(2)} | ${`${partStock}${extraStock}`.padEnd(!extraStock ? 3 : 8)}| ${part.item} {${range(partStock)}}`
             }
 
-            allStocks = cutils.range(Math.min(...allStocks))
+            allStocks = range(Math.min(...allStocks))
 
             message.reply({
                 embeds: [
@@ -209,7 +197,7 @@ module.exports = {
                         .setFooter({
                             text: `Showing ${relicFound.name.split(' ')[0]} Void relic  •  ${hasdashb ? 'Updated from box  • ' : 'Stock from Tracker  • '} ${allStocks} relic  `
                         })
-                        .setColor(cutils.hex[allStocks])
+                        .setColor(hex[allStocks])
                         .setTimestamp()
                 ]
             })

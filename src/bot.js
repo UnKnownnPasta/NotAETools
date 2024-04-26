@@ -40,7 +40,7 @@ class AETools {
         // Commands
         CommandHandler.setClient(this.client)
         CommandHandler.loadAll()
-        await CommandHandler.deployCommands();
+        // await CommandHandler.deployCommands();
 
         // Event Listeners
         this.intListen = new InteractionCreateListener(this.client)

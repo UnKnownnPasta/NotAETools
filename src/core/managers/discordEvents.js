@@ -2,6 +2,7 @@ const { Events, Client, CommandInteraction, Message, ButtonInteraction } = requi
 const { EventEmitter } = require('events')
 const CommandHandler = require('./fileHandler')
 const config = require('../../configs/config.json')
+const { relicExists, filterRelic } = require('../../utils/generic')
 
 class DiscordEventEmitter extends EventEmitter {
     /** * @param {Client} client */
@@ -51,7 +52,7 @@ class MessageCreateListener extends DiscordEventEmitter {
         } else if (isRelic && !isStatus && !isPrime) {
             cmdType = "relic";
         }
-        CommandHandler.treasury.get('anycmd')?.execute(client, message, word.toLowerCase(), cmdType)
+        CommandHandler.treasury.get('anycmd')?.execute(this.client, message, word.toLowerCase(), cmdType)
     }
 }
 

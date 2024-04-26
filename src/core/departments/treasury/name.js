@@ -8,7 +8,7 @@ module.exports = {
     name: 'name',
     type: 'slash',
     data: new SlashCommandBuilder()
-        .setName('user')
+        .setName('name')
         .setDescription('Get the In-Game-Name of a user')
         .addUserOption((option) =>
             option

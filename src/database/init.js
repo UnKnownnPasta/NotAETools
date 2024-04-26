@@ -19,7 +19,8 @@ class Database {
             Clans: require('./models/clanResources.js')(this.sequelize),
             Parts: require('./models/primeParts.js')(this.sequelize),
             Relics: require('./models/relicData.js')(this.sequelize),
-            Users: require('./models/users.js')(this.sequelize)
+            Users: require('./models/users.js')(this.sequelize),
+            Tokens: require('./models/relicTokens.js')(this.sequelize)
         }
     }
 

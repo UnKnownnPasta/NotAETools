@@ -4,7 +4,7 @@ const auth = require('google-auth-library');
 const { departments } = require('../../configs/config.json');
 const fs = require('node:fs/promises');
 const database = require('../../database/init.js');
-const { stockRanges } = require('../../utils/generic.js');
+const { range } = require('../../utils/generic.js');
 const logger = require('../../utils/logger.js');
 
 class GoogleSheetFetcher {
@@ -24,38 +24,33 @@ class GoogleSheetFetcher {
 
     async getPrimeParts() {
         const sheetValues = await this.googleSheets.spreadsheets.values.get({
-            spreadsheetId: departments.treasury.google.sheetId,
-            range: departments.treasury.google.relicSheetName + departments.treasury.google.ranges.relic
+            spreadsheetId: departments.treasury.google.trackerSheetId,
+            range: departments.treasury.google.managerSheetName + departments.treasury.google.ranges.manager
         })
-            .catch((err) => {
-                return Promise.reject(0)
-            })
+        .catch((error) => {
+            console.error(error)
+            return Promise.reject(0)
+        })
 
         const values = sheetValues.data.values;
         if (values.some(x => x[0] == '#ERROR!')) return console.log('Error fetching items: Items have invalid values (#ERROR!)');
-
-        const itemStockRegex = /\[(.+?)\]/;
-        const itemNameRegex = /(.*?)(?:\s+\[)/
 
         if (!values || !values?.length) return Promise.reject(0)
 
         try {
             const allPartsData = []
             await Promise.all(values.map(async (record) => {
-                const onlyParts = record.slice(1, 7);
-                await Promise.all(onlyParts.map((item) => {
-                    const itemStock = item.match(itemStockRegex)?.[1]
-                    const itemName = item.match(itemNameRegex)?.[1]
+                const itemStock = record[2]
+                let itemName = `${record[0]} ${record[1]}`
+                itemName = itemName.includes("Blueprint") ? itemName : `${itemName} Blueprint`
 
-                    if (itemStock && !allPartsData.find((itm) => itm.name == itemName)) {
-                        allPartsData.push({ name: `${itemName}`, stock: itemStock, color: stockRanges(parseInt(itemStock)) })
-                    }
-                }))
+                allPartsData.push({ name: `${itemName.replace(" Prime ", " ")}`, stock: itemStock, color: range(parseInt(itemStock)) })
             }));
 
             await database.models.Parts.bulkCreate(allPartsData, { updateOnDuplicate: ['stock', 'color'] });
             return Promise.resolve(1)
         } catch (error) {
+            console.error(error)
             return Promise.reject(0)
         }
     }
@@ -77,6 +72,7 @@ class GoogleSheetFetcher {
                 return Promise.resolve(1)
             })
             .catch(error => {
+                console.error(error)
                 return Promise.reject(0)
             });
     }
@@ -94,21 +90,54 @@ class GoogleSheetFetcher {
                 tempobj.relic = relic.name
                 tempobj.vaulted = relic.vaultInfo.vaulted
                 tempobj.rewards = relic.rewards.sort((a, b) => b.chance - a.chance).map(part => {
-                    return { part: part.item.name, rarity: getrarity(part.chance) }
+                    let partItemName = part.item.name.replace(" Prime ", " ")
+                    partItemName = partItemName.includes("Blueprint") ? partItemName : `${partItemName} Blueprint`
+                    return { part: partItemName, rarity: getrarity(part.chance) }
                 })
                 allRelicsData.push(tempobj)
             }))
 
             await database.models.Relics.bulkCreate(allRelicsData, { updateOnDuplicate: ['vaulted', 'rewards'] })
         } catch (error) {
+            console.error(error)
             return Promise.reject(0)
         }
         return Promise.resolve(1)
     }
 
+    async getAllTokens() {
+        const sheetValues = await this.googleSheets.spreadsheets.values.get({
+            spreadsheetId: departments.treasury.google.sheetId,
+            range: departments.treasury.google.relicSheetName + departments.treasury.google.ranges.relic
+        })
+        .catch((error) => {
+            console.error(error)
+            return Promise.reject(0)
+        })
+
+        const values = sheetValues.data.values;
+        if (values.some(x => x.at(-1) === '#ERROR!')) return console.log('Error fetching items: Items have invalid values (#ERROR!)');
+
+        try {
+            const allRelicsData = []
+            await Promise.all(values.map((record) => {
+                const relic = record[0]
+                const tokens = record[7]
+
+                allRelicsData.push({ relic: relic, tokens: tokens })
+            }));
+
+            await database.models.Tokens.bulkCreate(allRelicsData, { updateOnDuplicate: ['tokens'] });
+            return Promise.resolve(1)
+        } catch (error) {
+            console.error(error)
+            return Promise.reject(0)
+        }
+    }
+
     async startAsync() {
         const start = new Date().getTime()
-        return Promise.allSettled([this.getAllRelics(), this.getClanResources(), this.getPrimeParts()])
+        return Promise.allSettled([this.getAllRelics(), this.getClanResources(), this.getPrimeParts(), this.getAllTokens()])
         .then((results) => {
             const end = new Date().getTime()
             const resolvedCount = results.filter(result => result.status === 'fulfilled').length;

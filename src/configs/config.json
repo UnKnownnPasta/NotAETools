@@ -1,4 +1,5 @@
 {
+    "prefix": "++",
     "departments": {
         "treasury": {
             "fissureChannel": "1172943281571762308",
@@ -11,11 +12,14 @@
             },
             "google": {
                 "sheetId": "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY",
+                "trackerSheetId": "15VbpC6N6Lt3AK8WtF5bcSre6R5nqYSbMvF--d9LhZdU",
                 "relicSheetName": "Tracker - LIVE",
                 "usersSheetName": "Directory",
+                "managerSheetName": "MANAGERS",
                 "ranges": {
                     "relic": "!A2:H",
-                    "users": "!B2:C"
+                    "users": "!B2:C",
+                    "manager": "!Q3:S483"
                 }
             }
         },
