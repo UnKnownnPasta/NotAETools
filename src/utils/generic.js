@@ -47,13 +47,16 @@ function titleCase(str) {
         if (words[i].toLowerCase() === 'bp') {
             words[i] = 'Blueprint';
             continue;
+        } else if (words[i].toLowerCase().split('').every(char => char === words[i][0]) || words[i].toUpperCase() === 'IV') {
+            words[i] = words[i].toUpperCase()
+            continue;
         }
         words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1).toLowerCase();
     }
     return words.join(' ');
 }
 
-const erasFull = { 'l': 'Lith', 'm': 'Meso', 'n': 'Neo', 'a': 'Axi' }
+const erasFull = { 'l': 'Lith', 'm': 'Meso', 'n': 'Neo', 'a': 'Axi', 'r': 'Requiem' }
 
 /**
  * Returns full relic name formatted string
@@ -68,7 +71,7 @@ const erasFull = { 'l': 'Lith', 'm': 'Meso', 'n': 'Neo', 'a': 'Axi' }
 function filterRelic(relic_check) {
     const relic = relic_check.toLowerCase()
     let relicEra, relicType;
-    if (['meso', 'neo', 'axi', 'lith'].some(x => relic.startsWith(x))) {
+    if (['meso', 'neo', 'axi', 'lith', 'requiem'].some(x => relic.startsWith(x))) {
         [relicEra, relicType] = titleCase(relic).split(" ")
     } else {
         relicEra = erasFull[relic[0]]

@@ -27,7 +27,7 @@ module.exports = {
         boxFetch.map(p => collection_box[p.dataValues.name] = p.dataValues.stock)
 
         const word = titleCase(msg_unfiltered.replace(/\s*(-)(b|box)?\s*.*?$/, ''))
-        // const hasdashb = msg_unfiltered.match(/[-](b|box)/, '') !== null
+        const hasdashb = msg_unfiltered.match(/[-](b|box)/, '') !== null
         // let hasdashr = msg_unfiltered.match(/[-](r|relics)/, "") !== null
         const wordToUpper = word.toUpperCase()
 
@@ -114,10 +114,10 @@ module.exports = {
             break
 
         case 'prime':
-            const setName = word.replace('Prime', '').trim() + ' '
+            const setName = word.replace('Prime', '').trim()
 
             const allParts = await database.sequelize.query(`SELECT * FROM primeParts WHERE name LIKE :check_name`, {
-                replacements: { check_name: `${setName}%` },
+                replacements: { check_name: `${setName} %` },
                 type: QueryTypes.SELECT
             })
             if (!allParts.length) return;
@@ -127,7 +127,7 @@ module.exports = {
             const hexColor = uncodeObj[[Math.min(...allParts.map(y => codeObj[y.color]))]]
 
             const primeEmbed = new EmbedBuilder()
-                .setTitle(`[ ${setName}Prime ]`)
+                .setTitle(`[ ${setName} Prime ]`)
                 .setDescription(codeBlock('ml', allPartStrings.join("\n")))
                 .setColor(hex[hexColor])
             message.reply({ embeds: [primeEmbed] })
@@ -145,14 +145,14 @@ module.exports = {
             const rewardsString = await Promise.all(theRelic.map(async (rw, i) => {
                 const partStuff = await database.models.Parts.findOne({ where: { name: rw.part } })
                 if (rw.part === "Forma Blueprint") return `${rarities[i]} |    | Forma BP`
-                return `${rarities[i]} | ${partStuff.stock.padEnd(3)}| ${rw.part.replace("Blueprint", "BP")} {${partStuff.color}}`
+                return `${rarities[i]} | ${partStuff?.stock?.padEnd(3) ?? `-1 `}| ${rw?.part?.replace("Blueprint", "BP")} {${partStuff?.color ?? "???"}}`
             }))
 
             const tokensAmt = await database.models.Tokens.findOne({ where: { relic: relicFound[0].relic } })
   
             message.reply({ embeds: [
                 new EmbedBuilder()
-                .setTitle(`[ ${relicFound[0].relic} ] ${relicFound[0].vaulted ? "{V}" : "{UV}"} {${tokensAmt.tokens}}`)
+                .setTitle(`[ ${relicFound[0].relic} ] ${relicFound[0].vaulted ? "{V}" : "{UV}"} {${tokensAmt?.tokens ?? -100}}`)
                 .setDescription(codeBlock('ml', rewardsString.join("\n")))
             ] })
             break
