@@ -89,6 +89,7 @@ module.exports = {
                 replacements: { search_part: `${titleCase(word)}%` },
                 type: QueryTypes.SELECT
             })
+            console.log(findPart);
             if (!findPart.length) return;
             const part = findPart[0]
             const relics = relicData.filter(relic => {
@@ -103,9 +104,12 @@ module.exports = {
                 })
                 return `${tokens[0].tokens.padEnd(3)}| ${relic.dataValues.relic} {${relic.dataValues.vaulted ? "V" : "UV"}}`
             }));
-            
+
             message.reply({ embeds: [
-                new EmbedBuilder().setTitle(`[ ${part.name} ]`).setDescription(codeBlock('ml', relicToString.join("\n")))
+                new EmbedBuilder()
+                    .setTitle(`[ ${part.name} ]`)
+                    .setDescription(codeBlock('ml', relicToString.join("\n")))
+                    .setColor(hex[range(parseInt(part.stock))])
             ] })
             break
 
