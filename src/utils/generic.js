@@ -53,6 +53,8 @@ function titleCase(str) {
     return words.join(' ');
 }
 
+const erasFull = { 'l': 'Lith', 'm': 'Meso', 'n': 'Neo', 'a': 'Axi' }
+
 /**
  * Returns full relic name formatted string
  *
@@ -63,21 +65,18 @@ function titleCase(str) {
  * @param {String} relic
  * @returns {String}
  */
-function filterRelic(relic) {
+function filterRelic(relic_check) {
+    const relic = relic_check.toLowerCase()
     let relicEra, relicType;
-    if (['meso', 'neo', 'axi', 'lith'].some(x => relic.indexOf(x) !== -1)) {
-        return `${relic[0].toUpperCase()}${relic.slice(1, relic.split(' ')[0].length).toLowerCase()} ${relic.slice(relic.split(' ')[0].length + 1).toUpperCase()}`
+    if (['meso', 'neo', 'axi', 'lith'].some(x => relic.startsWith(x))) {
+        [relicEra, relicType] = titleCase(relic).split(" ")
     } else {
-        if (!isNaN(relic)) return null;
-        else if (relic[0] === 'a') relicEra = 'Axi'
-        else if (relic[0] === 'n') relicEra = 'Neo'
-        else if (relic[0] === 'm') relicEra = 'Meso'
-        else if (relic[0] === 'l') relicEra = 'Lith'
-        else return null;
-        relicType = relic.slice(1).toUpperCase();
-        if (relicType === '') return null;
-        return `${relicEra} ${relicType}`
+        relicEra = erasFull[relic[0]]
+        relicType = relic.slice(1).toUpperCase()
     }
+
+    if (!relicEra || !relicType) return undefined;
+    return `${relicEra} ${relicType}`
 }
 
 const range = (num) => {
@@ -134,4 +133,6 @@ async function relicExists(relic) {
     return wasfound ?? false
 }
 
-module.exports = { loadFiles, titleCase, filterRelic, range, codeObj, uncodeObj, hex, stockRanges, relicExists }
+const rarities = ['C ', 'C ', 'C ', 'UC', 'UC', 'RA']
+
+module.exports = { loadFiles, titleCase, filterRelic, range, codeObj, uncodeObj, hex, stockRanges, relicExists, rarities }
