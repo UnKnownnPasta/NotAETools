@@ -1,9 +1,9 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '..', '.env') })
+require('dotenv').config({ path: require('node:path').resolve(__dirname, '..', '.env') })
 
 // Circular dependency, has to be fetched seperately
 const CollectionBoxFetcher = require('./core/managers/boxFetch.js')
 const { InteractionCreateListener, MessageCreateListener } = require('./core/managers/discordEvents.js')
-const GoogleSheetManager = require('./core/managers/googleFetch.js')
+const GoogleSheetManager = require('./core/managers/googleHandle.js')
 const Database = require('./database/init.js')
 const CommandHandler = require('./core/managers/fileHandler.js')
 

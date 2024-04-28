@@ -43,7 +43,7 @@ class GoogleSheetFetcher {
                 const itemStock = record[2]
                 let itemName = `${record[0]} ${record[1]}`
 
-                allPartsData.push({ name: `${itemName.replace(" Prime ", " ")}`, stock: itemStock, color: range(parseInt(itemStock)) })
+                allPartsData.push({ name: `${itemName.replace(" Prime ", " ").replace(" and ", " & ")}`, stock: itemStock, color: range(parseInt(itemStock)) })
             }));
 
             await database.models.Parts.bulkCreate(allPartsData, { updateOnDuplicate: ['stock', 'color'] });
@@ -89,9 +89,9 @@ class GoogleSheetFetcher {
                 tempobj.relic = relic.name
                 tempobj.vaulted = relic.vaultInfo.vaulted
                 tempobj.rewards = relic.rewards.sort((a, b) => b.chance - a.chance).map(part => {
-                    let partItemName = part.item.name.replace(" Prime ", " ")
-                    partItemName.endsWith("Prime Blueprint") ? partItemName : partItemName.replace(" Blueprint", "")
-                    return { part: partItemName, rarity: getrarity(part.chance) }
+                    let partItemName = part.item.name
+                    partItemName = partItemName.endsWith("Prime Blueprint") ? partItemName : partItemName.replace(" Blueprint", "")
+                    return { part: partItemName.replace(" Prime ", " "), rarity: getrarity(part.chance) }
                 })
                 allRelicsData.push(tempobj)
             }))

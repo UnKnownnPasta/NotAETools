@@ -1,7 +1,5 @@
 const { EmbedBuilder, codeBlock, ButtonStyle, Message } = require('discord.js')
-// const fs = require('node:fs/promises')
 const { Pagination } = require('pagination.djs')
-const path = require('node:path')
 const database = require('../../../database/init.js')
 const { titleCase, filterRelic, codeObj, uncodeObj, hex, range, stockRanges, rarities } = require('../../../utils/generic.js')
 const { QueryTypes } = require('sequelize')
@@ -28,7 +26,6 @@ module.exports = {
 
         const word = titleCase(msg_unfiltered.replace(/\s*(-)(b|box)?\s*.*?$/, ''))
         const hasdashb = msg_unfiltered.match(/[-](b|box)/, '') !== null
-        const hasdashr = msg_unfiltered.match(/[-](r|relics)/, "") !== null
         const wordToUpper = word.toUpperCase()
 
         switch (command_type) {
@@ -51,7 +48,7 @@ module.exports = {
             }
 
             const sortedParts = [...new Set(statusParts.sort((a, b) => a.s - b.s).map((part) => {
-                return `${`[${part.s}]`.padEnd(5)}| ${part.i}`
+                return `${`[${part.s}]`.padEnd(5)}│ ${part.i}`
             })
             )]
 
@@ -62,7 +59,6 @@ module.exports = {
                         .setTitle(`[ ${wordToUpper} ]`)
                         .setDescription(codeBlock('ml', sortedParts.slice(i, i + 15).join('\n')))
                         .setColor(hex[wordToUpper])
-                        .setTimestamp()
                 )
             }
 
@@ -78,7 +74,7 @@ module.exports = {
 
             statusPagination.setEmbeds(embedsArrStatus, (embed, index, array) => {
                 return embed.setFooter({
-                    text: `${hasdashb ? 'Updated from box  • ' : 'Stock from Tracker  • '} ${stockRanges[word.toUpperCase()]} stock  •  Page ${index + 1}/${array.length}  `
+                    text: `${hasdashb ? 'Updated from box  • ' : 'Stock from Tracker  • '} ${stockRanges[word.toUpperCase()]} stock parts  •  Page ${index + 1}/${array.length}  `
                 })
             })
             statusPagination.render()
@@ -96,21 +92,52 @@ module.exports = {
                     return rw.part === part.name
                 })
             })
-            const relicToString = await Promise.all(relics.map(async (relic) => {
+            let relicToString = await Promise.all(relics.map(async (relic) => {
                 const tokens = await database.sequelize.query(`SELECT tokens FROM relicTokens WHERE relic = :relic_name`, {
                     replacements: { relic_name: relic.dataValues.relic },
                     type: QueryTypes.SELECT
                 })
                 const position = rarities[relic.dataValues.rewards.findIndex(r => r.part === part.name)]
-                return `${position} | ${tokens[0].tokens.padEnd(3)}| ${relic.dataValues.relic} {${relic.dataValues.vaulted ? "V" : "UV"}}`
+                return `${position} │ ${`{${tokens[0].tokens}}`.padEnd(5)}│ ${relic.dataValues.relic} {${relic.dataValues.vaulted ? "V" : "UV"}}`
             }));
+            relicToString = relicToString.sort((a, b) => parseInt(b.match(/\d+/)) - parseInt(a.match(/\d+/)))
+            
+            const basePartEmbed = new EmbedBuilder()
+                .setTitle(`[ ${part.name} ]`)
+                .setColor(hex[range(parseInt(part.stock))])
+                .setFooter({ text: `${part.color} Part  •  ${part.stock} stock  •  Stock from Tracker` });
 
-            message.reply({ embeds: [
-                new EmbedBuilder()
-                    .setTitle(`[ ${part.name} ]`)
-                    .setDescription(codeBlock('ml', relicToString.join("\n")))
-                    .setColor(hex[range(parseInt(part.stock))])
-            ] })
+            if (relicToString.length <= 15) {
+                message.reply({ embeds: [
+                    new EmbedBuilder(basePartEmbed)
+                        .setDescription(codeBlock('ml', relicToString.join("\n")))
+                ] })
+            } else {
+                const partEmbedArray = []
+                for (let i = 0; i < relicToString.length; i += 15) {
+                    partEmbedArray.push(
+                        new EmbedBuilder(basePartEmbed)
+                            .setDescription(codeBlock('ml', relicToString.slice(i, i+15).join("\n")))
+                    )
+                }
+
+                const partPagination = new Pagination(message, {
+                    firstEmoji: '⏮',
+                    prevEmoji: '◀️',
+                    nextEmoji: '▶️',
+                    lastEmoji: '⏭',
+                    idle: 240_000,
+                    buttonStyle: ButtonStyle.Secondary,
+                    loop: true
+                })
+    
+                partPagination.setEmbeds(partEmbedArray, (embed, index, array) => {
+                    return embed.setFooter({
+                        text: embed.data.footer.text + `  •  Page ${index + 1}/${array.length}`
+                    })
+                })
+                partPagination.render()
+            }
             break
 
         case 'prime':
@@ -122,7 +149,7 @@ module.exports = {
             })
             if (!allParts.length) return;
             const allPartStrings = allParts.map(part => {
-                return `${part.stock.padEnd(3)}| ${part.name.replace("Blueprint", "BP")} {${part.color}}`
+                return `${part.stock.padEnd(3)}│ ${part.name.replace("Blueprint", "BP")} {${part.color}}`
             })
             const hexColor = uncodeObj[[Math.min(...allParts.map(y => codeObj[y.color]))]]
 
@@ -140,20 +167,24 @@ module.exports = {
             })
 
             if (!relicFound.length) return;
+            const partStockArray = []
 
             const theRelic = await JSON.parse(relicFound[0].rewards)
             const rewardsString = await Promise.all(theRelic.map(async (rw, i) => {
                 const partStuff = await database.models.Parts.findOne({ where: { name: rw.part } })
-                if (rw.part === "Forma Blueprint") return `${rarities[i]} |    | Forma BP`
-                return `${rarities[i]} | ${partStuff?.stock?.padEnd(3) ?? `-1 `}| ${rw?.part?.replace("Blueprint", "BP")} {${partStuff?.color ?? "???"}}`
+                if (rw.part === "Forma") return `${rarities[i]} │    │ Forma BP`
+                partStockArray.push(partStuff?.stock ?? 1000)
+                return `${rarities[i]} │ ${partStuff?.stock?.padEnd(3) ?? `-1 `}│ ${rw?.part?.replace("Blueprint", "BP")} {${partStuff?.color ?? "???"}}`
             }))
 
             const tokensAmt = await database.models.Tokens.findOne({ where: { relic: relicFound[0].relic } })
   
             message.reply({ embeds: [
                 new EmbedBuilder()
-                .setTitle(`[ ${relicFound[0].relic} ] ${relicFound[0].vaulted ? "{V}" : "{UV}"} {${tokensAmt?.tokens ?? -100}}`)
+                .setTitle(`[ ${relicFound[0].relic} ] ${relicFound[0].vaulted ? "{V}" : "{UV}"} {${tokensAmt?.tokens ?? -1}}`)
                 .setDescription(codeBlock('ml', rewardsString.join("\n")))
+                .setColor(hex[range(Math.min(...partStockArray))])
+                .setFooter({ text: `${range(Math.min(...partStockArray))} Relic  •  Stock from Tracker` })
             ] })
             break
 

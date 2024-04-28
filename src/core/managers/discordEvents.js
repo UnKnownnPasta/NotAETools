@@ -36,8 +36,8 @@ class MessageCreateListener extends DiscordEventEmitter {
         let cmdType = "";
 
         let isPrime = word.split(/\s+/g).includes("prime");
-        let isRelic = await relicExists(filterRelic(word.toLowerCase().replace(/\b\s*[-](r|b|box)\s*.*?$/, "").trim()) ?? "");
-        let isStatus = /\b(ed|red|orange|green|yellow)\b(\b\s+[-]?(?:r|b|box)\b)?(.*)?/g.test(word);
+        let isRelic = await relicExists(filterRelic(word.toLowerCase().replace(/\b\s*[-](b|box)\s*.*?$/, "").trim()) ?? "");
+        let isStatus = /\b(ed|red|orange|green|yellow)\b(\b\s+[-]?(?:b|box)\b)?(.*)?/g.test(word);
 
         /* 1st check: not relic not prime and is ed
            2nd check: not relic not ed not prime
@@ -70,7 +70,7 @@ class InteractionCreateListener extends DiscordEventEmitter {
     async handleMessageCreate(interaction) {
         if (interaction.isAutocomplete()) {
             CommandHandler.getDepartment(interaction.commandName).get(interaction.commandName).autocomplete(interaction);
-        } else if (interaction.isButton()) {
+        } else if (interaction.isButton() && !interaction.customId.startsWith('paginate')) {
             CommandHandler.buttons.get(interaction.customId.split('-')[0]).execute(this.client, interaction)
         } else if (interaction.isChatInputCommand()) {
             CommandHandler.getDepartment(interaction.commandName).get(interaction.commandName).execute(this.client, interaction)
