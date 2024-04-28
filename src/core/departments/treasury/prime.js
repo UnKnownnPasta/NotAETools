@@ -50,7 +50,7 @@ module.exports = {
             })
             if (!allParts.length) return;
             const allPartStrings = allParts.map(part => {
-                return `${part.stock.padEnd(3)}│ ${part.name.replace("Blueprint", "BP")} ${dualitemslist.includes(part.name) ? 'x2' : ''} {${part.color}}`
+                return `${part.stock.padEnd(3)}│ ${part.name.replace("Blueprint", "BP")}${dualitemslist.includes(part.name) ? ' x2' : ''} {${part.color}}`
             })
             const hexColor = uncodeObj[[Math.min(...allParts.map(y => codeObj[y.color]))]]
 

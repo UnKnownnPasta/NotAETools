@@ -1,6 +1,6 @@
 {
   "name": "aetools",
-  "version": "2.0.7",
+  "version": "2.0.9",
   "description": "Helper bot for Warframe clan alliance \"Anime Empire\".",
   "main": "bot.js",
   "scripts": {
