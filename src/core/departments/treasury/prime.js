@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, AutocompleteInteraction, Client, CommandInteraction, EmbedBuilder, codeBlock, ButtonStyle } = require('discord.js')
 const { Pagination } = require('pagination.djs')
 const database = require('../../../database/init.js')
+const { dualitemslist } = require('../../../configs/commondata.json')
 const { codeObj, uncodeObj, hex, range, rarities } = require('../../../utils/generic.js')
 const { QueryTypes } = require('sequelize')
 
@@ -47,7 +48,7 @@ module.exports = {
             })
             if (!allParts.length) return;
             const allPartStrings = allParts.map(part => {
-                return `${part.stock.padEnd(3)}│ ${part.name.replace("Blueprint", "BP")} {${part.color}}`
+                return `${part.stock.padEnd(3)}│ ${part.name.replace("Blueprint", "BP")} ${dualitemslist.includes(part.name) ? 'x2' : ''} {${part.color}}`
             })
             const hexColor = uncodeObj[[Math.min(...allParts.map(y => codeObj[y.color]))]]
 
@@ -81,7 +82,7 @@ module.exports = {
             relicToString = relicToString.sort((a, b) => parseInt(b.match(/\d+/)) - parseInt(a.match(/\d+/)))
             
             const basePartEmbed = new EmbedBuilder()
-                .setTitle(`[ ${part.name} ]`)
+                .setTitle(`[ ${part.name} ] ${dualitemslist.includes(part.name) ? 'x2' : ''}`)
                 .setColor(hex[range(parseInt(part.stock))])
                 .setFooter({ text: `${part.color} Part  •  ${part.stock} stock  •  Stock from Tracker` });
 

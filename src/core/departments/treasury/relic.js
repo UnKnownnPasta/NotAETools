@@ -3,6 +3,7 @@ const database = require('../../../database/init')
 const { QueryTypes } = require('sequelize')
 const { Pagination } = require('pagination.djs')
 const { hex, range, stockRanges, filterRelic, rarities } = require('../../../utils/generic.js')
+const { dualitemslist } = require('../../../configs/commondata.json')
 
 module.exports = {
     name: 'relic',
@@ -46,7 +47,7 @@ module.exports = {
             const partStuff = await database.models.Parts.findOne({ where: { name: rw.part } })
             if (rw.part === "Forma") return `${rarities[i]} │    │ Forma BP`
             partStockArray.push(partStuff?.stock ?? 1000)
-            return `${rarities[i]} │ ${partStuff?.stock?.padEnd(3) ?? `-1 `}│ ${rw?.part?.replace("Blueprint", "BP")} {${partStuff?.color ?? "???"}}`
+            return `${rarities[i]} │ ${partStuff?.stock?.padEnd(3) ?? `-1 `}│ ${rw?.part?.replace("Blueprint", "BP")} ${dualitemslist.includes(rw?.part) ? 'x2' : ''} {${partStuff?.color ?? "???"}}`
         }))
 
         const tokensAmt = await database.models.Tokens.findOne({ where: { relic: relicFound[0].relic } })

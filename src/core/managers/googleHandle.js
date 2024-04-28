@@ -2,6 +2,7 @@ const path = require('node:path');
 const { google } = require('googleapis');
 const auth = require('google-auth-library');
 const { departments } = require('../../configs/config.json');
+const { dualitemslist } = require('../../configs/commondata.json')
 const fs = require('node:fs/promises');
 const database = require('../../database/init.js');
 const { range } = require('../../utils/generic.js');
@@ -58,11 +59,14 @@ class GoogleSheetFetcher {
             const allPartsData = []
             let allPrimeSetNames = []
             await Promise.all(values.map(async (record) => {
-                const itemStock = record[2]
+                let itemStock = record[2]
                 let itemName = `${record[0]} ${record[1]}`
+                itemName = itemName.replace(" Prime ", " ").replace(" and ", " & ")
                 allPrimeSetNames.push(record[0])
 
-                allPartsData.push({ name: `${itemName.replace(" Prime ", " ").replace(" and ", " & ")}`, stock: itemStock, color: range(parseInt(itemStock)) })
+                if (dualitemslist.includes(itemName)) itemStock = parseInt(itemStock) / 2 | 0
+
+                allPartsData.push({ name: `${itemName}`, stock: itemStock, color: range(parseInt(itemStock)) })
             }));
             allPrimeSetNames = [...new Set(allPrimeSetNames)].map(y => { return { name: y.replace(" and ", " & ").replace(" Prime", "") } })
 

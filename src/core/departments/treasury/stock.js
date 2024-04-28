@@ -3,6 +3,7 @@ const database = require('../../../database/init')
 const { QueryTypes } = require('sequelize')
 const { Pagination } = require('pagination.djs')
 const { hex, range, stockRanges, filterRelic, rarities } = require('../../../utils/generic.js')
+const { dualitemslist } = require('../../../configs/commondata.json')
 
 module.exports = {
     name: 'stock',
@@ -65,7 +66,7 @@ module.exports = {
                     partColor = range(partStock)
                 }
                 if (partColor !== wordToUpper) continue
-                statusParts.push({ s: partStock, i: item.name })
+                statusParts.push({ s: partStock, i: `${item.name}${dualitemslist.includes(item.name) ? ' x2' : ''}` })
             }
         }
 
