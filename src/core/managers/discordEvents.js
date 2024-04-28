@@ -32,6 +32,8 @@ class MessageCreateListener extends DiscordEventEmitter {
         if (!message.content.startsWith(config.prefix) || message.author.bot)
             return;
 
+        return;
+
         let word = message.content.slice(2).toLocaleLowerCase();
         let cmdType = "";
 

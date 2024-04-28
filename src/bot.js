@@ -6,6 +6,7 @@ const GoogleSheetManager = require('./core/managers/googleHandle.js')
 const Database = require('./database/init.js')
 const CommandHandler = require('./core/managers/fileHandler.js')
 const FissureManager = require('./core/managers/fissures.js')
+const IntervalManager = require('./core/managers/intervals.js')
 const { InteractionCreateListener, MessageCreateListener } = require('./core/managers/discordEvents.js')
 
 const { GatewayIntentBits, Client, Events, ActivityType } = require('discord.js')
@@ -23,12 +24,13 @@ class AETools {
                 GatewayIntentBits.GuildMembers
             ]
         });
-        this.resetDB = false;
+        this.resetDB = true;
 
         logger.info(`Starting...`)
 
         this.clearLogs()
         this.constructManagers()
+        this.anticrash()
     }
 
     async constructManagers() {
@@ -43,13 +45,15 @@ class AETools {
         // Commands
         CommandHandler.setClient(this.client)
         CommandHandler.loadAll()
-        // await CommandHandler.deployCommands();
+        await CommandHandler.deployCommands();
 
         // Event Listeners
         this.intListen = new InteractionCreateListener(this.client)
         this.msgListen = new MessageCreateListener(this.client)
 
         this.client.once(Events.ClientReady, async () => {
+            IntervalManager.setClient(this.client)
+
             this.client.user.setPresence({ activities: [{ name: 'The Future 🌌', type: ActivityType.Watching }], status: 'dnd' });
 
             // Fissures
@@ -57,10 +61,13 @@ class AETools {
             await FissureManager.refreshGuilds();
             await FissureManager.syncFissures();
 
-            logger.info({ message: 'logged in as ' + this.client.user.username })
+            logger.info({ message: 'logged in as ' + this.client.user.username + ` @ ${new Date()}` })
             if (this.resetDB) {
-                await Promise.all([GoogleSheetManager.startAsync(), CollectionBoxFetcher(this.client)])
+                await GoogleSheetManager.startAsync()
+                await CollectionBoxFetcher(this.client)
             }
+
+            await IntervalManager.startIntervals();
         })
     }
 
@@ -71,6 +78,21 @@ class AETools {
             fs.truncate(path.join(__dirname, 'storage', 'error.log'), 0,
                 (err, d) => { if (err) logger.error('Unexpected error when clearing Error Logs') })
         ])
+    }
+
+    anticrash() {
+        process.on('unhandledRejection', (reason, p) => {
+            logger.warn(' [antiCrash] :: Unhandled Rejection/Catch');
+            logger.info(reason, p);
+        });
+        process.on("uncaughtException", (err, origin) => {
+            logger.warn(' [antiCrash] :: Uncaught Exception/Catch');
+            logger.info(err, origin);
+        }) 
+        process.on('uncaughtExceptionMonitor', (err, origin) => {
+            logger.warn(' [antiCrash] :: Uncaught Exception/Catch (MONITOR)');
+            logger.info(err, origin);
+        });
     }
 }
 

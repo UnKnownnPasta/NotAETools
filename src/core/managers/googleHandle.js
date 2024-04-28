@@ -72,7 +72,7 @@ class GoogleSheetFetcher {
 
             await Promise.all([
                 database.models.Parts.bulkCreate(allPartsData, { updateOnDuplicate: ['stock', 'color'] }),
-                database.models.SetNames.bulkCreate(allPrimeSetNames)
+                database.models.SetNames.bulkCreate(allPrimeSetNames, { updateOnDuplicate: ['name'] })
             ])
             return Promise.resolve(1)
         } catch (error) {
