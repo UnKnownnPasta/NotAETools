@@ -28,12 +28,12 @@ class GoogleSheetFetcher {
             range: departments.treasury.google.managerSheetName + departments.treasury.google.ranges.manager
         })
         .catch((error) => {
-            console.error(error)
+            logger.error(error)
             return Promise.reject(0)
         })
 
         const values = sheetValues.data.values;
-        if (values.some(x => x[0] == '#ERROR!')) return console.log('Error fetching items: Items have invalid values (#ERROR!)');
+        if (values.some(x => x[0] == '#ERROR!')) return logger.error('Error fetching items: Items have invalid values (#ERROR!)');
 
         if (!values || !values?.length) return Promise.reject(0)
 
@@ -42,7 +42,6 @@ class GoogleSheetFetcher {
             await Promise.all(values.map(async (record) => {
                 const itemStock = record[2]
                 let itemName = `${record[0]} ${record[1]}`
-                itemName = itemName.includes("Blueprint") ? itemName : `${itemName} Blueprint`
 
                 allPartsData.push({ name: `${itemName.replace(" Prime ", " ")}`, stock: itemStock, color: range(parseInt(itemStock)) })
             }));
@@ -50,7 +49,7 @@ class GoogleSheetFetcher {
             await database.models.Parts.bulkCreate(allPartsData, { updateOnDuplicate: ['stock', 'color'] });
             return Promise.resolve(1)
         } catch (error) {
-            console.error(error)
+            logger.error(error)
             return Promise.reject(0)
         }
     }
@@ -72,7 +71,7 @@ class GoogleSheetFetcher {
                 return Promise.resolve(1)
             })
             .catch(error => {
-                console.error(error)
+                logger.error(error)
                 return Promise.reject(0)
             });
     }
@@ -91,7 +90,7 @@ class GoogleSheetFetcher {
                 tempobj.vaulted = relic.vaultInfo.vaulted
                 tempobj.rewards = relic.rewards.sort((a, b) => b.chance - a.chance).map(part => {
                     let partItemName = part.item.name.replace(" Prime ", " ")
-                    partItemName = partItemName.includes("Blueprint") ? partItemName : `${partItemName} Blueprint`
+                    partItemName.endsWith("Prime Blueprint") ? partItemName : partItemName.replace(" Blueprint", "")
                     return { part: partItemName, rarity: getrarity(part.chance) }
                 })
                 allRelicsData.push(tempobj)
@@ -99,7 +98,7 @@ class GoogleSheetFetcher {
 
             await database.models.Relics.bulkCreate(allRelicsData, { updateOnDuplicate: ['vaulted', 'rewards'] })
         } catch (error) {
-            console.error(error)
+            logger.error(error)
             return Promise.reject(0)
         }
         return Promise.resolve(1)
@@ -111,12 +110,12 @@ class GoogleSheetFetcher {
             range: departments.treasury.google.relicSheetName + departments.treasury.google.ranges.relic
         })
         .catch((error) => {
-            console.error(error)
+            logger.error(error)
             return Promise.reject(0)
         })
 
         const values = sheetValues.data.values;
-        if (values.some(x => x.at(-1) === '#ERROR!')) return console.log('Error fetching items: Items have invalid values (#ERROR!)');
+        if (values.some(x => x.at(-1) === '#ERROR!')) return logger.error('Error fetching items: Items have invalid values (#ERROR!)');
 
         try {
             const allRelicsData = []
@@ -130,7 +129,7 @@ class GoogleSheetFetcher {
             await database.models.Tokens.bulkCreate(allRelicsData, { updateOnDuplicate: ['tokens'] });
             return Promise.resolve(1)
         } catch (error) {
-            console.error(error)
+            logger.error(error)
             return Promise.reject(0)
         }
     }

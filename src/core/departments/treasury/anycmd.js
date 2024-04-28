@@ -28,7 +28,7 @@ module.exports = {
 
         const word = titleCase(msg_unfiltered.replace(/\s*(-)(b|box)?\s*.*?$/, ''))
         const hasdashb = msg_unfiltered.match(/[-](b|box)/, '') !== null
-        // let hasdashr = msg_unfiltered.match(/[-](r|relics)/, "") !== null
+        const hasdashr = msg_unfiltered.match(/[-](r|relics)/, "") !== null
         const wordToUpper = word.toUpperCase()
 
         switch (command_type) {

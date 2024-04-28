@@ -138,4 +138,15 @@ async function relicExists(relic) {
 
 const rarities = ['C ', 'C ', 'C ', 'UC', 'UC', 'RA']
 
-module.exports = { loadFiles, titleCase, filterRelic, range, codeObj, uncodeObj, hex, stockRanges, relicExists, rarities }
+const toClanName = {
+    IK: 'Imouto Kingdom',
+    WK: 'Waifu Kingdom',
+    MK: 'Manga Kingdom',
+    YK: 'Yuri Kingdom',
+    CK: 'Cowaii Kingdom',
+    TK: 'Tsuki Kingdom',
+    HK: 'Heavens Kingdom',
+    AK: 'Andromeda Kingdom'
+}
+
+module.exports = { loadFiles, titleCase, filterRelic, range, codeObj, uncodeObj, hex, stockRanges, relicExists, rarities, toClanName }

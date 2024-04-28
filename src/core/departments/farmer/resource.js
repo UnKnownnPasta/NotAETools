@@ -4,8 +4,8 @@ const {
     Client,
     CommandInteraction
 } = require('discord.js')
-const fs = require('node:fs/promises')
-const { titleCase } = require('../../../utils/generic')
+const database = require('../../../database/init')
+const { titleCase, toClanName } = require('../../../utils/generic')
 const { resourceNames } = require('../../../configs/commondata.json')
 
 module.exports = {
@@ -27,17 +27,19 @@ module.exports = {
      * @param {CommandInteraction} i
      */
     async execute (client, i) {
-        const resources = (await JSON.parse(await fs.readFile('./src/data/clandata.json'))).resources
-        const resrc = i.options.getString('resource', true)
+        const choiceResource = i.options.getString('resource', true)
 
-        if (!resourceNames.includes(resrc)) { return i.reply({ content: 'Invalid resource, choose from autofill instead', ephemeral: true }) }
+        if (!resourceNames.includes(choiceResource)) { return i.reply({ content: 'Invalid resource, choose from autofill instead', ephemeral: true }) }
 
         const clanEmbed = new EmbedBuilder()
-            .setTitle(`Resource overview of ${resrc}`)
+            .setTitle(`Resource overview of ${choiceResource}`)
 
-        await resources.slice(0, -1).map(r => {
-            const res = r.resources.filter(x => x.name == resrc)[0]
-            clanEmbed.addFields({ name: r.clan, value: `**Amt:** \`${res.amt}\` | **Short:** \`${res.short}\`` })
+        const allResources = await database.models.Clans.findAll()
+        await allResources.map((res) => {
+            const fieldName = res.dataValues.clan
+            const resVal = Object.entries(res.dataValues.resource).find(resrc => resrc[0] === choiceResource)
+            const fieldVal = `│ ${resVal[1].amt} (+${resVal[1].short})`
+            clanEmbed.addFields({ name: toClanName[fieldName], value: fieldVal })
         })
 
         await i.reply({ embeds: [clanEmbed] })

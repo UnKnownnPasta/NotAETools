@@ -69,7 +69,12 @@ class AllHandles {
                 const command = require(filePath);
                 if (!command.hasOwnProperty('execute')) logger.warn(`The command at ${filePath} is missing a required "execute" property.`);
                 if ('data' in command && command.type === 'slash') {
-                    commands.push(command.data.toJSON());
+                    const jsonData = command.data.toJSON()
+                    if (process.env.NODE_ENV !== 'production') {
+                        commands.push({ ...jsonData, description: `[DEV] ${jsonData.description}`  });
+                    } else {
+                        commands.push(jsonData)
+                    }
                 }
             }
         }

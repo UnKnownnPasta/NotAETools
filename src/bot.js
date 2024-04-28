@@ -24,6 +24,8 @@ class AETools {
         });
         this.resetDB = false;
 
+        logger.info(`Starting...`)
+
         this.clearLogs()
         this.constructManagers()
     }

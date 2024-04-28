@@ -99,7 +99,7 @@ module.exports = {
         const framesButtons = new ActionRowBuilder().addComponents(nekrosBtn, khoraBtn, nekros2Btn, novaBtn, wispBtn)
         const optionBtn = new ActionRowBuilder().addComponents(anyBtn, cancelBtn)
 
-        i.reply({ content: `<@${i.user.id}>`, embeds: [farmEmbed], components: [framesButtons, optionBtn] })
+        await i.reply({ content: `<@${i.user.id}>`, embeds: [farmEmbed], components: [framesButtons, optionBtn] })
     },
     async autocomplete (i) {
         const focusedValue = i.options.getFocused()

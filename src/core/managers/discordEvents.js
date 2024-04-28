@@ -1,4 +1,4 @@
-const { Events, Client, CommandInteraction, Message, ButtonInteraction } = require('discord.js')
+const { Events, Client, CommandInteraction, Message, ButtonInteraction, ChatInputCommandInteraction } = require('discord.js')
 const { EventEmitter } = require('events')
 const CommandHandler = require('./fileHandler')
 const config = require('../../configs/config.json')
@@ -68,12 +68,12 @@ class InteractionCreateListener extends DiscordEventEmitter {
 
     /** * @param {CommandInteraction|ButtonInteraction} interaction */
     async handleMessageCreate(interaction) {
-        const cmdDept = CommandHandler.getDepartment(interaction.commandName)
-        if (!cmdDept) return;
         if (interaction.isAutocomplete()) {
-            cmdDept.get(interaction.commandName).autocomplete(this.client, interaction)
-        } else {
-            cmdDept.get(interaction.commandName).execute(this.client, interaction)
+            CommandHandler.getDepartment(interaction.commandName).get(interaction.commandName).autocomplete(interaction);
+        } else if (interaction.isButton()) {
+            CommandHandler.buttons.get(interaction.customId.split('-')[0]).execute(this.client, interaction)
+        } else if (interaction.isChatInputCommand()) {
+            CommandHandler.getDepartment(interaction.commandName).get(interaction.commandName).execute(this.client, interaction)
         }
     }
 }

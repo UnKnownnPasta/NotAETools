@@ -1,10 +1,5 @@
-const {
-    Client,
-    EmbedBuilder,
-    ButtonInteraction,
-    codeBlock
-} = require("discord.js");
-const fsp = require('node:fs/promises')
+const { Client, EmbedBuilder, ButtonInteraction } = require("discord.js");
+const database = require('../../database/init')
 
 module.exports = { 
     name: "thost",
@@ -14,34 +9,37 @@ module.exports = {
  * @param {ButtonInteraction} i 
  */
     async execute(client, i) {
-        const embedDesc = i.message.embeds[0].description.split('\n')
-        let setOfUsers = embedDesc.slice(1).map(x => x.slice(3, -1))
-        const relic = embedDesc[0]
-        const relicEmbed = new EmbedBuilder()
-            .setTitle(`${i.message.embeds[0].title}`);
+        const hostEmbed = i.message.embeds[0]
+        const embedDesc = hostEmbed.description.split('\n')
+        const embedTitle = hostEmbed.title.split(" ")
+
+        let setOfUsers = embedDesc.map(x => x.match(/\d+/)[0])
+        const relic = hostEmbed.data.fields[0].name.split(" ").slice(0, 3).join(" ")
+        const relicEmbed = new EmbedBuilder(hostEmbed);
 
         switch (i.customId) {
-
             case 'thost-join':
-                if (setOfUsers.indexOf(i.user.id) !== -1) return i.update({ });
+                if (setOfUsers.indexOf(i.user.id) !== -1) return i.update({});
                 setOfUsers.push(i.user.id)
 
-                relicEmbed.setDescription(relic + '\n' + setOfUsers.map(x => `<@!${x}>`).join('\n'))
+                embedTitle[embedTitle.length - 1] = `${setOfUsers.length}/4`
+                relicEmbed.setTitle(embedTitle.join(" "))
+
+                relicEmbed.setDescription(setOfUsers.map(x => `<@!${x}>`).join('\n'))
                 await i.update({ embeds: [relicEmbed] })
 
                 if (setOfUsers.length >= 4) {
-                    let userData = (await JSON.parse(await fsp.readFile('../data/clandata.json')))
-                    if (!userData.treasuryids) return i.channel.send({ content: `<@740536348166848582> oi thost broke again, keys: ${Object.keys(userData)}` });
-                    userData = userData.treasuryids;
+                    let userData = await database.models.Users.findAll()
+
                     let usersInviteDesc = ""
-                    setOfUsers.slice(0, 4).forEach(userj => {
-                        var index = userData.findIndex(n => n.id == userj)
-                        if (index === -1) usersInviteDesc +=  `<@${userj}> - No IGN known\n`
-                        else usersInviteDesc +=  `<@${userj}> - /inv ${userData[index].name}\n`
+                    setOfUsers.slice(0, 4).forEach(squadMemberID => {
+                        var foundUserOrNot = userData.find(n => n.dataValues.uid === squadMemberID)
+                        if (!foundUserOrNot) usersInviteDesc +=  `<@${squadMemberID}> - No IGN known\n`
+                        else usersInviteDesc += `<@${squadMemberID}> - /inv ${foundUserOrNot.dataValues.name}\n`
                     })
                     
                     const filledEmbed = new EmbedBuilder()
-                    .setTitle(`Run for [${relic}] filled`)
+                    .setTitle(`Run for ${relic} FILLED`)
                     .setDescription(`Invite Others:\n` + usersInviteDesc)
 
                     try {
@@ -72,22 +70,8 @@ module.exports = {
                 break;
 
             case 'thost-relicview':
-                const relicName = relic.split('x ')[1].slice(0, -1)
-                let jsfile = (await JSON.parse(await fsp.readFile('./src/data/relicdata.json', 'utf-8'))).relicData
-                const relicInfo = jsfile.filter(x => x[0].name == relicName)[0]
-                const rarities = ['C', 'C', 'C', 'UC', 'UC', 'RA']
-                                
-                let embedDesc = ""
-                for (let r=1; r < 7; r++) {
-                    if (relicInfo[r].count == '')
-                        embedDesc += `${rarities[r-1].padEnd(2)} |    | Forma\n`
-                    else {
-                        embedDesc += `${rarities[r-1].padEnd(2)} | ${relicInfo[r].count.padEnd(3)}| ${relicInfo[r].name} {${relicInfo[r].type}}\n`
-                    }
-                }
-
-                await i.reply({ embeds: [new EmbedBuilder().setTitle(`[ ${relicName} ]`).setDescription(codeBlock('ml', embedDesc)).setTimestamp()], ephemeral: true })
-                    .catch((error) => { return; })
+                await i.reply({ content: `not supported`, ephemeral: true })
+                break;
         }
     },
 }

@@ -5,7 +5,8 @@ const {
     CommandInteraction,
     codeBlock
 } = require('discord.js')
-const fs = require('node:fs/promises')
+const database = require('../../../database/init')
+const { toClanName } = require('../../../utils/generic')
 
 module.exports = {
     name: 'clan',
@@ -35,17 +36,19 @@ module.exports = {
      * @param {CommandInteraction} i
      */
     async execute (client, i) {
-        const resources = (await JSON.parse(await fs.readFile('./src/data/clandata.json'))).resources
         const clan = i.options.getString('clan', true)
+        await i.deferReply()
+        const resources = await database.models.Clans.findOne({ where: { clan } })
 
-        let embedDesc = ''
-        await resources.filter(clans => clans.clan == clan)[0].resources.map(r => {
-            embedDesc += `${r.name.padEnd(17)} | Amt: ${r.amt.padEnd(12)} Overflow: ${r.short}\n`
+        let embedDesc = `RESOURCE`.padEnd(17) + ` | AMOUNT (+SHORTFALL)\n\n`
+        Object.entries(resources.dataValues.resource).map(async ([key, val]) => {
+            embedDesc += `${key.padEnd(17)} | ${val.amt.padEnd(12)} (+${val.short})\n`
         })
 
         const clanEmbed = new EmbedBuilder()
-            .setTitle(`Resource overview of ${clan}`)
-            .setDescription(codeBlock('ml', embedDesc))
-        await i.reply({ embeds: [clanEmbed] })
+            .setTitle(`Resources of ${toClanName[clan]}`)
+            .setDescription(codeBlock('ml', embedDesc));
+
+        await i.editReply({ embeds: [clanEmbed] })
     }
 }
