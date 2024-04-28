@@ -1,8 +1,7 @@
-const { SlashCommandBuilder, CommandInteraction, EmbedBuilder, codeBlock, ButtonStyle } = require('discord.js')
+const { SlashCommandBuilder, CommandInteraction, EmbedBuilder, codeBlock } = require('discord.js')
 const database = require('../../../database/init')
 const { QueryTypes } = require('sequelize')
-const { Pagination } = require('pagination.djs')
-const { hex, range, stockRanges, filterRelic, rarities } = require('../../../utils/generic.js')
+const { hex, range, filterRelic, rarities } = require('../../../utils/generic.js')
 const { dualitemslist } = require('../../../configs/commondata.json')
 
 module.exports = {
@@ -39,6 +38,10 @@ module.exports = {
             type: QueryTypes.SELECT
         })
 
+        const boxData = await database.models.Box.findAll()
+        const collection_box = {}
+        boxData.map(p => collection_box[p.dataValues.name] = p.dataValues.stock)
+
         if (!relicFound.length) return;
         const partStockArray = []
 
@@ -47,7 +50,7 @@ module.exports = {
             const partStuff = await database.models.Parts.findOne({ where: { name: rw.part } })
             if (rw.part === "Forma") return `${rarities[i]} │    │ Forma BP`
             partStockArray.push(partStuff?.stock ?? 1000)
-            return `${rarities[i]} │ ${partStuff?.stock?.padEnd(3) ?? `-1 `}│ ${rw?.part?.replace("Blueprint", "BP")} ${dualitemslist.includes(rw?.part) ? 'x2' : ''} {${partStuff?.color ?? "???"}}`
+            return `${rarities[i]} │ ${`${boxupdated ? parseInt(partStuff?.dataValues?.stock ?? -1) + parseInt(collection_box[rw.part] ?? 0) : partStuff.dataValues.stock}`.padEnd(3)}│ ${rw?.part?.replace("Blueprint", "BP")}${dualitemslist.includes(rw?.part) ? ' x2' : ''} {${partStuff?.color ?? "???"}}`
         }))
 
         const tokensAmt = await database.models.Tokens.findOne({ where: { relic: relicFound[0].relic } })
@@ -57,7 +60,7 @@ module.exports = {
             .setTitle(`[ ${relicFound[0].relic} ] ${relicFound[0].vaulted ? "{V}" : "{UV}"} {${tokensAmt?.tokens ?? -1}}`)
             .setDescription(codeBlock('ml', rewardsString.join("\n")))
             .setColor(hex[range(Math.min(...partStockArray))])
-            .setFooter({ text: `${range(Math.min(...partStockArray))} Relic  •  Stock from Tracker` })
+            .setFooter({ text: `${range(Math.min(...partStockArray))} Relic  •  Stock from ${boxupdated ? 'Box + Tracker' : 'Tracker'}` })
         ] })
     },
     async autocomplete(i) {

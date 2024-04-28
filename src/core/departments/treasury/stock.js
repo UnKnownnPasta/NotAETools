@@ -1,8 +1,7 @@
 const { SlashCommandBuilder, CommandInteraction, EmbedBuilder, codeBlock, ButtonStyle } = require('discord.js')
 const database = require('../../../database/init')
-const { QueryTypes } = require('sequelize')
 const { Pagination } = require('pagination.djs')
-const { hex, range, stockRanges, filterRelic, rarities } = require('../../../utils/generic.js')
+const { hex, range, stockRanges } = require('../../../utils/generic.js')
 const { dualitemslist } = require('../../../configs/commondata.json')
 
 module.exports = {
@@ -97,7 +96,7 @@ module.exports = {
 
         statusPagination.setEmbeds(embedsArrStatus, (embed, index, array) => {
             return embed.setFooter({
-                text: `${boxupdated ? 'Updated from box  • ' : 'Stock from Tracker  • '} ${stockRanges[word.toUpperCase()]} stock parts  •  Page ${index + 1}/${array.length}  `
+                text: `${boxupdated ? 'Updated from box  • ' : `Stock from ${boxupdated ? 'Box + Tracker' : 'Tracker'}  • `} ${stockRanges[word.toUpperCase()]} stock parts  •  Page ${index + 1}/${array.length}  `
             })
         })
         statusPagination.render()

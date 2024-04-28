@@ -39,6 +39,8 @@ module.exports = {
     async execute (client, i) {
         const setName = i.options.getString('name', true)
         const setPart = i.options.getString('part', false) ?? false
+        const boxupdated = i.options.getBoolean('boxupdated', false) ?? false
+
         await i.deferReply()
 
         if (!setPart) {
@@ -56,6 +58,7 @@ module.exports = {
                 .setTitle(`[ ${setName} Prime ]`)
                 .setDescription(codeBlock('ml', allPartStrings.join("\n")))
                 .setColor(hex[hexColor])
+                .setFooter({ text: `${hexColor} Set  •  Stock from ${boxupdated ? 'Box + Tracker' : 'Tracker'}` })
             await i.editReply({ embeds: [primeEmbed] })
         } else {
             const relicData = await database.models.Relics.findAll();
@@ -84,7 +87,7 @@ module.exports = {
             const basePartEmbed = new EmbedBuilder()
                 .setTitle(`[ ${part.name} ] ${dualitemslist.includes(part.name) ? 'x2' : ''}`)
                 .setColor(hex[range(parseInt(part.stock))])
-                .setFooter({ text: `${part.color} Part  •  ${part.stock} stock  •  Stock from Tracker` });
+                .setFooter({ text: `${part.color} Part  •  ${part.stock} stock  •  Stock from ${boxupdated ? 'Box + Tracker' : 'Tracker'}` });
 
             if (relicToString.length <= 15) {
                 await i.editReply({ embeds: [
