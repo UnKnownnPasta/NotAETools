@@ -45,28 +45,34 @@ class GoogleSheetFetcher {
             range: departments.treasury.google.managerSheetName + departments.treasury.google.ranges.manager
         })
         .catch((error) => {
-            logger.error(error)
+            console.error(error)
             return Promise.reject(0)
         })
 
         const values = sheetValues.data.values;
-        if (values.some(x => x[0] == '#ERROR!')) return logger.error('Error fetching items: Items have invalid values (#ERROR!)');
+        if (values.some(x => x[0] == '#ERROR!')) return console.error('Error fetching items: Items have invalid values (#ERROR!)');
 
         if (!values || !values?.length) return Promise.reject(0)
 
         try {
             const allPartsData = []
+            let allPrimeSetNames = []
             await Promise.all(values.map(async (record) => {
                 const itemStock = record[2]
                 let itemName = `${record[0]} ${record[1]}`
+                allPrimeSetNames.push(record[0])
 
                 allPartsData.push({ name: `${itemName.replace(" Prime ", " ").replace(" and ", " & ")}`, stock: itemStock, color: range(parseInt(itemStock)) })
             }));
+            allPrimeSetNames = [...new Set(allPrimeSetNames)].map(y => { return { name: y.replace(" and ", " & ").replace(" Prime", "") } })
 
-            await database.models.Parts.bulkCreate(allPartsData, { updateOnDuplicate: ['stock', 'color'] });
+            await Promise.all([
+                database.models.Parts.bulkCreate(allPartsData, { updateOnDuplicate: ['stock', 'color'] }),
+                database.models.SetNames.bulkCreate(allPrimeSetNames)
+            ])
             return Promise.resolve(1)
         } catch (error) {
-            logger.error(error)
+            console.error(error)
             return Promise.reject(0)
         }
     }
@@ -88,7 +94,7 @@ class GoogleSheetFetcher {
                 return Promise.resolve(1)
             })
             .catch(error => {
-                logger.error(error)
+                console.error(error)
                 return Promise.reject(0)
             });
     }
@@ -115,7 +121,7 @@ class GoogleSheetFetcher {
 
             await database.models.Relics.bulkCreate(allRelicsData, { updateOnDuplicate: ['vaulted', 'rewards'] })
         } catch (error) {
-            logger.error(error)
+            console.error(error)
             return Promise.reject(0)
         }
         return Promise.resolve(1)
@@ -127,12 +133,12 @@ class GoogleSheetFetcher {
             range: departments.treasury.google.relicSheetName + departments.treasury.google.ranges.relic
         })
         .catch((error) => {
-            logger.error(error)
+            console.error(error)
             return Promise.reject(0)
         })
 
         const values = sheetValues.data.values;
-        if (values.some(x => x.at(-1) === '#ERROR!')) return logger.error('Error fetching items: Items have invalid values (#ERROR!)');
+        if (values.some(x => x.at(-1) === '#ERROR!')) return console.error('Error fetching items: Items have invalid values (#ERROR!)');
 
         try {
             const allRelicsData = []
@@ -146,7 +152,7 @@ class GoogleSheetFetcher {
             await database.models.Tokens.bulkCreate(allRelicsData, { updateOnDuplicate: ['tokens'] });
             return Promise.resolve(1)
         } catch (error) {
-            logger.error(error)
+            console.error(error)
             return Promise.reject(0)
         }
     }

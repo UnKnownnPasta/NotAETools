@@ -20,7 +20,8 @@ class Database {
             Parts: require('./models/primeParts.js')(this.sequelize),
             Relics: require('./models/relicData.js')(this.sequelize),
             Users: require('./models/users.js')(this.sequelize),
-            Tokens: require('./models/relicTokens.js')(this.sequelize)
+            Tokens: require('./models/relicTokens.js')(this.sequelize),
+            SetNames: require('./models/onlyNames.js')(this.sequelize)
         }
     }
 

@@ -1,4 +1,5 @@
 {"level":"info","message":"Starting...","service":"user-service"}
 {"level":"info","message":"SQL Connection has been established successfully.","service":"user-service"}
+{"level":"info","message":"Started refreshing 10 application (/) commands.","service":"user-service"}
+{"level":"info","message":"Successfully reloaded 10 application (/) commands.","service":"user-service"}
 {"level":"info","message":"logged in as Project Horizon (DEV)","service":"user-service"}
-{"level":"info","message":"Finished Calls in 942ms - Resolved: 4, Rejected: 0","service":"user-service"}

@@ -80,7 +80,7 @@ module.exports = {
             statusPagination.render()
             break
 
-        case 'part': // TODO: PAGINATION
+        case 'part':
             const findPart = await database.sequelize.query(`SELECT * FROM primeParts WHERE name LIKE :search_part`, {
                 replacements: { search_part: `${titleCase(word)}%` },
                 type: QueryTypes.SELECT
