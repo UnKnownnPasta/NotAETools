@@ -24,7 +24,7 @@ class AETools {
                 GatewayIntentBits.GuildMembers
             ]
         });
-        this.resetDB = true;
+        this.resetDB = false;
 
         logger.info(`Starting...`)
 
@@ -45,7 +45,7 @@ class AETools {
         // Commands
         CommandHandler.setClient(this.client)
         CommandHandler.loadAll()
-        await CommandHandler.deployCommands();
+        // await CommandHandler.deployCommands();
 
         // Event Listeners
         this.intListen = new InteractionCreateListener(this.client)
@@ -83,15 +83,15 @@ class AETools {
     anticrash() {
         process.on('unhandledRejection', (reason, p) => {
             logger.warn(' [antiCrash] :: Unhandled Rejection/Catch');
-            logger.info(reason, p);
+            logger.error(reason, p);
         });
         process.on("uncaughtException", (err, origin) => {
             logger.warn(' [antiCrash] :: Uncaught Exception/Catch');
-            logger.info(err, origin);
+            logger.error(err, origin);
         }) 
         process.on('uncaughtExceptionMonitor', (err, origin) => {
             logger.warn(' [antiCrash] :: Uncaught Exception/Catch (MONITOR)');
-            logger.info(err, origin);
+            logger.error(err, origin);
         });
     }
 }

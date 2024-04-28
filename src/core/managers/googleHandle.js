@@ -66,6 +66,10 @@ class GoogleSheetFetcher {
 
                 if (dualitemslist.includes(itemName)) itemStock = parseInt(itemStock) / 2 | 0
 
+                if (itemName === "Kavasa Collar Band") itemName = "Kavasa Band"
+                if (itemName === "Kavasa Collar Buckle") itemName = "Kavasa Buckle"
+                if (itemName === "Kavasa Collar Blueprint") itemName = "Kavasa Kubrow Collar"
+
                 allPartsData.push({ name: `${itemName}`, stock: itemStock, color: range(parseInt(itemStock)) })
             }));
             allPrimeSetNames = [...new Set(allPrimeSetNames)].map(y => { return { name: y.replace(" and ", " & ").replace(" Prime", "") } })
