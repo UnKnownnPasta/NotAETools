@@ -23,7 +23,7 @@ class AETools {
                 GatewayIntentBits.GuildMembers
             ]
         });
-        this.resetDB = false;
+        this.resetDB = true;
 
         logger.info(`Starting...`)
 
@@ -38,12 +38,12 @@ class AETools {
         await Database.syncDatabase(this.resetDB);
 
         // Logging in
-        await this.client.login(process.env.TOKEN)
+        await this.client.login(process.env.DISCORD_TOKEN)
 
         // Commands
         CommandHandler.setClient(this.client)
         CommandHandler.loadAll()
-        // await CommandHandler.deployCommands();
+        await CommandHandler.deployCommands();
 
         // Event Listeners
         this.intListen = new InteractionCreateListener(this.client)

@@ -9,21 +9,38 @@ const logger = require('../../utils/logger.js');
 
 class GoogleSheetFetcher {
     constructor() {
-        const credentials = {
-            client_email: process.env.GOOGLE_EMAIL,
-            private_key: process.env.GOOGLE_KEY.replace(/\\n/g, '\n')
-        };
+        if (process.env.GOOGLE_EMAIL !== "") {
+            const credentials = {
+                client_email: process.env.GOOGLE_EMAIL,
+                private_key: process.env.GOOGLE_KEY.replace(/\\n/g, '\n')
+            };
+    
+            const googleClient = new auth.GoogleAuth({
+                credentials,
+                scopes: ['https://www.googleapis.com/auth/spreadsheets']
+            });
+    
+            this.googleSheets = google.sheets({ version: 'v4', auth: googleClient });
+            this.email_found = true
+        } else {
+            this.email_found = false
+        }
+    }
 
-        const googleClient = new auth.GoogleAuth({
-            credentials,
-            scopes: ['https://www.googleapis.com/auth/spreadsheets']
-        });
-
-        this.googleSheets = google.sheets({ version: 'v4', auth: googleClient });
+    async getFromSheet({ spreadsheetId, range }) {
+        if (this.email_found) {
+            return await this.googleSheets.spreadsheets.values.get({ spreadsheetId, range })
+        } else {
+            return await google.sheets("v4").spreadsheets.values.get({
+                auth: process.env.GOOGLE_APIKEY,
+                spreadsheetId: spreadsheetId,
+                range: range,
+            })
+        }
     }
 
     async getPrimeParts() {
-        const sheetValues = await this.googleSheets.spreadsheets.values.get({
+        const sheetValues = await this.getFromSheet({
             spreadsheetId: departments.treasury.google.trackerSheetId,
             range: departments.treasury.google.managerSheetName + departments.treasury.google.ranges.manager
         })
@@ -56,7 +73,7 @@ class GoogleSheetFetcher {
 
     async getClanResources() {
         await Promise.all(Object.entries(departments.farmer.google.ranges.resource).map(async (key) => {
-            const clandata = await this.googleSheets.spreadsheets.values.get({
+            const clandata = await this.getFromSheet({
                 spreadsheetId: departments.farmer.google.sheetId,
                 range: departments.farmer.google.resourceSheetName + key[1]
             })
@@ -105,7 +122,7 @@ class GoogleSheetFetcher {
     }
 
     async getAllTokens() {
-        const sheetValues = await this.googleSheets.spreadsheets.values.get({
+        const sheetValues = await this.getFromSheet({
             spreadsheetId: departments.treasury.google.sheetId,
             range: departments.treasury.google.relicSheetName + departments.treasury.google.ranges.relic
         })
