@@ -2,10 +2,11 @@ require('dotenv').config({ path: require('node:path').resolve(__dirname, '..', '
 
 // Circular dependency, has to be fetched seperately
 const CollectionBoxFetcher = require('./core/managers/boxFetch.js')
-const { InteractionCreateListener, MessageCreateListener } = require('./core/managers/discordEvents.js')
 const GoogleSheetManager = require('./core/managers/googleHandle.js')
 const Database = require('./database/init.js')
 const CommandHandler = require('./core/managers/fileHandler.js')
+const FissureManager = require('./core/managers/fissures.js')
+const { InteractionCreateListener, MessageCreateListener } = require('./core/managers/discordEvents.js')
 
 const { GatewayIntentBits, Client, Events, ActivityType } = require('discord.js')
 const logger = require('./utils/logger.js')
@@ -48,9 +49,14 @@ class AETools {
         this.intListen = new InteractionCreateListener(this.client)
         this.msgListen = new MessageCreateListener(this.client)
 
-        // Updating database
         this.client.once(Events.ClientReady, async () => {
             this.client.user.setPresence({ activities: [{ name: 'The Future 🌌', type: ActivityType.Watching }], status: 'dnd' });
+
+            // Fissures
+            FissureManager.setClient(this.client);
+            await FissureManager.refreshGuilds();
+            await FissureManager.syncFissures();
+
             logger.info({ message: 'logged in as ' + this.client.user.username })
             if (this.resetDB) {
                 await Promise.all([GoogleSheetManager.startAsync(), CollectionBoxFetcher(this.client)])

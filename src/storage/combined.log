@@ -1,4 +1,3 @@
 {"level":"info","message":"Starting...","service":"user-service"}
 {"level":"info","message":"SQL Connection has been established successfully.","service":"user-service"}
 {"level":"info","message":"logged in as Project Horizon (DEV)","service":"user-service"}
-{"level":"info","message":"Finished Calls in 1522ms - Resolved: 4, Rejected: 0","service":"user-service"}
