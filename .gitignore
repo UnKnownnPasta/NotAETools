@@ -3,7 +3,6 @@
 dev/
 _dev/
 node_modules/
-OLD/
 
 # Other files
 *.sqlite*
