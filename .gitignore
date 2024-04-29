@@ -11,6 +11,7 @@ boxdata.json
 farmerdata.json
 treasurydata.json
 *.log
+*.sqlite
 
 # Other
 *.traineddata
