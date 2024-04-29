@@ -7,3 +7,5 @@ abc.*
 *.Docker.*
 Dockerfile
 dev
+_dev/
+data
