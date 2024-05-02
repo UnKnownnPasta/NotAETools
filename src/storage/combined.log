@@ -1,4 +1,7 @@
 {"level":"info","message":"Starting...","service":"user-service"}
 {"level":"info","message":"SQL Connection has been established successfully.","service":"user-service"}
 {"level":"warn","message":"No fissure channel found, Is the channel ID wrong?","service":"user-service"}
-{"level":"info","message":"logged in as Project Horizon (DEV) @ Mon Apr 29 2024 00:56:31 GMT+0530 (India Standard Time)","service":"user-service"}
+{"level":"info","message":"logged in as Project Horizon (DEV) @ Wed May 01 2024 22:51:32 GMT+0530 (India Standard Time)","service":"user-service"}
+{"level":"warn","message":"No fissure channel found, Is the channel ID wrong?","service":"user-service"}
+{"level":"warn","message":" [antiCrash] :: Unhandled Rejection/Catch","service":"user-service"}
+{"level":"error","message":"Cannot read properties of undefined (reading 'threads')","service":"user-service","stack":"TypeError: Cannot read properties of undefined (reading 'threads')\n    at module.exports (D:\\Documents\\Discord Bots\\FRAMEWORKS\\reworkedAETools\\src\\core\\managers\\boxFetch.js:8:95)\n    at Timeout._onTimeout (D:\\Documents\\Discord Bots\\FRAMEWORKS\\reworkedAETools\\src\\core\\managers\\intervals.js:24:19)\n    at listOnTimeout (node:internal/timers:573:17)\n    at process.processTimers (node:internal/timers:514:7)"}

@@ -8,10 +8,17 @@ Clone the project and install necessary packages, then run it:
 ```
 git clone -b master https://github.com/UnKnownnPasta/NotAETools.git
 npm i --save
-node src/bot.js
 ```
 
-Needs `Node.js` v18.x.x or greater
+Requires pm2 globally installed: `npm i pm2 -g`
+
+Run project as development mode via `npm run dev` or in production via `npm run start`
+Stop via `npm run stop`
+
+Needs `Node.js` v21.x.x or greater
+
+## Notes:
+### Uses [warframe-relic-data](https://github.com/WFCD/warframe-relic-data) Project by the [Warframe Community Developers](https://github.com/WFCD) to refresh Relic contents via `npm run update`
 
 # Credits
 Created by [dePasta](https://github.com/UnKnownnPasta), original bot idea from [Zlushiie](https://github.com/Zlushiie)

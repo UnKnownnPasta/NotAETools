@@ -3249,6 +3249,88 @@
         }
     },
     {
+        "name": "Axi B8",
+        "rewards": [
+            {
+                "rarity": "Rare",
+                "chance": 2,
+                "item": {
+                    "name": "Baruuk Prime Neuroptics Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "639a8d9474b02f003889eb81",
+                        "urlName": "baruuk_prime_neuroptics_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Fang Prime Handle",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "54a73e65e779893a797fff42",
+                        "urlName": "fang_prime_handle"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Revenant Prime Systems Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "633e2e6af570d10793afb816",
+                        "urlName": "revenant_prime_systems_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Okina Prime Blade",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "663268d2e85cac3856c86dc1",
+                        "urlName": "okina_prime_blade"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Forma Blueprint",
+                    "uniqueName": ""
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Burston Prime Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "54a73e65e779893a797fff3a",
+                        "urlName": "burston_prime_blueprint"
+                    }
+                }
+            }
+        ],
+        "locations": [],
+        "uniqueName": "",
+        "vaultInfo": {
+            "vaulted": true
+        },
+        "warframeMarket": {
+            "id": "66325ce6e85cac3856c86cc6",
+            "urlName": "axi_b8_relic"
+        }
+    },
+    {
         "name": "Axi C1",
         "rewards": [
             {
@@ -4984,6 +5066,92 @@
         "warframeMarket": {
             "id": "639a8d9374b02f003889eb80",
             "urlName": "axi_f1_relic"
+        }
+    },
+    {
+        "name": "Axi F2",
+        "rewards": [
+            {
+                "rarity": "Rare",
+                "chance": 2,
+                "item": {
+                    "name": "Fulmin Prime Receiver",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "64c2aa1666456704eba6ba46",
+                        "urlName": "fulmin_prime_receiver"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Velox Prime Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "663267c4e85cac3856c86db5",
+                        "urlName": "velox_prime_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Wisp Prime Neuroptics Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "64c2aa1566456704eba6ba38",
+                        "urlName": "wisp_prime_neuroptics_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Revenant Prime Chassis Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "633e2e6af570d10793afb815",
+                        "urlName": "revenant_prime_chassis_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Bronco Prime Receiver",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "54a73e65e779893a797fff38",
+                        "urlName": "bronco_prime_receiver"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Masseter Prime Handle",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "6530690f22c7fd9770508547",
+                        "urlName": "masseter_prime_handle"
+                    }
+                }
+            }
+        ],
+        "locations": [],
+        "uniqueName": "",
+        "vaultInfo": {
+            "vaulted": true
+        },
+        "warframeMarket": {
+            "id": "66325ce9e85cac3856c86cc8",
+            "urlName": "axi_f2_relic"
         }
     },
     {
@@ -11587,6 +11755,88 @@
         "warframeMarket": {
             "id": "65a7fc7eed5b0d2e3eb462b8",
             "urlName": "axi_p6_relic"
+        }
+    },
+    {
+        "name": "Axi P7",
+        "rewards": [
+            {
+                "rarity": "Rare",
+                "chance": 2,
+                "item": {
+                    "name": "Protea Prime Chassis Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "66325cb5e85cac3856c86cc2",
+                        "urlName": "protea_prime_chassis_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Braton Prime Stock",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "54a73e65e779893a797fff35",
+                        "urlName": "braton_prime_stock"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Forma Blueprint",
+                    "uniqueName": ""
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Baruuk Prime Systems Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "639a8d9374b02f003889eb7e",
+                        "urlName": "baruuk_prime_systems_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Fang Prime Blade",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "54a73e65e779893a797fff40",
+                        "urlName": "fang_prime_blade"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Tatsu Prime Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "633e2e6af570d10793afb818",
+                        "urlName": "tatsu_prime_blueprint"
+                    }
+                }
+            }
+        ],
+        "locations": [],
+        "uniqueName": "",
+        "vaultInfo": {
+            "vaulted": true
+        },
+        "warframeMarket": {
+            "id": "66325ceae85cac3856c86cca",
+            "urlName": "axi_p7_relic"
         }
     },
     {
@@ -26636,6 +26886,88 @@
         }
     },
     {
+        "name": "Lith P9",
+        "rewards": [
+            {
+                "rarity": "Rare",
+                "chance": 2,
+                "item": {
+                    "name": "Protea Prime Systems Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "66325cb9e85cac3856c86cc4",
+                        "urlName": "protea_prime_systems_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Bronco Prime Barrel",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "54a73e65e779893a797fff36",
+                        "urlName": "bronco_prime_barrel"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Larkspur Prime Receiver",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "641263e07d179f02100c6d4c",
+                        "urlName": "larkspur_prime_receiver"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Forma Blueprint",
+                    "uniqueName": ""
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Lex Prime Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "54a73e65e779893a797fff4e",
+                        "urlName": "lex_prime_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Hildryn Prime Systems Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "641263e07d179f02100c6d41",
+                        "urlName": "hildryn_prime_systems_blueprint"
+                    }
+                }
+            }
+        ],
+        "locations": [],
+        "uniqueName": "",
+        "vaultInfo": {
+            "vaulted": true
+        },
+        "warframeMarket": {
+            "id": "66325cf3e85cac3856c86cde",
+            "urlName": "lith_p9_relic"
+        }
+    },
+    {
         "name": "Lith R1",
         "rewards": [
             {
@@ -29620,6 +29952,88 @@
         "warframeMarket": {
             "id": "65f85b70f51dc116096b6768",
             "urlName": "lith_t11_relic"
+        }
+    },
+    {
+        "name": "Lith T12",
+        "rewards": [
+            {
+                "rarity": "Rare",
+                "chance": 2,
+                "item": {
+                    "name": "Tatsu Prime Handle",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "633e2e6bf570d10793afb81e",
+                        "urlName": "tatsu_prime_handle"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Orthos Prime Blade",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "54a73e65e779893a797fff50",
+                        "urlName": "orthos_prime_blade"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Forma Blueprint",
+                    "uniqueName": ""
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Velox Prime Receiver",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "663267c6e85cac3856c86db9",
+                        "urlName": "velox_prime_receiver"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Larkspur Prime Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "641263e07d179f02100c6d4e",
+                        "urlName": "larkspur_prime_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Paris Prime Upper Limb",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "54a73e65e779893a797fff57",
+                        "urlName": "paris_prime_upper_limb"
+                    }
+                }
+            }
+        ],
+        "locations": [],
+        "uniqueName": "",
+        "vaultInfo": {
+            "vaulted": true
+        },
+        "warframeMarket": {
+            "id": "66325cf2e85cac3856c86cdc",
+            "urlName": "lith_t12_relic"
         }
     },
     {
@@ -37965,6 +38379,92 @@
         "warframeMarket": {
             "id": "65a7fc7eed5b0d2e3eb462bf",
             "urlName": "meso_g6_relic"
+        }
+    },
+    {
+        "name": "Meso G7",
+        "rewards": [
+            {
+                "rarity": "Rare",
+                "chance": 2,
+                "item": {
+                    "name": "Gauss Prime Systems Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "65a7fc5aed5b0d2e3eb462b6",
+                        "urlName": "gauss_prime_systems_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Okina Prime Handle",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "663268d1e85cac3856c86dbf",
+                        "urlName": "okina_prime_handle"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Tatsu Prime Blade",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "633e2e6af570d10793afb812",
+                        "urlName": "tatsu_prime_blade"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Burston Prime Stock",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "54a73e65e779893a797fff3c",
+                        "urlName": "burston_prime_stock"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Cobra & Crane Prime Hilt",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "639a941d74b02f0088877851",
+                        "urlName": "cobra_and_crane_prime_hilt"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Wisp Prime Systems Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "64c2aa1666456704eba6ba44",
+                        "urlName": "wisp_prime_systems_blueprint"
+                    }
+                }
+            }
+        ],
+        "locations": [],
+        "uniqueName": "",
+        "vaultInfo": {
+            "vaulted": true
+        },
+        "warframeMarket": {
+            "id": "66325cf1e85cac3856c86cd8",
+            "urlName": "meso_g7_relic"
         }
     },
     {
@@ -47666,6 +48166,88 @@
         }
     },
     {
+        "name": "Meso V9",
+        "rewards": [
+            {
+                "rarity": "Rare",
+                "chance": 2,
+                "item": {
+                    "name": "Velox Prime Barrel",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "663267c5e85cac3856c86db7",
+                        "urlName": "velox_prime_barrel"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Afuris Prime Link",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "639a941d74b02f008887784d",
+                        "urlName": "afuris_prime_link"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Baruuk Prime Chassis Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "639a8d9374b02f003889eb71",
+                        "urlName": "baruuk_prime_chassis_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Fang Prime Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "54a73e65e779893a797fff41",
+                        "urlName": "fang_prime_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Fulmin Prime Barrel",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "64c2aa1466456704eba6ba32",
+                        "urlName": "fulmin_prime_barrel"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Forma Blueprint",
+                    "uniqueName": ""
+                }
+            }
+        ],
+        "locations": [],
+        "uniqueName": "",
+        "vaultInfo": {
+            "vaulted": true
+        },
+        "warframeMarket": {
+            "id": "66325cf2e85cac3856c86cda",
+            "urlName": "meso_v9_relic"
+        }
+    },
+    {
         "name": "Meso W1",
         "rewards": [
             {
@@ -48703,6 +49285,170 @@
         "warframeMarket": {
             "id": "653053a332327ba8746da73a",
             "urlName": "meso_w3_relic"
+        }
+    },
+    {
+        "name": "Meso W4",
+        "rewards": [
+            {
+                "rarity": "Rare",
+                "chance": 2,
+                "item": {
+                    "name": "Wisp Prime Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "64c2aa1666456704eba6ba4a",
+                        "urlName": "wisp_prime_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Forma Blueprint",
+                    "uniqueName": ""
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Gunsen Prime Handle",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "64c2aa1466456704eba6ba31",
+                        "urlName": "gunsen_prime_handle"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Protea Prime Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "66325caae85cac3856c86cbe",
+                        "urlName": "protea_prime_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Lex Prime Receiver",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "54a73e65e779893a797fff4f",
+                        "urlName": "lex_prime_receiver"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Afuris Prime Barrel",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "639a941c74b02f008887784b",
+                        "urlName": "afuris_prime_barrel"
+                    }
+                }
+            }
+        ],
+        "locations": [],
+        "uniqueName": "",
+        "vaultInfo": {
+            "vaulted": true
+        },
+        "warframeMarket": {
+            "id": "66325cf0e85cac3856c86cd6",
+            "urlName": "meso_w4_relic"
+        }
+    },
+    {
+        "name": "Meso W5",
+        "rewards": [
+            {
+                "rarity": "Rare",
+                "chance": 2,
+                "item": {
+                    "name": "Wisp Prime Chassis Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "64c2aa1466456704eba6ba2d",
+                        "urlName": "wisp_prime_chassis_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Cobra & Crane Prime Blade",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "639a941d74b02f0088877850",
+                        "urlName": "cobra_and_crane_prime_blade"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Phantasma Prime Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "633e2e6bf570d10793afb820",
+                        "urlName": "phantasma_prime_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Forma Blueprint",
+                    "uniqueName": ""
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Shade Prime Cerebrum",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "641263e07d179f02100c6d48",
+                        "urlName": "shade_prime_cerebrum"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Acceltra Prime Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "65a7fcc4ed5b0d2e3eb462cf",
+                        "urlName": "acceltra_prime_blueprint"
+                    }
+                }
+            }
+        ],
+        "locations": [],
+        "uniqueName": "",
+        "vaultInfo": {
+            "vaulted": true
+        },
+        "warframeMarket": {
+            "id": "66325cefe85cac3856c86cd4",
+            "urlName": "meso_w5_relic"
         }
     },
     {
@@ -50099,6 +50845,92 @@
         "warframeMarket": {
             "id": "65a7fc7eed5b0d2e3eb462bb",
             "urlName": "neo_a11_relic"
+        }
+    },
+    {
+        "name": "Neo A12",
+        "rewards": [
+            {
+                "rarity": "Rare",
+                "chance": 2,
+                "item": {
+                    "name": "Acceltra Prime Barrel",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "65a7fcc4ed5b0d2e3eb462d0",
+                        "urlName": "acceltra_prime_barrel"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Larkspur Prime Stock",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "641263e07d179f02100c6d4a",
+                        "urlName": "larkspur_prime_stock"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Revenant Prime Neuroptics Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "633e2e6bf570d10793afb81d",
+                        "urlName": "revenant_prime_neuroptics_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Paris Prime String",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "54a73e65e779893a797fff56",
+                        "urlName": "paris_prime_string"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Orthos Prime Handle",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "54a73e65e779893a797fff52",
+                        "urlName": "orthos_prime_handle"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Akarius Prime Barrel",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "65a7fca4ed5b0d2e3eb462cb",
+                        "urlName": "akarius_prime_barrel"
+                    }
+                }
+            }
+        ],
+        "locations": [],
+        "uniqueName": "",
+        "vaultInfo": {
+            "vaulted": true
+        },
+        "warframeMarket": {
+            "id": "66325cece85cac3856c86cce",
+            "urlName": "neo_a12_relic"
         }
     },
     {
@@ -57183,6 +58015,88 @@
         }
     },
     {
+        "name": "Neo M5",
+        "rewards": [
+            {
+                "rarity": "Rare",
+                "chance": 2,
+                "item": {
+                    "name": "Masseter Prime Blade",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "6530690f22c7fd9770508546",
+                        "urlName": "masseter_prime_blade"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Forma Blueprint",
+                    "uniqueName": ""
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Gauss Prime Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "65a7fc5aed5b0d2e3eb462b3",
+                        "urlName": "gauss_prime_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Grendel Prime Neuroptics Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "653060f332327ba8746da746",
+                        "urlName": "grendel_prime_neuroptics_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Burston Prime Receiver",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "54a73e65e779893a797fff3b",
+                        "urlName": "burston_prime_receiver"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Afuris Prime Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "639a941d74b02f008887784f",
+                        "urlName": "afuris_prime_blueprint"
+                    }
+                }
+            }
+        ],
+        "locations": [],
+        "uniqueName": "",
+        "vaultInfo": {
+            "vaulted": true
+        },
+        "warframeMarket": {
+            "id": "66325cebe85cac3856c86ccc",
+            "urlName": "neo_m5_relic"
+        }
+    },
+    {
         "name": "Neo N1",
         "rewards": [
             {
@@ -59097,6 +60011,92 @@
         }
     },
     {
+        "name": "Neo O2",
+        "rewards": [
+            {
+                "rarity": "Rare",
+                "chance": 2,
+                "item": {
+                    "name": "Okina Prime Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "663268d0e85cac3856c86dbd",
+                        "urlName": "okina_prime_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Fulmin Prime Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "64c2aa1466456704eba6ba30",
+                        "urlName": "fulmin_prime_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Acceltra Prime Receiver",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "65a7fcc4ed5b0d2e3eb462d1",
+                        "urlName": "acceltra_prime_receiver"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Phantasma Prime Receiver",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "633e2e6cf570d10793afb824",
+                        "urlName": "phantasma_prime_receiver"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Gauss Prime Chassis Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "65a7fc5aed5b0d2e3eb462b5",
+                        "urlName": "gauss_prime_chassis_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Zylok Prime Barrel",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "6530694722c7fd977050854a",
+                        "urlName": "zylok_prime_barrel"
+                    }
+                }
+            }
+        ],
+        "locations": [],
+        "uniqueName": "",
+        "vaultInfo": {
+            "vaulted": true
+        },
+        "warframeMarket": {
+            "id": "66325ceee85cac3856c86cd2",
+            "urlName": "neo_o2_relic"
+        }
+    },
+    {
         "name": "Neo P1",
         "rewards": [
             {
@@ -59512,6 +60512,88 @@
         "warframeMarket": {
             "id": "65f85b70f51dc116096b6764",
             "urlName": "neo_p5_relic"
+        }
+    },
+    {
+        "name": "Neo P6",
+        "rewards": [
+            {
+                "rarity": "Rare",
+                "chance": 2,
+                "item": {
+                    "name": "Phantasma Prime Stock",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "633e2e6cf570d10793afb82a",
+                        "urlName": "phantasma_prime_stock"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Protea Prime Neuroptics Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "66325cb1e85cac3856c86cc0",
+                        "urlName": "protea_prime_neuroptics_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 11,
+                "item": {
+                    "name": "Masseter Prime Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "6530690f22c7fd9770508545",
+                        "urlName": "masseter_prime_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Akbronco Prime Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "54a73e65e779893a797fff22",
+                        "urlName": "akbronco_prime_blueprint"
+                    }
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Forma Blueprint",
+                    "uniqueName": ""
+                }
+            },
+            {
+                "rarity": "Uncommon",
+                "chance": 25.33,
+                "item": {
+                    "name": "Gunsen Prime Blueprint",
+                    "uniqueName": "",
+                    "warframeMarket": {
+                        "id": "64c2aa1466456704eba6ba2e",
+                        "urlName": "gunsen_prime_blueprint"
+                    }
+                }
+            }
+        ],
+        "locations": [],
+        "uniqueName": "",
+        "vaultInfo": {
+            "vaulted": true
+        },
+        "warframeMarket": {
+            "id": "66325cede85cac3856c86cd0",
+            "urlName": "neo_p6_relic"
         }
     },
     {

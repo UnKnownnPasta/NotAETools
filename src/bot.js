@@ -34,13 +34,21 @@ class AETools {
     }
 
     async constructManagers() {
+        try {
+            await fs.stat(path.join(__dirname, "storage/database.sqlite"))
+        } catch (error) {
+            if (error.code === "ENOENT") this.resetDB = true
+        }
+
         // Creating database
         await Database.authenticate();
         Database.defineModels();
         await Database.syncDatabase(this.resetDB);
 
         // Logging in
-        await this.client.login(process.env.DISCORD_TOKEN)
+        await this.client.login(process.env.DISCORD_TOKEN).catch(err => {
+            return console.log(`FATAL: Could not login to discord: ${err.message} \n${err.stack}`)
+        })
 
         // Commands
         CommandHandler.setClient(this.client)
