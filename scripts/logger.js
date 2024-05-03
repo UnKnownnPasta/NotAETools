@@ -28,6 +28,7 @@ if (process.env.NODE_ENV === 'development') {
         },
       },
       timestamp: pino.stdTimeFunctions.isoTime,
+      base: null
     },
   );
   
@@ -41,8 +42,9 @@ if (process.env.NODE_ENV === 'development') {
         },
       },
       timestamp: pino.stdTimeFunctions.isoTime,
+      base: null
     },
-    fileTransport
+    fileTransport,
   );
   
 }
