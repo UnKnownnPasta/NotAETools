@@ -1,6 +1,8 @@
 const { CommandInteraction, Client, ButtonInteraction } = require('discord.js')
 const logger = require('../../scripts/logger');
 
+const authCategories = ["890240564916797457", "1193155346156503091"]
+
 module.exports = {
     name: 'interactionCreate', 
     once: false,
@@ -9,6 +11,9 @@ module.exports = {
     * @param {Client} client
     */
     async listen(client, interaction) {
+        if (process.env.NODE_ENV !== "development" && client.dofilter && !authCategories.includes(interaction.channel.parentId)) 
+            return logger.warn(`[UNAUTH] ${interaction.member.displayName} @ ${interaction.channel.name}`);
+
         if (interaction.isChatInputCommand()) {
             client.treasury.get(interaction.commandName)?.execute(client, interaction)
             client.farmers.get(interaction.commandName)?.execute(client, interaction)
