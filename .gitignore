@@ -2,7 +2,6 @@
 _dev/
 dev/
 /node_modules
-src
 
 # JSONs
 clandata.json
@@ -11,7 +10,6 @@ boxdata.json
 farmerdata.json
 treasurydata.json
 *.log
-*.sqlite
 
 # Other
 *.traineddata
