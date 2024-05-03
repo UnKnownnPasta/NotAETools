@@ -5,6 +5,8 @@ const fs = require('node:fs/promises');
 const path = require("node:path");
 const logger = require("../../scripts/logger");
 
+const authCategories = ["890240564916797457", "1193155346156503091"]
+
 module.exports = {
     name: "messageCreate",
     once: false,
@@ -14,13 +16,21 @@ module.exports = {
      * @param {Message} message
      */
     async listen(client, message) {
+        if (message.content === "++filter" && (message.author.id == '740536348166848582' || message.author.id == '498993740715917312')) {
+            client.dofilter = !client.dofilter;
+        }
+
         if (message.content == '++dump' && (message.author.id == '740536348166848582' || message.author.id == '498993740715917312')) {
             const logfile = await fs.readFile(path.join(__dirname, '..', '..', 'data', 'app.log'))
             await message.delete();
             return await message.author.send({ files: [new AttachmentBuilder(Buffer.from(logfile, 'utf-8'), { name: 'dump.txt' })] })
         }
+
         if (!message.content.startsWith(config.prefix) || message.author.bot)
             return;
+
+        if (process.env.NODE_ENV !== "development" && client.dofilter && !authCategories.includes(message.channel.parentId)) 
+            return logger.warn(`[UNAUTH] ${message.author.displayName} @ ${message.channel.name}`);
 
         let word = message.content.slice(2).toLocaleLowerCase();
         let cmdType = "";
@@ -47,5 +57,5 @@ module.exports = {
             .get("anycmd")
             ?.execute(client, message, word.toLowerCase(), cmdType);
         logger.info(`[CMD] Ran ++${cmdType} command by ${message.member.nickname ?? message.author.username} with arguments: "${word}" @ ${new Date().toLocaleString()}`);
-        },
+    },
 };

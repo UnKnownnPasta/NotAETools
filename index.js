@@ -65,6 +65,7 @@ eventFiles.forEach(file => {
 
 // Login
 ;(async () => {
+	client.dofilter = true;
 	await client.login(process.env.TOKEN);
 
 	client.fissureLast = new Date().getTime() + 180000
