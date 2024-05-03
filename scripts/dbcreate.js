@@ -120,7 +120,8 @@ async function getAllClanData() {
  * @param {Client} client 
  */
 async function getAllBoxData(client) {
-    const boxChannel =  await client.channels.cache.get(collectionBox.id).threads;
+    const boxChannel =  await client.channels.cache.get(collectionBox.id)?.threads;
+    if (!boxChannel) return logger.warn(`No Threads channel found; failed to update box`)
     const boxStock = {}
 
     const matchAny = (a, b) => (a??"").startsWith(b??"") || (b??"").startsWith(a??"")

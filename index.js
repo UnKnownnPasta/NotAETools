@@ -20,22 +20,27 @@ const client = new Client({
     ]
 });
 
-let intrv_count = 0
+client.intrv_count = 0
 setInterval(async () => {
 	await Promise.all([
 		refreshFissures(client),
 		getAllBoxData(client)
-	])
+	]).then((res) => {
+		client.intrv_count++
+		client.fissureLast = new Date().getTime() + 180000
+	})
 }, 180_000);
 
 setInterval(async () => {
+	client.updateLast = new Date().getTime() + 300000
 	await Promise.all([
 		getAllRelics(),
 		getAllClanData(),
 		getAllUserData(),
-	])
-	intrv_count++
-	if (intrv_count%30 == 0) logger.info(`[INTRVL] ${intrv_count} intervals done.`)
+	]).then((res) => {
+		client.intrv_count++
+		if (client.intrv_count%60 == 0) logger.info(`[INTRVL] ${client.intrv_count} intervals done.`)
+	})
 }, 300_000);
 
 // Load all commands
@@ -61,9 +66,12 @@ eventFiles.forEach(file => {
 ;(async () => {
 	await client.login(process.env.TOKEN);
 
+	client.fissureLast = new Date().getTime() + 180000
+	client.updateLast = new Date().getTime() + 300000
+
 	client.on('ready', async () => {
-		client.user.setPresence({ activities: [{ name: 'Ya mom 👒', type: ActivityType.Watching }], status: 'dnd' });
 		logger.info(`[${client.user.username}] Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.`);
+		client.user.setPresence({ activities: [{ name: 'Ya mom 👒', type: ActivityType.Watching }], status: 'dnd' });
 
 		await client.guilds.fetch({ force: true });
 		await Promise.all([

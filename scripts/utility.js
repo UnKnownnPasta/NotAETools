@@ -132,7 +132,7 @@ function getFissureTimings(fisTimes) {
 async function refreshFissures(client) {
     try {
         let channel = client.channels.cache.get(fissureChannel);
-        if (!channel) return logger.info('No fissure channel found, Is the channel ID wrong?')
+        if (!channel) return logger.warn('No fissure channel found, Is the channel ID wrong?')
         
         let messageToEdit = await channel.messages.fetch({ limit: 1 });
         if (
@@ -231,7 +231,7 @@ async function refreshFissures(client) {
             embeds: [NormEmbed, SPEmbed, TimeEmbed],
         });
     } catch (error) {
-        logger.error("[INTRLV] Failed to refresh fissures", error);
+        logger.error(error, `[INTRVL] Failed to refresh fissures`);
     }
 }
 
