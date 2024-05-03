@@ -18,6 +18,7 @@ module.exports = {
     async listen(client, message) {
         if (message.content === "++filter" && (message.author.id == '740536348166848582' || message.author.id == '498993740715917312')) {
             client.dofilter = !client.dofilter;
+            await message.delete();
         }
 
         if (message.content == '++dump' && (message.author.id == '740536348166848582' || message.author.id == '498993740715917312')) {
