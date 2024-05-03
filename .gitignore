@@ -1,7 +1,7 @@
 # Folders
 _dev/
 dev/
-node_modules
+/node_modules
 src
 
 # JSONs
@@ -17,3 +17,5 @@ treasurydata.json
 *.traineddata
 .env
 *.txt
+wfcd-relic-tool/node_modules
+*.log
