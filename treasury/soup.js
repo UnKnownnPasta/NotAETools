@@ -51,6 +51,8 @@ module.exports = {
                 : 'GREEN'
         }
 
+        const priorityOfStatus = {"ED": 0, "RED": 1, "ORANGE": 2, "YELLOW": 3, "GREEN": 4, "#N/A": 5}
+
         async function getRelic(name, type=null) {
             for (const relic of relicsList.relicData) {
                 if (relic.name == name) {
@@ -59,10 +61,10 @@ module.exports = {
                         if (filtertype == "box") {
                             returnrange = range((boxlist[part.item] ?? 0) + (parseInt(part.stock)))
                         }
-                        return returnrange;
+                        return [returnrange, priorityOfStatus[returnrange]];
                     });
-                    if (type && type !== "box" && !StatusArr.includes(type.toUpperCase())) return null;
-                    return [relic.tokens, StatusArr];
+                    if (type && type !== "box" && !(Math.min(...StatusArr.map(x => x[1])) <= priorityOfStatus[type.toUpperCase()])) return null;
+                    return [relic.tokens, StatusArr.map(x => x[0])];
                 }
             }
             return null
@@ -91,6 +93,8 @@ module.exports = {
                 if (soupedAccepted.filter(str => str.match(/\d+([a-zA-Z]*\d+)/)[1] === short.toLowerCase().slice(letterstart.index)).length) {
                     duplicateStrings.push(short); continue;
                 }
+                if (isNaN(howmany)) continue;
+                howmany = `${(parseInt(howmany)/3 | 0)*3}`
 
                 soupedAccepted.push(short)
                 const _ = (rarity) => {
