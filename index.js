@@ -1,6 +1,7 @@
-const { Client, GatewayIntentBits, ActivityType, EmbedBuilder } = require('discord.js');
-const path = require('node:path')
+const path = require("node:path");
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+
+const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
 const fs = require('node:fs')
 const { loadFiles, refreshFissures } = require('./scripts/utility.js')
 const { getAllBoxData, getAllClanData, getAllRelics, getAllUserData } = require('./scripts/dbcreate.js');

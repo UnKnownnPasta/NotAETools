@@ -120,13 +120,23 @@ async function getAllClanData() {
  * @param {Client} client 
  */
 async function getAllBoxData(client) {
-    const boxChannel =  await client.channels.cache.get(collectionBox.id)?.threads;
+    let boxID, channelArr;
+
+    if (process.env.NODE_ENV === 'development') {
+        boxID = collectionBox.testid
+        channelArr = collectionBox.testchannels
+    } else {
+        boxID = collectionBox.id
+        channelArr = collectionBox.channels
+    }
+
+    const boxChannel =  await client.channels.cache.get(boxID)?.threads;
     if (!boxChannel) return logger.warn(`No Threads channel found; failed to update box`)
     const boxStock = {}
 
     const matchAny = (a, b) => (a??"").startsWith(b??"") || (b??"").startsWith(a??"")
     
-    await Promise.all(Object.entries(collectionBox.channels).map(async ([chnl, cid]) => {
+    await Promise.all(Object.entries(channelArr).map(async ([chnl, cid]) => {
 
         await boxChannel.fetch(cid).then(/*** @param {ThreadChannel} thread */ async (thread) => {
 

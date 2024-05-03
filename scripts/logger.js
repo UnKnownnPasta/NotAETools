@@ -16,19 +16,36 @@ const fileTransport = pino.transport({
   options: { destination: logFilePath },
 });
 
-const pinoLogger = pino(
-  {
-    level: 'info',
-    formatters: {
-      level: (label) => {
-        return { level: label.toUpperCase() };
-      },
-    },
-    timestamp: pino.stdTimeFunctions.isoTime,
-  },
-  fileTransport
-);
+let pinoLogger;
 
+if (process.env.NODE_ENV === 'development') {
+  pinoLogger = pino(
+    {
+      level: 'info',
+      formatters: {
+        level: (label) => {
+          return { level: label.toUpperCase() };
+        },
+      },
+      timestamp: pino.stdTimeFunctions.isoTime,
+    },
+  );
+  
+} else {
+  pinoLogger = pino(
+    {
+      level: 'info',
+      formatters: {
+        level: (label) => {
+          return { level: label.toUpperCase() };
+        },
+      },
+      timestamp: pino.stdTimeFunctions.isoTime,
+    },
+    fileTransport
+  );
+  
+}
 
 /**
  * @type {PinoLogger}
