@@ -72,7 +72,7 @@ class AETools {
             logger.info({ message: 'logged in as ' + this.client.user.username + ` @ ${new Date()}` })
             if (this.resetDB) {
                 await GoogleSheetManager.startAsync()
-                await CollectionBoxFetcher(this.client)
+                // await CollectionBoxFetcher(this.client)
             }
 
             await IntervalManager.startIntervals();

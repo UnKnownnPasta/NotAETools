@@ -50,7 +50,7 @@ module.exports = {
             const partStuff = await database.models.Parts.findOne({ where: { name: rw.part } })
             if (rw.part === "Forma") return `${rarities[i]} │    │ Forma BP`
             partStockArray.push(partStuff?.stock ?? 1000)
-            return `${rarities[i]} │ ${`${boxupdated ? parseInt(partStuff?.dataValues?.stock ?? -1) + parseInt(collection_box[rw.part] ?? 0) : partStuff.dataValues.stock}`.padEnd(3)}│ ${rw?.part?.replace("Blueprint", "BP")}${dualitemslist.includes(rw?.part) ? ' x2' : ''} {${partStuff?.color ?? "???"}}`
+            return `${rarities[i]} │ ${`${boxupdated ? parseInt(partStuff?.dataValues?.stock ?? -1) + parseInt(collection_box[rw.part] ?? 0) : partStuff?.dataValues?.stock ?? NaN}`.padEnd(3)}│ ${rw?.part?.replace("Blueprint", "BP")}${dualitemslist.includes(rw?.part) ? ' x2' : ''} {${partStuff?.color ?? "???"}}`
         }))
 
         const tokensAmt = await database.models.Tokens.findOne({ where: { relic: relicFound[0].relic } })
