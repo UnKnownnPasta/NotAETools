@@ -111,22 +111,10 @@ module.exports = {
                 soupedAccepted.push(short)
 
                 if (isSpecialMode) {
-                    let goodParts;
-                    if (res.slice(2).length > 3) {
-                        goodParts = res.slice(2).sort((a, b) => b[1] - a[1]).slice(3).sort((a, b) => a[1] - b[1]).map(x => {
-                            if (x[2]) {
-                                return `${x[2]}${x[0].replace(" x2", "")}[0m`
-                            }
-                            return null;
-                        }).filter(x => x)
-                    } else {
-                        goodParts = res.slice(2).map(x => {
-                            if (x[2]) {
-                                return `${x[2]}${x[0].replace(" x2", "")}[0m`
-                            }
-                            return null;
-                        }).filter(x => x)
-                    }
+                    let goodParts = res.slice(2).sort((a, b) => b[1] ?? 7 - a[1] ?? 7).filter(x => x[2]).slice(0, 2)
+                    .sort((a, b) => a[1] - b[1]).map(x => {
+                        return `${x[2]}${x[0].replace(" x2", "")}[0m`
+                    })
 
                     soupedStrings.push(`[2;37m${`{${res[0]}}`.padEnd(5)}[0m| [2;37m${(howmany+'x').padEnd(4)}[0m| [2;34m${rFullName.padEnd(8)}[0m| ${goodParts.join(', ')}`)
                 } else {
