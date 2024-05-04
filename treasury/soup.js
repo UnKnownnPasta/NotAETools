@@ -28,7 +28,13 @@ module.exports = {
                 { name: 'ORANGE', value: 'orange' },
                 { name: 'BOX', value: 'box' },
             )
-            .setRequired(false)),
+            .setRequired(false))
+        .addBooleanOption(option => 
+            option
+                .setName('new')
+                .setDescription('Renders soup in a new method')
+                .setRequired(false)
+        ),
     /**
      * Soupify relics
      * @param {Client} client 
@@ -37,6 +43,7 @@ module.exports = {
     async execute(client, i) {
         const relics = i.options.getString('relics', true).split(' '),
             filtertype = i.options.getString('filtertype', false) ?? false;
+        const isSpecialMode = i.options.getBoolean('new', false) ?? false;
         
         const [relicsList, boxlist] = await Promise.all([
             JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json'), 'utf-8')),
@@ -51,20 +58,26 @@ module.exports = {
                 : 'GREEN'
         }
 
+        const ansiValues = {"ED": "[2;35m", "RED": "[2;31m", "ORANGE": "[2;33m"}
+
         const priorityOfStatus = {"ED": 0, "RED": 1, "ORANGE": 2, "YELLOW": 3, "GREEN": 4, "#N/A": 5}
 
         async function getRelic(name, type=null) {
             for (const relic of relicsList.relicData) {
                 if (relic.name == name) {
+                    const stuffToSpecial = []
                     let StatusArr = relic.rewards.map(part => {
                         let returnrange = range(parseInt(part.stock));
                         if (filtertype == "box") {
                             returnrange = range((boxlist[part.item] ?? 0) + (parseInt(part.stock)))
                         }
+                        if (isSpecialMode) {
+                            stuffToSpecial.push([part.item, priorityOfStatus[returnrange], ansiValues[part.color]])
+                        }
                         return [returnrange, priorityOfStatus[returnrange]];
                     });
                     if (type && type !== "box" && !(Math.min(...StatusArr.map(x => x[1])) <= priorityOfStatus[type.toUpperCase()])) return null;
-                    return [relic.tokens, StatusArr.map(x => x[0])];
+                    return [relic.tokens, StatusArr.map(x => x[0]), ...stuffToSpecial];
                 }
             }
             return null
@@ -95,25 +108,50 @@ module.exports = {
                 }
                 if (isNaN(howmany)) continue;
                 howmany = `${(parseInt(howmany)/3 | 0)*3}`
-
                 soupedAccepted.push(short)
-                const _ = (rarity) => {
-                    return `| ${res[1].filter(x => x == rarity).length}`.padEnd(4) + rarity
+
+                if (isSpecialMode) {
+                    let goodParts;
+                    if (res.slice(2).length > 3) {
+                        goodParts = res.slice(2).sort((a, b) => b[1] - a[1]).slice(3).sort((a, b) => a[1] - b[1]).map(x => {
+                            if (x[2]) {
+                                return `${x[2]}${x[0].replace(" x2", "")}[0m`
+                            }
+                            return null;
+                        }).filter(x => x)
+                    } else {
+                        goodParts = res.slice(2).map(x => {
+                            if (x[2]) {
+                                return `${x[2]}${x[0].replace(" x2", "")}[0m`
+                            }
+                            return null;
+                        }).filter(x => x)
+                    }
+
+                    soupedStrings.push(`[2;37m${`{${res[0]}}`.padEnd(5)}[0m| [2;37m${(howmany+'x').padEnd(4)}[0m| [2;34m${rFullName.padEnd(8)}[0m| ${goodParts.join(', ')}`)
+                } else {
+                    const _ = (rarity) => {
+                        return `| ${res[1].filter(x => x == rarity).length}`.padEnd(4) + rarity
+                    }
+                    soupedStrings.push(`${`{${res[0]}}`.padEnd(5)}| ${(howmany+'x').padEnd(4)}| ${rFullName.padEnd(8)} ${_('ED')} ${_('RED')} ${_('ORANGE')}`)
                 }
-                if (res) soupedStrings.push(`${`{${res[0]}}`.padEnd(5)}| ${(howmany+'x').padEnd(4)}| ${rFullName.padEnd(8)} ${_('ED')} ${_('RED')} ${_('ORANGE')}`)
             }
             return soupedStrings
         }
 
         const splitFunc = (r) => {
             let l = r.split('|').map(x => x.trim()) // 3, 4, 5
-            let ED = l[3].split()[0], RED = l[4].split()[0], ORG = l[5].split()[0]
-            return `${ED}${RED}${ORG}`
+            if (isSpecialMode) {
+                return parseInt(l[0].match(/\{(\d+)\}/)[1]) ?? 0
+            } else {
+                let ED = l[3].split()[0], RED = l[4].split()[0], ORG = l[5].split()[0]
+                return `${ED}${RED}${ORG}`
+            }
         }
         const sortFunction = (a, b) => {
             r1 = splitFunc(a)
             r2 = splitFunc(b)
-            return r2.localeCompare(r1);
+            return isSpecialMode ? (r2 - r1) : (r2.localeCompare(r1))
         };
 
         const finishedSoup = (await soupedRelics(relics));
@@ -136,13 +174,13 @@ module.exports = {
             i.reply({ content: `Duplicates removed: ${duplicateStrings.join(' ')}`, embeds: [ 
                 new EmbedBuilder()
                 .setTitle('Souped relics')
-                .setDescription(codeBlock('ml', soupedString) + '\n\n' + codeText)
+                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + '\n\n' + codeText)
              ] })
         } else {
             i.reply({ embeds: [ 
                 new EmbedBuilder()
                 .setTitle('Souped relics')
-                .setDescription(codeBlock('ml', soupedString) + '\n\n' + codeText)
+                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + '\n\n' + codeText)
              ] })
         }
     }
