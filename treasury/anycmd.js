@@ -1,6 +1,6 @@
 const { EmbedBuilder, codeBlock, ButtonStyle, Message, ButtonBuilder, ActionRowBuilder } = require("discord.js");
 const fs = require("node:fs/promises");
-const { Pagination } = require("pagination.djs");
+const { Pagination, ExtraRowPosition } = require("pagination.djs");
 const { filterRelic, titleCase } = require("../scripts/utility.js");
 const path = require("node:path");
 
@@ -157,7 +157,8 @@ module.exports = {
                 .setStyle(ButtonStyle.Primary);
                 const soupButton = new ActionRowBuilder().addComponents(searchSoup)
 
-                const embedsParts = new EmbedBuilder()
+                if (sortedRelics.length < 20) {
+                    const embedsParts = new EmbedBuilder()
                     .setTitle(`[ ${realName} ]`)
                     .setDescription(codeBlock('ml', sortedRelics.join('\n')))
                     .setColor(hex[realColor])
@@ -165,7 +166,35 @@ module.exports = {
                         text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${realStock}${extraCount}x of part in stock  •  ${sortedRelics.length} results`
                     })
 
-                await message.reply({ embeds: [embedsParts], components: [soupButton] })
+                    await message.reply({ embeds: [embedsParts], components: [soupButton] })
+                } else {
+                    const baseEmbed = new EmbedBuilder()
+                    .setColor(hex[realColor])
+                    .setFooter({ 
+                        text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${realStock}${extraCount}x of part in stock  •  ${sortedRelics.length} results`
+                    })
+
+                    const partEmbedArr = []
+                    for (let i = 0; i < sortedRelics.length; i += 20) {
+                        partEmbedArr.push(new EmbedBuilder(baseEmbed).setDescription(codeBlock('ml', sortedRelics.slice(i, i+20).join("\n"))))
+                    }
+
+                    const partPagination = new Pagination(message, {
+                        firstEmoji: "⏮",
+                        prevEmoji: "◀️",
+                        nextEmoji: "▶️",
+                        lastEmoji: "⏭",
+                        idle: 240_000,
+                        buttonStyle: ButtonStyle.Secondary,
+                        loop: true,
+                    });
+    
+                    partPagination.setEmbeds(partEmbedArr, (embed, index, array) => {
+                        return embed.setTitle(`[ ${realName} ] ${index+1}/${partEmbedArr.length}`);
+                    });
+                    partPagination.addActionRows([soupButton], ExtraRowPosition.Below);
+                    partPagination.render();
+                }
                 break;
 
             case "prime":
