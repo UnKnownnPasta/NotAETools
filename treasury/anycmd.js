@@ -1,4 +1,4 @@
-const { EmbedBuilder, codeBlock, ButtonStyle, Message } = require("discord.js");
+const { EmbedBuilder, codeBlock, ButtonStyle, Message, ButtonBuilder, ActionRowBuilder } = require("discord.js");
 const fs = require("node:fs/promises");
 const { Pagination } = require("pagination.djs");
 const { filterRelic, titleCase } = require("../scripts/utility.js");
@@ -151,6 +151,12 @@ module.exports = {
                     return `${part.c.padEnd(2)} │ ${part.r} {${part.t}}`
                 })
 
+                const searchSoup = new ButtonBuilder()
+                .setCustomId(`searchsoup-${realName.replace(" x2", "")}`)
+                .setLabel('Search in Soup Store')
+                .setStyle(ButtonStyle.Primary);
+                const soupButton = new ActionRowBuilder().addComponents(searchSoup)
+
                 const embedsParts = new EmbedBuilder()
                     .setTitle(`[ ${realName} ]`)
                     .setDescription(codeBlock('ml', sortedRelics.join('\n')))
@@ -159,7 +165,7 @@ module.exports = {
                         text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${realStock}${extraCount}x of part in stock  •  ${sortedRelics.length} results`
                     })
 
-                await message.reply({ embeds: [embedsParts] })
+                await message.reply({ embeds: [embedsParts], components: [soupButton] })
                 break;
 
             case "prime":
