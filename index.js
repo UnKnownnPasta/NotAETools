@@ -38,6 +38,7 @@ setInterval(async () => {
 		getAllRelics(),
 		getAllClanData(),
 		getAllUserData(),
+		retrieveSoupStoreRelics(client)
 	]).then((res) => {
 		client.intrv_count++
 		if (client.intrv_count%60 == 0) logger.info(`[INTRVL] ${client.intrv_count} intervals done.`)
