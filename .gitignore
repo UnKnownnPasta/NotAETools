@@ -9,6 +9,7 @@ relicdata.json
 boxdata.json
 farmerdata.json
 treasurydata.json
+soupdata.json
 *.log
 
 # Other

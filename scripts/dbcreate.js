@@ -1,7 +1,7 @@
 const { google } = require('googleapis');
 const { spreadsheet, collectionBox, dualitemslist } = require('../data/config.json');
 const { titleCase } = require('./utility');
-const { Client, ThreadChannel } = require('discord.js');
+const { Client, ThreadChannel, Message } = require('discord.js');
 
 const logger = require('./logger');
 const fs = require('node:fs/promises');
@@ -264,4 +264,63 @@ async function getAllBoxData(client) {
     await fs.writeFile(path.join(__dirname, '..', 'data', 'BoxData.json'), JSON.stringify(fixedBoxStock))
 }
 
-module.exports = { getAllClanData, getAllUserData, getAllRelics, getAllBoxData }
+const INTACTRELIC = process.env.NODE_ENV === "development" ? "1236313453355073556" : "1193415346229620758"
+const RADDEDRELIC = process.env.NODE_ENV === "development" ? "1236313496082317382" : "1193414617490276423"
+
+function parseStringToList(str) {
+    const regex = /\d+x\s*\|\s*[^\|]+?\s*\|\s*\d+\s*ED\s*\|\s*\d+\s*RED\s*\|\s*\d+\s*ORANGE/g;
+    const matches = str.replace(/\{\d+\}\s*\|\s*/g, '').matchAll(regex);
+    return matches || [];
+}
+
+async function retrieveSoupStoreRelics(client) {
+    let boxID;
+
+    if (process.env.NODE_ENV === 'development') {
+        boxID = collectionBox.testid
+    } else {
+        boxID = collectionBox.id
+    }
+
+    const boxChannel = await client.channels.cache.get(boxID)?.threads;
+    if (!boxChannel) return logger.warn(`No Threads channel found; failed to update box`)
+
+    const relicsMegaJSON = []
+
+    const relicStuff = (await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data/RelicData.json')))).relicData
+    const positions = ['intact', 'radded']
+
+    await Promise.all(
+        [INTACTRELIC, RADDEDRELIC].map(async (RELICSTORE, i) => {
+            await boxChannel.fetch(RELICSTORE).then(async (thread) => {
+                if (!thread.messageCount) return;
+                const messages = await thread.messages.fetch({ limit: thread.messageCount, cache: false })
+                messages.map(/** * @param {Message} msg **/async (msg) => {
+                    const soupTexts = [...parseStringToList(msg.content)].map(x => x[0])
+                    if (!soupTexts.length) return;
+                    const authorID = msg.author.id
+                    const authorName = msg.author.displayName
+                    const authorLink = msg.url
+
+                    const relics = soupTexts.map(x => x.split("|")[1].trim())
+                    const infor = []
+
+                    for (const relic of relics) {
+                        const info = relicStuff.find(x => x.name === relic)
+                        if (!relic) continue;
+                        infor.push(...info.parts.filter(x => x).map(y => y.replace(" x2", "")))
+                    }
+
+                    relicsMegaJSON.push({
+                        ID: authorID, link: authorLink, name: authorName, type: positions[i],
+                        relics: relics, parts: [...new Set(infor)]
+                    })
+                })
+            })
+        })
+    )
+
+    await fs.writeFile(path.join(__dirname, '..', 'data/SoupData.json'), JSON.stringify(relicsMegaJSON))
+}
+
+module.exports = { getAllClanData, getAllUserData, getAllRelics, getAllBoxData, retrieveSoupStoreRelics }
