@@ -155,20 +155,21 @@ module.exports = {
         .filter(x => x!==undefined)
         .join('\n\n')
         let codeText =  `*CODE: ${soupedAccepted.join(' ')}*`
-        if ((soupedString + codeText).length > 4090) 
+        if ((soupedString + codeText).length > 4000) 
             return i.reply({ content: `Souped relics is too big to render.`, ephemeral: true })
         
+        const currentTimeStamp = `<t:${new Date().getTime() / 1000 | 0}:R>`
         if (duplicateStrings.length !== 0) {
             i.reply({ content: `Duplicates removed: ${duplicateStrings.join(' ')}`, embeds: [ 
                 new EmbedBuilder()
                 .setTitle('Souped relics')
-                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + '\n\n' + codeText)
+                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + '\n\n' + codeText + `\n${currentTimeStamp}: \`${currentTimeStamp}\``)
              ] })
         } else {
             i.reply({ embeds: [ 
                 new EmbedBuilder()
                 .setTitle('Souped relics')
-                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + '\n\n' + codeText)
+                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + '\n\n' + codeText + `\n${currentTimeStamp}: \`${currentTimeStamp}\``)
              ] })
         }
     }
