@@ -308,12 +308,13 @@ async function retrieveSoupStoreRelics(client) {
                     for (const relic of relics) {
                         const info = relicStuff.find(x => x.name === relic)
                         if (!relic) continue;
+                        infor.push({ relic: relic, has: [...new Set(info.parts.filter(x => x).map(y => y.replace(" x2", "")))] })
                         infor.push(...info.parts.filter(x => x).map(y => y.replace(" x2", "")))
                     }
 
                     relicsMegaJSON.push({
                         ID: authorID, link: authorLink, name: authorName, type: positions[i],
-                        relics: relics, parts: [...new Set(infor)]
+                        relics: relics, parts: infor
                     })
                 })
             })
