@@ -25,7 +25,8 @@ client.intrv_count = 0
 setInterval(async () => {
 	await Promise.all([
 		refreshFissures(client),
-		getAllBoxData(client)
+		getAllBoxData(client),
+		retrieveSoupStoreRelics(client)
 	]).then((res) => {
 		client.intrv_count++
 		client.fissureLast = new Date().getTime() + 180000
@@ -38,7 +39,6 @@ setInterval(async () => {
 		getAllRelics(),
 		getAllClanData(),
 		getAllUserData(),
-		retrieveSoupStoreRelics(client)
 	]).then((res) => {
 		client.intrv_count++
 		if (client.intrv_count%60 == 0) logger.info(`[INTRVL] ${client.intrv_count} intervals done.`)
