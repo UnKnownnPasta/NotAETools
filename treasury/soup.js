@@ -117,8 +117,7 @@ module.exports = {
                 soupedAccepted.push(short)
 
                 if (isSpecialMode) {
-                    let goodParts = res.slice(2).sort((a, b) => b[1] ?? 7 - a[1] ?? 7).filter(x => x[2]).slice(0, 2)
-                    .sort((a, b) => a[1] - b[1]).map(x => {
+                    let goodParts = res.slice(2).sort((a, b) => a[1] - b[1]).filter(x => x[2]).slice(0, 2).map(x => {
                         return `${x[2]}${x[0].replace(" x2", "")}[0m`
                     })
 
