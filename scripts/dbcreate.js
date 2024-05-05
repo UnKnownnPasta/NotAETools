@@ -62,7 +62,6 @@ async function getAllRelics() {
         const JSONData = { relicData: allRelicData, relicNames: onlyRelics, partNames: onlyParts.filter(p => p) }
         
         await fs.writeFile(path.join(__dirname, '..', 'data', 'RelicData.json'), JSON.stringify(JSONData))
-        // await database.models.Items.bulkCreate(allRelicData, { updateOnDuplicate: ['stock', 'color'] });
     }
 }
 
@@ -83,13 +82,11 @@ async function getAllUserData() {
             return { uid: data[0], name: data[1] }
         }),
         FarmerIDValues.data.values.filter(val => val.length).map((data) => {
-            return { uid: data[0], name: data[1], tokens: data[2], bonus: data[3], spent: data[4], left: data[5], playtime: (data.at(7) ? `${data[7]} (${data[6]})` : data[6]) }
+            return { uid: data[0], name: data[1], tokens: data[2], bonus: data[3], spent: data[4], left: data[5], playtime: data.at(7) ? `${data[6]} (${data[7]})` : data[6] }
         })
     ])
 
     await Promise.all([
-        // database.models.Treasurers.bulkCreate(TreasData, { updateOnDuplicate: ['name'] }),
-        // database.models.Farmers.bulkCreate(FarmData, { updateOnDuplicate: ['name', 'tokens', 'bonus', 'spent', 'left', 'playtime'] }),
         fs.writeFile(path.join(__dirname, '..', 'data', 'TreasuryData.json'), JSON.stringify(TreasData)),
         fs.writeFile(path.join(__dirname, '..', 'data', 'FarmerData.json'), JSON.stringify(FarmData)),
     ]);
@@ -108,7 +105,6 @@ async function getAllClanData() {
         return { clan: key[0], resource: localist };
     }))
     .then(async (results) => {
-        // await database.models.Resources.bulkCreate(results.filter(res => res), { updateOnDuplicate: ['resource'] })
         await fs.writeFile(path.join(__dirname, '..', 'data', 'ClanData.json'), JSON.stringify(results.filter(res => res)))
     })
     .catch(error => {
