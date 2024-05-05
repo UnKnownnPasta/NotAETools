@@ -231,7 +231,7 @@ async function getAllBoxData(client) {
     await Promise.all(Object.entries(boxStock).map(async ([part, stock]) => {
         const splitnm = titleCase(part).split(" ")
         let pind = partNames.filter(x => {
-            if (splitnm[0] == 'Mag') return x.startsWith('Mag')
+            if (splitnm[0] == 'Mag') return x.startsWith('Mag ')
             else if (splitnm[0] == 'Magnus') return x.startsWith('Magnus')
             else return splitnm.length > 2 ? (x.startsWith(splitnm[0]) && matchAny(x.split(" ")[1], splitnm[1]) && matchAny(x.split(" ")[2], splitnm[2]) && matchAny(x.split(" ")[3], splitnm[3])) : x.startsWith(splitnm[0])
         })
