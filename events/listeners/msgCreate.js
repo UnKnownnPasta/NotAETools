@@ -18,12 +18,11 @@ module.exports = {
     async listen(client, message) {
         if (message.content === "++filter" && (message.author.id == '740536348166848582' || message.author.id == '498993740715917312')) {
             client.dofilter = !client.dofilter;
-            await message.delete();
+            await message.reply({ content: `> ${process.env.NODE_ENV} - ${client.dofilter}` });
         }
 
         if (message.content == '++dump' && (message.author.id == '740536348166848582' || message.author.id == '498993740715917312')) {
             const logfile = await fs.readFile(path.join(__dirname, '..', '..', 'data', 'app.log'))
-            await message.delete();
             return await message.author.send({ files: [new AttachmentBuilder(Buffer.from(logfile, 'utf-8'), { name: 'dump.txt' })] })
         }
 
