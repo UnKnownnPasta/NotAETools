@@ -44,6 +44,12 @@ module.exports = {
         const relics = i.options.getString('relics', true).split(' '),
             filtertype = i.options.getString('filtertype', false) ?? false;
         const isSpecialMode = i.options.getBoolean('new', false) ?? false;
+
+        if (relics.join(' ').match(/\d+x\s*\|\s*[^\|]+?\s*\|\s*\d+\s*ED\s*\|\s*\d+\s*RED\s*\|\s*\d+\s*ORANGE/g)) {
+            return i.reply({ content: `Resouping of soup like\n\`\`\`ml\n{12} | 12x | Lith K2  | 1 ED | 0 RED | 2 ORANGE\`\`\`is done using \`/resoup\` not \`/soup\`.`,
+                ephemeral: true
+            })
+        }
         
         const [relicsList, boxlist] = await Promise.all([
             JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json'), 'utf-8')),
@@ -158,18 +164,18 @@ module.exports = {
         if ((soupedString + codeText).length > 4000) 
             return i.reply({ content: `Souped relics is too big to render.`, ephemeral: true })
         
-        const currentTimeStamp = `<t:${new Date().getTime() / 1000 | 0}:R>`
+        const currentTimeStamp = `<t:${new Date().getTime() / 1000 | 0}:f>`
         if (duplicateStrings.length !== 0) {
             i.reply({ content: `Duplicates removed: ${duplicateStrings.join(' ')}`, embeds: [ 
                 new EmbedBuilder()
                 .setTitle('Souped relics')
-                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + '\n\n' + codeText + `\n${currentTimeStamp}: \`${currentTimeStamp}\``)
+                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + '\n' + codeText + `\n\n${currentTimeStamp}: \`${currentTimeStamp}\``)
              ] })
         } else {
             i.reply({ embeds: [ 
                 new EmbedBuilder()
                 .setTitle('Souped relics')
-                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + '\n\n' + codeText + `\n${currentTimeStamp}: \`${currentTimeStamp}\``)
+                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + '\n' + codeText + `\n\n${currentTimeStamp}: \`${currentTimeStamp}\``)
              ] })
         }
     }

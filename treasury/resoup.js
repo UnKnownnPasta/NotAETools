@@ -38,6 +38,12 @@ module.exports = {
         let soupedText = i.options.getString('relics', true),
         filtertype = i.options.getString('filtertype', false) ?? false;
 
+        if (soupedText.match(/[l|m|n|a]\w+\d+/g)) {
+            return i.reply({ content: `Making soup using shorthand like **6lg1** is done using the \`/soup\` command, not \`/resoup\``,
+                ephemeral: true
+             })
+        }
+
         /**
          * @param {String} str 
          * @returns Array
@@ -149,20 +155,21 @@ module.exports = {
         .filter(x => x!==undefined)
         .join('\n\n')
         let codeText =  `*CODE: ${soupedAccepted.join(' ')}*`
-        if ((soupedString + codeText).length > 4090) 
+        if ((soupedString + codeText).length > 4000) 
             return i.reply({ content: `Souped relics is too big to render.`, ephemeral: true })
-        
+
+        const currentTimeStamp = `<t:${new Date().getTime() / 1000 | 0}:f>`
         if (duplicateStrings.length !== 0) {
             i.reply({ content: `Duplicates removed: ${duplicateStrings.join(' ')}`, embeds: [ 
                 new EmbedBuilder()
-                .setTitle('Souped relics')
-                .setDescription(codeBlock('ml', soupedString) + '\n\n' + codeText)
+                .setTitle('Resouped relics')
+                .setDescription(codeBlock('ml', soupedString) + '\n' + codeText + `\n\n${currentTimeStamp}: \`${currentTimeStamp}\``)
              ] })
         } else {
             i.reply({ embeds: [ 
                 new EmbedBuilder()
-                .setTitle('Souped relics')
-                .setDescription(codeBlock('ml', soupedString) + '\n\n' + codeText)
+                .setTitle('Resouped relics')
+                .setDescription(codeBlock('ml', soupedString) + '\n' + codeText + `\n\n${currentTimeStamp}: \`${currentTimeStamp}\``)
              ] })
         }
     }
