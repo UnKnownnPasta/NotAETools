@@ -121,7 +121,7 @@ module.exports = {
                         return `${x[2]}${x[0].replace(" x2", "")}[0m`
                     })
 
-                    soupedStrings.push(`[2;37m${`{${res[0]}}`.padEnd(5)}[0m| [2;37m${(howmany+'x').padEnd(4)}[0m| [2;34m${rFullName.padEnd(8)}[0m| ${goodParts.join(', ')}`)
+                    soupedStrings.push(`[2;37m${`{${res[0]}}`.padEnd(5)}[0m| [2;37m${(howmany+'x').padEnd(4)}[0m| [2;34m${rFullName.padEnd(8)}[0m | ${goodParts.join(', ')}`)
                 } else {
                     const _ = (rarity) => {
                         return `| ${res[1].filter(x => x == rarity).length}`.padEnd(4) + rarity
