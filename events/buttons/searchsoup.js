@@ -20,6 +20,7 @@ module.exports = {
         const soupStore = await JSON.parse(await fs.readFile(path.join(__dirname, '..', '..', 'data/SoupData.json')))
 
         const hits = []
+        let counts = 0
         for (const order of soupStore) {
             const hasHit = []
             for (const p of order.parts) {
@@ -28,11 +29,12 @@ module.exports = {
                 }
             }
             if (!hasHit.length) continue;
+            counts += hasHit.length
             hits.push({ link: order.link, name: order.name, type: order.type, relics: hasHit })
         }
 
         const foundAllEmbed = new EmbedBuilder()
-        .setTitle(`Found ${hits.length} relics`)
+        .setTitle(`Found ${counts} relics`)
         .setColor(`#C2B280`);
 
         if (hits.length) {
