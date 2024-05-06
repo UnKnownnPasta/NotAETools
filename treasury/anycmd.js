@@ -151,11 +151,11 @@ module.exports = {
                     return `${part.c.padEnd(2)} │ ${part.r} {${part.t}}`
                 })
 
-                const searchSoup = new ButtonBuilder()
-                .setCustomId(`searchsoup-${realName.replace(" x2", "")}`)
-                .setLabel('Search in Soup Store')
+                const searchSoupPart = new ButtonBuilder()
+                .setCustomId(`searchsoup-part-${realName.replace(" x2", "")}`)
+                .setLabel('🔎 Soup Store')
                 .setStyle(ButtonStyle.Primary);
-                const soupButton = new ActionRowBuilder().addComponents(searchSoup)
+                const soupButtonPart = new ActionRowBuilder().addComponents(searchSoupPart)
 
                 if (sortedRelics.length < 20) {
                     const embedsParts = new EmbedBuilder()
@@ -166,7 +166,7 @@ module.exports = {
                         text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${realStock}${extraCount}x of part in stock  •  ${sortedRelics.length} results`
                     })
 
-                    await message.reply({ embeds: [embedsParts], components: [soupButton] })
+                    await message.reply({ embeds: [embedsParts], components: [soupButtonPart] })
                 } else {
                     const baseEmbed = new EmbedBuilder()
                     .setColor(hex[realColor])
@@ -192,7 +192,7 @@ module.exports = {
                     partPagination.setEmbeds(partEmbedArr, (embed, index, array) => {
                         return embed.setTitle(`[ ${realName} ] ${index+1}/${partEmbedArr.length}`);
                     });
-                    partPagination.addActionRows([soupButton], ExtraRowPosition.Below);
+                    partPagination.addActionRows([soupButtonPart], ExtraRowPosition.Below);
                     partPagination.render();
                 }
                 break;
@@ -235,6 +235,12 @@ module.exports = {
                 colorOfParts = uncodeObj[Math.min(...colorOfParts.map(color => codeObj[color]))]
                 stockOfParts = Math.min(...stockOfParts)
 
+                const searchSoupSet = new ButtonBuilder()
+                .setCustomId(`searchsoup-set-${setName.trim()}`)
+                .setLabel('🔎 Soup Store')
+                .setStyle(ButtonStyle.Primary);
+                const soupButtonSet = new ActionRowBuilder().addComponents(searchSoupSet)
+
                 message.reply({ embeds: [
                     new EmbedBuilder()
                     .setTitle(`[ ${word} ]`)
@@ -242,7 +248,7 @@ module.exports = {
                     .setTimestamp()
                     .setDescription(codeBlock("ml", setPartsText.join("\n")))
                     .setColor(hex[colorOfParts])
-                ] })
+                ], components: [soupButtonSet] })
                 break;
 
             case "relic":
