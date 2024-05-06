@@ -132,15 +132,20 @@ module.exports = {
         }
 
         const splitFunc = (r) => {
-            let l = r.split('|').map(x => x.trim()) // 3, 4, 5
-            let ED = l[3].split()[0], RED = l[4].split()[0], ORG = l[5].split()[0]
-            return `${ED}${RED}${ORG}`
+            const rSplit = r.split('|')
+            const l = rSplit.map(x => x.trim()) // 3, 4, 5
+            const ED = l[3].split()[0]; const RED = l[4].split()[0]; const ORG = l[5].split()[0]
+            return `${ED}${RED}${ORG}-${rSplit[0].match(/\d+/)[0]}-${rSplit[1].match(/\d+/)[0]}`
         }
         const sortFunction = (a, b) => {
-            r1 = splitFunc(a)
-            r2 = splitFunc(b)
-            return r2.localeCompare(r1);
-        };
+            r1 = splitFunc(a).split('-')
+            r2 = splitFunc(b).split('-')
+            if (r1[0] === r2[0]) {
+                if (r1[1] === r2[1]) return parseInt(r2[2]) - parseInt(r1[2])
+                return parseInt(r2[1]) - parseInt(r1[1])
+            }
+            return r2[0].localeCompare(r1[0])
+        }
 
         const finishedSoup = (await soupedRelics(relics));
         const filterRelics = (rname) => {
