@@ -20,6 +20,6 @@ module.exports = {
         .setDescription(`Fissures/Box info resets every **3 minutes**\nDatabase resets every **5 minutes**`)
         .setTimestamp();
 
-        await i.reply({ embeds: [timerEmbed] });
+        await i.reply({ embeds: [timerEmbed], ephemeral: true });
     },
 };
