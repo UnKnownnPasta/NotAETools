@@ -264,8 +264,9 @@ const INTACTRELIC = process.env.NODE_ENV === "development" ? "123631345335507355
 const RADDEDRELIC = process.env.NODE_ENV === "development" ? "1236313496082317382" : "1193414617490276423"
 
 function parseStringToList(str) {
-    const regex = /\d+x\s*\|\s*[^\|]+?\s*\|\s*\d+\s*ED\s*\|\s*\d+\s*RED\s*\|\s*\d+\s*ORANGE/g;
-    const matches = str.replace(/\{\d+\}\s*\|\s*/g, '').matchAll(regex);
+    // const regex = /\d+x\s*\|\s*[^\|]+?\s*\|\s*\d+\s*ED\s*\|\s*\d+\s*RED\s*\|\s*\d+\s*ORANGE/g;
+    const regex = /(Axi|Meso|Neo|Lith) [A-Z]\d+/g;
+    const matches = str.matchAll(regex);
     return matches || [];
 }
 
@@ -292,24 +293,22 @@ async function retrieveSoupStoreRelics(client) {
                 if (!thread.messageCount) return;
                 const messages = await thread.messages.fetch({ limit: thread.messageCount, cache: false })
                 messages.map(/** * @param {Message} msg **/async (msg) => {
-                    const soupTexts = [...parseStringToList(msg.content)].map(x => x[0])
-                    if (!soupTexts.length) return;
+                    const Relics = [...parseStringToList(msg.content)].map(x => x[0])
+                    if (!Relics.length) return;
                     const authorID = msg.author.id
                     const authorName = msg.author.displayName
                     const authorLink = msg.url
 
-                    const Relics = soupTexts.map(x => x.split("|")[1].trim())
-                    const infor = []
-
+                    const soupInfo = []
                     for (const relic of Relics) {
                         const info = relicStuff.find(x => x.name === relic)
                         if (!relic) continue;
-                        infor.push({ relic: relic, has: [...new Set(info.parts.filter(x => x).map(y => y.replace(" x2", "")))] })
+                        soupInfo.push({ relic: relic, has: [...new Set(info.parts.filter(x => x).map(y => y.replace(" x2", "")))] })
                     }
 
                     relicsMegaJSON.push({
                         ID: authorID, link: authorLink, name: authorName, type: positions[i],
-                        relics: Relics, parts: infor
+                        relics: Relics, parts: soupInfo
                     })
                 })
             })
