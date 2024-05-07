@@ -154,7 +154,7 @@ module.exports = {
                 const searchSoupPart = new ButtonBuilder()
                 .setCustomId(`searchsoup-part-${realName.replace(" x2", "")}`)
                 .setLabel('🔎 Soup Store')
-                .setStyle(ButtonStyle.Primary);
+                .setStyle(ButtonStyle.Secondary);
                 const soupButtonPart = new ActionRowBuilder().addComponents(searchSoupPart)
 
                 if (sortedRelics.length < 20) {
@@ -238,7 +238,7 @@ module.exports = {
                 const searchSoupSet = new ButtonBuilder()
                 .setCustomId(`searchsoup-set-${setName.trim()}`)
                 .setLabel('🔎 Soup Store')
-                .setStyle(ButtonStyle.Primary);
+                .setStyle(ButtonStyle.Secondary);
                 const soupButtonSet = new ActionRowBuilder().addComponents(searchSoupSet)
 
                 message.reply({ embeds: [
@@ -289,7 +289,7 @@ module.exports = {
                     .setTitle(`[ ${properRelicName} ] {${relicFound.tokens}}`)
                     .setDescription(codeBlock('ml', relicDesc.join("\n")))
                     .setFooter({ 
-                        text: `Showing ${relicFound.name.split(" ")[0]} Void relic  •  ${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${allStocks} relic  `
+                        text: `${relicFound.name.split(" ")[0]} Void relic  •  ${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${allStocks} relic  `
                     })
                     .setColor(hex[allStocks])
                     .setTimestamp()
