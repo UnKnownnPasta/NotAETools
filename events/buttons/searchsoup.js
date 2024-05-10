@@ -68,7 +68,7 @@ module.exports = {
                 }
         
                 const sFoundAllEmbed = new EmbedBuilder()
-                .setTitle(`Found ${sCounts} relics`)
+                .setAuthor({ name: `Found ${sCounts} relics`, iconURL: i.member.displayAvatarURL() })
                 .setColor(`#C2B280`);
         
                 if (sHits.length) {
@@ -80,7 +80,7 @@ module.exports = {
                     })
                 }
         
-                await i.reply({ embeds: [sFoundAllEmbed] })
+                await i.reply({ embeds: [sFoundAllEmbed] });
                 break;
 
             default:
