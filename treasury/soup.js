@@ -78,7 +78,7 @@ module.exports = {
                             returnrange = range((boxlist[part.item] ?? 0) + (parseInt(part.stock)))
                         }
                         if (isSpecialMode) {
-                            stuffToSpecial.push([part.item, priorityOfStatus[returnrange], ansiValues[part.color]])
+                            stuffToSpecial.push([part.item, priorityOfStatus[returnrange], ansiValues[returnrange]])
                         }
                         return [returnrange, priorityOfStatus[returnrange]];
                     });
