@@ -217,13 +217,13 @@ module.exports = {
             i.reply({ content: `Duplicates removed: ${duplicateStrings.join(' ')}`, embeds: [ 
                 new EmbedBuilder()
                 .setTitle('Resouped relics')
-                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + '\n' + codeText + `\n\n${currentTimeStamp} [\`${currentTimeStamp}\`]`)
+                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + '\n' + codeText)
              ] })
         } else {
             i.reply({ embeds: [ 
                 new EmbedBuilder()
                 .setTitle('Resouped relics')
-                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + '\n' + codeText + `\n\n${currentTimeStamp} [\`${currentTimeStamp}\`]`)
+                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + '\n' + codeText)
              ] })
         }
     }
