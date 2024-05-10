@@ -64,7 +64,7 @@ module.exports = {
                 : 'GREEN'
         }
 
-        const ansiValues = {"ED": "[2;35m", "RED": "[2;31m", "ORANGE": "[2;33m"}
+        const ansiValues = {"ED": "[35m", "RED": "[31m", "ORANGE": "[33m"}
 
         const priorityOfStatus = {"ED": 0, "RED": 1, "ORANGE": 2, "YELLOW": 3, "GREEN": 4, "#N/A": 5}
 
@@ -121,7 +121,7 @@ module.exports = {
                         return `${x[2]}${x[0].replace(" x2", "")}[0m`
                     })
 
-                    soupedStrings.push(`[2;37m${`{${res[0]}}`.padEnd(5)}[0m| [2;37m${(howmany+'x').padEnd(4)}[0m| [2;34m${rFullName.padEnd(8)}[0m | ${goodParts.join(', ')}`)
+                    soupedStrings.push(`[37m${`{${res[0]}}`.padEnd(5)}[0m| [37m${(howmany+'x').padEnd(4)}[0m| [34m${rFullName.padEnd(8)}[0m | ${goodParts.join(', ')}`)
                 } else {
                     const _ = (rarity) => {
                         return `| ${res[1].filter(x => x == rarity).length}`.padEnd(4) + rarity
@@ -138,7 +138,7 @@ module.exports = {
             if (isSpecialMode) {
                 const countOf = (x) => (r.match(new RegExp(x, 'g')) || []).length;
                 const tokenParse = parseInt(l[0].match(/\{(\d+)\}/)[1]) ?? 0
-                const counts = [countOf('\\[2;35m'), countOf('\\[2;31m'), countOf('\\[2;33m')]
+                const counts = [countOf('\\[35m'), countOf('\\[31m'), countOf('\\[33m')]
 
                 return [tokenParse, counts, rSplit[1].match(/\d+/)[0]]
             } else {
@@ -182,21 +182,21 @@ module.exports = {
         })
         .filter(x => x!==undefined)
         .join('\n\n')
-        let codeText =  `*CODE: ${soupedAccepted.join(' ')}*`
-        if ((soupedString + codeText).length > 4000) 
+        let codeText =  `\n*CODE: ${soupedAccepted.join(' ')}*`
+        if (soupedString.length > 4096 - codeText.length)
             return i.reply({ content: `Souped relics is too big to render.`, ephemeral: true })
         
         if (duplicateStrings.length !== 0) {
             i.reply({ content: `Duplicates removed: ${duplicateStrings.join(' ')}`, embeds: [ 
                 new EmbedBuilder()
                 .setTitle('Souped relics')
-                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + '\n' + codeText)
+                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + codeText)
              ] })
         } else {
             i.reply({ embeds: [ 
                 new EmbedBuilder()
                 .setTitle('Souped relics')
-                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + '\n' + codeText)
+                .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + codeText)
              ] })
         }
     }
