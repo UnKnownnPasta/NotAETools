@@ -288,7 +288,7 @@ const RADDEDRELIC = process.env.NODE_ENV === "development" ? "123631349608231738
 
 function parseStringToList(str) {
     // const regex = /\d+x\s*\|\s*[^\|]+?\s*\|\s*\d+\s*ED\s*\|\s*\d+\s*RED\s*\|\s*\d+\s*ORANGE/g;
-    const regex = /(Axi|Meso|Neo|Lith) [A-Z]\d+/g;
+    const regex = /(\d+x).*( Axi|Meso|Neo|Lith) ([A-Z]\d+)/g;
     const matches = str.matchAll(regex);
     return matches || [];
 }
@@ -316,7 +316,7 @@ async function retrieveSoupStoreRelics(client) {
                 if (!thread.messageCount) return;
                 const messages = await thread.messages.fetch({ limit: thread.messageCount, cache: false })
                 messages.map(/** * @param {Message} msg **/async (msg) => {
-                    const Relics = [...parseStringToList(msg.content)].map(x => x[0])
+                    const Relics = [...parseStringToList(msg.content)].map(x => x[0].replace(/\[0m/g, '').replace(/\[(2;)?34m/g, '').split(/\s*\| /g))
                     if (!Relics.length) return;
                     const authorID = msg.author.id
                     const authorName = msg.author.displayName
@@ -324,9 +324,9 @@ async function retrieveSoupStoreRelics(client) {
 
                     const soupInfo = []
                     for (const relic of Relics) {
-                        const info = relicStuff.find(x => x.name === relic)
+                        const info = relicStuff.find(x => x.name === relic[1])
                         if (!relic) continue;
-                        soupInfo.push({ relic: relic, has: [...new Set(info.parts.filter(x => x).map(y => y.replace(" x2", "")))] })
+                        soupInfo.push({ relic: relic[1], howmany: parseInt(relic[0].replace('x', '')), has: [...new Set(info.parts.filter(x => x).map(y => y.replace(" x2", "")))] })
                     }
 
                     relicsMegaJSON.push({

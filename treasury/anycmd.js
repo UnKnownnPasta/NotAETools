@@ -282,6 +282,12 @@ module.exports = {
                 
                 allStocks = range(Math.min(...allStocks))
 
+                const searchSoupRelic = new ButtonBuilder()
+                .setCustomId(`searchsoup-relic-${properRelicName.trim()}`)
+                .setLabel('🔎 Soup Store')
+                .setStyle(ButtonStyle.Secondary);
+                const soupButtonRelic = new ActionRowBuilder().addComponents(searchSoupRelic)
+
                 message.reply({ embeds: [
                     new EmbedBuilder()
                     .setTitle(`[ ${properRelicName} ] {${relicFound.tokens}}`)
@@ -291,7 +297,7 @@ module.exports = {
                     })
                     .setColor(hex[allStocks])
                     .setTimestamp()
-                ] })
+                ], components: [soupButtonRelic] })
                 break;
 
             default:

@@ -31,7 +31,7 @@ module.exports = {
                     const hasHit = []
                     for (const p of order.parts) {
                         if (p.has.includes(parttoFind)) {
-                            hasHit.push(p.relic)
+                            hasHit.push(`${p.howmany} ${p.relic}`)
                         }
                     }
                     if (!hasHit.length) continue;
@@ -62,7 +62,7 @@ module.exports = {
                     const hasHit = []
                     for (const p of order.parts) {
                         if (p.has.some(x => x.startsWith(`${parttoFind} `))) {
-                            hasHit.push(p.relic)
+                            hasHit.push(`${p.howmany} ${p.relic}`)
                         }
                     }
                     if (!hasHit.length) continue;
@@ -84,6 +84,38 @@ module.exports = {
                 }
         
                 await i.editReply({ embeds: [sFoundAllEmbed] });
+                break;
+
+            case 'relic':
+                const rHits = []
+                let rCounts = 0
+                for (const order of soupStore) {
+                    const hasHit = []
+                    for (const p of order.parts) {
+                        if (p.relic === parttoFind) {
+                            hasHit.push(p.howmany)
+                        }
+                    }
+                    if (!hasHit.length) continue;
+                    rCounts += hasHit.length
+                    rHits.push({ link: order.link, name: order.name, type: order.type, howmany: hasHit.reduce((a, c) => a += c, 0) })
+                }
+
+                const rFoundAllEmbed = new EmbedBuilder()
+                .setAuthor({ name: `Found ${rCounts} relics`, iconURL: i.member.displayAvatarURL() })
+                .setColor(`#C2B280`);
+        
+                const descRelics = []
+
+                if (rHits.length) {
+                    rHits.slice(0, 10).map(x => {
+                        descRelics.push(`⇒ By __${x.name}__ - Soup [Link](${x.link}) - ${x.howmany}x ${x.type}`)
+                    })
+                }
+
+                if (descRelics.length) rFoundAllEmbed.setDescription(descRelics.join("\n"))
+
+                await i.editReply({ embeds: [rFoundAllEmbed] });
                 break;
 
             default:
