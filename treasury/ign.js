@@ -4,6 +4,7 @@ const {
 } = require("discord.js");
 const fs = require("node:fs/promises");
 const path = require("node:path");
+const { getAllUserData } = require("../scripts/dbcreate");
 
 module.exports = {
     name: "ign",
@@ -17,7 +18,7 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(client, i) {
-        const treasury = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'TreasuryData.json')))
+        const treasury = await getAllUserData('treasury')
         const foundid = treasury.filter(x => x.uid == i.options.getUser('user', true).id)
         if (foundid.length == 0) return i.reply({ embeds: [new EmbedBuilder().setTitle(`No IGN Found`)], ephemeral: true })
         else i.reply({ embeds: [new EmbedBuilder().setTitle(`/inv ${foundid[0].name}`).setFooter({ text: `ID: ${foundid[0].uid} - Consider using LunaBot instead` })] })

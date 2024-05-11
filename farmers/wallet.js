@@ -4,6 +4,7 @@ const {
 } = require("discord.js");
 const fs = require("node:fs/promises");
 const path = require("node:path");
+const { getAllUserData } = require("../scripts/dbcreate");
 
 module.exports = {
     name: "wallet",
@@ -16,7 +17,7 @@ module.exports = {
         .setDescription('Farmer to view wallet of')
         .setRequired(true)),
     async execute(client, i) {
-        const farmer = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'FarmerData.json')))
+        const farmer = await getAllUserData('farmer')
         const foundid = farmer.filter(x => x.uid == i.options.getUser('user', true).id)
         if (foundid.length == 0) return i.reply({ embeds: [new EmbedBuilder().setTitle(`No Wallet Found`)], ephemeral: true });
         else {

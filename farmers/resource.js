@@ -7,6 +7,7 @@ const {
 const fs = require("node:fs/promises");
 const { titleCase } = require("../scripts/utility");
 const path = require("node:path");
+const { getAllClanData } = require("../scripts/dbcreate");
 
 const resourceNames = [
     'Credits', 'Alloy Plate',
@@ -34,14 +35,14 @@ const resourceNames = [
   ];
 
 const reverseClan = {
-    IK: "Imouto Kingdom",
-    WK: "Waifu Kingdom",
-    MK: "Manga Kingdom",
-    YK: "Yuri Kingdom",
-    CK: "Cowaii Kingdom",
-    TK: "Tsuki Kingdom",
-    HK: "Heavens Kingdom",
-    AK: "Andromeda Kingdom"
+    IK: "Imouto",
+    WK: "Waifu",
+    MK: "Manga",
+    YK: "Yuri",
+    CK: "Cowaii",
+    TK: "Tsuki",
+    HK: "Heavens",
+    AK: "Andromeda"
 };
 
 module.exports = {
@@ -62,21 +63,22 @@ module.exports = {
      * @param {CommandInteraction} i 
      */
     async execute(client, i) {
-        const resources = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'ClanData.json')))
+        await i.deferReply()
         const resrc = i.options.getString('resource', true)
 
         if (!resourceNames.includes(resrc)) 
             return i.reply({ content: `Invalid resource, choose from autofill instead`, ephemeral: true });
-        
+
+        const resources = await getAllClanData();
         const clanEmbed = new EmbedBuilder()
         .setTitle(`Resource overview of ${resrc}`);
 
         await resources.slice(0, -1).map(r => {
             const res = Object.entries(r.resource).filter(([ key, value ]) => key == resrc)[0]
-            clanEmbed.addFields({ name: reverseClan[r.clan].replace("Kingdom", ""), value: `**Amt:** \`${res[1].amt}\` | **Short:** \`${res[1].short}\`` })
+            clanEmbed.addFields({ name: reverseClan[r.clan], value: `**Amt:** \`${res[1].amt}\` | **Short:** \`${res[1].short}\`` })
         });
 
-        await i.reply({ embeds: [clanEmbed] })
+        await i.editReply({ embeds: [clanEmbed] })
     },
     async autocomplete(i) {
 		const focusedValue = i.options.getFocused().toLowerCase();

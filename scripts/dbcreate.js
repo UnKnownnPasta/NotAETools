@@ -65,51 +65,67 @@ async function getAllRelics() {
     }
 }
 
-async function getAllUserData() {
-    const [TreasIDValues, FarmerIDValues] = await Promise.all([
-        googleSheets({
+async function getAllUserData(key=null) {
+    if (!key) return [];
+
+    if (key === 'treasury') {
+        const res = await googleSheets({
             spreadsheetId: spreadsheet.treasury.id,
             range: spreadsheet.treasury.useridName + spreadsheet.treasury.ranges.ids,
-        }),
-        googleSheets({
+        })
+        const workOnData = res.data.values.filter(val => val.length).map((data) => {
+            return { uid: data[0], name: data[1] }
+        })
+        return workOnData;
+    } else if (key === 'farmer') {
+        const res = await googleSheets({
             spreadsheetId: spreadsheet.farmer.id,
             range: spreadsheet.farmer.userName + spreadsheet.farmer.ranges.users,
         })
-    ])
-    
-    const [TreasData, FarmData] = await Promise.all([
-        TreasIDValues.data.values.filter(val => val.length).map((data) => {
-            return { uid: data[0], name: data[1] }
-        }),
-        FarmerIDValues.data.values.filter(val => val.length).map((data) => {
+        const workOnData = res.data.values.filter(val => val.length).map((data) => {
             return { uid: data[0], name: data[1], tokens: data[2], bonus: data[3], spent: data[4], left: data[5], playtime: data.at(7) ? `${data[6]} (${data[7]})` : data[6] }
         })
-    ])
-
-    await Promise.all([
-        fs.writeFile(path.join(__dirname, '..', 'data', 'TreasuryData.json'), JSON.stringify(TreasData)),
-        fs.writeFile(path.join(__dirname, '..', 'data', 'FarmerData.json'), JSON.stringify(FarmData)),
-    ]);
+        return workOnData;
+    } else {
+        return undefined;
+    }
+    // await Promise.all([
+    //     fs.writeFile(path.join(__dirname, '..', 'data', 'TreasuryData.json'), JSON.stringify(TreasData)),
+    //     fs.writeFile(path.join(__dirname, '..', 'data', 'FarmerData.json'), JSON.stringify(FarmData)),
+    // ]);
 }
 
-async function getAllClanData() {
-    await Promise.all(Object.entries(spreadsheet.farmer.ranges.resource).map(async (key) => {
+async function getAllClanData(clan=undefined) {
+    if (!clan) {
+        return await Promise.all(Object.entries(spreadsheet.farmer.ranges.resource).map(async (key) => {
+            const clandata = await googleSheets({
+                spreadsheetId: spreadsheet.farmer.id,
+                range: spreadsheet.farmer.resourceName + key[1]
+            })
+            if (!clandata) return {}
+    
+            let localist = {};
+            await Promise.all(clandata.data.values.map(x => localist[x[0]] = { amt: x[1], short: x[2] ?? '0' }))
+            return { clan: key[0], resource: localist };
+        }))
+        .then(async (results) => {
+            return results.filter(res => res);
+            // await fs.writeFile(path.join(__dirname, '..', 'data', 'ClanData.json'), JSON.stringify(results.filter(res => res)))
+        })
+        .catch(error => {
+            logger.error(error, 'Error fetching sheet values for clans');
+        });
+    } else {
         const clandata = await googleSheets({
             spreadsheetId: spreadsheet.farmer.id,
-            range: spreadsheet.farmer.resourceName + key[1]
+            range: spreadsheet.farmer.resourceName + spreadsheet.farmer.ranges.resource[clan]
         })
         if (!clandata) return {}
 
         let localist = {};
-        await Promise.all(clandata.data.values.map(x => localist[x[0]] = { amt: x[1], short: x[2] ?? '0' }))
-        return { clan: key[0], resource: localist };
-    }))
-    .then(async (results) => {
-        await fs.writeFile(path.join(__dirname, '..', 'data', 'ClanData.json'), JSON.stringify(results.filter(res => res)))
-    })
-    .catch(error => {
-        logger.error(error, 'Error fetching sheet values for clans');
-    });
+         clandata.data.values.map(x => localist[x[0]] = { amt: x[1], short: x[2] ?? '0' })
+        return { clan: clan, resource: localist };
+    }
 }
 
 /**

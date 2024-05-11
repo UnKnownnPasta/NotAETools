@@ -6,6 +6,7 @@ const {
 } = require("discord.js");
 const fs = require('node:fs/promises');
 const path = require("node:path");
+const { getAllUserData } = require("../../scripts/dbcreate");
 
 module.exports = { 
     name: "thost",
@@ -30,15 +31,16 @@ module.exports = {
                 await i.update({ embeds: [relicEmbed] })
 
                 if (setOfUsers.length >= 4) {
-                    let userData = (await JSON.parse(await fs.readFile(path.join(__dirname, '..', '..', 'data/TreasuryData.json'))))
-                    if (!userData) return i.channel.send({ content: `<@740536348166848582> oi thost broke again, keys: ${Object.keys(userData)}` });
+                    let userData = await getAllUserData('treasury')
+                    if (!userData) return i.channel.send({ content: `<@740536348166848582> oi thost broke again` });
+                    
                     let usersInviteDesc = ""
                     setOfUsers.slice(0, 4).forEach(userj => {
                         var index = userData.findIndex(n => n.uid == userj)
                         if (index === -1) usersInviteDesc +=  `<@${userj}> - No IGN known\n`
                         else usersInviteDesc +=  `<@${userj}> - /inv ${userData[index].name}\n`
                     })
-                    
+
                     const filledEmbed = new EmbedBuilder()
                     .setTitle(`Run for [${relic}] filled`)
                     .setDescription(`Invite Others:\n` + usersInviteDesc)

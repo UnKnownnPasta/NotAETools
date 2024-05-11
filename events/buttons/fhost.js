@@ -6,6 +6,7 @@ const {
 } = require("discord.js");
 const fs = require('node:fs/promises');
 const path = require("node:path");
+const { getAllUserData } = require("../../scripts/dbcreate");
 
 module.exports = {
     name: "fhost",
@@ -65,8 +66,9 @@ module.exports = {
         }
 
         if (allIDs.filter(x => x != 'n').length >= 4) {
+            await i.message.edit({ content: 'Preparing squad...', components: [] });
+            let names = await getAllUserData('farmer')
             await i.message.delete();
-            let names = await JSON.parse(await fs.readFile(path.join(__dirname, '..', '..', 'data', 'FarmerData.json')))
 
             const IDList = allIDs.filter(x => x != 'n').slice(0, 4).map(ids => {
                 const jsofuser = names.find(user => user.uid == ids)

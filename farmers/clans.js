@@ -7,6 +7,7 @@ const {
 } = require("discord.js");
 const fs = require("node:fs/promises");
 const path = require("node:path");
+const { getAllClanData } = require("../scripts/dbcreate");
 
 const clanOptions = [
     { name: "Imouto Kingdom", value: "IK" },
@@ -48,19 +49,19 @@ module.exports = {
      * @param {CommandInteraction} i 
      */
     async execute(client, i) {
-        const resources = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'ClanData.json')))
+        await i.deferReply()
         const clan = i.options.getString('clan', true)
         
         let embedDesc = []
-        const clanResources = await resources.filter(clans => clans.clan == clan)[0].resource;
+        const clanResources = await getAllClanData(clan);
         
-        await Promise.all(Object.entries(clanResources).map(([ key, { amt, short } ]) => {
+        await Object.entries(clanResources.resource).map(([ key, { amt, short } ]) => {
             embedDesc.push(`${key.padEnd(17)} | Amt: ${amt} (+${short})`)
-        }));
+        });
 
         const clanEmbed = new EmbedBuilder()
-        .setTitle(`Resource overview of ${reverseClan[clan]} ~ Viewing ${embedDesc.length} resources`)
+        .setTitle(`Resource overview of ${reverseClan[clan]}`)
         .setDescription(codeBlock('ml', embedDesc.join("\n")));
-        await i.reply({ embeds: [clanEmbed] })
+        await i.editReply({ embeds: [clanEmbed] })
     },
 };

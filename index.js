@@ -33,7 +33,7 @@ setInterval(async () => {
 	client.updateLast = new Date().getTime() + 300000
 	await Promise.all([
 		getAllRelics(),
-		getAllClanData(),
+		getAllUserData(),
 	]).then((res) => {
 		client.intrv_count++
 		if (client.intrv_count%60 == 0) logger.info(`[INTRVL] ${client.intrv_count} intervals done.`)
@@ -76,8 +76,6 @@ eventFiles.forEach(file => {
 		client.boxData = await getAllBoxData(client)
 
 		await Promise.all([
-			getAllUserData(),
-			getAllClanData(),
 			getAllRelics(),
 			refreshFissures(client),
 			require('./scripts/deploy.js'),
