@@ -157,7 +157,7 @@ module.exports = {
                 .setStyle(ButtonStyle.Secondary);
                 const soupButtonPart = new ActionRowBuilder().addComponents(searchSoupPart)
 
-                if (sortedRelics.length < 20) {
+                if (sortedRelics.length < 17) {
                     const embedsParts = new EmbedBuilder()
                     .setTitle(`[ ${realName} ]`)
                     .setDescription(codeBlock('ml', sortedRelics.join('\n')))
@@ -175,8 +175,8 @@ module.exports = {
                     })
 
                     const partEmbedArr = []
-                    for (let i = 0; i < sortedRelics.length; i += 20) {
-                        partEmbedArr.push(new EmbedBuilder(baseEmbed).setDescription(codeBlock('ml', sortedRelics.slice(i, i+20).join("\n"))))
+                    for (let i = 0; i < sortedRelics.length; i += 17) {
+                        partEmbedArr.push(new EmbedBuilder(baseEmbed).setDescription(codeBlock('ml', sortedRelics.slice(i, i+17).join("\n"))))
                     }
 
                     const partPagination = new Pagination(message, {
