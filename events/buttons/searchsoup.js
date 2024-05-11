@@ -40,7 +40,7 @@ module.exports = {
                 }
         
                 const pFoundAllEmbed = new EmbedBuilder()
-                .setTitle(`Found ${pCounts} relics`)
+                .setAuthor({ name: `Found ${pCounts} relics`, iconURL: i.member.displayAvatarURL() })
                 .setColor(`#C2B280`);
         
                 if (pHits.length) {
