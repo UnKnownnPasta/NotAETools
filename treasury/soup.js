@@ -26,7 +26,6 @@ module.exports = {
             .setChoices(
                 { name: 'ED', value: 'ed' },
                 { name: 'RED', value: 'red' },
-                { name: 'ORANGE', value: 'orange' },
                 { name: 'BOX', value: 'box' },
             )
             .setRequired(false))
