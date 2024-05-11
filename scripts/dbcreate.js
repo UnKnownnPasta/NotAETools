@@ -140,6 +140,7 @@ async function getAllBoxData(client) {
     
     await Promise.all(arrOfEntries.map(async ([chnl, cid]) => {
         await boxChannel.fetch(cid).then(/*** @param {ThreadChannel} thread */ async (thread) => {
+            if (!thread.messageCount) return;
             const messages = await thread.messages.fetch({ limit: thread.messageCount, cache: false })
             messages.map((msg) => {
                 let parts = msg.content
