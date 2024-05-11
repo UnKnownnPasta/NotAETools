@@ -3,6 +3,7 @@ const fs = require("node:fs/promises");
 const { Pagination, ExtraRowPosition } = require("pagination.djs");
 const { filterRelic, titleCase } = require("../scripts/utility.js");
 const path = require("node:path");
+const { getAllBoxData } = require("../scripts/dbcreate.js");
 
 const range = (num) => {
     return num >= 0 && num <= 7 ? 'ED'
@@ -51,19 +52,16 @@ module.exports = {
      * @param {Message} message 
      */
     async execute(client, message, msg_unfiltered, command_type) {
-        const [fetchRelicData, fetchCollectionBox] = await Promise.all([
-            fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json')),
-            fs.readFile(path.join(__dirname, '..', 'data', 'BoxData.json'))
-        ]);
         const partRarities = ["C", "C", "C", "UC", "UC", "RA"];
 
-        const [relic_data, collection_box] = await Promise.all([
-            JSON.parse(fetchRelicData), JSON.parse(fetchCollectionBox)
+        const [rdata, collection_box] = await Promise.all([
+            fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json')),
+            getAllBoxData(client)
         ])
+        const relic_data = await JSON.parse(rdata);
 
         const word = titleCase(msg_unfiltered.replace(/\s*(-)(b|box)?\s*.*?$/, ""));
         let hasdashb = msg_unfiltered.match(/-(?:b|box)/, "") !== null
-        // let hasdashr = msg_unfiltered.match(/-(?:r)/, "") !== null
         const wordToUpper = word.toUpperCase()
 
         switch (command_type) {
@@ -118,7 +116,7 @@ module.exports = {
                         text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${stockRanges[word.toUpperCase()]} stock  •  Page ${index + 1}/${array.length}  `,
                     });
                 });
-                statusPagination.render();
+                statusPagination.render(message);
                 break;
         
             case "part":

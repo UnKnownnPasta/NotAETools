@@ -7,6 +7,7 @@ const {
 } = require("discord.js");
 const fs = require('node:fs/promises');
 const path = require("node:path");
+const { getAllBoxData } = require("../scripts/dbcreate");
 
 module.exports = {
     name: 'soup',
@@ -41,6 +42,7 @@ module.exports = {
      * @param {CommandInteraction} i 
      */
     async execute(client, i) {
+        await i.deferReply()
         const relics = i.options.getString('relics', true).split(' '),
             filtertype = i.options.getString('filtertype', false) ?? false;
         const isSpecialMode = i.options.getBoolean('new', false) ?? false;
@@ -53,7 +55,7 @@ module.exports = {
         
         const [relicsList, boxlist] = await Promise.all([
             JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json'), 'utf-8')),
-            JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'BoxData.json'), 'utf-8'))
+            await getAllBoxData(client)
         ])
         
         const range = (num) => {
@@ -69,24 +71,21 @@ module.exports = {
         const priorityOfStatus = {"ED": 0, "RED": 1, "ORANGE": 2, "YELLOW": 3, "GREEN": 4, "#N/A": 5}
 
         async function getRelic(name, type=null) {
-            for (const relic of relicsList.relicData) {
-                if (relic.name == name) {
-                    const stuffToSpecial = []
-                    let StatusArr = relic.rewards.map(part => {
-                        let returnrange = range(parseInt(part.stock));
-                        if (filtertype == "box") {
-                            returnrange = range((boxlist[part.item] ?? 0) + (parseInt(part.stock)))
-                        }
-                        if (isSpecialMode) {
-                            stuffToSpecial.push([part.item, priorityOfStatus[returnrange], ansiValues[returnrange]])
-                        }
-                        return [returnrange, priorityOfStatus[returnrange]];
-                    });
-                    if (type && type !== "box" && !(Math.min(...StatusArr.map(x => x[1])) <= priorityOfStatus[type.toUpperCase()])) return null;
-                    return [relic.tokens, StatusArr.map(x => x[0]), ...stuffToSpecial];
+            const relic = relicsList.relicData.find(r => r.name === name)
+            if (!relic) return null;
+            const stuffToSpecial = []
+            let StatusArr = relic.rewards.map(part => {
+                let returnrange = range(parseInt(part.stock));
+                if (filtertype == "box") {
+                    returnrange = range((boxlist[part.item] ?? 0) + (parseInt(part.stock)))
                 }
-            }
-            return null
+                if (isSpecialMode) {
+                    stuffToSpecial.push([part.item, priorityOfStatus[returnrange], ansiValues[returnrange]])
+                }
+                return [returnrange, priorityOfStatus[returnrange]];
+            });
+            if (type && type !== "box" && !(Math.min(...StatusArr.map(x => x[1])) <= priorityOfStatus[type.toUpperCase()])) return null;
+            return [relic.tokens, StatusArr.map(x => x[0]), ...stuffToSpecial];
         }
         let soupedAccepted = []
 
@@ -187,13 +186,13 @@ module.exports = {
             return i.reply({ content: `Souped relics is too big to render.`, ephemeral: true })
         
         if (duplicateStrings.length !== 0) {
-            i.reply({ content: `Duplicates removed: ${duplicateStrings.join(' ')}`, embeds: [ 
+            i.editReply({ content: `Duplicates removed: ${duplicateStrings.join(' ')}`, embeds: [ 
                 new EmbedBuilder()
                 .setTitle('Souped relics')
                 .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + codeText)
              ] })
         } else {
-            i.reply({ embeds: [ 
+            i.editReply({ embeds: [ 
                 new EmbedBuilder()
                 .setTitle('Souped relics')
                 .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + codeText)

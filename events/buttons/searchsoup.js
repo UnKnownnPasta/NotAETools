@@ -7,6 +7,7 @@ const {
 const fs = require('node:fs/promises');
 const path = require("node:path");
 const { titleCase } = require("../../scripts/utility");
+const { retrieveSoupStoreRelics } = require("../../scripts/dbcreate");
 
 module.exports = { 
     name: "searchsoup",
@@ -16,9 +17,11 @@ module.exports = {
      * @param {ButtonInteraction} i 
      */
     async execute(client, i) {
+        await i.deferReply()
         const parttoFind = i.customId.split('-')[2]
         const findType = i.customId.split('-')[1]
-        const soupStore = await JSON.parse(await fs.readFile(path.join(__dirname, '..', '..', 'data/SoupData.json')))
+        // const soupStore = await JSON.parse(await fs.readFile(path.join(__dirname, '..', '..', 'data/SoupData.json')))
+        const soupStore = await retrieveSoupStoreRelics(client)
 
         switch (findType) {
             case 'part':
@@ -49,7 +52,7 @@ module.exports = {
                     })
                 }
         
-                await i.reply({ embeds: [pFoundAllEmbed] })
+                await i.editReply({ embeds: [pFoundAllEmbed] })
                 break;
         
             case 'set':
@@ -80,7 +83,7 @@ module.exports = {
                     })
                 }
         
-                await i.reply({ embeds: [sFoundAllEmbed] });
+                await i.editReply({ embeds: [sFoundAllEmbed] });
                 break;
 
             default:

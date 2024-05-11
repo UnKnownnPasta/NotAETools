@@ -23,11 +23,7 @@ const client = new Client({
 
 client.intrv_count = 0
 setInterval(async () => {
-	await Promise.all([
-		refreshFissures(client),
-		getAllBoxData(client),
-		retrieveSoupStoreRelics(client)
-	]).then((res) => {
+	await refreshFissures(client).then(() => {
 		client.intrv_count++
 		client.fissureLast = new Date().getTime() + 180000
 	})
@@ -38,7 +34,6 @@ setInterval(async () => {
 	await Promise.all([
 		getAllRelics(),
 		getAllClanData(),
-		getAllUserData(),
 	]).then((res) => {
 		client.intrv_count++
 		if (client.intrv_count%60 == 0) logger.info(`[INTRVL] ${client.intrv_count} intervals done.`)
@@ -71,18 +66,19 @@ eventFiles.forEach(file => {
 
 	client.fissureLast = new Date().getTime() + 180000
 	client.updateLast = new Date().getTime() + 300000
+	client.lastboxupdate = new Date().getTime() - 100000
 
 	client.on('ready', async () => {
 		logger.info(`[${client.user.username}] Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.`);
 		client.user.setPresence({ activities: [{ name: 'Ya mom 👒', type: ActivityType.Watching }], status: 'dnd' });
 
 		await client.guilds.fetch({ force: true });
+		client.boxData = await getAllBoxData(client)
+
 		await Promise.all([
 			getAllUserData(),
 			getAllClanData(),
 			getAllRelics(),
-			retrieveSoupStoreRelics(client),
-			getAllBoxData(client),
 			refreshFissures(client),
 			require('./scripts/deploy.js'),
 		])

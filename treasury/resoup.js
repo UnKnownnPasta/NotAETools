@@ -7,6 +7,7 @@ const {
 } = require("discord.js");
 const fs = require('node:fs/promises');
 const path = require("node:path");
+const { getAllBoxData } = require("../scripts/dbcreate");
 
 module.exports = {
     name: 'resoup',
@@ -35,6 +36,7 @@ module.exports = {
      * @param {CommandInteraction} i 
      */
     async execute(client, i) {
+        await i.deferReply()
         let soupedText = i.options.getString('relics', true),
         filtertype = i.options.getString('filtertype', false) ?? false;
 
@@ -79,7 +81,7 @@ module.exports = {
 
         const [relicsList, boxlist] = await Promise.all([
             JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json'), 'utf-8')),
-            JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'BoxData.json'), 'utf-8'))
+            await getAllBoxData(client)
         ])
         
         const range = (num) => {
@@ -213,13 +215,13 @@ module.exports = {
             return i.reply({ content: `Souped relics is too big to render.`, ephemeral: true })
 
         if (duplicateStrings.length !== 0) {
-            i.reply({ content: `Duplicates removed: ${duplicateStrings.join(' ')}`, embeds: [ 
+            i.editReply({ content: `Duplicates removed: ${duplicateStrings.join(' ')}`, embeds: [ 
                 new EmbedBuilder()
                 .setTitle('Resouped relics')
                 .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + codeText)
              ] })
         } else {
-            i.reply({ embeds: [ 
+            i.editReply({ embeds: [ 
                 new EmbedBuilder()
                 .setTitle('Resouped relics')
                 .setDescription((isSpecialMode ? codeBlock('ansi', soupedString) : codeBlock('ml', soupedString)) + codeText)

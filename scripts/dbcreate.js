@@ -117,6 +117,11 @@ async function getAllClanData() {
  */
 async function getAllBoxData(client) {
     let boxID, channelArr;
+    const start = new Date().getTime() 
+
+    if (new Date().getTime() - client.lastboxupdate < 60000) {
+        return client.boxData;
+    }
 
     if (process.env.NODE_ENV === 'development') {
         boxID = collectionBox.testid
@@ -131,96 +136,93 @@ async function getAllBoxData(client) {
     const boxStock = {}
 
     const matchAny = (a, b) => (a??"").startsWith(b??"") || (b??"").startsWith(a??"")
+    const arrOfEntries = Object.entries(channelArr)
     
-    await Promise.all(Object.entries(channelArr).map(async ([chnl, cid]) => {
-
+    await Promise.all(arrOfEntries.map(async ([chnl, cid]) => {
         await boxChannel.fetch(cid).then(/*** @param {ThreadChannel} thread */ async (thread) => {
-
             const messages = await thread.messages.fetch({ limit: thread.messageCount, cache: false })
+            messages.map((msg) => {
+                let parts = msg.content
+                    .toLowerCase()
+                    .replace(/\s+/g, ' ')
+                    .replace(/\s*prime\s*/g, ' ')
+                    .replace(/\(.*?\)/g, "")
+                    .replace(/<@!?[^>]+>/g, "")
+                    .replace(/x(\d+)/g, '$1x')
+                    .replace(/ and /g, " & ")
+                    .trim()
+                    .replace(/\b(\d+)\s*x?\s*\b/g, '$1x ')
+                    .replace(/\b(\d+)\s*x?\b\s*(.*?)\s*/g, '$1x $2, ')
+                    .split(/(?:(?:, )|(?:\n)|(?:\s(?=\b\d+x?\b)))/);
 
-                await Promise.all(messages.map(async (msg) => {
-                    let parts = msg.content
-                        .toLowerCase()
-                        .replace(/\s+/g, ' ')
-                        .replace(/\s*prime\s*/g, ' ')
-                        .replace(/\(.*?\)/g, "")
-                        .replace(/<@!?[^>]+>/g, "")
-                        .replace(/x(\d+)/g, '$1x')
-                        .replace(/ and /g, " & ")
-                        .trim()
-                        .replace(/\b(\d+)\s*x?\s*\b/g, '$1x ')
-                        .replace(/\b(\d+)\s*x?\b\s*(.*?)\s*/g, '$1x $2, ')
-                        .split(/(?:(?:, )|(?:\n)|(?:\s(?=\b\d+x?\b)))/);
+                let newParts = [];
+                for (let i = 0; i < parts.length; i++) {
+                    if (/\d+x/.test(parts[i]) && i < parts.length - 1) {
+                        newParts.push(parts[i] + parts[i + 1]);
+                        i++;
+                    } else if (i < parts.length - 1 && parts[i + 1].endsWith('x ')) {
+                        newParts.push(parts[i + 1] + parts[i]);
+                        i++;
+                    } else {
+                        newParts.push(parts[i]);
+                    }
+                }
 
-                    let newParts = [];
-                    for (let i = 0; i < parts.length; i++) {
-                        if (/\d+x/.test(parts[i]) && i < parts.length - 1) {
-                            newParts.push(parts[i] + parts[i + 1]);
-                            i++;
-                        } else if (i < parts.length - 1 && parts[i + 1].endsWith('x ')) {
-                            newParts.push(parts[i + 1] + parts[i]);
-                            i++;
-                        } else {
-                            newParts.push(parts[i]);
+                parts = newParts.filter(x => /\dx/.test(x));
+                if (!parts.length) return;
+
+                const splitByStock = parts
+                    .filter(x => x)
+                    .map(part => part
+                        .split(/(\b\d+\s*x\b|\bx\s*\d+\b)\s*(.*)/)
+                        .map(bystock => {
+                    let y = bystock
+                    if (/\d/.test(bystock)) {
+                        let x_replaced = bystock.replace(/(\d+)x/, '$1')
+                        y = parseInt(x_replaced)
+                        if (isNaN(y)) y = x_replaced;
+                    }
+                    return y;
+                    }))
+                    .map(x => x.filter(y => y))
+
+                for (let part of splitByStock) {
+                    part = part.filter(x => x)
+                    let nmIndex = part.indexOf(part.find(element => typeof element === 'number'));
+
+                    if (nmIndex == -1 || part.length < 2 || !part.some(x => typeof x == 'string')) { continue; }
+
+                    let updatedAny = false;
+                    const boxObj = Object.entries(boxStock);
+                    let curPartName = part[~nmIndex & 1].trim().replace(" x2", "")
+
+                    for (const [key, val] of boxObj) {
+                        let words = key.split(" ")
+                        let x = words, y = words.at(-1);
+                        let partText = curPartName.split(' ').filter(x => x)
+
+                        if (partText.slice(0, -1).some(n => matchAny(n, words[0]))) {
+                            if (partText[0] == 'magnus' && ['bp', 'receiver', 'reciever', 'barrel'].some(nx => nx.startsWith(partText.at(-1)))) {
+                                updatedAny = true
+                                boxStock[curPartName] = (boxStock[curPartName] ?? 0) + part[nmIndex]
+                                continue;
+                            }
+                            else if (partText[0] == 'mag' && ['bp', 'neuroptics', 'blueprint', 'systems', 'chassis'].some(nx => nx.startsWith(partText.at(-1)))) {
+                                updatedAny = true
+                                boxStock[curPartName] = (boxStock[curPartName] ?? 0) + part[nmIndex]
+                                continue;
+                            }
+                            else if (partText.length <= 2 ? matchAny(y, partText.at(-1) ?? "00") : (matchAny(x.at(-1) ?? "00", partText.at(-1)) && matchAny(x.at(-2) ?? "00", partText.at(-2)) && matchAny(x.at(-3) ?? "00", partText.at(-3) ?? "00") && matchAny(x.at(-4) ?? "00", partText.at(-4) ?? "00"))) {
+                                updatedAny = true
+                                boxStock[key] += part[nmIndex]
+                                continue;
+                            }
                         }
                     }
 
-                    parts = newParts.filter(x => /\dx/.test(x));
-                    if (!parts.length) return;
-
-                    const splitByStock = parts
-                        .filter(x => x)
-                        .map(part => part
-                            .split(/(\b\d+\s*x\b|\bx\s*\d+\b)\s*(.*)/)
-                            .map(bystock => {
-                        let y = bystock
-                        if (/\d/.test(bystock)) {
-                            let x_replaced = bystock.replace(/(\d+)x/, '$1')
-                            y = parseInt(x_replaced)
-                            if (isNaN(y)) y = x_replaced;
-                        }
-                        return y;
-                        }))
-                        .map(x => x.filter(y => y))
-
-                    await Promise.all(splitByStock.map((part) => {
-                        part = part.filter(x => x)
-                        let nmIndex = part.indexOf(part.find(element => typeof element === 'number'));
-
-                        if (nmIndex == -1 || part.length < 2 || !part.some(x => typeof x == 'string')) { return; }
-
-                        let updatedAny = false;
-                        const boxObj = Object.entries(boxStock);
-                        let curPartName = part[~nmIndex & 1].trim().replace(" x2", "")
-
-                        for (const [key, val] of boxObj) {
-                            let words = key.split(" ")
-                            let x = words, y = words.at(-1);
-                            let partText = curPartName.split(' ').filter(x => x)
-
-                            if (partText.slice(0, -1).some(n => matchAny(n, words[0]))) {
-                                if (partText[0] == 'magnus' && ['bp', 'receiver', 'reciever', 'barrel'].some(nx => nx.startsWith(partText.at(-1)))) {
-                                    updatedAny = true
-                                    boxStock[curPartName] = (boxStock[curPartName] ?? 0) + part[nmIndex]
-                                    return;
-                                }
-                                else if (partText[0] == 'mag' && ['bp', 'neuroptics', 'blueprint', 'systems', 'chassis'].some(nx => nx.startsWith(partText.at(-1)))) {
-                                    updatedAny = true
-                                    boxStock[curPartName] = (boxStock[curPartName] ?? 0) + part[nmIndex]
-                                    return;
-                                }
-                                else if (partText.length <= 2 ? matchAny(y, partText.at(-1) ?? "00") : (matchAny(x.at(-1) ?? "00", partText.at(-1)) && matchAny(x.at(-2) ?? "00", partText.at(-2)) && matchAny(x.at(-3) ?? "00", partText.at(-3) ?? "00") && matchAny(x.at(-4) ?? "00", partText.at(-4) ?? "00"))) {
-                                    updatedAny = true
-                                    boxStock[key] += part[nmIndex]
-                                    return;
-                                }
-                            }
-                        }
-
-                        if (!updatedAny) { boxStock[curPartName] = part[nmIndex] }
-                    }))
-                }))
-            //}) // async msg
+                    if (!updatedAny) { boxStock[curPartName] = part[nmIndex] }
+                }
+            })
         })
     }))
 
@@ -257,7 +259,11 @@ async function getAllBoxData(client) {
         }
     }))
 
-    await fs.writeFile(path.join(__dirname, '..', 'data', 'BoxData.json'), JSON.stringify(fixedBoxStock))
+    console.log(`done in ${new Date().getTime() - start}`);
+    client.lastboxupdate = new Date().getTime();
+    client.boxData = fixedBoxStock;
+    return fixedBoxStock;
+    // await fs.writeFile(path.join(__dirname, '..', 'data', 'BoxData.json'), JSON.stringify(fixedBoxStock))
 }
 
 const INTACTRELIC = process.env.NODE_ENV === "development" ? "1236313453355073556" : "1193415346229620758"
@@ -315,7 +321,8 @@ async function retrieveSoupStoreRelics(client) {
         })
     )
 
-    await fs.writeFile(path.join(__dirname, '..', 'data/SoupData.json'), JSON.stringify(relicsMegaJSON))
+    return relicsMegaJSON;
+    // await fs.writeFile(path.join(__dirname, '..', 'data/SoupData.json'), JSON.stringify(relicsMegaJSON))
 }
 
 module.exports = { getAllClanData, getAllUserData, getAllRelics, getAllBoxData, retrieveSoupStoreRelics }
