@@ -54,7 +54,7 @@ module.exports = {
             let regex;
             if (isSpecialMode) {
                 str = str.replace(//g, '')
-                regex = /\d+x\s+\[0m\| \[(2;)?34m(Lith|Meso|Neo|Axi) [A-Z]\d+/g;
+                regex = /\d+x\s*\[0m\| \[(2;)?34m(Lith|Meso|Neo|Axi) [A-Z]\d+/g;
             } else {
                 regex = /\b\d+x\s+\|\s+(Lith|Meso|Neo|Axi)\s[A-Z]\d+\b/g;
             }
@@ -68,7 +68,7 @@ module.exports = {
         const relics = [];
         for (const match of filteredToSoups) {
             if (isSpecialMode) {
-                const pmatch = match[0].replace(/\s+\[0m\| /g, ' ').replace(/\[(2;)?34m/, '')
+                const pmatch = match[0].replace(/\s*\[0m\| /g, ' ').replace(/\[(2;)?34m/, '')
                 const pSplitted = pmatch.replace('|', '').split(/\s+/g)
                 relics.push(`${pSplitted[0].slice(0, -1)}${toShort(pSplitted.slice(1))}`)
             } else {
