@@ -182,7 +182,7 @@ module.exports = {
         .join('\n\n')
         let codeText =  `\n*CODE: ${soupedAccepted.join(' ')}*`
         if (soupedString.length > 4096 - codeText.length)
-            return i.reply({ content: `Souped relics is too big to render.`, ephemeral: true })
+            return i.editReply({ content: `Souped relics is too big to render.`, ephemeral: true })
         
         if (duplicateStrings.length !== 0) {
             i.editReply({ content: `Duplicates removed: ${duplicateStrings.join(' ')}`, embeds: [ 
