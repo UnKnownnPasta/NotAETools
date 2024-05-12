@@ -67,7 +67,7 @@ module.exports = {
         const resrc = i.options.getString('resource', true)
 
         if (!resourceNames.includes(resrc)) 
-            return i.reply({ content: `Invalid resource, choose from autofill instead`, ephemeral: true });
+            return i.editReply({ content: `Invalid resource, choose from autofill instead`, ephemeral: true });
 
         const resources = await getAllClanData();
         const clanEmbed = new EmbedBuilder()
