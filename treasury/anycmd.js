@@ -138,8 +138,8 @@ module.exports = {
                         realColor = relicIndexOfReward.color
                     }
                     if (hasdashb) {
-                        extraCount = `(+${collection_box[realName] ?? 0})`;
-                        realColor = range((collection_box[realName] ?? 0) + parseInt(relicIndexOfReward.stock))
+                        extraCount = `(+${collection_box[realName.replace(" x2", "")] ?? 0})`;
+                        realColor = range((collection_box[realName.replace(" x2", "")] ?? 0) + parseInt(relicIndexOfReward.stock))
                     }
                     partRelics.push({ r: relic.name, t: relic.tokens, c: partRarities[partIndex] })
                 }

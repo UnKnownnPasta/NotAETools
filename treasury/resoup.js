@@ -40,7 +40,7 @@ module.exports = {
         filtertype = i.options.getString('filtertype', false) ?? false;
 
         if (soupedText.match(/\b\d+(l|m|n|a)\w+\d+\b/g)) {
-            return i.reply({ content: `Making soup using shorthand like **6lg1** is done using the \`/soup\` command, not \`/resoup\``,
+            return i.editReply({ content: `Making soup using shorthand like **6lg1** is done using the \`/soup\` command, not \`/resoup\``,
                 ephemeral: true
              })
         }

@@ -47,7 +47,7 @@ module.exports = {
         const isSpecialMode = i.options.getBoolean('new', false) ?? false;
 
         if (relics.join(' ').match(/\d+x\s*\|\s*[^\|]+?\s*\|\s*\d+\s*ED\s*\|\s*\d+\s*RED\s*\|\s*\d+\s*ORANGE/g) || relics.join(' ').includes('')) {
-            return i.reply({ content: `Resouping of soup like\n\`\`\`ml\n{12} | 12x | Lith K2  | 1 ED | 0 RED | 2 ORANGE\`\`\`is done using \`/resoup\` not \`/soup\`.`,
+            return i.editReply({ content: `Resouping of soup like\n\`\`\`ml\n{12} | 12x | Lith K2  | 1 ED | 0 RED | 2 ORANGE\`\`\`is done using \`/resoup\` not \`/soup\`.`,
                 ephemeral: true
             })
         }
