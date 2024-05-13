@@ -19,7 +19,7 @@ class IntervalManager {
             await SheetHandler.startAsync();
         }, 300_000);
         
-        this.intervals.push(fissureInterval, sheetInterval, boxInterval);
+        this.intervals.push(fissureInterval, sheetInterval);
     }
 
     stopIntervals() {

@@ -15,14 +15,11 @@ module.exports = {
     async execute (client, message, msg_unfiltered, command_type) {
         const models = database.models
 
-        const [item_data, relicData, boxFetch] = await Promise.all([
+        const [item_data, relicData, collection_box] = await Promise.all([
             models.Parts.findAll(),
             models.Relics.findAll(),
-            models.Box.findAll()
+            require('../../managers/boxFetch.js')(client)
         ])
-
-        const collection_box = {}
-        boxFetch.map(p => collection_box[p.dataValues.name] = p.dataValues.stock)
 
         const word = titleCase(msg_unfiltered.replace(/\s*(-)(b|box)?\s*.*?$/, ''))
         const hasdashb = msg_unfiltered.match(/[-](b|box)/, '') !== null
@@ -89,7 +86,7 @@ module.exports = {
             const part = findPart[0]
             const relics = relicData.filter(relic => {
                 return relic.dataValues.rewards.some(rw => {
-                    return rw.part === part.name
+                    return rw.part === part.name.replace(" x2", "")
                 })
             })
             let relicToString = await Promise.all(relics.map(async (relic) => {
@@ -97,15 +94,16 @@ module.exports = {
                     replacements: { relic_name: relic.dataValues.relic },
                     type: QueryTypes.SELECT
                 })
-                const position = rarities[relic.dataValues.rewards.findIndex(r => r.part === part.name)]
+                const position = rarities[relic.dataValues.rewards.findIndex(r => r.part === part.name.replace(" x2", ""))]
                 return `${position} │ ${`{${tokens[0].tokens}}`.padEnd(5)}│ ${relic.dataValues.relic} {${relic.dataValues.vaulted ? "V" : "UV"}}`
             }));
-            relicToString = relicToString.sort((a, b) => parseInt(b.match(/\d+/)) - parseInt(a.match(/\d+/)))
+            relicToString = relicToString.sort((a, b) => parseInt(b.match(/\d+/)[0]) - parseInt(a.match(/\d+/)))
             
+            const extraPartStock = collection_box[part.name.replace(" x2", "")] ?? 0
             const basePartEmbed = new EmbedBuilder()
                 .setTitle(`[ ${part.name} ]`)
-                .setColor(hex[range(parseInt(part.stock))])
-                .setFooter({ text: `${part.color} Part  •  ${part.stock} stock  •  Stock from Tracker` });
+                .setColor(hex[range(parseInt(part.stock) + (hasdashb ? extraPartStock : 0))])
+                .setFooter({ text: `${hasdashb ? "Updated from box" : "Stock from tracker"}  •  ${part.stock}${hasdashb ? (`(+${extraPartStock})`) : ""}x of part in stock  •  ${relicToString.length} results` });
 
             if (relicToString.length <= 15) {
                 message.reply({ embeds: [
@@ -149,14 +147,17 @@ module.exports = {
             })
             if (!allParts.length) return;
             const allPartStrings = allParts.map(part => {
-                return `${part.stock.padEnd(3)}│ ${part.name.replace("Blueprint", "BP")} {${part.color}}`
+                return `${`${hasdashb ? `${part.stock}(+${collection_box[part.name.replace(" x2", "")] ?? 0})`.padEnd(7) : part.stock.padEnd(3)}`}│ ${part.name.replace("Blueprint", "BP")} {${part.color}}`
             })
-            const hexColor = uncodeObj[[Math.min(...allParts.map(y => codeObj[y.color]))]]
+
+            const setStock = Math.min(...allParts.map(y => parseInt(y.stock) + (hasdashb ? collection_box[y.name.replace(" x2", "")] ?? 0 : 0)))
 
             const primeEmbed = new EmbedBuilder()
                 .setTitle(`[ ${setName} Prime ]`)
                 .setDescription(codeBlock('ml', allPartStrings.join("\n")))
-                .setColor(hex[hexColor])
+                .setColor(hex[range(setStock)])
+                .setFooter({ text: `${hasdashb ? "Updated from box" : "Stock from tracker"}  •  ${setStock}x of set in stock  •  ${range(setStock)} Set` })
+                .setTimestamp()
             message.reply({ embeds: [primeEmbed] })
             break
 
@@ -171,10 +172,15 @@ module.exports = {
 
             const theRelic = await JSON.parse(relicFound[0].rewards)
             const rewardsString = await Promise.all(theRelic.map(async (rw, i) => {
-                const partStuff = await database.models.Parts.findOne({ where: { name: rw.part } })
-                if (rw.part === "Forma") return `${rarities[i]} │    │ Forma BP`
-                partStockArray.push(partStuff?.stock ?? 1000)
-                return `${rarities[i]} │ ${partStuff?.stock?.padEnd(3) ?? `-1 `}│ ${rw?.part?.replace("Blueprint", "BP")} {${partStuff?.color ?? "???"}}`
+                const partStuff = (await database.sequelize.query(`SELECT * FROM primeParts WHERE name LIKE :part_name1 OR name LIKE :part_name2`, {
+                    replacements: { part_name1: `${rw.part} x2`, part_name2: `${rw.part}` },
+                    type: QueryTypes.SELECT
+                }))[0]
+                if (rw.part === "Forma") return `${rarities[i]} │ ${hasdashb ? "      " : "  "} │ Forma BP`
+                const boxStock = collection_box[partStuff?.name] ?? 0
+                partStockArray.push(hasdashb ? parseInt(partStuff?.stock) + (boxStock) : partStuff?.stock ?? 1000)
+                const stockString = hasdashb ? `${partStuff?.stock}(+${boxStock})`.padEnd(7) : partStuff?.stock?.padEnd(3)
+                return `${rarities[i]} │ ${stockString}│ ${rw?.part?.replace("Blueprint", "BP")} {${range(parseInt(partStuff?.stock) + boxStock) ?? "???"}}`
             }))
 
             const tokensAmt = await database.models.Tokens.findOne({ where: { relic: relicFound[0].relic } })
@@ -184,7 +190,8 @@ module.exports = {
                 .setTitle(`[ ${relicFound[0].relic} ] ${relicFound[0].vaulted ? "{V}" : "{UV}"} {${tokensAmt?.tokens ?? -1}}`)
                 .setDescription(codeBlock('ml', rewardsString.join("\n")))
                 .setColor(hex[range(Math.min(...partStockArray))])
-                .setFooter({ text: `${range(Math.min(...partStockArray))} Relic  •  Stock from Tracker` })
+                .setFooter({ text: `${relicFound[0].relic.split(" ")[0]} Void relic  •  ${range(Math.min(...partStockArray))} Relic  •  ${hasdashb ? "Updated from box" : "Stock from tracker"}` })
+                .setTimestamp()
             ] })
             break
 

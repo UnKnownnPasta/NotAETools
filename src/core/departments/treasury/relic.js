@@ -33,34 +33,38 @@ module.exports = {
         const boxupdated = i.options.getBoolean('boxupdated', false) ?? false
         await i.deferReply();
 
+        const collection_box = require('../../managers/boxFetch.js')(client)
+
         const relicFound = await database.sequelize.query(`SELECT * FROM relicData WHERE relic = :relic_name`, {
             replacements: { relic_name: relic },
             type: QueryTypes.SELECT
         })
-
-        const boxData = await require('../../managers/boxFetch.js')(client)
-        const collection_box = {}
-        boxData.map(p => collection_box[p.dataValues.name] = p.dataValues.stock)
 
         if (!relicFound.length) return;
         const partStockArray = []
 
         const theRelic = await JSON.parse(relicFound[0].rewards)
         const rewardsString = await Promise.all(theRelic.map(async (rw, i) => {
-            const partStuff = await database.models.Parts.findOne({ where: { name: rw.part } })
-            if (rw.part === "Forma") return `${rarities[i]} │    │ Forma BP`
-            partStockArray.push(partStuff?.stock ?? 1000)
-            return `${rarities[i]} │ ${`${boxupdated ? parseInt(partStuff?.dataValues?.stock ?? -1) + parseInt(collection_box[rw.part] ?? 0) : partStuff?.dataValues?.stock ?? NaN}`.padEnd(3)}│ ${rw?.part?.replace("Blueprint", "BP")}${dualitemslist.includes(rw?.part) ? ' x2' : ''} {${partStuff?.color ?? "???"}}`
+            const partStuff = (await database.sequelize.query(`SELECT * FROM primeParts WHERE name LIKE :part_name1 OR name LIKE :part_name2`, {
+                replacements: { part_name1: `${rw.part} x2`, part_name2: `${rw.part}` },
+                type: QueryTypes.SELECT
+            }))[0]
+            if (rw.part === "Forma") return `${rarities[i]} │ ${boxupdated ? "      " : "  "} │ Forma BP`
+            const boxStock = collection_box[partStuff?.name] ?? 0
+            partStockArray.push(boxupdated ? parseInt(partStuff?.stock) + (boxStock) : partStuff?.stock ?? 1000)
+            const stockString = boxupdated ? `${partStuff?.stock}(+${boxStock})`.padEnd(7) : partStuff?.stock?.padEnd(3)
+            return `${rarities[i]} │ ${stockString}│ ${rw?.part?.replace("Blueprint", "BP")} {${range(parseInt(partStuff?.stock) + boxStock) ?? "???"}}`
         }))
 
         const tokensAmt = await database.models.Tokens.findOne({ where: { relic: relicFound[0].relic } })
 
-        await i.editReply({ embeds: [
+        message.reply({ embeds: [
             new EmbedBuilder()
             .setTitle(`[ ${relicFound[0].relic} ] ${relicFound[0].vaulted ? "{V}" : "{UV}"} {${tokensAmt?.tokens ?? -1}}`)
             .setDescription(codeBlock('ml', rewardsString.join("\n")))
             .setColor(hex[range(Math.min(...partStockArray))])
-            .setFooter({ text: `${range(Math.min(...partStockArray))} Relic  •  Stock from ${boxupdated ? 'Box + Tracker' : 'Tracker'}` })
+            .setFooter({ text: `${relicFound[0].relic.split(" ")[0]} Void relic  •  ${range(Math.min(...partStockArray))} Relic  •  ${boxupdated ? "Updated from box" : "Stock from tracker"}` })
+            .setTimestamp()
         ] })
     },
     async autocomplete(i) {

@@ -1,6 +1,10 @@
 {"level":"info","message":"Starting...","service":"user-service"}
 {"level":"info","message":"SQL Connection has been established successfully.","service":"user-service"}
-{"level":"info","message":"Started refreshing 10 application (/) commands.","service":"user-service"}
-{"level":"info","message":"Successfully reloaded 10 application (/) commands.","service":"user-service"}
 {"level":"warn","message":"No fissure channel found, Is the channel ID wrong?","service":"user-service"}
-{"level":"info","message":"logged in as Project Horizon (DEV) @ Fri May 03 2024 20:21:09 GMT+0530 (India Standard Time)","service":"user-service"}
+{"level":"info","message":"logged in as Project Horizon (DEV) @ Mon May 13 2024 20:40:05 GMT+0530 (India Standard Time)","service":"user-service"}
+{"level":"warn","message":"No fissure channel found, Is the channel ID wrong?","service":"user-service"}
+{"level":"info","message":"Finished Calls in 1185ms - Resolved: 3, Rejected: 0","service":"user-service"}
+{"level":"warn","message":"No fissure channel found, Is the channel ID wrong?","service":"user-service"}
+{"level":"warn","message":"No fissure channel found, Is the channel ID wrong?","service":"user-service"}
+{"level":"info","message":"Finished Calls in 1084ms - Resolved: 3, Rejected: 0","service":"user-service"}
+{"level":"warn","message":"No fissure channel found, Is the channel ID wrong?","service":"user-service"}

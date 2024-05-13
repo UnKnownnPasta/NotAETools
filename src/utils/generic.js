@@ -132,7 +132,7 @@ const stockRanges = {
  * @returns {Boolean}
  */
 async function relicExists(relic) {
-    const wasfound = await database.models.Relics.findOne({ where: { relic: relic } });
+    const wasfound = await database.models.Relics.findOne({ where: { relic: relic ?? "" } });
     return wasfound ?? false
 }
 

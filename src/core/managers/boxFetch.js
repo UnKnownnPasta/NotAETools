@@ -12,8 +12,8 @@ module.exports = async (client) => {
     }
 
     if (process.env.NODE_ENV === 'development') {
-        boxID = collectionBox.testid
-        channelArr = collectionBox.testchannels
+        boxID = "1221032022919872572"
+        channelArr = { "ntoz": "1221695851231973386", "atom": "1221695831875256441", "mtoo": "1221388067806384168", "ptos": "1221032209893294101" }
     } else {
         boxID = departments.treasury.soupstoreThreadID
         channelArr = departments.treasury.soupstoreChannels

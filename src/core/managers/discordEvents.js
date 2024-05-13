@@ -1,8 +1,9 @@
-const { Events, Client, CommandInteraction, Message, ButtonInteraction, ChatInputCommandInteraction } = require('discord.js')
+const { Events, Client, CommandInteraction, Message, ButtonInteraction } = require('discord.js')
 const { EventEmitter } = require('events')
 const CommandHandler = require('./fileHandler')
 const config = require('../../configs/config.json')
 const { relicExists, filterRelic } = require('../../utils/generic')
+const logger = require('../../utils/logger')
 
 class DiscordEventEmitter extends EventEmitter {
     /** * @param {Client} client */
@@ -49,7 +50,7 @@ class MessageCreateListener extends DiscordEventEmitter {
         let cmdType = "";
 
         let isPrime = word.split(/\s+/g).includes("prime");
-        let isRelic = await relicExists(filterRelic(word.toLowerCase().replace(/\b\s*[-]?(r|b|box)\s*.*?$/, "").trim()));
+        let isRelic = await relicExists(filterRelic(word.toLowerCase().replace(/\b\s*[-]?(r|b|box)\s*.*?$/, "").trim()) ?? "");
         let isStatus = /\b(ed|red|orange|green|yellow)\b(\b\s+[-]?(?:r|b|box)\b)?(.*)?/g.test(word);
 
         // 1st check: not relic not prime and is ed

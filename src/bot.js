@@ -55,7 +55,7 @@ class AETools {
         // Commands
         CommandHandler.setClient(this.client)
         CommandHandler.loadAll()
-        await CommandHandler.deployCommands();
+        // await CommandHandler.deployCommands();
 
         // Event Listeners
         this.intListen = new InteractionCreateListener(this.client)
@@ -74,8 +74,8 @@ class AETools {
             logger.info({ message: 'logged in as ' + this.client.user.username + ` @ ${new Date()}` })
             if (this.resetDB) {
                 await GoogleSheetManager.startAsync()
-                await BoxManager(this.client)
             }
+            await BoxManager(this.client)
 
             await IntervalManager.startIntervals();
         })
@@ -93,15 +93,15 @@ class AETools {
     anticrash() {
         process.on('unhandledRejection', (reason, p) => {
             logger.warn(' [antiCrash] :: Unhandled Rejection/Catch');
-            logger.error(reason, p);
+            console.error(reason, p);
         });
         process.on("uncaughtException", (err, origin) => {
             logger.warn(' [antiCrash] :: Uncaught Exception/Catch');
-            logger.error(err, origin);
+            console.error(err, origin);
         }) 
         process.on('uncaughtExceptionMonitor', (err, origin) => {
             logger.warn(' [antiCrash] :: Uncaught Exception/Catch (MONITOR)');
-            logger.error(err, origin);
+            console.error(err, origin);
         });
     }
 }
