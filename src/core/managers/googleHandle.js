@@ -80,7 +80,7 @@ class GoogleSheetFetcher {
             ])
             return Promise.resolve(1)
         } catch (error) {
-            console.error(error)
+            logger.error('Part Name Fetching Error:', error)
             return Promise.reject(0)
         }
     }
@@ -167,7 +167,7 @@ class GoogleSheetFetcher {
 
     async startAsync() {
         const start = new Date().getTime()
-        return Promise.allSettled([this.getAllRelics(), this.getClanResources(), this.getPrimeParts(), this.getAllTokens()])
+        return Promise.allSettled([this.getAllRelics(), this.getPrimeParts(), this.getAllTokens()])
         .then((results) => {
             const end = new Date().getTime()
             const resolvedCount = results.filter(result => result.status === 'fulfilled').length;

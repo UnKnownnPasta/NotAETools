@@ -3,13 +3,14 @@ const database = require('../../../database/init')
 const { Pagination } = require('pagination.djs')
 const { hex, range, stockRanges } = require('../../../utils/generic.js')
 const { dualitemslist } = require('../../../configs/commondata.json')
+const BoxManager = require('../../managers/boxFetch.js')
 
 module.exports = {
     name: 'stock',
     type: 'slash',
     data: new SlashCommandBuilder()
         .setName('stock')
-        .setDescription('View a void relic and its contents')
+        .setDescription('View the parts in a range of stock')
         .addStringOption((option) =>
             option
                 .setName('stock')
@@ -41,13 +42,10 @@ module.exports = {
 
         const models = database.models
 
-        const [item_data, boxFetch] = await Promise.all([
+        const [item_data, collection_box] = await Promise.all([
             models.Parts.findAll(),
-            models.Box.findAll()
+            BoxManager(client)
         ])
-
-        const collection_box = {}
-        boxFetch.map(p => collection_box[p.dataValues.name] = p.dataValues.stock)
 
         const word = edtype
         const wordToUpper = word.toUpperCase()

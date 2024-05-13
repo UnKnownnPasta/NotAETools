@@ -1,7 +1,7 @@
 require('dotenv').config({ path: require('node:path').resolve(__dirname, '..', '.env') })
 
 // Circular dependency, has to be fetched seperately
-const CollectionBoxFetcher = require('./core/managers/boxFetch.js')
+const BoxManager = require('./core/managers/boxFetch.js')
 const GoogleSheetManager = require('./core/managers/googleHandle.js')
 const Database = require('./database/init.js')
 const CommandHandler = require('./core/managers/fileHandler.js')
@@ -27,6 +27,8 @@ class AETools {
         this.resetDB = false;
 
         logger.info(`Starting...`)
+
+        this.client.lastboxupdate = new Date().getTime() - 100000
 
         this.clearLogs()
         this.constructManagers()
@@ -72,7 +74,7 @@ class AETools {
             logger.info({ message: 'logged in as ' + this.client.user.username + ` @ ${new Date()}` })
             if (this.resetDB) {
                 await GoogleSheetManager.startAsync()
-                // await CollectionBoxFetcher(this.client)
+                await BoxManager(this.client)
             }
 
             await IntervalManager.startIntervals();

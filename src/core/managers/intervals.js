@@ -1,6 +1,5 @@
 const FissureManager = require('./fissures')
 const SheetHandler = require('./googleHandle')
-const BoxHandler = require('./boxFetch')
 
 class IntervalManager {
     constructor() {
@@ -19,10 +18,6 @@ class IntervalManager {
         const sheetInterval = setInterval(async () => {
             await SheetHandler.startAsync();
         }, 300_000);
-        
-        const boxInterval = setInterval(async () => {
-            await BoxHandler(this.client);
-        }, 180_000);
         
         this.intervals.push(fissureInterval, sheetInterval, boxInterval);
     }

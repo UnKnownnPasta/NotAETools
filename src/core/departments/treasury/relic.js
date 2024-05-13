@@ -38,7 +38,7 @@ module.exports = {
             type: QueryTypes.SELECT
         })
 
-        const boxData = await database.models.Box.findAll()
+        const boxData = await require('../../managers/boxFetch.js')(client)
         const collection_box = {}
         boxData.map(p => collection_box[p.dataValues.name] = p.dataValues.stock)
 
