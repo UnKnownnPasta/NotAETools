@@ -102,7 +102,7 @@ module.exports = {
                     let StatusArr = relic.rewards.map(part => {
                         let returnrange = range(parseInt(part.stock));
                         if (filtertype == "box") {
-                            returnrange = range((boxlist[part.item] ?? 0) + (parseInt(part.stock)))
+                            returnrange = range((boxlist[part.item.replace(' x2', '')] ?? 0) + (parseInt(part.stock)))
                         }
                         if (isSpecialMode) {
                             stuffToSpecial.push([part.item, priorityOfStatus[returnrange], ansiValues[returnrange]])
