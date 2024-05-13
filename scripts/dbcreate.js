@@ -276,7 +276,6 @@ async function getAllBoxData(client) {
         }
     }))
 
-    console.log(`done in ${new Date().getTime() - start}`);
     client.lastboxupdate = new Date().getTime();
     client.boxData = fixedBoxStock;
     return fixedBoxStock;
