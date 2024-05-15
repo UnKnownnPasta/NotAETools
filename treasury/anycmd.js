@@ -90,14 +90,21 @@ module.exports = {
                     })
                 )]
 
+                const baseStatusEmbed = new EmbedBuilder()
+                .setTitle(`[ ${wordToUpper} ]`)
+                .setColor(hex[wordToUpper])
+                .setFooter({ text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${stockRanges[word.toUpperCase()]} stock` })
+                .setTimestamp();
+
+                if (!sortedParts.length) {
+                    return message.reply({ embeds: [baseStatusEmbed] })
+                }
+
                 const embedsArrStatus = []
                 for (let i = 0; i < sortedParts.length; i += 15) {
                     embedsArrStatus.push(
-                        new EmbedBuilder()
-                        .setTitle(`[ ${wordToUpper} ]`)
+                        new EmbedBuilder(baseStatusEmbed)
                         .setDescription(codeBlock('ml', sortedParts.slice(i, i + 15).join('\n')))
-                        .setColor(hex[wordToUpper])
-                        .setTimestamp()
                     )
                 }
 
@@ -113,7 +120,7 @@ module.exports = {
 
                 statusPagination.setEmbeds(embedsArrStatus, (embed, index, array) => {
                     return embed.setFooter({
-                        text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${stockRanges[word.toUpperCase()]} stock  •  Page ${index + 1}/${array.length}  `,
+                        text: embed.data.footer.text + `  •  Page ${index + 1}/${array.length}  `,
                     });
                 });
                 statusPagination.render(message);
