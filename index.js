@@ -70,10 +70,10 @@ eventFiles.forEach(file => {
 		client.user.setPresence({ activities: [{ name: 'Ya mom 👒', type: ActivityType.Watching }], status: 'dnd' });
 
 		await client.guilds.fetch({ force: true });
+		await getAllRelics();
 		client.boxData = await getAllBoxData(client)
 
 		await Promise.all([
-			getAllRelics(),
 			refreshFissures(client),
 			require('./scripts/deploy.js'),
 		])
