@@ -66,7 +66,8 @@ function titleCase(str) {
 function filterRelic(relic) {
     let relicEra, relicType;
     if (['meso', 'neo', 'axi', 'lith'].some(x => relic.indexOf(x) !== -1)) {
-        return `${relic[0].toUpperCase()}${relic.slice(1, relic.split(' ')[0].length).toLowerCase()} ${relic.split(' ')[1].toUpperCase()}`
+        const [er, typ] = relic.split(" ")
+        return `${er.toUpperCase()}${relic.slice(1, er.length).toLowerCase()} ${typ?.toUpperCase()}`
     } else {
         if (!isNaN(relic)) return null;
         else if (relic[0] === 'a') relicEra = "Axi"
