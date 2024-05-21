@@ -23,6 +23,8 @@
     "googleapis": "^134.0.0",
     "hot-esm": "^1.6.0",
     "pagination.djs": "^4.0.14",
+    "pino": "^9.1.0",
+    "pino-pretty": "^11.0.0",
     "sequelize": "^6.37.3",
     "sqlite3": "^5.1.7",
     "winston": "^3.13.0"
