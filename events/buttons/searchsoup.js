@@ -31,7 +31,7 @@ module.exports = {
                     const hasHit = []
                     for (const p of order.parts) {
                         if (p.has.includes(parttoFind)) {
-                            hasHit.push(`${p.howmany} ${p.relic}`)
+                            hasHit.push(`${p.howmany}x ${p.relic}`)
                         }
                     }
                     if (!hasHit.length) continue;
@@ -62,7 +62,7 @@ module.exports = {
                     const hasHit = []
                     for (const p of order.parts) {
                         if (p.has.some(x => x.startsWith(`${parttoFind} `))) {
-                            hasHit.push(`${p.howmany} ${p.relic}`)
+                            hasHit.push(`${p.howmany}x ${p.relic}`)
                         }
                     }
                     if (!hasHit.length) continue;

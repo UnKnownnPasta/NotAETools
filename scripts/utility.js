@@ -102,29 +102,29 @@ function getFissureTimings(fisTimes) {
     const tierMap = new Map();
 
     fisTimes.forEach(([tier, expiryTime]) => {
-        const currentDiff = Math.abs(expiryTime - currentTime);
-        const closestTime = tierMap.get(tier);
+        const farthestTime = tierMap.get(tier);
         
-        if ((!closestTime) || currentDiff < Math.abs(closestTime - currentTime)) {
+        if ((!farthestTime) || Math.abs(expiryTime - currentTime) > Math.abs(farthestTime - currentTime)) {
             tierMap.set(tier, expiryTime);
         }
     });
 
     const updatedTierMap = new Map();
 
-    tierMap.forEach((closestTime, tier) => {
-        const closestExpiryTime = closestTime - 3 * 60;
-        const closestElement = fisTimes.find(([currentTier, expiryTime]) => {
-            return currentTier === tier && Math.abs(expiryTime - closestExpiryTime) <= 180 && expiryTime - currentTime > 0;
+    tierMap.forEach((farthestTime, tier) => {
+        const farthestExpiryTime = farthestTime - 3 * 60;
+        const farthestElement = fisTimes.find(([currentTier, expiryTime]) => {
+            return currentTier === tier && Math.abs(expiryTime - farthestExpiryTime) <= 180 && expiryTime - currentTime > 0;
         });
 
-        if (closestElement) {
-            updatedTierMap.set(tier, closestExpiryTime);
+        if (farthestElement) {
+            updatedTierMap.set(tier, farthestExpiryTime);
         }
     });
 
     return updatedTierMap;
 }
+
 
 /**
  * Utility function to cycle and display current fissures

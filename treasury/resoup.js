@@ -16,7 +16,7 @@ module.exports = {
         .setDescription('Re-Soup given soup')
         .addStringOption(option => 
         option
-            .setName('relics')
+            .setName('oldsoup')
             .setDescription('Relics to soup. This is obtained from /soup')
             .setRequired(true))
         .addStringOption(option =>
@@ -36,7 +36,7 @@ module.exports = {
      */
     async execute(client, i) {
         await i.deferReply()
-        let soupedText = i.options.getString('relics', true),
+        let soupedText = i.options.getString('oldsoup', true),
         filtertype = i.options.getString('filtertype', false) ?? false;
 
         if (soupedText.match(/\b\d+(l|m|n|a)\w+\d+\b/g)) {
