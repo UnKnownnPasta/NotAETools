@@ -27,7 +27,7 @@ module.exports = {
         })
         let hostComps = i.message.components.map(x => x.components).flat();
         const allIDs = hostFields.map(x => x[1].split('|')).flat()
-        // if (allIDs.includes(i.user.id) && i.customId != 'fhost-❌') return i.update({ });
+        if (allIDs.includes(i.user.id) && i.customId != 'fhost-❌') return i.update({ });
 
         const newRow = (arr) => new ActionRowBuilder().addComponents(arr)
         
