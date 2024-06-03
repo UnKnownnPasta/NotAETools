@@ -67,7 +67,7 @@ eventFiles.forEach(file => {
 
 	client.on('ready', async () => {
 		logger.info(`[${client.user.username}] Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.`);
-		client.user.setPresence({ activities: [{ name: 'Ya mom 👒', type: ActivityType.Watching }], status: 'dnd' });
+		client.user.setPresence({ activities: [{ name: 'Zlushiie ❤', type: ActivityType.Watching }], status: 'dnd' });
 
 		await client.guilds.fetch({ force: true });
 		await getAllRelics();

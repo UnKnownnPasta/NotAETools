@@ -7,6 +7,7 @@ const {
 const fs = require('node:fs/promises');
 const path = require("node:path");
 const { getAllUserData } = require("../../scripts/dbcreate");
+const { readFile } = require("node:fs");
 
 module.exports = {
     name: "fhost",
@@ -26,7 +27,7 @@ module.exports = {
         })
         let hostComps = i.message.components.map(x => x.components).flat();
         const allIDs = hostFields.map(x => x[1].split('|')).flat()
-        if (allIDs.includes(i.user.id) && i.customId != 'fhost-❌') return i.update({ });
+        // if (allIDs.includes(i.user.id) && i.customId != 'fhost-❌') return i.update({ });
 
         const newRow = (arr) => new ActionRowBuilder().addComponents(arr)
         
@@ -67,7 +68,7 @@ module.exports = {
 
         if (allIDs.filter(x => x != 'n').length >= 4) {
             await i.message.edit({ content: 'Preparing squad...', components: [] });
-            let names = await getAllUserData('farmer')
+            let names = await JSON.parse(await fs.readFile(path.join(__dirname, '..', '..', 'data/FarmerData.json')))
             await i.message.delete();
 
             const IDList = allIDs.filter(x => x != 'n').slice(0, 4).map(ids => {
