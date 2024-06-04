@@ -4,11 +4,11 @@ require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
 const fs = require('node:fs')
 const { loadFiles, refreshFissures } = require('./scripts/utility.js')
-const { getAllBoxData, getAllClanData, getAllRelics, getAllUserData, retrieveSoupStoreRelics } = require('./scripts/dbcreate.js');
+const { getAllBoxData, getAllRelics } = require('./scripts/dbcreate.js');
 const logger = require('./scripts/logger.js');
 
 process.on('uncaughtException', (err) => {
-	console.error(err, `anti crash :: uncaughtException`)
+	logger.error(err, `anti crash :: uncaughtException`)
 });
 
 // Initialize client

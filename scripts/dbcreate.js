@@ -869,12 +869,13 @@ async function getAllUserData(key=null) {
             range: 'Leaderboard!D30:I'
         }).then((re) => {
             return re.data.values.map((data) => {
-                if (data.filter(x => !x).length > 1) return []
-                const run = parseInt(data[4]) ?? 0
-                const rad = parseInt(data[3]) ?? 0
-                const merch = parseInt(data[2]) ?? 0
-                return { uid: data[1].replace('ID: ', ''), name: data[0], total: run + rad + merch, run, rad, merch }
-            })
+                if (data.filter(x => !x).length > 1) return;
+                const run = isNaN(parseInt(data[4])) ? 0 : parseInt(data[4])
+                const rad = isNaN(parseInt(data[3])) ? 0 : parseInt(data[3])
+                const merch = isNaN(parseInt(data[2])) ? 0 : parseInt(data[2])
+                const userid = data[1].replace('ID: ', '')
+                return { uid: userid === '' ? '000000' : userid, name: data[0] === '' ? '#NF!' : data[0], all: run + rad + merch, run, rad, merch }
+            }).filter(x => x)
         })
     } else {
         return undefined;

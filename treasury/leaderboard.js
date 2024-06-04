@@ -18,7 +18,7 @@ module.exports = {
         .addSubcommand(sc =>
             sc
                 .setName('all')
-                .setDescription('Over-all runcount, i.e. merch + rad + run')
+                .setDescription('Overall run count')
         )
         .addSubcommand(sc =>
             sc
@@ -39,49 +39,50 @@ module.exports = {
      * @param {CommandInteraction} i 
      */
     async execute(client, i) {
-        // const fetchData = await getAllUserData('leaderboard');
-        const lmao = (await fs.readFile(path.join(__dirname, '..', 'data/a.txt'))).toLocaleString()
-        const fetchData = lmao.split('\n').map((d) => {
-            const data = d.split(/\s+/g)
-            const run = isNaN(parseInt(data[4])) ? 0 : parseInt(data[4])
-            const rad = isNaN(parseInt(data[3])) ? 0 : parseInt(data[3])
-            const merch = isNaN(parseInt(data[2])) ? 0 : parseInt(data[2])
-            return { uid: data[1], name: data[0], all: run + rad + merch, run: run, rad: rad, merch: merch }
-        })
+        const fetchData = await getAllUserData('leaderboard');
+        // const lmao = (await fs.readFile(path.join(__dirname, '..', 'data/a.txt'))).toLocaleString()
+        // const fetchData = lmao.split('\n').map((d) => {
+        //     const data = d.split(/\s+/g)
+        //     const run = isNaN(parseInt(data[4])) ? 0 : parseInt(data[4])
+        //     const rad = isNaN(parseInt(data[3])) ? 0 : parseInt(data[3])
+        //     const merch = isNaN(parseInt(data[2])) ? 0 : parseInt(data[2])
+        //     return { uid: data[1], name: data[0], all: run + rad + merch, run: run, rad: rad, merch: merch }
+        // })
         const embArr = []
         let sortedData;
-        // await i.reply({ content: 'Loading..' });
+        const curSub = i.options.getSubcommand(true);
         
-        switch (i.options._subcommand) {
+        switch (curSub) {
             case 'all':
-                sortedData = fetchData.filter(x => !Array.isArray(x)).sort((a, b) => b.all - a.all)
+                sortedData = fetchData.sort((a, b) => b.all - a.all)
                 break;
 
             case 'run':
-                sortedData = fetchData.filter(x => !Array.isArray(x)).sort((a, b) => b.run - a.run)
+                sortedData = fetchData.sort((a, b) => b.run - a.run)
                 break;
 
             case 'rad':
-                sortedData = fetchData.filter(x => !Array.isArray(x)).sort((a, b) => b.rad - a.rad)
+                sortedData = fetchData.sort((a, b) => b.rad - a.rad)
                 break;
         
             case 'merch':
-                sortedData = fetchData.filter(x => !Array.isArray(x)).sort((a, b) => b.merch - a.merch)
+                sortedData = fetchData.sort((a, b) => b.merch - a.merch)
                 break;
 
             default:
                 break;
         }
 
-        const text = titleCase(i.options._subcommand) === "All" ? "Count" : titleCase(i.options._subcommand)
-        const baseEmbed = new EmbedBuilder().setTitle(`Highest ${text} Leaderboard`).setColor('#4169E1')
+        const nameFull = { run: "Relics Run", rad: "Relics Radded", merch: "Most Relics Merched", all: "Most Relics Used" }
+        const text = titleCase(nameFull[curSub])
+        const baseEmbed = new EmbedBuilder().setTitle(`${text} Leaderboard`).setColor('#4169E1')
         const baseDescText = `**Your rank: ${sortedData.findIndex(v => v.uid === i.user.id) + 1}**\n---------------------------`
 
         for (let x = 0; x < sortedData.length; x += 15) {
             const textOfShi = [baseDescText]
 
             sortedData.slice(x, x+15).map((y, m) => {
-                textOfShi.push(`${x + m == 0 ? '🥇 | ' : x + m == 1 ? '🥈 | ' : x + m == 2 ? '🥉 | ' : ''}<@!${y.uid}>: ${y[i.options._subcommand]}`)
+                textOfShi.push(`${x + m == 0 ? '🥇 │ ' : x + m == 1 ? '🥈 │ ' : x + m == 2 ? '🥉 │ ' : y.uid === i.user.id ? `${x + m + 1}.`.padEnd(4) + '\>\> ' : `${x + m + 1}.`.padEnd(4)}<@!${y.uid}> - ${y[curSub]}`)
             })
 
             embArr.push(
@@ -91,7 +92,7 @@ module.exports = {
         }
         
 
-        const statusPagination = new Pagination(i, {
+        const lbPagination = new Pagination(i, {
             firstEmoji: "⏮",
             prevEmoji: "◀️",
             nextEmoji: "▶️",
@@ -101,11 +102,11 @@ module.exports = {
             loop: true,
         });
 
-        statusPagination.setEmbeds(embArr, (embed, index, array) => {
+        lbPagination.setEmbeds(embArr, (embed, index, array) => {
             return embed.setFooter({
                 text: `Page ${index + 1}/${array.length}  `,
             });
         });
-        statusPagination.render();
+        lbPagination.render();
     },
 };
