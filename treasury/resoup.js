@@ -26,7 +26,7 @@ module.exports = {
             .setChoices(
                 { name: 'ED', value: 'ed' },
                 { name: 'RED', value: 'red' },
-                { name: 'BOX', value: 'box' },
+                // { name: 'BOX', value: 'box' },
             )
             .setRequired(false)),
     /**
@@ -101,7 +101,7 @@ module.exports = {
                     const stuffToSpecial = []
                     let StatusArr = relic.rewards.map(part => {
                         let returnrange = range(parseInt(part.stock));
-                        if (filtertype == "box") {
+                        if (true) {
                             returnrange = range((boxlist[part.item.replace(' x2', '')] ?? 0) + (parseInt(part.stock)))
                         }
                         if (isSpecialMode) {
