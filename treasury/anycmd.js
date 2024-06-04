@@ -123,7 +123,7 @@ module.exports = {
                         text: embed.data.footer.text + `  •  Page ${index + 1}/${array.length}  `,
                     });
                 });
-                statusPagination.render(message);
+                statusPagination.render();
                 break;
         
             case "part":

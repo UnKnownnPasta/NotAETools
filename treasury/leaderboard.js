@@ -39,6 +39,7 @@ module.exports = {
      * @param {CommandInteraction} i 
      */
     async execute(client, i) {
+        await i.deferReply()
         const fetchData = await getAllUserData('leaderboard');
         // const lmao = (await fs.readFile(path.join(__dirname, '..', 'data/a.txt'))).toLocaleString()
         // const fetchData = lmao.split('\n').map((d) => {
@@ -90,7 +91,6 @@ module.exports = {
                 .setDescription(textOfShi.join('\n'))
             )
         }
-        
 
         const lbPagination = new Pagination(i, {
             firstEmoji: "⏮",
@@ -107,6 +107,6 @@ module.exports = {
                 text: `Page ${index + 1}/${array.length}  `,
             });
         });
-        lbPagination.render();
+        lbPagination.editReply();
     },
 };
