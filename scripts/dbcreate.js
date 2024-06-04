@@ -863,13 +863,22 @@ async function getAllUserData(key=null) {
         //     return { uid: data[0], name: data[1], tokens: data[2], bonus: data[3], spent: data[4], left: data[5], playtime: data.at(7) ? `${data[6]} (${data[7]})` : data[6] }
         // })
         // return workOnData;
+    } else if (key === 'leaderboard') {
+        return await googleSheets({
+            spreadsheetId: '1Mrp2qcFY9CO8V-MndnYCkkVBJ-f_U_zeK-oq3Ncashk',
+            range: 'Leaderboard!D30:I'
+        }).then((re) => {
+            return re.data.values.map((data) => {
+                if (data.filter(x => !x).length > 1) return []
+                const run = parseInt(data[4]) ?? 0
+                const rad = parseInt(data[3]) ?? 0
+                const merch = parseInt(data[2]) ?? 0
+                return { uid: data[1].replace('ID: ', ''), name: data[0], total: run + rad + merch, run, rad, merch }
+            })
+        })
     } else {
         return undefined;
     }
-    // await Promise.all([
-    //     fs.writeFile(path.join(__dirname, '..', 'data', 'TreasuryData.json'), JSON.stringify(TreasData)),
-    //     fs.writeFile(path.join(__dirname, '..', 'data', 'FarmerData.json'), JSON.stringify(FarmData)),
-    // ]);
 }
 
 async function getAllClanData(clan=undefined) {

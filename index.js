@@ -8,7 +8,7 @@ const { getAllBoxData, getAllClanData, getAllRelics, getAllUserData, retrieveSou
 const logger = require('./scripts/logger.js');
 
 process.on('uncaughtException', (err) => {
-	logger.error(err, `anti crash :: uncaughtException`)
+	console.error(err, `anti crash :: uncaughtException`)
 });
 
 // Initialize client
