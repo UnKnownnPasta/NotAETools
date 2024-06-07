@@ -72,16 +72,14 @@ module.exports = {
                     for (const part of relic.rewards) {
                         partItem = part.item.replace(" x2", "")
                         if (partItem === "Forma") continue;
+                        let partStock = parseInt(part.stock)
                         let partColor = part.color
-                        if (partColor === wordToUpper) { // just to early skip parts that dont match the color
-                            let partStock = parseInt(part.stock)
-                            if (hasdashb) {
-                                partStock = partStock + (collection_box[partItem] ?? 0)
-                                partColor = range(partStock)
-                            }
-                            if (partColor !== wordToUpper) continue;
-                            statusParts.push({ s: partStock, i: part.item })
+                        if (hasdashb) {
+                            partStock = partStock + (collection_box[partItem] ?? 0)
+                            partColor = range(partStock)
                         }
+                        if (partColor !== wordToUpper) continue;
+                        statusParts.push({ s: partStock, i: part.item })
                     }
                 }
 
@@ -203,7 +201,8 @@ module.exports = {
                 break;
 
             case "prime":
-                const setName = word.replace("Prime", "").trim() + " ";
+                let setName = word.replace("Prime", "").trim();
+                if (setName === "Mag") setName = "Mag ";
 
                 const setParts = []
                 for (const relic of relic_data.relicData) {

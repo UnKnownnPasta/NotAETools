@@ -431,24 +431,6 @@ async function getAllUserData(key=null) {
                 "playtime": "1280 (8)"
             },
             {
-                "uid": "1029087996349259816",
-                "name": "ChillinCharlie",
-                "tokens": "0",
-                "bonus": "0",
-                "spent": "0",
-                "left": "0",
-                "playtime": "0 (0)"
-            },
-            {
-                "uid": "370355075643867146",
-                "name": "Chrisimperative",
-                "tokens": "10",
-                "bonus": "10",
-                "spent": "0",
-                "left": "10",
-                "playtime": "0 (0)"
-            },
-            {
                 "uid": "303793827548889088",
                 "name": "coolXX",
                 "tokens": "3459",
@@ -465,24 +447,6 @@ async function getAllUserData(key=null) {
                 "spent": "0",
                 "left": "0",
                 "playtime": "11 (0)"
-            },
-            {
-                "uid": "126854616305369088",
-                "name": "DasJamal",
-                "tokens": "0",
-                "bonus": "0",
-                "spent": "0",
-                "left": "0",
-                "playtime": "0 (0)"
-            },
-            {
-                "uid": "445574719383797770",
-                "name": "drewkenshin",
-                "tokens": "0",
-                "bonus": "0",
-                "spent": "0",
-                "left": "0",
-                "playtime": "0 (0)"
             },
             {
                 "uid": "1049116028552093816",
@@ -528,15 +492,6 @@ async function getAllUserData(key=null) {
                 "spent": "0",
                 "left": "12",
                 "playtime": "246 (0)"
-            },
-            {
-                "uid": "250045594582646784",
-                "name": "Ketchump",
-                "tokens": "0",
-                "bonus": "0",
-                "spent": "0",
-                "left": "0",
-                "playtime": "0 (0)"
             },
             {
                 "uid": "809690396720496661",
@@ -665,15 +620,6 @@ async function getAllUserData(key=null) {
                 "playtime": "1798 (0)"
             },
             {
-                "uid": "1089167160020041749",
-                "name": "Rivoci",
-                "tokens": "0",
-                "bonus": "0",
-                "spent": "0",
-                "left": "0",
-                "playtime": "0 (0)"
-            },
-            {
                 "uid": "166263217998397440",
                 "name": "Rvban",
                 "tokens": "539",
@@ -782,76 +728,22 @@ async function getAllUserData(key=null) {
                 "playtime": "609 (0)"
             },
             {
-                "uid": "",
-                "name": "",
-                "tokens": "",
-                "bonus": "",
-                "spent": "",
-                "left": "",
-                "playtime": " (0)"
+                "uid": "740536348166848582",
+                "name": "UnKnownnPasta",
+                "tokens": "66",
+                "bonus": "0",
+                "spent": "0",
+                "left": "66",
+                "playtime": "0 (0)"
             },
             {
                 "uid": "",
-                "name": "",
-                "tokens": "",
-                "bonus": "",
-                "spent": "",
-                "left": "",
-                "playtime": " (0)"
-            },
-            {
-                "uid": "",
-                "name": "",
-                "tokens": "",
-                "bonus": "",
-                "spent": "",
-                "left": "",
-                "playtime": " (0)"
-            },
-            {
-                "uid": "",
-                "name": "",
-                "tokens": "",
-                "bonus": "",
-                "spent": "",
-                "left": "",
-                "playtime": " (0)"
-            },
-            {
-                "uid": "",
-                "name": "",
-                "tokens": "",
-                "bonus": "",
-                "spent": "",
-                "left": "",
-                "playtime": " (0)"
-            },
-            {
-                "uid": "",
-                "name": "",
-                "tokens": "",
-                "bonus": "",
-                "spent": "",
-                "left": "",
-                "playtime": " (0)"
-            },
-            {
-                "uid": "",
-                "name": "",
-                "tokens": "",
-                "bonus": "",
-                "spent": "",
-                "left": "",
-                "playtime": " (0)"
-            },
-            {
-                "uid": "",
-                "name": "",
-                "tokens": "",
-                "bonus": "",
-                "spent": "",
-                "left": "",
-                "playtime": " (0)"
+                "name": "Last_Hope2299",
+                "tokens": "13",
+                "bonus": "0",
+                "spent": "0",
+                "left": "0",
+                "playtime": "0 (0)"
             }
         ]
         
@@ -1009,17 +901,17 @@ async function getAllBoxData(client) {
                             if (partText[0] == 'magnus' && ['bp', 'receiver', 'reciever', 'barrel'].some(nx => nx.startsWith(partText.at(-1)))) {
                                 updatedAny = true
                                 boxStock[curPartName] = (boxStock[curPartName] ?? 0) + part[nmIndex]
-                                continue;
+                                break;
                             }
                             else if (partText[0] == 'mag' && ['bp', 'neuroptics', 'blueprint', 'systems', 'chassis'].some(nx => nx.startsWith(partText.at(-1)))) {
                                 updatedAny = true
                                 boxStock[curPartName] = (boxStock[curPartName] ?? 0) + part[nmIndex]
-                                continue;
+                                break;
                             }
                             else if (partText.length <= 2 ? matchAny(y, partText.at(-1) ?? "00") : (matchAny(x.at(-1) ?? "00", partText.at(-1)) && matchAny(x.at(-2) ?? "00", partText.at(-2)) && matchAny(x.at(-3) ?? "00", partText.at(-3) ?? "00") && matchAny(x.at(-4) ?? "00", partText.at(-4) ?? "00"))) {
                                 updatedAny = true
                                 boxStock[key] += part[nmIndex]
-                                continue;
+                                break;
                             }
                         }
                     }

@@ -1,6 +1,6 @@
 const { Message, Client, AttachmentBuilder } = require("discord.js");
 const config = require("../../data/config.json");
-const { filterRelic, relicExists } = require("../../scripts/utility");
+const { filterRelic, relicExists, titleCase } = require("../../scripts/utility");
 const fs = require('node:fs/promises');
 const path = require("node:path");
 const logger = require("../../scripts/logger");
@@ -30,13 +30,15 @@ module.exports = {
             return;
 
         if (process.env.NODE_ENV !== "development" && client.dofilter && !authCategories.includes(message.channel.parentId)) 
-            return logger.warn(`[UNAUTH] ${message.author.displayName} @ ${message.channel.name}`);
+            return logger.warn(`[UNAUTH/MSG] ${message.author.displayName} @ ${message.channel.name}: ${message.content}`);
 
         let word = message.content.slice(2).toLocaleLowerCase();
         let cmdType = "";
 
-        let isPrime = word.split(/\s+/g).includes("prime");
-        let isRelic = await relicExists(filterRelic(word.toLowerCase().replace(/\b\s*[-]?(r|b|box)$/, "").trim()));
+        let isPrime = word.split(/\s+/g).includes("prime") || 
+            ['Blueprint', 'Chassis', 'Neuroptics', 'Systems', 'Barrel', 'Receiver', 'Stock', 'Grip', 'Lower Limb', 'String', 'Upper Limb', 'Blade', 'Handle', 'Link', 'Pouch', 'Stars', 'Gauntlet', 'Ornament', 'Head', 'Disc', 'Boot', 'Hilt', 'Chain', 'Guard', 'Carapace', 'Cerebrum', 'Band', 'Buckle', 'Harness', 'Wings']
+            .every(x => !titleCase(word).includes(x));
+        let isRelic = await relicExists(filterRelic(word.toLowerCase().replace(/\b\s*[-](r|b|box)$/, "").trim()));
         let isStatus = /\b(ed|red|orange|green|yellow)\b(\b\s+[-]?(?:r|b|box)\b)?(.*)?/g.test(word);
 
         // 1st check: not relic not prime and is ed

@@ -90,9 +90,9 @@ module.exports = {
      */
     async execute(client, i) {
         const mission = i.options.getString('mission', true).toLowerCase(),
-            resource = i.options.getString('resource', true),
-            frame = i.options.getString('frame', true),
-            mstype = i.options.getString('missiontype', true),
+            resource = titleCase(i.options.getString('resource', true)),
+            frame = titleCase(i.options.getString('frame', true)),
+            mstype = titleCase(i.options.getString('missiontype', true)),
             dura = i.options.getInteger('duration', false) ?? 0;
         if (!resourceNames.includes(resource)) return i.reply({ content: `Resource selected is not a valid one, select one from the autocomplete list.`, ephemeral: true })
 
