@@ -33,13 +33,14 @@ module.exports = {
             return logger.warn(`[UNAUTH/MSG] ${message.author.displayName} @ ${message.channel.name}: ${message.content}`);
 
         let word = message.content.slice(2).toLocaleLowerCase();
+        const wordTitled = titleCase(word)
         let cmdType = "";
 
-        let isPrime = word.split(/\s+/g).includes("prime") || 
-            ['Blueprint', 'Chassis', 'Neuroptics', 'Systems', 'Barrel', 'Receiver', 'Stock', 'Grip', 'Lower Limb', 'String', 'Upper Limb', 'Blade', 'Handle', 'Link', 'Pouch', 'Stars', 'Gauntlet', 'Ornament', 'Head', 'Disc', 'Boot', 'Hilt', 'Chain', 'Guard', 'Carapace', 'Cerebrum', 'Band', 'Buckle', 'Harness', 'Wings']
-            .every(x => !titleCase(word).includes(x));
-        let isRelic = await relicExists(filterRelic(word.toLowerCase().replace(/\b\s*[-](r|b|box)$/, "").trim()));
         let isStatus = /\b(ed|red|orange|green|yellow)\b(\b\s+[-]?(?:r|b|box)\b)?(.*)?/g.test(word);
+        let isRelic = await relicExists(filterRelic(word.toLowerCase().replace(/\b\s*[-](r|b|box)$/, "").trim()));
+        let isPrime = (word.split(/\s+/g).includes("prime") || 
+            ['BP', 'Blueprint', 'Chassis', 'Neuroptics', 'Systems', 'Barrel', 'Receiver', 'Stock', 'Grip', 'Lower Limb', 'String', 'Upper Limb', 'Blade', 'Handle', 'Link', 'Pouch', 'Stars', 'Gauntlet', 'Ornament', 'Head', 'Disc', 'Boot', 'Hilt', 'Chain', 'Guard', 'Carapace', 'Cerebrum', 'Band', 'Buckle', 'Harness', 'Wings']
+            .every(x => !wordTitled.includes(x))) && !isRelic && !isStatus;
 
         // 1st check: not relic not prime and is ed
         // 2nd check: not relic not ed not prime

@@ -239,6 +239,12 @@ module.exports = {
                 colorOfParts = uncodeObj[Math.min(...colorOfParts.map(color => codeObj[color]))]
                 stockOfParts = Math.min(...stockOfParts)
 
+                const nameConstruct = []
+                const partTypes = ['BP', 'x2', 'Blueprint', 'Chassis', 'Neuroptics', 'Systems', 'Barrel', 'Receiver', 'Stock', 'Grip', 'Lower Limb', 'String', 'Upper Limb', 'Blade', 'Handle', 'Link', 'Pouch', 'Stars', 'Gauntlet', 'Ornament', 'Head', 'Disc', 'Boot', 'Hilt', 'Chain', 'Guard', 'Carapace', 'Cerebrum', 'Band', 'Buckle', 'Harness', 'Wings'];
+                setParts[0].n.split(/\s+/g).map(n => {
+                    !partTypes.some(y => y.startsWith(n)) ? nameConstruct.push(n) : ''
+                })
+
                 const searchSoupSet = new ButtonBuilder()
                 .setCustomId(`searchsoup-set-${setName.trim()}`)
                 .setLabel('🔎 Soup Store')
@@ -247,7 +253,7 @@ module.exports = {
 
                 message.reply({ embeds: [
                     new EmbedBuilder()
-                    .setTitle(`[ ${word} ]`)
+                    .setTitle(`[ ${nameConstruct.join(' ')}${word.includes('Prime') ? '' : ' Prime'} ]`)
                     .setFooter({ text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${stockOfParts}x of set in stock  •  ${colorOfParts} Set  ` })
                     .setTimestamp()
                     .setDescription(codeBlock("ml", setPartsText.join("\n")))
