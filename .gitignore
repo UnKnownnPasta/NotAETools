@@ -1,13 +1,3 @@
-# Folders
 .env
-dev/
 _dev/
 node_modules/
-
-# Other files
-*.sqlite*
-*.txt
-*.traineddata
-
-# JSON Files
-/data

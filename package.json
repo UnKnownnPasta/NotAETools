@@ -1,39 +1,27 @@
 {
-  "name": "aetools",
-  "version": "2.0.9",
-  "description": "Helper bot for Warframe clan alliance \"Anime Empire\".",
-  "main": "bot.js",
+  "name": "aetools-mongo",
+  "version": "1.0.0",
+  "description": "Revised AETools.",
+  "main": "index.js",
   "scripts": {
-    "lint": "npx eslint . --ignore-pattern node_modules/ --ignore-pattern _dev/",
-    "lint-fix": "npx eslint . --ignore-pattern node_modules/ --ignore-pattern _dev/ --fix",
-    "dev": "node src/bot.js",
-    "start": "pm2 start ecosystem.config.js",
-    "stop": "pm2 stop ecosystem.config.js && pm2 delete ecosystem.config.js"
+    "test": "test"
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UnKnownnPasta/NotAETools.git#V2"
+  },
+  "keywords": [
+    "discord.js",
+    "mongo",
+    "app"
+  ],
   "author": "dePasta @ GitHub",
-  "license": "MIT",
-  "dependencies": {
-    "axios": "^1.6.8",
-    "chalk": "^4.1.0",
-    "discord.js": "^14.12.1",
-    "dotenv": "^16.4.5",
-    "events": "^3.3.0",
-    "googleapis": "^134.0.0",
-    "pagination.djs": "^4.0.14",
-    "sequelize": "^6.37.3",
-    "sqlite3": "^5.1.7",
-    "winston": "^3.13.0"
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/UnKnownnPasta/NotAETools/issues"
   },
-  "devDependencies": {
-    "@eslint/eslintrc": "^3.0.2",
-    "@eslint/js": "^9.1.1",
-    "@stylistic/eslint-plugin-js": "^1.7.2",
-    "eslint": "^8.57.0",
-    "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-n": "^16.6.2",
-    "eslint-plugin-promise": "^6.1.1",
-    "globals": "^15.0.0"
+  "homepage": "https://github.com/UnKnownnPasta/NotAETools/tree/V2#readme",
+  "dependencies": {
+    "discord.js": "^14.15.3"
   }
 }
