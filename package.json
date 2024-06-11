@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Revised AETools.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "test"
   },
@@ -22,6 +23,11 @@
   },
   "homepage": "https://github.com/UnKnownnPasta/NotAETools/tree/V2#readme",
   "dependencies": {
-    "discord.js": "^14.15.3"
+    "chalk": "^4.1.2",
+    "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5",
+    "googleapis": "^140.0.0",
+    "mongodb": "6.7",
+    "winston": "^3.13.0"
   }
 }
