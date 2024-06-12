@@ -812,7 +812,6 @@ async function getAllClanData(clan=undefined) {
  */
 async function getAllBoxData(client) {
     let boxID, channelArr;
-    const start = new Date().getTime() 
 
     if (new Date().getTime() - client.lastboxupdate < 60000) {
         return client.boxData;
@@ -827,7 +826,11 @@ async function getAllBoxData(client) {
     }
 
     const boxChannel =  await client.channels.cache.get(boxID)?.threads;
-    if (!boxChannel) return logger.warn(`No Threads channel found; failed to update box`)
+    if (!boxChannel) {
+        logger.warn(`No Threads channel found; failed to update box`);
+        client.lastboxupdate = new Date().getTime();
+        return {}
+    }
     const boxStock = {}
 
     const matchAny = (a, b) => (a??"").startsWith(b??"") || (b??"").startsWith(a??"")

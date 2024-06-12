@@ -75,7 +75,7 @@ module.exports = {
                         let partStock = parseInt(part.stock)
                         let partColor = part.color
                         if (hasdashb) {
-                            partStock = partStock + (collection_box[partItem] ?? 0)
+                            partStock = partStock + (collection_box[`${partItem}`] ?? 0)
                             partColor = range(partStock)
                         }
                         if (partColor !== wordToUpper) continue;
@@ -212,7 +212,7 @@ module.exports = {
 
                         const partOfSet = relic.rewards[partExistsIndex]
                         if (setParts.some((rec) => rec.n === partOfSet.item)) return;
-    
+
                         let stockOfSetPart = parseInt(partOfSet.stock);
                         let extraStock = 0;
                         let colorOfPart = partOfSet.color
@@ -241,7 +241,7 @@ module.exports = {
                 stockOfParts = Math.min(...stockOfParts)
 
                 const nameConstruct = []
-                const partTypes = ['BP', 'x2', 'Blueprint', 'Chassis', 'Neuroptics', 'Systems', 'Barrel', 'Receiver', 'Stock', 'Grip', 'Lower Limb', 'String', 'Upper Limb', 'Blade', 'Handle', 'Link', 'Pouch', 'Stars', 'Gauntlet', 'Ornament', 'Head', 'Disc', 'Boot', 'Hilt', 'Chain', 'Guard', 'Carapace', 'Cerebrum', 'Band', 'Buckle', 'Harness', 'Wings'];
+                const partTypes = ['BP', 'x2', 'Blueprint', 'Chassis', 'Neuroptics', 'Systems', 'Barrel', 'Receiver', 'Stock', 'Grip', 'Lower Limb', 'String', 'Upper Limb', 'Limb', 'Blade', 'Handle', 'Link', 'Pouch', 'Stars', 'Gauntlet', 'Ornament', 'Head', 'Disc', 'Boot', 'Hilt', 'Chain', 'Guard', 'Carapace', 'Cerebrum', 'Band', 'Buckle', 'Harness', 'Wings'];
                 setParts[0].n.split(/\s+/g).map(n => {
                     !partTypes.some(y => y.startsWith(n)) ? nameConstruct.push(n) : ''
                 })
@@ -254,7 +254,7 @@ module.exports = {
 
                 message.reply({ embeds: [
                     new EmbedBuilder()
-                    .setTitle(`[ ${nameConstruct.join(' ')}${word.includes('Prime') ? '' : ' Prime'} ]`)
+                    .setTitle(`[ ${nameConstruct.join(' ')} Prime ]`)
                     .setFooter({ text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${stockOfParts}x of set in stock  •  ${colorOfParts} Set  ` })
                     .setTimestamp()
                     .setDescription(codeBlock("ml", setPartsText.join("\n")))

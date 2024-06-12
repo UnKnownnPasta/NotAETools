@@ -2,7 +2,7 @@
 <div align='center'>
 
   <div>
-    <img src="blob/logo.png" width="250" alt="Warp" />
+    <img src="./blob/logo.png" width="250" alt="Warp" />
   </div>
 
 ![Static Badge](https://img.shields.io/badge/created_with-discord.js_v14-blue) ![Static Badge](https://img.shields.io/badge/license-MIT-green) ![Static Badge](https://img.shields.io/badge/contributors-1-orange)
@@ -56,7 +56,7 @@ Here:
 
 Example:
 
-<div><img src='blob/relicexample.png'></div>
+<div><img src='./blob/relicexample.png'></div>
 
 **\*NOTE\***: The blue text is the stock of the part in the relic, C/UC/RA means COMMON/UNCOMMON/RARE and the number in **{}** is the token value of the relic.
 
@@ -78,11 +78,11 @@ Here:
 
 Example:
 
-<div><img src='blob/squadtreexample.png'></div>
+<div><img src='./blob/squadtreexample.png'></div>
 
 The bot will host a squad as:
 
-<div><img src='blob/squadtrehostedex.png'></div>
+<div><img src='./blob/squadtrehostedex.png'></div>
 
 And after getting 4 members, the bot will ping all squad members. The host then invites them and runs the relic.
 
@@ -99,7 +99,7 @@ Here:
 
 Example:
 
-<div><img src='blob/farmerrunex.png'></div>
+<div><img src='./blob/farmerrunex.png'></div>
 
 ## Part Availability
 
@@ -125,11 +125,11 @@ Here:
 
 Example:
 
-<div><img src='blob/soupexample.png'></div>
+<div><img src='./blob/soupexample.png'></div>
 
 After this, the bot replies as:
 
-<div><img src='blob/soupresult.png'></div>
+<div><img src='./blob/soupresult.png'></div>
 
 You can post this text in ![Static Badge](https://img.shields.io/badge/%23Intact%20Relic%20Soup%20Store-3c4270) or ![Static Badge](https://img.shields.io/badge/%23Radded%20Relic%20Soup%20Store-3c4270), if the relics are pre-radded.
 
@@ -145,7 +145,7 @@ Here in `SOUPTEXT`, you place the massive text you get from `/soup`. The bot wil
 
 Example: 
 
-<div><img src='blob/resoupexample.png'></div>
+<div><img src='./blob/resoupexample.png'></div>
 
 ## Prime Sets
 
@@ -157,7 +157,7 @@ Here, FRAME is the name of the frame to fetch. like: `++vauban prime`
 
 Example: 
 
-<div><img src='blob/primesetexample.png'></div>
+<div><img src='./blob/primesetexample.png'></div>
 
 **\*NOTE\***:
 The blue numbers indicate the stock, and ORANGE/ED/etc means exactly what it means. (incase you forgot, [see this](https://docs.google.com/document/d/1syjdKLIhfIoAvNFwHtO4yBQjSZTOe869az9xaMBPQrc/edit#heading=h.vfg2mm7li9ri))
@@ -182,12 +182,12 @@ For farmers, it is necessary to see what resources are in low stock for their cl
 
 1. `/resource resource:NAME`
     - NAME is the name of the resource to see. \*MAKE SURE TO SELECT THE NAME FROM AUTOCOMPLETE LIST, ABOVE WHERE YOU TYPED THE COMMAND\*
-    - Example: <div><img src='blob/resourceex.png'></div>
+    - Example: <div><img src='./blob/resourceex.png'></div>
 
 
 2. `/clan clan:NAME`
     - NAME is any choice from the choices list, shown in example
-    - Example: <div><img src='blob/clanex.png'></div>
+    - Example: <div><img src='./blob/clanex.png'></div>
 
 <br />
 

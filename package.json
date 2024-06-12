@@ -15,12 +15,16 @@
     "chalk": "^4.1.2",
     "discord.js": "^14.15.3",
     "dotenv": "^16.4.4",
+    "finalhandler": "^1.2.0",
     "googleapis": "^133.0.0",
+    "marked": "^13.0.0",
     "pagination.djs": "^4.0.13",
     "pino": "^7.11.0",
     "pino-pretty": "^11.0.0",
     "pm2": "^5.3.1",
+    "primer-css": "^9.6.0",
     "sequelize": "^6.37.1",
+    "serve-static": "^1.15.0",
     "tesseract.js": "^5.0.4"
   },
   "devDependencies": {
