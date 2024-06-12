@@ -69,7 +69,7 @@ eventFiles.forEach(file => {
 		logger.info(`[${client.user.username}] Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.`);
 		client.user.setPresence({ activities: [{ name: 'Zlushiie ❤', type: ActivityType.Watching }], status: 'dnd' });
 
-		require('./keep_alive.js')
+		const keep_alive = require('./keep_alive.js');
 
 		await client.guilds.fetch({ force: true });
 		await getAllRelics();
