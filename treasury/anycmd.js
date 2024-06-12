@@ -203,6 +203,7 @@ module.exports = {
             case "prime":
                 let setName = word.replace("Prime", "").trim();
                 if (setName === "Mag") setName = "Mag ";
+                if (setName === "Bo") setName = "Bo ";
 
                 const setParts = []
                 for (const relic of relic_data.relicData) {
