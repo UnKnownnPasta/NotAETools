@@ -818,7 +818,7 @@ async function getAllBoxData(client) {
         return client.boxData;
     }
 
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'removed_Temp_development') {
         boxID = collectionBox.testid
         channelArr = collectionBox.testchannels
     } else {
