@@ -4,7 +4,7 @@ const path = require('node:path');
 
 const server = http.createServer((req, res) => {
     if (req.url === '/heartbeat') {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
         res.write('OK!');
         res.end();
     } else if (req.url === '/') {
