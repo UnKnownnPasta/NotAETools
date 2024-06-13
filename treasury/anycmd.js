@@ -240,21 +240,22 @@ module.exports = {
                 colorOfParts = uncodeObj[Math.min(...colorOfParts.map(color => codeObj[color]))]
                 stockOfParts = Math.min(...stockOfParts)
 
-                const nameConstruct = []
-                const partTypes = ['BP', 'x2', 'Blueprint', 'Chassis', 'Neuroptics', 'Systems', 'Barrel', 'Receiver', 'Stock', 'Grip', 'Lower Limb', 'String', 'Upper Limb', 'Limb', 'Blade', 'Handle', 'Link', 'Pouch', 'Stars', 'Gauntlet', 'Ornament', 'Head', 'Disc', 'Boot', 'Hilt', 'Chain', 'Guard', 'Carapace', 'Cerebrum', 'Band', 'Buckle', 'Harness', 'Wings'];
-                setParts[0].n.split(/\s+/g).map(n => {
+                const setPartArr = setParts[0].n.split(/\s+/g)
+                const nameConstruct = [setPartArr[0]]
+                const partTypes = ['BP', 'x2', 'Blueprint', 'Chassis', 'Neuroptics', 'Systems', 'Barrel', 'Receiver', 'Stock', 'Grip', 'Lower Limb', 'String', 'Upper Limb', 'Limb', 'Blade', 'Blades', 'Handle', 'Link', 'Pouch', 'Stars', 'Gauntlet', 'Ornament', 'Head', 'Disc', 'Boot', 'Hilt', 'Chain', 'Guard', 'Carapace', 'Cerebrum', 'Band', 'Buckle', 'Harness', 'Wings'];
+                setPartArr.slice(1).map((n, i) => {
                     !partTypes.some(y => y.startsWith(n)) ? nameConstruct.push(n) : ''
                 })
 
                 const searchSoupSet = new ButtonBuilder()
-                .setCustomId(`searchsoup-set-${setName.trim()}`)
+                .setCustomId(`searchsoup-set-${word.includes('Prime') ? word.replace("Prime", "").trim() : nameConstruct.join(' ')}`.trim())
                 .setLabel('🔎 Soup Store')
                 .setStyle(ButtonStyle.Secondary);
                 const soupButtonSet = new ActionRowBuilder().addComponents(searchSoupSet)
 
                 message.reply({ embeds: [
                     new EmbedBuilder()
-                    .setTitle(`[ ${nameConstruct.join(' ')} Prime ]`)
+                    .setTitle(`[ ${word.includes('Prime') ? word.replace("Prime", "").trim() : nameConstruct.join(' ')} Prime ]`)
                     .setFooter({ text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${stockOfParts}x of set in stock  •  ${colorOfParts} Set  ` })
                     .setTimestamp()
                     .setDescription(codeBlock("ml", setPartsText.join("\n")))

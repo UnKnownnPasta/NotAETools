@@ -1,8 +1,0 @@
-name = "horizontest"
-type = "javascript"
-main = "dist/worker.js"
-node_compat = true
-
-account_id = "3646500d0ae9e8d8fdd565ec567d95aa"
-workers_dev = true
-compatibility_date = "2024-06-11"

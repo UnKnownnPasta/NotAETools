@@ -814,7 +814,7 @@ async function getAllBoxData(client) {
     let boxID, channelArr;
 
     if (new Date().getTime() - client.lastboxupdate < 60000) {
-        return client.boxData;
+        return client.boxData ?? {};
     }
 
     if (process.env.NODE_ENV === 'removed_Temp_development') {

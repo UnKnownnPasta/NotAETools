@@ -41,7 +41,7 @@ module.exports = {
         let isPrime = (word.split(/\s+/g).includes("prime") || 
             ['BP', 'Blueprint', 'Chassis', 'Neuroptics', 'Systems', 'Barrel', 'Receiver', 'Stock', 'Grip', 'Lower Limb', 'String', 'Upper Limb', 'Blade', 'Handle', 'Link', 'Pouch', 'Stars', 'Gauntlet', 'Ornament', 'Head', 'Disc', 'Boot', 'Hilt', 'Chain', 'Guard', 'Carapace', 'Cerebrum', 'Band', 'Buckle', 'Harness', 'Wings']
             .every(x => {
-                return !wordTitled.split(" ").some(y => x.includes(y))
+                return !wordTitled.split(" ").slice(1).some(y => x.includes(y))
             })) && !isRelic && !isStatus;
 
         // 1st check: not relic not prime and is ed
