@@ -73,7 +73,7 @@ module.exports = {
         const clanEmbed = new EmbedBuilder()
         .setTitle(`Resource overview of ${resrc}`);
 
-        await resources.slice(0, -1).map(r => {
+        await resources.map(r => {
             const res = Object.entries(r.resource).filter(([ key, value ]) => key == resrc)[0]
             clanEmbed.addFields({ name: reverseClan[r.clan], value: `**Amt:** \`${res[1].amt}\` | **Short:** \`${res[1].short}\`` })
         });
