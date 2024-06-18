@@ -307,7 +307,7 @@ module.exports = {
                     .setTitle(`[ ${properRelicName} ] {${relicFound.tokens}}`)
                     .setDescription(codeBlock('ml', relicDesc.join("\n")))
                     .setFooter({ 
-                        text: `${relicFound.name.split(" ")[0]} Void relic  •  ${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${allStocks} relic  `
+                        text: `Viewing ${relicFound.name.split(" ")[0]} Void relic  •  ${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${allStocks} relic  `
                     })
                     .setColor(hex[allStocks])
                     .setTimestamp()
