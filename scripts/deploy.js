@@ -1,10 +1,7 @@
-require('dotenv').config()
 const { REST, Routes } = require('discord.js');
 const fs = require('node:fs');
 const path = require('node:path');
 const logger = require('./logger.js');
-
-require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') });
 
 const commands = [];
 const treasuryFolder = path.join(__dirname, '..', 'treasury');
