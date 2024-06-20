@@ -64,7 +64,7 @@ module.exports = {
      */
     async execute(client, i) {
         await i.deferReply()
-        const resrc = i.options.getString('resource', true)
+        const resrc = titleCase(i.options.getString('resource', true) ?? "")
 
         if (!resourceNames.includes(resrc)) 
             return i.editReply({ content: `Invalid resource, choose from autofill instead`, ephemeral: true });

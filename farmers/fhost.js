@@ -80,7 +80,7 @@ module.exports = {
         .addIntegerOption((option) => 
         option
             .setName('duration')
-            .setDescription('Duration of farm in minutes, eg. 180')
+            .setDescription('Duration of farm in minutes, eg. 180, leave blank to count as 20 waves')
             .setRequired(false)
         ),
     /**
