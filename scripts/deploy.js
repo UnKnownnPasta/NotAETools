@@ -39,6 +39,6 @@ const rest = new REST().setToken(process.env.TOKEN);
 
 		logger.info(`Successfully reloaded ${data.length} application (/) commands.`);
 	} catch (err) {
-		logger.info(err.title, 'Deploy js failed')
+		logger.error(err.title, 'Deploy js failed')
 	}
 })();
