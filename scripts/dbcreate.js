@@ -300,8 +300,8 @@ async function getAllBoxData(client) {
     // await fs.writeFile(path.join(__dirname, '..', 'data', 'BoxData.json'), JSON.stringify(fixedBoxStock))
 }
 
-const INTACTRELIC = process.env.NODE_ENV === "development" ? "1236313453355073556" : "1193415346229620758"
-const RADDEDRELIC = process.env.NODE_ENV === "development" ? "1236313496082317382" : "1193414617490276423"
+const INTACTRELIC = "1193415346229620758"
+const RADDEDRELIC = "1193414617490276423"
 
 function parseStringToList(str) {
     // const regex = /\d+x\s*\|\s*[^\|]+?\s*\|\s*\d+\s*ED\s*\|\s*\d+\s*RED\s*\|\s*\d+\s*ORANGE/g;
@@ -311,13 +311,7 @@ function parseStringToList(str) {
 }
 
 async function retrieveSoupStoreRelics(client) {
-    let boxID;
-
-    if (process.env.NODE_ENV === 'development') {
-        boxID = collectionBox.testid
-    } else {
-        boxID = collectionBox.id
-    }
+    let boxID = collectionBox.id;
 
     const boxChannel = await client.channels.cache.get(boxID)?.threads;
     if (!boxChannel) return logger.warn(`No Threads channel found; failed to update Soup Store`)
