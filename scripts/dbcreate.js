@@ -61,6 +61,7 @@ async function getAllRelics() {
                 if (part !== 'Forma') {
                     allPartNames.push(part)
                 }
+                if (part.includes('x2')) stock = parseInt(stock) / 2 | 0;
                 rewards.push({ item: part, stock: stock, color: part !== 'Forma' ? range(parseInt(stock)) : '' });
             }
             allRelicData.push({ name, parts, rewards, tokens, vaulted });
