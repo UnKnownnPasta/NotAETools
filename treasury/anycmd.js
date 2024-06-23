@@ -90,7 +90,7 @@ module.exports = {
                 const baseStatusEmbed = new EmbedBuilder()
                 .setTitle(`[ ${wordToUpper} ]`)
                 .setColor(hex[wordToUpper])
-                .setFooter({ text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${stockRanges[word.toUpperCase()]} stock` })
+                .setFooter({ text: `Parts with: ${stockRanges[word.toUpperCase()]} stock  •  ${sortedParts.length} results  •  ` })
                 .setTimestamp();
 
                 if (!sortedParts.length) {
@@ -117,12 +117,12 @@ module.exports = {
 
                 statusPagination.setEmbeds(embedsArrStatus, (embed, index, array) => {
                     return embed.setFooter({
-                        text: embed.data.footer.text + `  •  Page ${index + 1}/${array.length}  `,
+                        text: embed.data.footer.text + `Page ${index + 1}/${array.length}`,
                     });
                 });
                 statusPagination.render();
                 break;
-        
+
             case "part":
                 if (word.split(/\s+/g).length === 1) return;
                 const partRelics = [];
@@ -165,16 +165,18 @@ module.exports = {
                     .setDescription(codeBlock('ml', sortedRelics.join('\n')))
                     .setColor(hex[realColor])
                     .setFooter({ 
-                        text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${realStock}${extraCount}x of part in stock  •  ${sortedRelics.length} results`
+                        text: `${realStock}${extraCount}x of part in stock  •  ${sortedRelics.length} results`
                     })
+                    .setTimestamp();
 
                     await message.reply({ embeds: [embedsParts], components: [soupButtonPart] })
                 } else {
                     const baseEmbed = new EmbedBuilder()
                     .setColor(hex[realColor])
                     .setFooter({ 
-                        text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${realStock}${extraCount}x of part in stock  •  ${sortedRelics.length} results`
+                        text: `${realStock}${extraCount}x of part in stock  •  ${sortedRelics.length} results`
                     })
+                    .setTimestamp();
 
                     const partEmbedArr = []
                     for (let i = 0; i < sortedRelics.length; i += 17) {
@@ -203,34 +205,43 @@ module.exports = {
                 let setName = word.replace("Prime", "").trim();
                 if (setName === "Mag") setName = "Mag ";
                 if (setName === "Bo") setName = "Bo ";
-
+                
+                let relicCount = 0;
                 const setParts = []
                 for (const relic of relic_data.relicData) {
-                    relic.parts.map((p, partExistsIndex) => {
-                        if (!p?.startsWith(setName)) return;
+                    let partsFound = 0;
+                    const relicParts = relic.parts;
+                    for (let index = 0; index < relicParts.length; index++) {
+                        const p = relicParts[index];
+                        if (!p?.startsWith(setName)) continue;
 
-                        const partOfSet = relic.rewards[partExistsIndex]
-                        if (setParts.some((rec) => rec.n === partOfSet.item)) return;
+                        const partOfSet = relic.rewards[index]
+                        if (setParts.some((rec) => rec.r === relic.name)) continue;
+                        partsFound += 1;
+                        if (setParts.some((rec) => rec.n === partOfSet.item)) continue;
 
                         let stockOfSetPart = parseInt(partOfSet.stock);
                         let extraStock = 0;
-                        let colorOfPart = partOfSet.color
+                        let colorOfPart = partOfSet.color;
                         if (hasdashb) {
                             extraStock = collection_box[partOfSet.item.replace(" x2", "")] ?? 0
                             colorOfPart = range(stockOfSetPart + extraStock)
                         }
-    
-                        setParts.push({ s: stockOfSetPart, ex: extraStock, n: partOfSet.item, c: colorOfPart })
-                    })
+
+                        setParts.push({ s: stockOfSetPart, ex: extraStock, n: partOfSet.item, c: colorOfPart, r: relic.name })
+                    }
+                    relicCount += partsFound;
                 }
                 if (!setParts.length) return;
 
                 let colorOfParts = []
                 let stockOfParts = []
+                let boxStockOfParts = []
                 const setPartsText = setParts.map((part) => {
                     colorOfParts.push(part.c)
-                    stockOfParts.push(part.s + part.ex)
+                    stockOfParts.push(part.s)
                     if (hasdashb) {
+                        boxStockOfParts.push(part.ex)
                         return `${`${part.s}(+${part.ex})`.padEnd(8)}│ ${part.n} {${part.c}}`
                     } else {
                         return `${`${part.s}`.padEnd(3)}│ ${part.n} {${part.c}}`
@@ -238,6 +249,7 @@ module.exports = {
                 })
                 colorOfParts = uncodeObj[Math.min(...colorOfParts.map(color => codeObj[color]))]
                 stockOfParts = Math.min(...stockOfParts)
+                boxStockOfParts = Math.min(...boxStockOfParts)
 
                 const setPartArr = setParts[0].n.split(/\s+/g)
                 const nameConstruct = [setPartArr[0]]
@@ -255,7 +267,7 @@ module.exports = {
                 message.reply({ embeds: [
                     new EmbedBuilder()
                     .setTitle(`[ ${word.includes('Prime') ? word.replace("Prime", "").trim() : nameConstruct.join(' ')} Prime ]`)
-                    .setFooter({ text: `${hasdashb ? `Updated from box  • ` : `Stock from Tracker  • `} ${stockOfParts}x of set in stock  •  ${colorOfParts} Set  ` })
+                    .setFooter({ text: `${stockOfParts}(+${boxStockOfParts})x of set in stock  •  ${colorOfParts} Set  •  Inside ${relicCount} relics` })
                     .setTimestamp()
                     .setDescription(codeBlock("ml", setPartsText.join("\n")))
                     .setColor(hex[colorOfParts])
@@ -306,7 +318,7 @@ module.exports = {
                     .setTitle(`[ ${properRelicName} ] {${relicFound.tokens}}`)
                     .setDescription(codeBlock('ml', relicDesc.join("\n")))
                     .setFooter({ 
-                        text: `Viewing ${relicFound.name.split(" ")[0]} Void relic  •  ${hasdashb ? `Stock from Tracker + Box  • ` : `Stock from Tracker  • `} ${allStocks} relic  `
+                        text: `Viewing ${relicFound.name.split(" ")[0]} Void relic  •  Stock from Tracker + Box  •  ${allStocks} relic  `
                     })
                     .setColor(hex[allStocks])
                     .setTimestamp()
