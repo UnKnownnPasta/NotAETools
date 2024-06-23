@@ -43,4 +43,13 @@
     }
 
     fs.writeFileSync('./abc.csv', newdata.join("\n"))
+
+    const newvaultdata = []
+
+    for (const d of data) {
+        if (d.name.startsWith('Requiem')) continue;
+        newvaultdata.push(`${d.name};${`${d.vaultInfo.vaulted}`.toUpperCase()}`)
+    }
+
+    fs.writeFileSync('./abcd.csv', newvaultdata.join("\n"))
 })()

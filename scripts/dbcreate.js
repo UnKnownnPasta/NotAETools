@@ -81,16 +81,15 @@ async function getAllUserData(key=null) {
         })
         return workOnData;
     } else if (key === 'farmer') {
-        return await farmerdata();
-        
-        // const res = await googleSheets({
-        //     spreadsheetId: spreadsheet.farmer.id,
-        //     range: spreadsheet.farmer.userName + spreadsheet.farmer.ranges.users,
-        // })
-        // const workOnData = res.data.values.filter(val => val.length).map((data) => {
-        //     return { uid: data[0], name: data[1], tokens: data[2], bonus: data[3], spent: data[4], left: data[5], playtime: data.at(7) ? `${data[6]} (${data[7]})` : data[6] }
-        // })
-        // return workOnData;
+        const res = await googleSheets({
+            spreadsheetId: spreadsheet.farmer.id,
+            range: spreadsheet.farmer.userName + spreadsheet.farmer.ranges.users,
+        })
+        const workOnData = res.data.values.filter(val => val.length).map((data) => {
+            return { uid: data[0], name: data[1], tokens: data[2], bonus: data[3], spent: data[4], left: data[5], playtime: data.at(7) ? `${data[6]} (${data[7]})` : data[6] }
+        })
+        if (!workOnData?.length) return await farmerdata();
+        return workOnData;
     } else if (key === 'leaderboard') {
         return await googleSheets({
             spreadsheetId: '1Mrp2qcFY9CO8V-MndnYCkkVBJ-f_U_zeK-oq3Ncashk',
@@ -102,7 +101,7 @@ async function getAllUserData(key=null) {
                 const rad = isNaN(parseInt(data[3])) ? 0 : parseInt(data[3])
                 const merch = isNaN(parseInt(data[2])) ? 0 : parseInt(data[2])
                 const userid = data[1].replace('ID: ', '')
-                return { uid: userid === '' ? '000000' : userid, name: data[0] === '' ? '#NF!' : data[0], all: run + rad + merch, run, rad, merch }
+                return { uid: userid === '' ? '000000' : userid, name: !data[0] ? '#NF!' : data[0], all: run + rad + merch, run, rad, merch }
             }).filter(x => x)
         })
     } else {
