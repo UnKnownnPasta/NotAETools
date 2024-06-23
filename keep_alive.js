@@ -1,9 +1,23 @@
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
+const { getAllRelics } = require('./scripts/dbcreate');
 
-const server = http.createServer((req, res) => {
-    if (req.url === '/heartbeat') {
+const server = http.createServer(async (req, res) => {
+    if (req.url.startsWith('/forceupdate')) {
+        const token = decodeURIComponent(req.headers.token)
+        if (token === process.env.supertoken) {
+            // await getAllRelics()
+            res.writeHead(200, { 'Content-Type': 'text/plain' });
+            res.write('OK!');
+            res.end();
+            console.log('received ping');
+        } else {
+            res.writeHead(403, { 'Content-Type': 'text/plain' });
+            res.write('403 Forbidden');
+            res.end();
+        }
+    } else if (req.url === '/heartbeat') {
         res.writeHead(200, { 'Content-Type': 'text/plain' });
         res.write('OK!');
         res.end();
