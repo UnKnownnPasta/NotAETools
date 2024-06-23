@@ -83,13 +83,12 @@ module.exports = {
             await getAllBoxData(client)
         ])
         
-        const range = (num) => {
-            return num >= 0 && num <= 7 ? 'ED'
-                : num > 7 && num <= 15 ? 'RED'
-                : num > 15 && num <=31 ? 'ORANGE'
-                : num > 31 && num <=64 ? 'YELLOW'
-                : 'GREEN'
-        }
+        const range = (num) => 
+            num >= 0 && num <= 10 ? 'ED'
+            : num > 10 && num <= 15 ? 'RED'
+            : num > 15 && num <= 31 ? 'ORANGE'
+            : num > 31 && num <= 64 ? 'YELLOW'
+            : num > 64 ? 'GREEN' : '';
 
         const ansiValues = {"ED": "[35m", "RED": "[31m", "ORANGE": "[33m"}
 
