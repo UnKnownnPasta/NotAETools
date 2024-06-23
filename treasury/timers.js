@@ -7,17 +7,16 @@ module.exports = {
         .setDescription("Get when the next reset happens for AETools"),
     async execute(client, i) {
         const fissureReset = client.fissureLast / 1000 | 0
-        const updateReset = client.updateLast / 1000 | 0
         const resetsDone = client.intrv_count
 
         const timerEmbed = new EmbedBuilder()
         .setTitle(`Last timing resets`)
         .addFields(
             { name: `Fissures`, value: `<t:${fissureReset}:R>`, inline: true },
-            { name: `Database`, value: `<t:${updateReset}:R>`, inline: true },
-            { name: `Resets Count`, value: `${resetsDone} times`, inline: true },
+            { name: `Reset Count`, value: `${resetsDone} times`, inline: true },
+            { name: `Database`, value: `Around 3-5 mins after tracker updates`, inline: false },
         )
-        .setDescription(`Fissures resets every **3 minutes**\nDatabase resets every **5 minutes**`)
+        .setDescription(`Fissures resets every **3 minutes**\nDatabase rechecked every **5 minutes**`)
         .setTimestamp();
 
         await i.reply({ embeds: [timerEmbed], ephemeral: true });

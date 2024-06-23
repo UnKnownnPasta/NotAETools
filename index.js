@@ -29,14 +29,6 @@ setInterval(async () => {
 	})
 }, 180_000);
 
-setInterval(async () => {
-	client.updateLast = new Date().getTime() + 300000
-	await getAllRelics().then((res) => {
-		client.intrv_count++
-		if (client.intrv_count%60 == 0) logger.info(`[INTRVL] ${client.intrv_count} intervals done.`)
-	})
-}, 300_000);
-
 // Load all commands
 ;(async () => {
 	[client.treasury, client.farmers, client.buttons] = await Promise.all([
@@ -62,7 +54,6 @@ eventFiles.forEach(file => {
 	await client.login(process.env.TOKEN);
 
 	client.fissureLast = new Date().getTime() + 180000
-	client.updateLast = new Date().getTime() + 300000
 	client.lastboxupdate = new Date().getTime() - 100000
 
 	client.on('ready', async () => {
