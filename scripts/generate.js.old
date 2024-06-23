@@ -1,0 +1,46 @@
+;(async () => {
+    const fs = require('node:fs')
+    const fileinfo = fs.readFileSync('./Relics.json')
+    const data = await JSON.parse(fileinfo)
+    const newdata = []
+    const dualitemlist = [
+        "Afuris Barrel","Afuris Receiver","Akarius Barrel","Akarius Receiver","Akbolto Barrel","Akbolto Receiver","Akjagara Barrel","Akjagara Receiver","Aksomati Barrel","Aksomati Receiver","Akstiletto Barrel","Akstiletto Receiver",
+        "Hikou Pouch","Spira Pouch","Spira Blade","Ankyros Gauntlet","Ankyros Blade","Bo Ornament","Dual Kamas Handle","Dual Kamas Blade","Dual Keres Handle","Dual Keres Blade","Fang Handle","Fang Blade","Glaive Blade","Guandao Blade","Gunsen Handle",
+        "Gunsen Blade","Kogake Boot","Kogake Gauntlet","Kronen Handle","Kronen Blade","Nami Skyla Handle","Nami Skyla Blade","Ninkondi Handle","Orthos Blade","Tekko Gauntlet","Tekko Blade","Tipedo Ornament","Venka Gauntlet","Venka Blade","Okina Handle","Okina Blade"
+    ]
+
+    for (const d of data) {
+        const toData = []
+        if (d.name.startsWith('Requiem')) continue;
+        toData.push(d.name)
+        const relicRewards = d.rewards.reverse();
+        relicRewards.sort((a, b) => a.chance - b.chance).reverse().map(x => {
+            let itemName = x.item.name.replace(' Kubrow ', ' ');
+            if (itemName === "Forma Blueprint") {
+                return toData.push(`Forma`)
+            }
+            if (itemName.includes('Silva')) {
+                itemName = itemName.replace(' & ', ' and ')
+            }
+            if (itemName === "Kavasa Prime Buckle") {
+                itemName = "Kavasa Prime Collar Buckle"
+            }
+            if (itemName === "Kavasa Prime Band") {
+                itemName = "Kavasa Prime Collar Band"
+            }
+            if (itemName === "Kavasa Prime Collar Blueprint") {
+                itemName = "Kavasa Prime Collar Blueprint"
+                return toData.push(`="${itemName.replace(' Prime ', ' ').replace(" Blueprint", " Prime")} | " & INDEX(C2:C492, MATCH("${itemName}", A2:A492 & " " & B2:B492, 0))`)
+            }
+            if (itemName.includes('Blades')) {
+                itemName = itemName.replace('Blades', 'Blade')
+            }
+            let extratext = ''
+            if (dualitemlist.includes(itemName.replace(" Blueprint", "").replace(' Prime ', ' '))) extratext = ' x2'
+            toData.push(`="${itemName.replace(" Blueprint", "").replace(' Prime ', ' ')}${extratext} | " & INDEX(C2:C492, MATCH("${itemName.replace(" Blueprint", "").endsWith("Prime") ?  itemName : itemName.replace(" Blueprint", "")}", ArrayFormula(TRIM(A2:A492) & " " & TRIM(B2:B492)), 0))`)
+        })
+        newdata.push(toData.join(';'))
+    }
+
+    fs.writeFileSync('./abc.csv', newdata.join("\n"))
+})()
