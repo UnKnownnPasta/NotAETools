@@ -125,7 +125,6 @@ async function getAllClanData(clan=undefined) {
         }))
         .then(async (results) => {
             return results.filter(res => res);
-            // await fs.writeFile(path.join(__dirname, '..', 'data', 'ClanData.json'), JSON.stringify(results.filter(res => res)))
         })
         .catch(error => {
             logger.error(error, 'Error fetching sheet values for clans');
@@ -177,6 +176,8 @@ async function getAllBoxData(client) {
             if (!thread.messageCount) return;
             const messages = await thread.messages.fetch({ limit: thread.messageCount, cache: false })
             messages.map((msg) => {
+                if (msg.content.toLowerCase().includes('banned')) return;
+
                 let parts = msg.content
                     .toLowerCase()
                     .replace(/\s+/g, ' ')

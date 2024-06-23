@@ -37,8 +37,8 @@ const hex = {
 }
 
 const stockRanges = {
-    "ED": "0 - 7",
-    "RED": "8 - 15",
+    "ED": "0 - 10",
+    "RED": "11 - 15",
     "ORANGE": "16 - 31",
     "YELLOW": "32 - 64",
     "GREEN": "64 - inf",
@@ -60,7 +60,7 @@ module.exports = {
         const relic_data = await JSON.parse(rdata);
 
         const word = titleCase(msg_unfiltered.replace(/\s*(-)(b|box)?\s*.*?$/, ""));
-        let hasdashb = msg_unfiltered.match(/-(?:b|box)/, "") !== null
+        const hasdashb = true; //msg_unfiltered.match(/-(?:b|box)/, "") !== null
         const wordToUpper = word.toUpperCase()
 
         switch (command_type) {
