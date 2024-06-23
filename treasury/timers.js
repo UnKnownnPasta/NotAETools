@@ -13,11 +13,11 @@ module.exports = {
         const timerEmbed = new EmbedBuilder()
         .setTitle(`Last timing resets`)
         .addFields(
-            { name: `Fissures/Box`, value: `<t:${fissureReset}:R>`, inline: true },
+            { name: `Fissures`, value: `<t:${fissureReset}:R>`, inline: true },
             { name: `Database`, value: `<t:${updateReset}:R>`, inline: true },
             { name: `Resets Count`, value: `${resetsDone} times`, inline: true },
         )
-        .setDescription(`Fissures/Box info resets every **3 minutes**\nDatabase resets every **5 minutes**`)
+        .setDescription(`Fissures resets every **3 minutes**\nDatabase resets every **5 minutes**`)
         .setTimestamp();
 
         await i.reply({ embeds: [timerEmbed], ephemeral: true });
