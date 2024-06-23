@@ -216,8 +216,9 @@ module.exports = {
                         if (!p?.startsWith(setName)) continue;
 
                         const partOfSet = relic.rewards[index]
-                        if (setParts.some((rec) => rec.r === relic.name)) continue;
-                        partsFound += 1;
+                        if (!setParts.some((rec) => rec.r === relic.name)) {
+                            partsFound += 1;
+                        }
                         if (setParts.some((rec) => rec.n === partOfSet.item)) continue;
 
                         let stockOfSetPart = parseInt(partOfSet.stock);
