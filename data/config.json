@@ -18,6 +18,10 @@
         }
     },
     "spreadsheet": {
+        "personal": {
+            "id": "1Hk9ENpfW--WV_rg1Pwa24VZyrvq8WGBAAoSFEgocfYo",
+            "ranges": { "relic": "!A2:I" }
+        },
         "treasury": {
             "id": "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY",
             "relicName": "Tracker - LIVE",

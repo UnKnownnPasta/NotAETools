@@ -145,12 +145,12 @@ module.exports = {
                         extraCount = `(+${collection_box[realName.replace(" x2", "")] ?? 0})`;
                         realColor = range((collection_box[realName.replace(" x2", "")] ?? 0) + parseInt(relicIndexOfReward.stock))
                     }
-                    partRelics.push({ r: relic.name, t: relic.tokens, c: partRarities[partIndex] })
+                    partRelics.push({ r: relic.name, t: relic.tokens, c: partRarities[partIndex], v: relic.vaulted ? 'V' : 'UV' })
                 }
                 if (!partRelics.length) return;
 
                 const sortedRelics = partRelics.sort((a, b) => parseInt(b.t) - parseInt(a.t)).map((part) => {
-                    return `${part.c.padEnd(2)} │ ${part.r} {${part.t}}`
+                    return `${part.c.padEnd(2)} │ ${part.r} {${part.t}} {${part.v}}`
                 })
 
                 const searchSoupPart = new ButtonBuilder()
@@ -267,7 +267,7 @@ module.exports = {
                 message.reply({ embeds: [
                     new EmbedBuilder()
                     .setTitle(`[ ${word.includes('Prime') ? word.replace("Prime", "").trim() : nameConstruct.join(' ')} Prime ]`)
-                    .setFooter({ text: `${stockOfParts}(+${boxStockOfParts})x of set in stock  •  ${colorOfParts} Set  •  Inside ${relicCount} relics` })
+                    .setFooter({ text: `${stockOfParts}(+${boxStockOfParts})x currently in stock  •  ${colorOfParts} Set  •  Inside of ${relicCount} relics` })
                     .setTimestamp()
                     .setDescription(codeBlock("ml", setPartsText.join("\n")))
                     .setColor(hex[colorOfParts])
@@ -315,7 +315,7 @@ module.exports = {
 
                 message.reply({ embeds: [
                     new EmbedBuilder()
-                    .setTitle(`[ ${properRelicName} ] {${relicFound.tokens}}`)
+                    .setTitle(`[ ${properRelicName} ] {${relicFound.tokens}} {${relicFound.vaulted ? 'V' : 'UV'}}`)
                     .setDescription(codeBlock('ml', relicDesc.join("\n")))
                     .setFooter({ 
                         text: `Viewing ${relicFound.name.split(" ")[0]} Void relic  •  Stock from Tracker + Box  •  ${allStocks} relic  `

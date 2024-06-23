@@ -29,41 +29,45 @@ const range = (num) =>
 
 async function getAllRelics() {
     const sheetValues = await googleSheets({ 
-        spreadsheetId: spreadsheet.treasury.id,
-        range: spreadsheet.treasury.relicName + spreadsheet.treasury.ranges.relic,
+        spreadsheetId: spreadsheet.personal.id,
+        range: 'Sheet1' + spreadsheet.personal.ranges.relic,
     })
     .catch((err) => {
         logger.error(err, 'Error fetching items and stock, using google client')
     })
 
     const values = sheetValues.data.values;
-    if (values.some(x => x[0] == '#ERROR!')) return logger.warn(`Error fetching items: Items have invalid values (#ERROR!)`);
-
-    const itemStockRegex = /\[(.+?)\]/;
-    const itemNameRegex = /(.*?)(?:\s+\[)/
+    if (values[0] === "#ERROR!" || values[0]?.[0] === "#ERROR!") return console.log(`Error fetching items: Items have invalid values (#ERROR!)`);
 
     if (values && values?.length) {
-        const allRelicData = []
-        await Promise.all(values.map(async (record) => {
-            const pushObj = { name: record[0], parts: [], rewards: [], tokens: record[7] }
-            await Promise.all(record.slice(1, 7).map((item) => {
-                let itemStock = item.match(itemStockRegex)?.[1]
-                let itemName = item.match(itemNameRegex)?.[1]?.replace(' and ', ' & ')
-                if (dualitemslist.includes(itemName)) itemName += " x2"
-                
-                pushObj.parts.push(itemName);
-                pushObj.rewards.push({ item: itemName ?? "Forma", stock: itemStock ?? "", color: range(parseInt(itemStock ?? 100)) });
-                return;
-            }))
-            allRelicData.push(pushObj)
-        }));
+        const allRelicData = [];
+        const allRelicNames = [];
+        const allPartNames = [];
 
-        const [onlyRelics, onlyParts] = await Promise.all([
-            [... new Set(allRelicData.map(relic => relic.name).flat())],
-            [... new Set(allRelicData.map(relic => relic.parts).flat().map(part => part?.replace(" x2", "")))],
-        ])
-        const JSONData = { relicData: allRelicData, relicNames: onlyRelics, partNames: onlyParts.filter(p => p) }
-        
+        for (const row of values) {
+            let tokens = parseInt(row[1]);
+            if (isNaN(tokens)) tokens = 0;
+
+            const name = row[2];
+            const parts = [];
+            const rewards = [];
+            const vaulted = row[0] === 'TRUE' ? true : false;
+
+            for (const item of row.slice(3)) {
+                let [part, stock] = item.split(' | ');
+                if (part.endsWith('Prime')) part = part.replace(' Prime', ' BP');
+                part = part.replace(' and ', ' & ');
+                parts.push(part !== 'Forma' ? part : null);
+                if (part !== 'Forma') {
+                    allPartNames.push(part)
+                }
+                rewards.push({ item: part, stock: stock, color: part !== 'Forma' ? range(parseInt(stock)) : '' });
+            }
+            allRelicData.push({ name, parts, rewards, tokens, vaulted });
+            allRelicNames.push(name);
+        }
+
+        const JSONData = { relicData: allRelicData, relicNames: allRelicNames, partNames: allPartNames }
         await fs.writeFile(path.join(__dirname, '..', 'data', 'RelicData.json'), JSON.stringify(JSONData))
     }
 }
@@ -263,7 +267,7 @@ async function getAllBoxData(client) {
 
     const fixedBoxStock = {}
     const jsfile = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json')))
-    const partNames = [... new Set(jsfile.relicData.map(x => x.parts).flat().filter(x => x))]
+    const partNames = jsfile.partNames;
 
     await Promise.all(Object.entries(boxStock).map(async ([part, stock]) => {
         const splitnm = titleCase(part).split(" ")
