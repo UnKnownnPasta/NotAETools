@@ -251,7 +251,11 @@ module.exports = {
                 colorOfParts = uncodeObj[Math.min(...colorOfParts.map(color => codeObj[color]))]
                 stockOfParts = Math.min(...stockOfParts)
                 boxStockOfParts = boxStockOfParts.filter(x => x)
-                if (boxStockOfParts.length) boxStockOfParts = Math.min(...boxStockOfParts.filter(x => x));
+                if (boxStockOfParts.length) {
+                    boxStockOfParts = Math.min(...boxStockOfParts);
+                } else {
+                    boxStockOfParts = 0;
+                }
 
                 const setPartArr = setParts[0].n.split(/\s+/g)
                 const nameConstruct = [setPartArr[0]]
