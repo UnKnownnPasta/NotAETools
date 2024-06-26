@@ -25,7 +25,8 @@ const client = new Client({
 		Partials.User,
 		Partials.Channel,
 	],
-	allowedMentions: { parse: [] }
+	allowedMentions: { parse: [] },
+	presence: { activities: [{ name: 'Zlushiie ❤', type: ActivityType.Watching }], status: 'idle' }
 });
 
 client.intrv_count = 0
@@ -65,17 +66,16 @@ eventFiles.forEach(file => {
 
 	client.on('ready', async () => {
 		logger.info(`[${client.user.username}] Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.`);
-		client.user.setPresence({ activities: [{ name: 'Zlushiie ❤', type: ActivityType.Watching }], status: 'dnd' });
 
-		// const keep_alive = require('./keep_alive.js');
+		const keep_alive = require('./keep_alive.js');
 
-		// await client.guilds.fetch({ force: true });
-		// await getAllRelics();
-		// client.boxData = await getAllBoxData(client)
+		await client.guilds.fetch({ force: true });
+		await getAllRelics();
+		client.boxData = await getAllBoxData(client)
 
-		// await Promise.all([
-		// 	refreshFissures(client),
-		// 	require('./scripts/deploy.js'),
-		// ])
+		await Promise.all([
+			refreshFissures(client),
+			require('./scripts/deploy.js'),
+		])
 	})
 })();
