@@ -1,7 +1,7 @@
 const path = require("node:path");
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
-const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
+const { Client, GatewayIntentBits, ActivityType, Partials, MessageMentions } = require('discord.js');
 const fs = require('node:fs')
 const { loadFiles, refreshFissures } = require('./scripts/utility.js')
 const { getAllBoxData, getAllRelics } = require('./scripts/dbcreate.js');
@@ -17,8 +17,15 @@ const client = new Client({
         GatewayIntentBits.Guilds, 
         GatewayIntentBits.MessageContent, 
         GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.GuildMembers
-    ]
+        GatewayIntentBits.GuildMembers,
+		GatewayIntentBits.DirectMessages
+    ],
+	partials: [
+		Partials.Message,
+		Partials.User,
+		Partials.Channel,
+	],
+	allowedMentions: { parse: [] }
 });
 
 client.intrv_count = 0
@@ -60,15 +67,15 @@ eventFiles.forEach(file => {
 		logger.info(`[${client.user.username}] Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.`);
 		client.user.setPresence({ activities: [{ name: 'Zlushiie ❤', type: ActivityType.Watching }], status: 'dnd' });
 
-		const keep_alive = require('./keep_alive.js');
+		// const keep_alive = require('./keep_alive.js');
 
-		await client.guilds.fetch({ force: true });
-		await getAllRelics();
-		client.boxData = await getAllBoxData(client)
+		// await client.guilds.fetch({ force: true });
+		// await getAllRelics();
+		// client.boxData = await getAllBoxData(client)
 
-		await Promise.all([
-			refreshFissures(client),
-			require('./scripts/deploy.js'),
-		])
+		// await Promise.all([
+		// 	refreshFissures(client),
+		// 	require('./scripts/deploy.js'),
+		// ])
 	})
 })();

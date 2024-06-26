@@ -61,6 +61,6 @@ module.exports = {
         client.treasury
             .get("anycmd")
             ?.execute(client, message, word.toLowerCase(), cmdType);
-        logger.info(`[CMD] Ran ++${cmdType} command by ${message.member.nickname ?? message.author.username} with arguments: "${word}" @ ${new Date().toLocaleString()}`);
+        logger.info(`[CMD] Ran ++${cmdType} command by ${message.member?.nickname ?? message.author.username} with arguments: "${word}" @ ${new Date().toLocaleString()}`);
     },
 };
