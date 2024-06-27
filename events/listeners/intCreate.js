@@ -11,7 +11,7 @@ module.exports = {
     * @param {Client} client
     */
     async listen(client, interaction) {
-        if (process.env.NODE_ENV !== "development" && client.dofilter && !authCategories.includes(interaction.channel.parentId)) 
+        if (client.dofilter && !authCategories.includes(interaction.channel.parentId)) 
             return logger.warn(`[UNAUTH/INT] ${interaction.member.displayName} @ ${interaction.channel.name}: ${interaction.commandName} &&& ${interaction.options.data.map(x=>`"${x.name}": ${x.value}`).join(', ')}`);
 
         if (interaction.isChatInputCommand()) {
