@@ -29,7 +29,7 @@ module.exports = {
         if (!message.content.startsWith(config.prefix) || message.author.bot)
             return;
 
-        if (process.env.NODE_ENV !== "development" && client.dofilter && !authCategories.includes(message.channel.parentId)) 
+        if (client.dofilter && !authCategories.includes(message.channel.parentId)) 
             return logger.warn(`[UNAUTH/MSG] ${message.author.displayName} @ ${message.channel.name}: ${message.content}`);
 
         let word = message.content.slice(2).toLocaleLowerCase();
