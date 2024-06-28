@@ -16,7 +16,7 @@ module.exports = {
      * @param {Message} message
      */
     async listen(client, message) {
-        if (message.content === "++filter" && (message.author.id == '740536348166848582' || message.author.id == '498993740715917312')) {
+        if (!message.channel.isDMBased() && message.content === "++filter" && (message.author.id == '740536348166848582' || message.author.id == '498993740715917312')) {
             client.dofilter = !client.dofilter;
             await message.reply({ content: `> ${process.env.NODE_ENV} - ${client.dofilter}` });
         }
