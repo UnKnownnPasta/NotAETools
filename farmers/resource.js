@@ -39,7 +39,7 @@ const reverseClan = {
     WK: "Waifu",
     MK: "Manga",
     YK: "Yuri",
-    CK: "Cowaii",
+    CK: "Cassiopeia",
     TK: "Tsuki",
     HK: "Heavens",
     AK: "Andromeda"
@@ -50,7 +50,7 @@ const clanOptions = [
     { name: "Waifu Kingdom", value: "WK" },
     { name: "Manga Kingdom", value: "MK" },
     { name: "Yuri Kingdom", value: "YK" },
-    { name: "Cowaii Kingdom", value: "CK" },
+    { name: "Cassiopeia Kingdom", value: "CK" },
     { name: "Tsuki Kingdom", value: "TK" },
     { name: "Heavens Kingdom", value: "HK" },
     { name: "Andromeda Kingdom", value: "AK" }
