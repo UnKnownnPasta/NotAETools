@@ -26,10 +26,10 @@ module.exports = {
             return await message.author.send({ files: [new AttachmentBuilder(Buffer.from(logfile, 'utf-8'), { name: 'dump.txt' })] })
         }
 
-        if (!message.channel.isDMBased() && !message.content.startsWith(config.prefix) || message.author.bot)
+        if (!message.content.startsWith(config.prefix) || message.author.bot)
             return;
 
-        if (client.dofilter && !authCategories.includes(message.channel.parentId)) 
+        if (!message.channel.isDMBased() && client.dofilter && !authCategories.includes(message.channel.parentId)) 
             return logger.warn(`[UNAUTH/MSG] ${message.author.displayName} @ ${message.channel.name}: ${message.content}`);
 
         let word = message.content.slice(2).toLocaleLowerCase();
