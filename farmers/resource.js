@@ -4,35 +4,35 @@ const {
     Client,
     CommandInteraction,
 } = require("discord.js");
-const fs = require("node:fs/promises");
 const { titleCase } = require("../scripts/utility");
-const path = require("node:path");
 const { getAllClanData } = require("../scripts/dbcreate");
 
 const resourceNames = [
-    'Credits', 'Alloy Plate',
-    'Asterite', 'Aucrux Capacitors',
-    'Bracoid', 'Carbides',
-    'Circuits', 'Control Module',
-    'Copernics', 'Cryotic',
-    'Cubic Diodes', 'Detonite Ampule',
-    'Ferrite', 'Fieldron Sample',
-    'Forma', 'Fresnels',
-    'Gallium', 'Gallos Rods',
-    'Hexenon', 'Isos',
-    'Kesslers', 'Komms',
-    'Morphics', 'Mutagen Sample',
-    'Nano Spores', 'Neural Sensors',
-    'Neurodes', 'Nitain Extract',
-    'Nullstones', 'Orokin Cell',
-    'Oxium', 'Plastids',
-    'Polymer Bundle', 'Pustrels',
-    'Rubedo', 'Salvage',
-    'Tellurium', 'Ticor Plate',
-    'Titanium', 'Trachons',
-    'Detonite Injector', 'Fieldron',
-    'Mutagen Mass'
-  ];
+    "Credits",
+    "Alloy Plate",
+    "Circuits",
+    "Control Module",
+    "Cryotic",
+    "Detonite Ampule",
+    "Ferrite",
+    "Fieldron Sample",
+    "Forma",
+    "Gallium",
+    "Morphics",
+    "Mutagen Sample",
+    "Nano Spores",
+    "Neural Sensors",
+    "Neurodes",
+    "Orokin Cell",
+    "Oxium",
+    "Plastids",
+    "Polymer Bundle",
+    "Rubedo",
+    "Salvage",
+    "Detonite Injector",
+    "Fieldron",
+    "Mutagen Mass",
+];
 
 const reverseClan = {
     IK: "Imouto",
@@ -45,6 +45,17 @@ const reverseClan = {
     AK: "Andromeda"
 };
 
+const clanOptions = [
+    { name: "Imouto Kingdom", value: "IK" },
+    { name: "Waifu Kingdom", value: "WK" },
+    { name: "Manga Kingdom", value: "MK" },
+    { name: "Yuri Kingdom", value: "YK" },
+    { name: "Cowaii Kingdom", value: "CK" },
+    { name: "Tsuki Kingdom", value: "TK" },
+    { name: "Heavens Kingdom", value: "HK" },
+    { name: "Andromeda Kingdom", value: "AK" }
+]
+
 module.exports = {
     name: "resource",
     data: new SlashCommandBuilder()
@@ -56,6 +67,13 @@ module.exports = {
         .setDescription('Resource to view details of')
         .setRequired(true)
         .setAutocomplete(true)
+    )
+    .addStringOption((option) =>
+        option
+            .setName('clan')
+            .setDescription('Which clan to see')
+            .setRequired(false)
+            .addChoices(...clanOptions)
     ),
     /**
      * Command to retrieve clan wise resources
@@ -65,6 +83,7 @@ module.exports = {
     async execute(client, i) {
         await i.deferReply()
         const resrc = titleCase(i.options.getString('resource', true) ?? "")
+        const clanname = titleCase(i.options.getString('clan', false) ?? "")
 
         if (!resourceNames.includes(resrc)) 
             return i.editReply({ content: `Invalid resource, choose from autofill instead`, ephemeral: true });
@@ -73,10 +92,11 @@ module.exports = {
         const clanEmbed = new EmbedBuilder()
         .setTitle(`Resource overview of ${resrc}`);
 
-        await resources.map(r => {
+        for (const r of resources) {
+            if (clanname && clanname.toUpperCase() !== r.clan) continue;
             const res = Object.entries(r.resource).filter(([ key, value ]) => key == resrc)[0]
             clanEmbed.addFields({ name: reverseClan[r.clan], value: `**Amt:** \`${res[1].amt}\` | **Short:** \`${res[1].short}\`` })
-        });
+        }
 
         await i.editReply({ embeds: [clanEmbed] })
     },
