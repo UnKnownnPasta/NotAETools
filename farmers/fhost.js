@@ -115,16 +115,17 @@ module.exports = {
         const novaBtn = buildBtn('Nova', ButtonStyle.Success)
         const wispBtn = buildBtn('Wisp', ButtonStyle.Success)
         const cancelBtn = buildBtn('❌', ButtonStyle.Danger)
+        const confirmBtn = buildBtn('✅', ButtonStyle.Success)
 
         const possFrames = [nekrosBtn, khoraBtn, wispBtn, novaBtn, nekros2Btn, anyBtn]
         possFrames.forEach(fm => {
             if (fm.data.custom_id == `fhost-${frame}` && fm.data.custom_id != 'fhost-Any') fm.setDisabled(true)
-            if (fm.data.custom_id !== 'fhost-❌')
+            if (fm.data.custom_id !== 'fhost-❌' && fm.data.custom_id !== 'fhost-✅')
                 farmEmbed.addFields({name: `${fm.data.label}`, value:`${fm.data.custom_id == `fhost-${frame}` ? `<@${i.user.id}>` : 'None'}`, inline: true})
         });
 
         const framesButtons = new ActionRowBuilder().addComponents(nekrosBtn, khoraBtn, nekros2Btn, novaBtn, wispBtn)
-        const optionBtn = new ActionRowBuilder().addComponents(anyBtn, cancelBtn)
+        const optionBtn = new ActionRowBuilder().addComponents(anyBtn, cancelBtn, confirmBtn)
 
         i.reply({ content: `<@${i.user.id}>`, embeds: [farmEmbed], components: [framesButtons, optionBtn] })
     },
