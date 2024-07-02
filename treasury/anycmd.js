@@ -53,10 +53,8 @@ module.exports = {
     async execute(client, message, msg_unfiltered, command_type) {
         const partRarities = ["C", "C", "C", "UC", "UC", "RA"];
 
-        const [rdata, collection_box] = await Promise.all([
-            fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json')),
-            getAllBoxData(client)
-        ])
+        const rdata = await fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json'));
+        const collection_box = await getAllBoxData(client);
         const relic_data = await JSON.parse(rdata);
 
         const word = titleCase(msg_unfiltered.replace(/\s*(-)(b|box)?\s*.*?$/, ""));
