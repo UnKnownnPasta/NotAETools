@@ -21,8 +21,8 @@ const googleSheets = async ({ spreadsheetId, range }) => {
 }
 
 const range = (num) => 
-    num >= 0 && num <= 10 ? 'ED'
-    : num > 10 && num <= 15 ? 'RED'
+    num >= 0 && num <= 9 ? 'ED'
+    : num > 9 && num <= 15 ? 'RED'
     : num > 15 && num <= 31 ? 'ORANGE'
     : num > 31 && num <= 64 ? 'YELLOW'
     : num > 64 ? 'GREEN' : '';
