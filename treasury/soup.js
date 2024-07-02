@@ -43,7 +43,7 @@ module.exports = {
     async execute(client, i) {
         await i.deferReply()
         const relics = i.options.getString('relics', true).split(' '),
-            filtertype = i.options.getString('filtertype', false) ?? false;
+            filtertype = i.options.getString('filtertype', false);
         const isSpecialMode = i.options.getBoolean('new', false) ?? false;
 
         if (relics.join(' ').match(/\d+x\s*\|\s*[^\|]+?\s*\|\s*\d+\s*ED\s*\|\s*\d+\s*RED\s*\|\s*\d+\s*ORANGE/g) || relics.join(' ').includes('')) {
@@ -68,21 +68,21 @@ module.exports = {
 
         const priorityOfStatus = {"ED": 0, "RED": 1, "ORANGE": 2, "YELLOW": 3, "GREEN": 4, "#N/A": 5}
 
-        async function getRelic(name, type=null) {
+        async function getRelic(name) {
             const relic = relicsList.relicData.find(r => r.name === name)
+
             if (!relic) return null;
             const stuffToSpecial = []
             let StatusArr = relic.rewards.map(part => {
-                let returnrange = range(parseInt(part.stock));
-                if (true) {
-                    returnrange = range((boxlist[part.item.replace(' x2', '')] ?? 0) + (parseInt(part.stock)))
-                }
+                let returnrange = range((boxlist[part.item.replace(" x2", "")] ?? 0) + parseInt(part.stock));
+
                 if (isSpecialMode) {
                     stuffToSpecial.push([part.item, priorityOfStatus[returnrange], ansiValues[returnrange]])
                 }
                 return [returnrange, priorityOfStatus[returnrange]];
             });
-            if (type && type !== "box" && !(Math.min(...StatusArr.map(x => x[1])) <= priorityOfStatus[type.toUpperCase()])) return null;
+
+            if (filtertype && !(Math.min(...StatusArr.filter(x => !isNaN(x[1])).map(x => x[1])) <= priorityOfStatus[filtertype.toUpperCase()])) return null;
             return [relic.tokens, StatusArr.map(x => x[0]), ...stuffToSpecial];
         }
         let soupedAccepted = []
@@ -104,7 +104,7 @@ module.exports = {
                 const relicEra = fullfms[short.slice(letterstart.index, letterstart.index+1)]
                 const relicType = short.slice(letterstart.index+1).toUpperCase()
                 rFullName = `${relicEra} ${relicType}`
-                const res = !filtertype ? await getRelic(rFullName) : await getRelic(rFullName, filtertype)
+                const res = await getRelic(rFullName)
                 if (!res) continue;
                 if (soupedAccepted.filter(str => str.match(/\d+([a-zA-Z]*\d+)/)[1] === short.toLowerCase().slice(letterstart.index)).length) {
                     duplicateStrings.push(short); continue;
@@ -114,7 +114,7 @@ module.exports = {
                 soupedAccepted.push(short)
 
                 if (isSpecialMode) {
-                    let goodParts = res.slice(2).sort((a, b) => a[1] - b[1]).filter(x => x[2]).slice(0, 2).map(x => {
+                    let goodParts = res.slice(2).filter(x => x[2]).sort((a, b) => a[1] - b[1]).slice(0, 2).map(x => {
                         return `${x[2]}${x[0].replace(" x2", "")}[0m`
                     })
 
