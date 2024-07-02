@@ -37,8 +37,8 @@ const hex = {
 }
 
 const stockRanges = {
-    "ED": "0 - 10",
-    "RED": "11 - 15",
+    "ED": "0 - 9",
+    "RED": "10 - 15",
     "ORANGE": "16 - 31",
     "YELLOW": "32 - 64",
     "GREEN": "64 - inf",
