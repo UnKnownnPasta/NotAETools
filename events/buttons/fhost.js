@@ -40,7 +40,7 @@ module.exports = {
             }
         }
 
-        // if (doFilterCheck && allIDs.includes(i.user.id) && i.customId != 'fhost-❌') return i.update({ });
+        if (doFilterCheck && allIDs.includes(i.user.id) && i.customId != 'fhost-❌') return i.update({ });
         
         const newRow = (arr) => new ActionRowBuilder().addComponents(arr);
 
