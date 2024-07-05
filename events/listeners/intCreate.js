@@ -34,6 +34,9 @@ module.exports = {
             } catch (error) {
                 logger.error(error, `Error while trying to run a autocomplete`);
             }
+        } else if (interaction.isUserContextMenuCommand()) {
+            client.treasury.get(interaction.commandName)?.execute(client, interaction)
+            logger.info(`[CTX] "${interaction.user.username}" Ran interaction command "${interaction.commandName}" [Context Menu]`)
         }
     },
 };
