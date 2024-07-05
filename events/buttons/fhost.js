@@ -35,12 +35,12 @@ module.exports = {
             if (filterCheck.length <= 1) {
                 return i.reply({ content: `Squad needs atleast 2 members.`, ephemeral: true })
             } else {
-                minimumFill = filterCheck;
+                minimumFill = filterCheck.length;
                 doFilterCheck = false;
             }
         }
 
-        if (doFilterCheck && allIDs.includes(i.user.id) && i.customId != 'fhost-❌') return i.update({ });
+        // if (doFilterCheck && allIDs.includes(i.user.id) && i.customId != 'fhost-❌') return i.update({ });
         
         const newRow = (arr) => new ActionRowBuilder().addComponents(arr);
 
@@ -84,7 +84,7 @@ module.exports = {
             await i.update({ content: i.message.content, embeds: [globalHostEmbed], components: [newRow(hostComps.slice(0, 5)), newRow(hostComps.slice(5))] })
         }
 
-        if (allIDs.filter(x => x != 'n').length >= minimumFill.length) {
+        if (allIDs.filter(x => x != 'n').length >= minimumFill) {
             await i.message.edit({ content: 'Preparing squad...', components: [] });
             let names = await getAllUserData('farmer')
             await i.message.delete();
