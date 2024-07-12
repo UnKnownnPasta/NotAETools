@@ -319,7 +319,10 @@ async function retrieveSoupStoreRelics(client) {
     let boxID = '1193067569301684256';
 
     const boxChannel = await client.channels.cache.get(boxID)?.threads;
-    if (!boxChannel) return logger.warn(`No Threads channel found; failed to update Soup Store`)
+    if (!boxChannel) {
+        logger.warn(`No Threads channel found; failed to update Soup Store`)
+        return [];
+    }
 
     const relicsMegaJSON = []
 

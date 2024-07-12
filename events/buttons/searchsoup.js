@@ -20,7 +20,6 @@ module.exports = {
         await i.deferReply()
         const parttoFind = i.customId.split('-')[2]
         const findType = i.customId.split('-')[1]
-        // const soupStore = await JSON.parse(await fs.readFile(path.join(__dirname, '..', '..', 'data/SoupData.json')))
         const soupStore = await retrieveSoupStoreRelics(client)
 
         switch (findType) {
@@ -102,7 +101,7 @@ module.exports = {
                 }
 
                 const rFoundAllEmbed = new EmbedBuilder()
-                .setAuthor({ name: `Found ${rCounts} relics`, iconURL: i.member.displayAvatarURL() })
+                .setAuthor({ name: `Found ${rCounts} relics`, iconURL: i.user.displayAvatarURL() })
                 .setColor(`#C2B280`);
         
                 const descRelics = []
