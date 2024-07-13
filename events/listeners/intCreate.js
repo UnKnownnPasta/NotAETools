@@ -12,12 +12,12 @@ module.exports = {
     */
     async listen(client, interaction) {
         if (process.env.NODE_ENV !== 'development' && client.dofilter && !authCategories.includes(interaction.channel.parentId)) 
-            return logger.warn(`[UNAUTH/INT] ${interaction.user.username} @ ${interaction.channel.name}: ${interaction.commandName} &&& ${interaction.options.data.map(x=>`"${x.name}": ${x.value}`).join(', ')}`);
+            return logger.warn(`[UNAUTH/INT] ${interaction.user.username} @ ${interaction.channel.name}: ${interaction.commandName} &&& ${interaction.options?.data?.map(x=>`"${x.name}": ${x.value}`)?.join(', ')}`);
 
         if (interaction.isChatInputCommand()) {
             client.treasury.get(interaction.commandName)?.execute(client, interaction)
             client.farmers.get(interaction.commandName)?.execute(client, interaction)
-            logger.info(`[CMD] "${interaction.user.username}" Ran interaction command "${interaction.commandName}" with arguments: ${interaction.options.data.map(x=>`"${x.name}": ${x.value}`).join(', ')}`)
+            logger.info(`[CMD] "${interaction.user.username}" Ran interaction command "${interaction.commandName}" with arguments: ${interaction.options?.data?.map(x=>`"${x.name}": ${x.value}`)?.join(', ')}`)
         } else if (interaction.isButton()) {
             if (interaction.customId.startsWith('paginate')) return;
             client.buttons?.get(interaction.customId.split('-')[0])?.execute(client, interaction)
