@@ -39,7 +39,7 @@ module.exports = {
                 }
         
                 const pFoundAllEmbed = new EmbedBuilder()
-                .setAuthor({ name: `Found ${pCounts} relics`, iconURL: i.member.displayAvatarURL() })
+                .setAuthor({ name: `Found ${pCounts} relics`, iconURL: i.user.displayAvatarURL() })
                 .setColor(`#C2B280`);
         
                 if (pHits.length) {
@@ -70,7 +70,7 @@ module.exports = {
                 }
         
                 const sFoundAllEmbed = new EmbedBuilder()
-                .setAuthor({ name: `Found ${sCounts} relics`, iconURL: i.member.displayAvatarURL() })
+                .setAuthor({ name: `Found ${sCounts} relics`, iconURL: i.user.displayAvatarURL() })
                 .setColor(`#C2B280`);
         
                 if (sHits.length) {
