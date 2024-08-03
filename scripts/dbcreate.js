@@ -187,9 +187,10 @@ async function getAllBoxData(client) {
                     .replace(/\s+/g, ' ')
                     .replace(/\s*prime\s*/g, ' ')
                     .replace(/\(.*?\)/g, "")
-                    .replace(/<@!?[^>]+>/g, "")
+                    .replace(/<@!?[^>]+>/g, "") // mentions regex
                     .replace(/x(\d+)/g, '$1x')
                     .replace(/ and /g, " & ")
+                    .replace(/^\s*[-*+]\s+/gm, "") // remove lists from mkdwn
                     .trim()
                     .replace(/\b(\d+)\s*x?\s*\b/g, '$1x ')
                     .replace(/\b(\d+)\s*x?\b\s*(.*?)\s*/g, '$1x $2, ')
