@@ -78,20 +78,20 @@ async function getAllUserData(key=null) {
 
     if (key === 'treasury') {
         const res = await googleSheets({
-            spreadsheetId: spreadsheet.treasury.id,
-            range: spreadsheet.treasury.useridName + spreadsheet.treasury.ranges.ids,
+            spreadsheetId: spreadsheet.personal.id,
+            range: spreadsheet.personal.ranges.treasury,
         })
         const workOnData = res.data.values.filter(val => val.length).map((data) => {
-            return { uid: data[0], name: data[1] }
+            return { name: data[0], uid: data[1]?.replace("ID: ", "") ?? "0" }
         })
         return workOnData;
     } else if (key === 'farmer') {
         const res = await googleSheets({
-            spreadsheetId: spreadsheet.farmer.id,
-            range: spreadsheet.farmer.userName + spreadsheet.farmer.ranges.users,
+            spreadsheetId: spreadsheet.personal.id,
+            range: spreadsheet.personal.ranges.farmer,
         })
         const workOnData = res.data.values.filter(val => val.length).map((data) => {
-            return { uid: data[0], name: data[1], tokens: data[2], bonus: data[3], spent: data[4], left: data[5], playtime: data.at(7) ? `${data[6]} (${data[7]})` : data[6] }
+            return { uid: data[0], name: data[1], tokens: data[2], bonus: data[3], spent: data[4], left: data[5], playtime: data[6] }
         })
         if (!workOnData?.length) return await farmerdata();
         return workOnData;
