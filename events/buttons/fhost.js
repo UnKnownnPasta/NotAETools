@@ -93,7 +93,7 @@ module.exports = {
                 const jsofuser = names.find(user => user.uid == ids)
                 return jsofuser ?  `<@${ids}> /inv ${jsofuser?.name}` : `<@${ids}> No IGN found`
             })
-            await i.channel.send({ content: `${IDList.join("\n")}`, embeds: [globalHostEmbed] });
+            await i.channel.send({ content: `${IDList.join("\n")}`, embeds: [globalHostEmbed], allowedMentions: { repliedUser: true, parse: ['users'] } });
         }
     },
 };

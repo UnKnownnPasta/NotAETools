@@ -47,7 +47,7 @@ module.exports = {
 
                     try {
                         await i.message.delete()
-                        await i.channel.send({ embeds: [filledEmbed], content: `${setOfUsers.slice(0, 4).map(x => `<@${x}>`).join(" ")}` })
+                        await i.channel.send({ embeds: [filledEmbed], content: `${setOfUsers.slice(0, 4).map(x => `<@${x}>`).join(" ")}`, allowedMentions: { repliedUser: true, parse: ['users'] }  })
                     } catch (error) {
                         return i?.followUp({ content: `Could not join run, squad is filled`, ephemeral: true });
                     } 
