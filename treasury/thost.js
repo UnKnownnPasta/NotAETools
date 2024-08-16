@@ -14,6 +14,7 @@ const path = require("node:path");
 
 module.exports = {
     name: "thost",
+    disabled: true,
     data: new SlashCommandBuilder()
         .setName("thost")
         .setDescription("Hosts a treasury run")

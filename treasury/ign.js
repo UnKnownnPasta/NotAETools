@@ -8,6 +8,7 @@ const { getAllUserData } = require("../scripts/dbcreate");
 
 module.exports = {
     name: "ign",
+    disabled: true,
     data: new SlashCommandBuilder()
         .setName("ign")
         .setDescription("Get ign of a user")
