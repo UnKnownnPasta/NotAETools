@@ -10,6 +10,7 @@ for (const file of fs.readdirSync(treasuryFolder)) {
 	const filePath = path.join(treasuryFolder, file);
 	if (!filePath.endsWith(".js")) continue;
 	const command = require(filePath);
+	if (command['disabled'] === true) continue;
 	if ('data' in command && 'execute' in command) {
 		commands.push(command.data.toJSON());
 	}
@@ -21,6 +22,7 @@ for (const file of fs.readdirSync(farmerFolder)) {
 	const filePath = path.join(farmerFolder, file);
 	if (!filePath.endsWith(".js")) continue;
 	const command = require(filePath);
+	if (command['disabled'] === true) continue;
 	if ('data' in command && 'execute' in command) {
 		commands.push(command.data.toJSON());
 	}
