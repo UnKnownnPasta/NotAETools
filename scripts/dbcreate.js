@@ -279,7 +279,7 @@ async function getAllBoxData(client) {
             else return splitnm.length > 2 ? (x.startsWith(splitnm[0]) && matchAny(x.split(" ")[1], splitnm[1]) && matchAny(x.split(" ")[2], splitnm[2]) && matchAny(x.split(" ")[3], splitnm[3])) : x.startsWith(splitnm[0])
         })
         .filter(y => y.split(' ').slice(1).some(
-            z => splitnm.slice(1).some(p => z === "BP" ? z === p : z.startsWith(p == 'bp' ? 'BP' : p.slice(0, -1)))))
+            z => splitnm.slice(1).some(p => z === "BP" ? z === p : z.startsWith(p == 'BP' ? 'BP' : p.slice(0, -1)))))
 
         if (pind.length > 1) {
             let numMatch = 0;
