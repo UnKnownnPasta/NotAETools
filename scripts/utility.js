@@ -1,4 +1,4 @@
-const { Collection, EmbedBuilder, Client } = require("discord.js");
+const { Collection, EmbedBuilder, Client, parseEmoji } = require("discord.js");
 const path = require('node:path')
 const fs = require('node:fs/promises');
 const { fissureChannel } = require('../data/config.json')
@@ -159,6 +159,7 @@ async function refreshFissures(client) {
             isHard,
         ]);
 
+        // --- Fissure Embeds ---
         const [N_Embed, S_Embed] = Object.entries(fissures.reduce((acc, fissure) => {
             let currentEmbed = fissure[2] ? acc.S_Embed : acc.N_Embed;
 
@@ -171,23 +172,32 @@ async function refreshFissures(client) {
             { N_Embed: {}, S_Embed: {} }
         ));
 
+        const embedSort = (embed) => Object.values(embed[1]).sort((a, b) => tiers.indexOf(a.name) - tiers.indexOf(b.name))
+
         const NormEmbed = new EmbedBuilder()
-            .setTitle("Normal Fissures")
+        .setAuthor({ name: "Steel Path Fissures", iconURL: `https://cdn.discordapp.com/emojis/${parseEmoji("<:normalPath:1283097587347357716>").id}.png` })
             .setColor("#2c2c34")
-            .setFields(Object.values(N_Embed[1]).sort((a, b) => tiers.indexOf(a.name) - tiers.indexOf(b.name)));
+            .setFields(embedSort(N_Embed));
 
         const SPEmbed = new EmbedBuilder()
-            .setTitle("Steel Path Fissures")
-            .setFields(Object.values(S_Embed[1]).sort((a, b) => tiers.indexOf(a.name) - tiers.indexOf(b.name)))
+            .setAuthor({ name: "Steel Path Fissures", iconURL: `https://cdn.discordapp.com/emojis/${parseEmoji("<:steelPath:1283097589931048971>").id}.png` })
+            .setFields(embedSort(S_Embed))
             .setColor("#2c2c34")
             .setTimestamp();
 
-        const TimeEmbed = new EmbedBuilder()
-            .setTitle("Next fissure resets:")
-            .setColor("#b6a57f");
-
-        if (NormEmbed.data.fields.length == 0) NormEmbed.setDescription(`No ideal fissures`);
+        if (NormEmbed.data.fields.length == 0) {
+            NormEmbed.setDescription(`No ideal fissures`);
+        }
         if (SPEmbed.data.fields.length == 0) SPEmbed.setDescription(`No ideal fissures`);
+
+        // ------------- Getting next resets -------------
+        
+        const emojiObj = { 
+            "Lith": "<:LithRelicIntact:1283085303191703614>", 
+            "Meso": "<:MesoRelicIntact:1283085306756857887>", 
+            "Neo": "<:NeoRelicIntact:1283085312649859093>", 
+            "Axi": "<:AxiRelicIntact:1283085323127230576>" 
+        }
 
         let timeArrOfObj = [];
         const fisTimes = getFissureTimings(
@@ -204,32 +214,38 @@ async function refreshFissures(client) {
             timeArrOfObj.push({ era: key, time: `<t:${val}:R>` })
         });
         
-        const allDesc = Object.entries(timeArrOfObj.reduce((acc, { era, time }) => {
+        const allTimeObjs = Object.entries(timeArrOfObj.reduce((acc, { era, time }) => {
             const [ status, erra ] = era.split(' ')
-            let currentEmbed = acc[`${erra}desc`];
+            let currentEmbed = acc[`${erra}time`];
 
             if (!currentEmbed.norm && status == 'false') currentEmbed.norm = time;
             else if (!currentEmbed.sp && status == 'true') currentEmbed.sp = time;
 
             return acc;
         }, {
-            Lithdesc: { norm: undefined, sp: undefined },
-            Mesodesc: { norm: undefined, sp: undefined },
-            Neodesc: { norm: undefined, sp: undefined },
-            Axidesc: { norm: undefined, sp: undefined },
+            Lithtime: { norm: undefined, sp: undefined },
+            Mesotime: { norm: undefined, sp: undefined },
+            Neotime: { norm: undefined, sp: undefined },
+            Axitime: { norm: undefined, sp: undefined },
         }));
 
-        const timeDesc = allDesc
-            .sort((a, b) => tiers.indexOf(a[0].replace('desc', '')) - tiers.indexOf(b[0].replace('desc', '')))
-            .map(x => {
-                return `\`${`${x[0].replace('desc', '')}`.padEnd(4)}\` - Normal: ${x[1].norm ?? 'in ???'} SP: ${x[1].sp ?? 'in ???'}`
-        })
+        const timeObjSort = (embed, type) => embed
+            .sort((a, b) => tiers.indexOf(a[0].replace('time', '')) - tiers.indexOf(b[0].replace('time', '')))
+            .map(c => `${emojiObj[c[0].replace('time', '')]} ${c[1][type] ?? '???'}`)
 
-        TimeEmbed.setDescription(timeDesc.join('\n'));
+        const NextFissuresEmbed = new EmbedBuilder()
+        .setColor("#b6a57f")
+        .addFields(
+            { name: "Normal", value: timeObjSort(allTimeObjs, 'norm').join("\n"), inline: true },
+            { name: "Steel Path", value: timeObjSort(allTimeObjs, 'sp').join("\n"), inline: true }
+        )
+        .setFooter({ text: "Next Fissure Reset Timers / by era" })
+
+        // ------------- Refreshing Embeds -------------
 
         await messageToEdit.edit({
             content: null,
-            embeds: [NormEmbed, SPEmbed, TimeEmbed],
+            embeds: [NormEmbed, SPEmbed, NextFissuresEmbed],
         });
     } catch (error) {
         logger.error(error, `[INTRVL] Failed to refresh fissures`);
