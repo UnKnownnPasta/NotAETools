@@ -88,7 +88,7 @@ module.exports = {
                 const baseStatusEmbed = new EmbedBuilder()
                 .setTitle(`[ ${wordToUpper} ]`)
                 .setColor(hex[wordToUpper])
-                .setFooter({ text: `Parts with: ${stockRanges[word.toUpperCase()]} stock  •  ${sortedParts.length} results  •  ` })
+                .setFooter({ text: `Parts with: ${stockRanges[word.toUpperCase()]} stock  •  ${sortedParts.length} results` })
                 .setTimestamp();
 
                 if (!sortedParts.length) {
@@ -115,7 +115,7 @@ module.exports = {
 
                 statusPagination.setEmbeds(embedsArrStatus, (embed, index, array) => {
                     return embed.setFooter({
-                        text: embed.data.footer.text + `Page ${index + 1}/${array.length}`,
+                        text: embed.data.footer.text + `  •  Page ${index + 1}/${array.length}`,
                     });
                 });
                 statusPagination.render();

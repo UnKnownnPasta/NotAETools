@@ -175,19 +175,19 @@ async function refreshFissures(client) {
         const embedSort = (embed) => Object.values(embed[1]).sort((a, b) => tiers.indexOf(a.name) - tiers.indexOf(b.name))
 
         const NormEmbed = new EmbedBuilder()
-        .setAuthor({ name: "Steel Path Fissures", iconURL: `https://cdn.discordapp.com/emojis/${parseEmoji("<:normalPath:1283097587347357716>").id}.png` })
+            .setAuthor({ name: "Regular Fissures", 
+                iconURL: `https://cdn.discordapp.com/emojis/${parseEmoji("<:normalPath:1283097587347357716>").id}.png` })
             .setColor("#2c2c34")
             .setFields(embedSort(N_Embed));
 
         const SPEmbed = new EmbedBuilder()
-            .setAuthor({ name: "Steel Path Fissures", iconURL: `https://cdn.discordapp.com/emojis/${parseEmoji("<:steelPath:1283097589931048971>").id}.png` })
+            .setAuthor({ name: "Steel Path Fissures", 
+                iconURL: `https://cdn.discordapp.com/emojis/${parseEmoji("<:steelPath:1283097589931048971>").id}.png` })
             .setFields(embedSort(S_Embed))
             .setColor("#2c2c34")
             .setTimestamp();
 
-        if (NormEmbed.data.fields.length == 0) {
-            NormEmbed.setDescription(`No ideal fissures`);
-        }
+        if (NormEmbed.data.fields.length == 0) NormEmbed.setDescription(`No ideal fissures`);
         if (SPEmbed.data.fields.length == 0) SPEmbed.setDescription(`No ideal fissures`);
 
         // ------------- Getting next resets -------------
@@ -236,7 +236,7 @@ async function refreshFissures(client) {
         const NextFissuresEmbed = new EmbedBuilder()
         .setColor("#b6a57f")
         .addFields(
-            { name: "Normal", value: timeObjSort(allTimeObjs, 'norm').join("\n"), inline: true },
+            { name: "Regular", value: timeObjSort(allTimeObjs, 'norm').join("\n"), inline: true },
             { name: "Steel Path", value: timeObjSort(allTimeObjs, 'sp').join("\n"), inline: true }
         )
         .setFooter({ text: "Next Fissure Reset Timers / by era" })
