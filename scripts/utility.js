@@ -176,13 +176,13 @@ async function refreshFissures(client) {
 
         const NormEmbed = new EmbedBuilder()
             .setAuthor({ name: "Regular Fissures", 
-                iconURL: `https://cdn.discordapp.com/emojis/${parseEmoji("<:normalPath:1283097587347357716>").id}.png` })
+                iconURL: `https://cdn.discordapp.com/emojis/${parseEmoji("<:normalPath:1287248821461454910>").id}.png` })
             .setColor("#2c2c34")
             .setFields(embedSort(N_Embed));
 
         const SPEmbed = new EmbedBuilder()
             .setAuthor({ name: "Steel Path Fissures", 
-                iconURL: `https://cdn.discordapp.com/emojis/${parseEmoji("<:steelPath:1283097589931048971>").id}.png` })
+                iconURL: `https://cdn.discordapp.com/emojis/${parseEmoji("<:steelPath:1287249765091905620>").id}.png` })
             .setFields(embedSort(S_Embed))
             .setColor("#2c2c34")
             .setTimestamp();
@@ -193,10 +193,10 @@ async function refreshFissures(client) {
         // ------------- Getting next resets -------------
         
         const emojiObj = { 
-            "Lith": "<:LithRelicIntact:1283085303191703614>", 
-            "Meso": "<:MesoRelicIntact:1283085306756857887>", 
-            "Neo": "<:NeoRelicIntact:1283085312649859093>", 
-            "Axi": "<:AxiRelicIntact:1283085323127230576>" 
+            "Lith": "<:LithRelicIntact:1287249967475458078>", 
+            "Meso": "<:MesoRelicIntact:1287250081380044801>", 
+            "Neo": "<:NeoRelicIntact:1287250258765545502>", 
+            "Axi": "<:AxiRelicIntact:1287250368299925524>" 
         }
 
         let timeArrOfObj = [];
