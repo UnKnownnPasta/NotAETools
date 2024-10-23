@@ -18,6 +18,8 @@
     "googleapis": "^133.0.0",
     "pagination.djs": "^4.0.13",
     "pino": "^7.11.0",
-    "pino-pretty": "^11.0.0"
+    "pino-pretty": "^11.0.0",
+    "sequelize": "^6.37.4",
+    "sqlite3": "^5.1.7"
   }
 }
