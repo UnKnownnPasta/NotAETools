@@ -1,12 +1,12 @@
 const path = require("node:path");
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
-const { Client, GatewayIntentBits, ActivityType, Partials, MessageMentions } = require('discord.js');
-const Sequelize = require('sequelize');
+const { Client, GatewayIntentBits, ActivityType, Partials } = require('discord.js');
 const fs = require('node:fs')
 const { loadFiles, refreshFissures } = require('./scripts/utility.js')
 const { getAllBoxData, getAllRelics } = require('./scripts/dbcreate.js');
 const logger = require('./scripts/logger.js');
+const { default: mongoose } = require("mongoose");
 
 process.on('uncaughtException', (err) => {
 	logger.error(err, `anti crash :: uncaughtException`)
@@ -58,49 +58,23 @@ eventFiles.forEach(file => {
 	logger.info(`[STRTUP] Loaded ${event.name} listener.`);
 });
 
+async function run_mongo() {
+	await mongoose.connect(`${process.env.MONGODB_URI}`);
+	logger.info("[MONGODB] Successfully connected to MongoDB!");
+}
+
 // Login
 ;(async () => {
+	await run_mongo().catch(err => logger.error(err, '[MONGODB] Failed to connect to MongoDB.'));
+
 	client.dofilter = true;
 	await client.login(process.env.TOKEN);
 
 	client.fissureLast = new Date().getTime() + 180000
 	client.lastboxupdate = new Date().getTime() - 100000
 
-	const sequelize = new Sequelize('database', 'user', 'password', {
-		host: 'localhost',
-		dialect: 'sqlite',
-		logging: false,
-		storage: path.resolve(__dirname, './data/database.sqlite'),
-	});
-
-	const VCData = sequelize.define('vcdata', {
-		id: {
-			type: Sequelize.STRING,
-			primaryKey: true,
-			allowNull: false
-		},
-		lastVCConnectTimestamp: {
-			type: Sequelize.INTEGER,
-			defaultValue: 0
-		},
-		totalVCConnects: {
-			type: Sequelize.INTEGER,
-			defaultValue: 0
-		},
-		totalVCTime: {
-			type: Sequelize.INTEGER,
-			defaultValue: 0
-		},
-	}, {
-		timestamps: false,
-	})
-
-	client.sequelize = sequelize;
-
 	client.on('ready', async () => {
 		logger.info(`[${client.user.username}] Online at ${new Date().toLocaleString()}; Cached ${client.guilds.cache.size} guilds.`);
-
-		VCData.sync();
 
 		const keep_alive = require('./keep_alive.js');
 
