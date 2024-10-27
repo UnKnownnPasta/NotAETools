@@ -9,6 +9,21 @@ const { default: mongoose } = require("mongoose");
 const { Pagination } = require("pagination.djs");
 const vcmodel = require("../data/vcmodel");
 
+const roundOff = num => Math.round(num * 100) / 100;
+function formatDuration(seconds) {
+    const days = Math.floor(seconds / 86400);
+    const hours = Math.floor((seconds % 86400) / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
+    return [
+        days ? `${roundOff(days)}d` : '',
+        hours ? `${roundOff(hours)}h` : '',
+        minutes ? `${roundOff(minutes)}m` : '',
+        secs ? `${roundOff(secs)}s` : ''
+    ].filter(Boolean).join(' ');
+}
+
 module.exports = {
     name: "vcleaderboard",
     data: new SlashCommandBuilder()
@@ -23,8 +38,8 @@ module.exports = {
         await i.deferReply()
 
         const vcEmbed = new EmbedBuilder().setTitle(`VC Leaderboard`);
-        // const allVCData = await sql.query(`SELECT * FROM vcdata`, { type: sql.QueryTypes.SELECT });
-        const allVCData = await mongoose.model("VoiceStateData", vcmodel).find();
+        const VCData = await mongoose.model("VoiceStateData", vcmodel).find();
+        const allVCData = VCData.filter(vc => vc.superid.split('-')[0] === i.guildId);
 
         if (allVCData.length == 0) {
             vcEmbed.setDescription(`No data found`);
@@ -39,7 +54,10 @@ module.exports = {
 
                 for (let j = i; j < i + 15 && j < sortedVCData.length; j++) {
                     const vc = sortedVCData[j];
-                    textArray.push(`${i + j === 0 ? "🥇" : i + j === 1 ? "🥈" : i + j === 2 ? "🥉" : ""} ${i + j + 1} | <@!${vc.superid.split('-')[1]}> - ${vc.totalVCTime} seconds`);
+                    const time = formatDuration(vc.totalVCTime);
+                    const position = `${i + j === 0 ? "🥇" : i + j === 1 ? "🥈" : i + j === 2 ? "🥉" : `${i + j + 1}.`}`
+
+                    textArray.push(`${position}  <@!${vc.superid.split('-')[1]}> - ${time}`);
                 }
                 const embedI = new EmbedBuilder(vcEmbed).setDescription(textArray.join('\n'));
                 vcEmbedsArray.push(embedI);
