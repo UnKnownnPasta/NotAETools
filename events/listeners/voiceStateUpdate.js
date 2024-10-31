@@ -4,7 +4,7 @@ const vcmodel = require('../../data/vcmodel');
 
 module.exports = {
     name: 'voiceStateUpdate',
-    once: false,
+    once: true,
     /**
      * Voice states listener (joining, muting, etc)
      * @param {Client} client 

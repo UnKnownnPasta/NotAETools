@@ -26,6 +26,7 @@ function formatDuration(seconds) {
 
 module.exports = {
     name: "vcleaderboard",
+    disabled: true,
     data: new SlashCommandBuilder()
     .setName('vcleaderboard')
     .setDescription('See who has slept the longest in vc'),
