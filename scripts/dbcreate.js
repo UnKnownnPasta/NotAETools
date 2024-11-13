@@ -432,7 +432,12 @@ async function getAllBoxData(client) {
     }))
 
     const fixedBoxStock = {}
-    const jsfile = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json')))
+    let jsfile;
+    try {
+        jsfile = await JSON.parse(await fs.readFile(path.join(__dirname, '..', 'data', 'RelicData.json')))
+    } catch (error) {
+        return;
+    }
     const partNames = jsfile.partNames;
 
     await Promise.all(Object.entries(boxStock).map(async ([part, stock]) => {
