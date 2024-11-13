@@ -6,6 +6,8 @@ const { Client, ThreadChannel, Message } = require('discord.js');
 const logger = require('./logger');
 const fs = require('node:fs/promises');
 const path = require('node:path');
+const axios = require('axios');
+const cheerio = require('cheerio');
 
 const farmerdata = async () => {
     const readData = await fs.readFile(path.join(__dirname, '../data/farmers.json'))
@@ -26,6 +28,168 @@ const range = (num) =>
     : num > 15 && num <= 31 ? 'ORANGE'
     : num > 31 && num <= 64 ? 'YELLOW'
     : num > 64 ? 'GREEN' : '';
+
+
+const a = [' C', 'UC', ' R'];
+const b = { "11": 1, "25.33": 0, "2": 2 };
+const judgeRarity = (num) => a[b[num]];
+const normalize = (name) => {
+    name = name.replace(/\s+/g, ' ').trim().replace(" Blueprint", "");
+    return name.endsWith(" Prime") ? name : name.replace(" Prime ", " ");
+}
+
+function extractPercentage(str) {
+    const match = str.match(/\((\d+(\.\d+)?)%\)/);
+    return match ? parseFloat(match[1]) : null;  // Return the parsed float value
+}
+
+async function fetchData(msg) {
+    const sheetValues = await googleSheets({
+        spreadsheetId: spreadsheet.personal.id,
+        range: "Sheet2" + "!H2:I",
+    }).catch((err) => {
+        logger.error(
+            err,
+            "Error fetching items and stock, using google client"
+        );
+    });
+
+    const sheetValues2 = await googleSheets({
+        spreadsheetId: spreadsheet.personal.id,
+        range: "Sheet2" + "!A2:C",
+    }).catch((err) => {
+        logger.error(
+            err,
+            "Error fetching items and stock, using google client"
+        );
+    });
+
+    await msg.edit({ content: `\`\`\`
+        DONE Fetching data...
+        Updating DB...\`\`\`` });
+
+    const tokenValues = {};
+    const values = sheetValues.data.values;
+    for (let i = 0; i < values.length; i++) {
+        tokenValues[values[i][0]] = parseInt(values[i][1]) || 0;
+    }
+
+    const stockValues = {};
+    const values2 = sheetValues2.data.values;
+    for (let i = 0; i < values2.length; i++) {
+        let itemName = normalize(values2[i][0] + " " + values2[i][1]);
+        const stck = parseInt(values2[i][2]) || 0;
+        stockValues[itemName] = dualitemslist.includes(itemName) ? stck / 2 | 0 : stck;
+    }
+
+    try {
+        const url =
+            "https://warframe-web-assets.nyc3.cdn.digitaloceanspaces.com/uploads/cms/hnfvc0o3jnfvc873njb03enrf56.html";
+        const response = await axios.get(url);
+
+        const $ = cheerio.load(response.data);
+        const relicRewards = [];
+
+        // Iterate through each <table> after #relicRewards until #keyRewards
+        $("#relicRewards")
+            .nextUntil("#keyRewards", "table")
+            .each((_, table) => {
+                const tableElement = $(table);
+                let currentRelic = { rewards: [] };
+
+                // Now find the <tbody> element inside each table
+                const tbody = tableElement.find("tbody");
+                tbody.find("tr").each((_, row) => {
+                    const columns = $(row).find("td");
+                    const textName = $(row).find("th").text().trim();
+
+                    // Skip blank rows (which separate relics)
+                    if ($(row).hasClass("blank-row")) {
+                        if (currentRelic.rewards.length > 0) {
+                            relicRewards.push(currentRelic);
+                            currentRelic = { rewards: [] };
+                        }
+                        return;
+                    }
+
+                    if (!currentRelic.name && textName) {
+                        currentRelic.name = textName;
+                    }
+
+                    // Process the reward rows which contain <td> elements
+                    if (columns.length >= 2) {
+                        const reward = {
+                            name: columns.eq(0).text().trim(),
+                            value: columns.eq(1).text().trim(),
+                        };
+                        currentRelic.rewards.push(reward);
+                    }
+                });
+
+                // Push the current relic's rewards if it has data
+                if (currentRelic.rewards.length > 0) {
+                    relicRewards.push(currentRelic);
+                }
+            });
+
+        const newRelicRewards = [];
+        const allRelicNames = [];
+        const allPartNames = [];
+
+        for (const relic of relicRewards) {
+            const trueName = relic.name.split(" ").slice(0, -2).join(" ");
+            const trueType = relic.name.split(" ").slice(-1)[0];
+
+            if (!allRelicNames.includes(trueName)) allRelicNames.push(trueName);
+            
+            if (!newRelicRewards.some((r) => r.name === trueName) && trueType === "(Intact)") {
+                const newRewards = relic.rewards.map((reward) => {
+                    const rewardName = normalize(reward.name.replace(/\s+/g, " "));
+                    const stock = stockValues[rewardName];
+                    if (!allPartNames.includes(rewardName) && !rewardName.includes("Forma")) allPartNames.push(rewardName);
+                    return {
+                        item: `${rewardName}${dualitemslist.includes(rewardName) ? " x2" : ""}`,
+                        rarity: judgeRarity(extractPercentage(reward.value)),
+                        stock: stock || 0,
+                        color: range(parseInt(stock) || 0),
+                    };
+                })
+
+                newRelicRewards.push({
+                    name: trueName,
+                    rewards: newRewards,
+                    tokens: tokenValues[trueName],
+                    vaulted: false,
+                    parts: newRewards.map((reward) => reward.item.replace(" x2", "")),
+                });
+            }
+        }
+
+        await msg.edit({ content: `\`\`\`
+            DONE Fetching data...
+            DONE Updating DB...\`\`\`` });
+
+        const JSONData = { relicData: newRelicRewards, relicNames: allRelicNames, partNames: allPartNames }
+        await fs.writeFile(path.join(__dirname, '..', 'data', 'RelicData.json'), JSON.stringify(JSONData))
+
+        await msg.edit({ content: `Updated.\`\`\`
+            DONE Fetching data...
+            DONE Updating DB...\`\`\`` });
+        
+        setTimeout(async () => {
+            await msg.delete();
+        }, 10_000);
+    } catch (error) {
+        console.error("Error fetching relic rewards:", error);
+        await msg.edit({ content: `\`\`\`
+            DONE Fetching data...
+            FAIL Updating DB...
+
+            ${error.message}
+            \`\`\`` });
+        return [];
+    }
+}
 
 async function getAllRelics() {
     const sheetValues = await googleSheets({ 
@@ -362,4 +526,4 @@ async function retrieveSoupStoreRelics(client) {
     // await fs.writeFile(path.join(__dirname, '..', 'data/SoupData.json'), JSON.stringify(relicsMegaJSON))
 }
 
-module.exports = { getAllClanData, getAllUserData, getAllRelics, getAllBoxData, retrieveSoupStoreRelics }
+module.exports = { getAllClanData, getAllUserData, getAllRelics, getAllBoxData, retrieveSoupStoreRelics, fetchData }

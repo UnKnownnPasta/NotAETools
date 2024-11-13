@@ -4,7 +4,7 @@ const { filterRelic, relicExists, titleCase } = require("../../scripts/utility")
 const fs = require('node:fs/promises');
 const path = require("node:path");
 const logger = require("../../scripts/logger");
-
+const updateRelics = require("../../data/misc.js");
 const authCategories = ["890240564916797457", "1193155346156503091"]
 
 module.exports = {
@@ -19,6 +19,15 @@ module.exports = {
         if (message.content === "++filter" && (message.author.id == '740536348166848582' || message.author.id == '498993740715917312')) {
             client.dofilter = !client.dofilter;
             await message.reply({ content: `> ${process.env.NODE_ENV} - ${client.dofilter}` });
+        }
+        if (
+            message.content === "++update" 
+            && 
+            ((message.author.id == '740536348166848582' || message.author.id == '498993740715917312')
+            || message.member.roles.cache.find(x => x.id == '890240560542134276'))
+        ) {
+            await updateRelics.execute(client, message);
+            return;
         }
 
         if (message.content == '++dump' && (message.author.id == '740536348166848582' || message.author.id == '498993740715917312')) {

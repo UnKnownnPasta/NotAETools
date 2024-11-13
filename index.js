@@ -4,7 +4,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 const { Client, GatewayIntentBits, ActivityType, Partials } = require('discord.js');
 const fs = require('node:fs')
 const { loadFiles, refreshFissures } = require('./scripts/utility.js')
-const { getAllBoxData, getAllRelics } = require('./scripts/dbcreate.js');
+const { getAllBoxData, fetchData } = require('./scripts/dbcreate.js');
 const logger = require('./scripts/logger.js');
 const { default: mongoose } = require("mongoose");
 
@@ -79,7 +79,7 @@ async function run_mongo() {
 		const keep_alive = require('./keep_alive.js');
 
 		await client.guilds.fetch({ force: true });
-		await getAllRelics();
+		// await fetchData();
 		client.boxData = await getAllBoxData(client)
 
 		await Promise.all([
