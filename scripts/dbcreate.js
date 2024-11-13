@@ -140,6 +140,7 @@ async function fetchData(msg) {
             const trueName = relic.name.split(" ").slice(0, -2).join(" ");
             const trueType = relic.name.split(" ").slice(-1)[0];
 
+            if (trueName.includes("Requiem")) continue;
             if (!allRelicNames.includes(trueName)) allRelicNames.push(trueName);
             
             if (!newRelicRewards.some((r) => r.name === trueName) && trueType === "(Intact)") {
