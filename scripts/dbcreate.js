@@ -64,9 +64,11 @@ async function fetchData(msg) {
         );
     });
 
-    await msg.edit({ content: `\`\`\`
+    if (msg) {
+        await msg.edit({ content: `\`\`\`
         DONE Fetching data...
         Updating DB...\`\`\`` });
+    }
 
     const tokenValues = {};
     const values = sheetValues.data.values;
@@ -77,7 +79,7 @@ async function fetchData(msg) {
     const stockValues = {};
     const values2 = sheetValues2.data.values;
     for (let i = 0; i < values2.length; i++) {
-        let itemName = normalize(values2[i][0] + " " + values2[i][1]);
+        let itemName = normalize(`${values2[i][0] + " " + values2[i][1]}`.replace(" and ", " & ").replace("2X ", "").replace(" Prime Collar", " Prime"));
         const stck = parseInt(values2[i][2]) || 0;
         stockValues[itemName] = dualitemslist.includes(itemName) ? stck / 2 | 0 : stck;
     }
@@ -119,7 +121,7 @@ async function fetchData(msg) {
                     // Process the reward rows which contain <td> elements
                     if (columns.length >= 2) {
                         const reward = {
-                            name: columns.eq(0).text().trim(),
+                            name: columns.eq(0).text().trim().replace(" and ", " & ").replace("Kubrow Collar Blueprint", "Blueprint"),
                             value: columns.eq(1).text().trim(),
                         };
                         currentRelic.rewards.push(reward);
@@ -142,10 +144,10 @@ async function fetchData(msg) {
 
             if (trueName.includes("Requiem")) continue;
             if (!allRelicNames.includes(trueName)) allRelicNames.push(trueName);
-            
+
             if (!newRelicRewards.some((r) => r.name === trueName) && trueType === "(Intact)") {
                 const newRewards = relic.rewards.map((reward) => {
-                    const rewardName = normalize(reward.name.replace(/\s+/g, " "));
+                    const rewardName = normalize(reward.name.replace(/\s+/g, " ").replace(" and ", " & ").replace("2X ", ""));
                     const stock = stockValues[rewardName];
                     if (!allPartNames.includes(rewardName) && !rewardName.includes("Forma")) allPartNames.push(rewardName);
                     return {
@@ -166,28 +168,36 @@ async function fetchData(msg) {
             }
         }
 
-        await msg.edit({ content: `\`\`\`
-            DONE Fetching data...
-            DONE Updating DB...\`\`\`` });
+        if (msg) {
+            await msg.edit({ content: `\`\`\`
+        DONE Fetching data...
+        DONE Updating DB...\`\`\`` });
+        }
 
         const JSONData = { relicData: newRelicRewards, relicNames: allRelicNames, partNames: allPartNames }
         await fs.writeFile(path.join(__dirname, '..', 'data', 'RelicData.json'), JSON.stringify(JSONData))
 
-        await msg.edit({ content: `Updated.\`\`\`
-            DONE Fetching data...
-            DONE Updating DB...\`\`\`` });
+        if (msg) {
+            await msg.edit({ content: `\`\`\`
+        DONE Fetching data...
+        DONE Updating DB... Finished.\`\`\`` });
+        }
         
         setTimeout(async () => {
-            await msg.delete();
+            if (msg) {
+                await msg.delete();
+            }
         }, 10_000);
     } catch (error) {
         console.error("Error fetching relic rewards:", error);
-        await msg.edit({ content: `\`\`\`
-            DONE Fetching data...
-            FAIL Updating DB...
-
-            ${error.message}
-            \`\`\`` });
+        if (msg) {
+            await msg.edit({ content: `\`\`\`
+                DONE Fetching data...
+                FAIL Updating DB...
+    
+                ${error.message}
+                \`\`\`` });
+        }
         return [];
     }
 }
