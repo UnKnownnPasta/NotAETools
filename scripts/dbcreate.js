@@ -30,17 +30,9 @@ const range = (num) =>
     : num > 64 ? 'GREEN' : '';
 
 
-const a = [' C', 'UC', ' R'];
-const b = { "11": 1, "25.33": 0, "2": 2 };
-const judgeRarity = (num) => a[b[num]];
 const normalize = (name) => {
     name = name.replace(/\s+/g, ' ').trim().replace(" Blueprint", "");
     return name.endsWith(" Prime") ? name : name.replace(" Prime ", " ");
-}
-
-function extractPercentage(str) {
-    const match = str.match(/\((\d+(\.\d+)?)%\)/);
-    return match ? parseFloat(match[1]) : null;  // Return the parsed float value
 }
 
 async function fetchData(msg) {
@@ -147,12 +139,12 @@ async function fetchData(msg) {
 
             if (!newRelicRewards.some((r) => r.name === trueName) && trueType === "(Intact)") {
                 const newRewards = relic.rewards.map((reward) => {
-                    const rewardName = normalize(reward.name.replace(/\s+/g, " ").replace(" and ", " & ").replace("2X ", ""));
+                    let rewardName = normalize(reward.name.replace(/\s+/g, " ").replace(" and ", " & ").replace("2X ", ""));
+                    rewardName = rewardName.endsWith(" Prime") ? rewardName.replace(" Prime", " Blueprint") : rewardName;
                     const stock = stockValues[rewardName];
                     if (!allPartNames.includes(rewardName) && !rewardName.includes("Forma")) allPartNames.push(rewardName);
                     return {
                         item: `${rewardName}${dualitemslist.includes(rewardName) ? " x2" : ""}`,
-                        rarity: judgeRarity(extractPercentage(reward.value)),
                         stock: stock || 0,
                         color: range(parseInt(stock) || 0),
                     };
@@ -199,52 +191,6 @@ async function fetchData(msg) {
                 \`\`\`` });
         }
         return [];
-    }
-}
-
-async function getAllRelics() {
-    const sheetValues = await googleSheets({ 
-        spreadsheetId: spreadsheet.personal.id,
-        range: 'Sheet1' + spreadsheet.personal.ranges.relic,
-    })
-    .catch((err) => {
-        logger.error(err, 'Error fetching items and stock, using google client')
-    })
-
-    const values = sheetValues.data.values;
-    if (values[0] === "#ERROR!" || values[0]?.[0] === "#ERROR!") return console.log(`Error fetching items: Items have invalid values (#ERROR!)`);
-
-    if (values && values?.length) {
-        const allRelicData = [];
-        const allRelicNames = [];
-        const allPartNames = [];
-
-        for (const row of values) {
-            let tokens = parseInt(row[1]);
-            if (isNaN(tokens)) tokens = 0;
-
-            const name = row[2];
-            const parts = [];
-            const rewards = [];
-            const vaulted = row[0] === 'TRUE' ? true : false;
-
-            for (const item of row.slice(3)) {
-                let [part, stock] = item.split(' | ');
-                if (part.endsWith('Prime')) part = part.replace(' Prime', ' BP');
-                part = part.replace(' and ', ' & ');
-                parts.push(part !== 'Forma' ? part : null);
-                if (part !== 'Forma') {
-                    allPartNames.push(part)
-                }
-                if (part.includes('x2')) stock = parseInt(stock) / 2 | 0;
-                rewards.push({ item: part, stock: stock, color: part !== 'Forma' ? range(parseInt(stock)) : '' });
-            }
-            allRelicData.push({ name, parts, rewards, tokens, vaulted });
-            allRelicNames.push(name);
-        }
-
-        const JSONData = { relicData: allRelicData, relicNames: allRelicNames, partNames: allPartNames }
-        await fs.writeFile(path.join(__dirname, '..', 'data', 'RelicData.json'), JSON.stringify(JSONData))
     }
 }
 
@@ -483,14 +429,12 @@ async function getAllBoxData(client) {
     client.lastboxupdate = new Date().getTime();
     client.boxData = fixedBoxStock;
     return fixedBoxStock;
-    // await fs.writeFile(path.join(__dirname, '..', 'data', 'BoxData.json'), JSON.stringify(fixedBoxStock))
 }
 
 const INTACTRELIC = "1193415346229620758"
 const RADDEDRELIC = "1193414617490276423"
 
 function parseStringToList(str) {
-    // const regex = /\d+x\s*\|\s*[^\|]+?\s*\|\s*\d+\s*ED\s*\|\s*\d+\s*RED\s*\|\s*\d+\s*ORANGE/g;
     const regex = /(\d+x).*( Axi|Meso|Neo|Lith) ([A-Z]\d+)/g;
     const matches = str.matchAll(regex);
     return matches || [];
@@ -539,7 +483,6 @@ async function retrieveSoupStoreRelics(client) {
     )
 
     return relicsMegaJSON;
-    // await fs.writeFile(path.join(__dirname, '..', 'data/SoupData.json'), JSON.stringify(relicsMegaJSON))
 }
 
-module.exports = { getAllClanData, getAllUserData, getAllRelics, getAllBoxData, retrieveSoupStoreRelics, fetchData }
+module.exports = { getAllClanData, getAllUserData, getAllBoxData, retrieveSoupStoreRelics, fetchData }

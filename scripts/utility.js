@@ -41,7 +41,7 @@ function titleCase(str) {
 
     for (let i = 0; i < words.length; i++) {
       if (words[i].toLowerCase() == 'bp' || words[i].toLowerCase() == 'blueprint') {
-        words[i] = 'BP';
+        words[i] = 'Blueprint';
         continue;
       }
       if (words[i].toLowerCase().startsWith('neuroptic')) {
