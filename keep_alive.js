@@ -1,13 +1,13 @@
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
-const { getAllRelics } = require('./scripts/dbcreate');
+const { fetchData } = require('./scripts/dbcreate');
 
 const server = http.createServer(async (req, res) => {
     if (req.url.startsWith('/forceupdate')) {
         const token = decodeURIComponent(req.headers.token)
         if (token === process.env.supertoken) {
-            await getAllRelics()
+            await fetchData()
             res.writeHead(200, { 'Content-Type': 'text/plain' });
             res.write('OK!');
             res.end();
