@@ -32,7 +32,7 @@ const range = (num) =>
 
 const normalize = (name) => {
     name = name.replace(/\s+/g, ' ').trim().replace(" Blueprint", "");
-    return name.endsWith(" Prime") ? name : name.replace(" Prime ", " ");
+    return name.endsWith(" Prime") ? name.replace(" Prime", " Blueprint") : name.replace(" Prime ", " ");
 }
 
 async function fetchData(msg) {
