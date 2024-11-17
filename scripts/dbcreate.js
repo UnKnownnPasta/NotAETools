@@ -112,7 +112,7 @@ async function fetchData(msg, ogmsg) {
         const relicRewards = [];
 
         // Iterate through each <table> after #relicRewards until #keyRewards
-        $("#relicRewards")
+        await $("#relicRewards")
             .nextUntil("#keyRewards", "table")
             .each(async (_, table) => {
                 const tableElement = $(table);
@@ -123,7 +123,6 @@ async function fetchData(msg, ogmsg) {
                     const columns = $(row).find("td");
                     const textName = $(row).find("th").text().trim();
 
-                    // Skip blank rows (which separate relics)
                     if ($(row).hasClass("blank-row")) {
                         if (currentRelic.rewards.length > 0) {
                             relicRewards.push(currentRelic);
@@ -137,21 +136,9 @@ async function fetchData(msg, ogmsg) {
                     }
                     if (columns.length >= 2) {
                         const reward = {
-                            name: columns
-                                .eq(0)
-                                .text()
-                                .trim()
-                                .replace(" and ", " & ")
-                                .replace(
-                                    "Kubrow Collar Blueprint",
-                                    "Blueprint"
-                                ),
+                            name: columns.eq(0).text().trim().replace(" and ", " & ").replace("Kubrow Collar Blueprint", "Blueprint"),
                             value: parseFloat(
-                                columns
-                                    .eq(1)
-                                    .text()
-                                    .trim()
-                                    .match(/\((\d+(\.\d+)?)%\)/)?.[1]
+                                columns.eq(1).text().trim().match(/\((\d+(\.\d+)?)%\)/)?.[1]
                             ),
                         };
                         currentRelic.rewards.push(reward);
