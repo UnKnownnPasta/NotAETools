@@ -60,20 +60,14 @@ async function fetchData(msg, ogmsg) {
         spreadsheetId: spreadsheet.personal.id,
         range: "Sheet2" + "!H2:I",
     }).catch((err) => {
-        logger.error(
-            err,
-            "Error fetching items and stock, using google client"
-        );
+        logger.error(err, "Error fetching items and stock, using google client");
     });
 
     const sheetValues2 = await googleSheets({
         spreadsheetId: spreadsheet.personal.id,
         range: "Sheet2" + "!A2:C",
     }).catch((err) => {
-        logger.error(
-            err,
-            "Error fetching items and stock, using google client"
-        );
+        logger.error(err, "Error fetching items and stock, using google client");
     });
 
     const tokenValues = {};
@@ -98,116 +92,49 @@ async function fetchData(msg, ogmsg) {
     delete stockValues["Venka Blade"];
 
     try {
-        const url =
-            "https://warframe-web-assets.nyc3.cdn.digitaloceanspaces.com/uploads/cms/hnfvc0o3jnfvc873njb03enrf56.html";
+        const url = "https://warframe-web-assets.nyc3.cdn.digitaloceanspaces.com/uploads/cms/hnfvc0o3jnfvc873njb03enrf56.html";
         const response = await axios.get(url);
 
         const $ = cheerio.load(response.data);
         const htmlText = $.html();
 
-        /**
-         * @type {Object[]}
-         * @typedef {{name: string, rewards: {name: string, value: number}[]}}
-         */
         const relicRewards = [];
+        
+        // Limit processing to a smaller number of tables in each iteration
+        const tables = $("#relicRewards").nextUntil("#keyRewards", "table");
+        let batchSize = 5; // Adjust the batch size based on the service limits
+        let tableBatch = [];
 
-        // Iterate through each <table> after #relicRewards until #keyRewards
-        await $("#relicRewards")
-            .nextUntil("#keyRewards", "table")
-            .each(async (_, table) => {
-                const tableElement = $(table);
-                let currentRelic = { rewards: [] };
+        for (let i = 0; i < tables.length; i++) {
+            tableBatch.push(tables[i]);
 
-                const tbody = tableElement.find("tbody");
-                tbody.find("tr").each(async (_, row) => {
-                    const columns = $(row).find("td");
-                    const textName = $(row).find("th").text().trim();
+            // Process in batches to avoid overwhelming the event loop
+            if (tableBatch.length === batchSize || i === tables.length - 1) {
+                // Process batch
+                await processTablesBatch(tableBatch, relicRewards, $, msg);
 
-                    if ($(row).hasClass("blank-row")) {
-                        if (currentRelic.rewards.length > 0) {
-                            relicRewards.push(currentRelic);
-                            currentRelic = { rewards: [] };
-                        }
-                        await new Promise((resolve) => setImmediate(resolve));
-                    }
-
-                    if (!currentRelic.name && textName) {
-                        currentRelic.name = textName;
-                    }
-                    if (columns.length >= 2) {
-                        const reward = {
-                            name: columns.eq(0).text().trim().replace(" and ", " & ").replace("Kubrow Collar Blueprint", "Blueprint"),
-                            value: parseFloat(
-                                columns.eq(1).text().trim().match(/\((\d+(\.\d+)?)%\)/)?.[1]
-                            ),
-                        };
-                        currentRelic.rewards.push(reward);
-                    }
-                });
-
-                if (currentRelic.rewards.length > 0) {
-                    relicRewards.push(currentRelic);
-                }
-                await new Promise(resolve => setImmediate(resolve)); 
-            });
-
-        const newRelicRewards = [];
-        const allRelicNames = [];
-        const allPartNames = [];
-        const orderToSortBy = [25.33, 11, 2];
-
-        if (msg) {
-            await msg.edit({ content: `\`\`\`DONE Fetching data...\nCreating Records...\`\`\`` });
-        }
-
-        for (const relic of relicRewards) {
-            const trueName = relic.name.split(" ").slice(0, -2).join(" ");
-            const trueType = relic.name.split(" ").slice(-1)[0];
-
-            if (trueName.includes("Requiem")) continue;
-            if (!allRelicNames.includes(trueName)) allRelicNames.push(trueName);
-
-            if (!newRelicRewards.some((r) => r.name === trueName) && trueType === "(Intact)") {
-                const newRewards = relic.rewards.map((reward) => {
-                    let rewardName = normalize(reward.name.replace(/\s+/g, " ").replace(" and ", " & ").replace("2X ", ""));
-                    rewardName = rewardName.endsWith(" Prime") ? rewardName.replace(" Prime", " Blueprint") : rewardName;
-                    const stock = stockValues[rewardName];
-                    if (!allPartNames.includes(rewardName) && !rewardName.includes("Forma")) allPartNames.push(rewardName);
-                    return {
-                        item: `${rewardName}${dualitemslist.includes(rewardName) ? " x2" : ""}`,
-                        stock: stock || 0,
-                        color: range(parseInt(stock) || 0),
-                        rarity: parseFloat(reward.value),
-                    };
-                })
-
-                newRelicRewards.push({
-                    name: trueName,
-                    rewards: newRewards.sort((a, b) => orderToSortBy.indexOf(a.rarity) - orderToSortBy.indexOf(b.rarity)),
-                    tokens: tokenValues[trueName],
-                    vaulted: await searchForDrops(htmlText, trueName),
-                    parts: newRewards.map((reward) => reward.item.replace(" x2", "")),
-                });
+                // Clear the batch for the next iteration
+                tableBatch = [];
+                await new Promise(resolve => setTimeout(resolve, 100)); // Small delay to release the event loop
             }
         }
 
-        if (msg) {
-            await msg.edit({ content: `\`\`\`DONE Fetching data...\nDONE Creating Records...\nUpdating DB...\`\`\`` });
-        }
+        const newRelicRewards = await processRelics(relicRewards, stockValues, tokenValues, htmlText, msg);
 
-        const JSONData = { relicData: newRelicRewards, relicNames: allRelicNames, partNames: allPartNames }
-        await fs.writeFile(path.join(__dirname, '..', 'data', 'RelicData.json'), JSON.stringify(JSONData))
+        // Further processing like saving data to file and updating the database can go here
+        await fs.writeFile(path.join(__dirname, '..', 'data', 'RelicData.json'), JSON.stringify(newRelicRewards))
 
         if (msg) {
             await msg.edit({ content: `\`\`\`DONE Fetching data...\nDONE Creating Records...\nDONE Updating DB... ✅\`\`\`` });
             ogmsg.react('✔');
         }
-        
+
         setTimeout(async () => {
             if (msg) {
                 await msg.delete();
             }
         }, 4_000);
+
     } catch (error) {
         console.error("Error fetching relic rewards:", error);
         if (msg) {
@@ -219,6 +146,88 @@ async function fetchData(msg, ogmsg) {
         console.timeEnd("fetchData");
     }
 }
+
+// Function to process a batch of tables
+async function processTablesBatch(tableBatch, relicRewards, $, msg) {
+    for (const table of tableBatch) {
+        const tableElement = $(table);
+        let currentRelic = { rewards: [] };
+
+        const tbody = tableElement.find("tbody");
+        tbody.find("tr").each((_, row) => {
+            const columns = $(row).find("td");
+            const textName = $(row).find("th").text().trim();
+
+            if ($(row).hasClass("blank-row")) {
+                if (currentRelic.rewards.length > 0) {
+                    relicRewards.push(currentRelic);
+                    currentRelic = { rewards: [] };
+                }
+                return;
+            }
+
+            if (!currentRelic.name && textName) {
+                currentRelic.name = textName;
+            }
+            if (columns.length >= 2) {
+                const reward = {
+                    name: columns.eq(0).text().trim().replace(" and ", " & ").replace("Kubrow Collar Blueprint", "Blueprint"),
+                    value: parseFloat(columns.eq(1).text().trim().match(/\((\d+(\.\d+)?)%\)/)?.[1]),
+                };
+                currentRelic.rewards.push(reward);
+            }
+        });
+
+        if (currentRelic.rewards.length > 0) {
+            relicRewards.push(currentRelic);
+        }
+    }
+
+    await msg.edit({ content: `\`\`\`DONE Fetching data...\nCreating Records...\`\`\`` });
+}
+
+// Function to process the relic rewards
+async function processRelics(relicRewards, stockValues, tokenValues, htmlText, msg) {
+    const newRelicRewards = [];
+    const allRelicNames = [];
+    const allPartNames = [];
+    const orderToSortBy = [25.33, 11, 2];
+
+    for (const relic of relicRewards) {
+        const trueName = relic.name.split(" ").slice(0, -2).join(" ");
+        const trueType = relic.name.split(" ").slice(-1)[0];
+
+        if (trueName.includes("Requiem")) continue;
+        if (!allRelicNames.includes(trueName)) allRelicNames.push(trueName);
+
+        if (!newRelicRewards.some((r) => r.name === trueName) && trueType === "(Intact)") {
+            const newRewards = relic.rewards.map((reward) => {
+                let rewardName = normalize(reward.name.replace(/\s+/g, " ").replace(" and ", " & ").replace("2X ", ""));
+                rewardName = rewardName.endsWith(" Prime") ? rewardName.replace(" Prime", " Blueprint") : rewardName;
+                const stock = stockValues[rewardName];
+                if (!allPartNames.includes(rewardName) && !rewardName.includes("Forma")) allPartNames.push(rewardName);
+                return {
+                    item: `${rewardName}${dualitemslist.includes(rewardName) ? " x2" : ""}`,
+                    stock: stock || 0,
+                    color: range(parseInt(stock) || 0),
+                    rarity: parseFloat(reward.value),
+                };
+            });
+
+            newRelicRewards.push({
+                name: trueName,
+                rewards: newRewards.sort((a, b) => orderToSortBy.indexOf(a.rarity) - orderToSortBy.indexOf(b.rarity)),
+                tokens: tokenValues[trueName],
+                vaulted: await searchForDrops(htmlText, trueName),
+                parts: newRewards.map((reward) => reward.item.replace(" x2", "")),
+            });
+        }
+    }
+    await msg.edit({ content: `\`\`\`DONE Fetching data...\nDONE Creating Records...\nUpdating DB...\`\`\`` });
+
+    return { relicData: newRelicRewards, relicNames: allRelicNames, partNames: allPartNames };
+}
+
 
 async function getAllUserData(key=null) {
     if (!key) return [];
