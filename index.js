@@ -78,7 +78,7 @@ async function run_mongo() {
 
 		const keep_alive = require('./keep_alive.js');
 
-		await fetchData();
+		// await fetchData();
 		await client.guilds.fetch({ force: true });
 		client.boxData = await getAllBoxData(client)
 
