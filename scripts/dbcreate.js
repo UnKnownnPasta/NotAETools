@@ -36,6 +36,8 @@ const normalize = (name) => {
 }
 
 async function fetchData(msg) {
+    console.time("fetchData");
+
     const sheetValues = await googleSheets({
         spreadsheetId: spreadsheet.personal.id,
         range: "Sheet2" + "!H2:I",
@@ -76,12 +78,19 @@ async function fetchData(msg) {
         stockValues[itemName] = dualitemslist.includes(itemName) ? stck / 2 | 0 : stck;
     }
 
+    stockValues["Venka Blades"] = stockValues["Venka Blade"] || 0;
+    delete stockValues["Venka Blade"];
+
     try {
         const url =
             "https://warframe-web-assets.nyc3.cdn.digitaloceanspaces.com/uploads/cms/hnfvc0o3jnfvc873njb03enrf56.html";
         const response = await axios.get(url);
 
         const $ = cheerio.load(response.data);
+        /**
+         * @type {Object[]}
+         * @typedef {{name: string, rewards: {name: string, value: number}[]}}
+         */
         const relicRewards = [];
 
         // Iterate through each <table> after #relicRewards until #keyRewards
@@ -114,7 +123,7 @@ async function fetchData(msg) {
                     if (columns.length >= 2) {
                         const reward = {
                             name: columns.eq(0).text().trim().replace(" and ", " & ").replace("Kubrow Collar Blueprint", "Blueprint"),
-                            value: columns.eq(1).text().trim(),
+                            value: parseFloat(columns.eq(1).text().trim().match(/\((\d+(\.\d+)?)%\)/)?.[1]),
                         };
                         currentRelic.rewards.push(reward);
                     }
@@ -129,6 +138,7 @@ async function fetchData(msg) {
         const newRelicRewards = [];
         const allRelicNames = [];
         const allPartNames = [];
+        const orderToSortBy = [25.33, 11, 2];
 
         for (const relic of relicRewards) {
             const trueName = relic.name.split(" ").slice(0, -2).join(" ");
@@ -147,12 +157,13 @@ async function fetchData(msg) {
                         item: `${rewardName}${dualitemslist.includes(rewardName) ? " x2" : ""}`,
                         stock: stock || 0,
                         color: range(parseInt(stock) || 0),
+                        rarity: parseFloat(reward.value),
                     };
                 })
 
                 newRelicRewards.push({
                     name: trueName,
-                    rewards: newRewards,
+                    rewards: newRewards.sort((a, b) => orderToSortBy.indexOf(a.rarity) - orderToSortBy.indexOf(b.rarity)),
                     tokens: tokenValues[trueName],
                     vaulted: false,
                     parts: newRewards.map((reward) => reward.item.replace(" x2", "")),
@@ -191,6 +202,8 @@ async function fetchData(msg) {
                 \`\`\`` });
         }
         return [];
+    } finally {
+        console.timeEnd("fetchData");
     }
 }
 
