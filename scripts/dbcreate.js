@@ -114,13 +114,12 @@ async function fetchData(msg, ogmsg) {
         // Iterate through each <table> after #relicRewards until #keyRewards
         $("#relicRewards")
             .nextUntil("#keyRewards", "table")
-            .each((_, table) => {
+            .each(async (_, table) => {
                 const tableElement = $(table);
                 let currentRelic = { rewards: [] };
 
-                // Now find the <tbody> element inside each table
                 const tbody = tableElement.find("tbody");
-                tbody.find("tr").each((_, row) => {
+                tbody.find("tr").each(async (_, row) => {
                     const columns = $(row).find("td");
                     const textName = $(row).find("th").text().trim();
 
@@ -130,27 +129,39 @@ async function fetchData(msg, ogmsg) {
                             relicRewards.push(currentRelic);
                             currentRelic = { rewards: [] };
                         }
-                        return;
+                        await new Promise((resolve) => setImmediate(resolve));
                     }
 
                     if (!currentRelic.name && textName) {
                         currentRelic.name = textName;
                     }
-
-                    // Process the reward rows which contain <td> elements
                     if (columns.length >= 2) {
                         const reward = {
-                            name: columns.eq(0).text().trim().replace(" and ", " & ").replace("Kubrow Collar Blueprint", "Blueprint"),
-                            value: parseFloat(columns.eq(1).text().trim().match(/\((\d+(\.\d+)?)%\)/)?.[1]),
+                            name: columns
+                                .eq(0)
+                                .text()
+                                .trim()
+                                .replace(" and ", " & ")
+                                .replace(
+                                    "Kubrow Collar Blueprint",
+                                    "Blueprint"
+                                ),
+                            value: parseFloat(
+                                columns
+                                    .eq(1)
+                                    .text()
+                                    .trim()
+                                    .match(/\((\d+(\.\d+)?)%\)/)?.[1]
+                            ),
                         };
                         currentRelic.rewards.push(reward);
                     }
                 });
 
-                // Push the current relic's rewards if it has data
                 if (currentRelic.rewards.length > 0) {
                     relicRewards.push(currentRelic);
                 }
+                await new Promise(resolve => setImmediate(resolve)); 
             });
 
         const newRelicRewards = [];
