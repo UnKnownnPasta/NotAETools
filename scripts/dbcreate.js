@@ -22,6 +22,25 @@ const googleSheets = async ({ spreadsheetId, range }) => {
     });
 }
 
+async function searchForDrops(htmlText, searchString) {
+    let count = 0;
+    let position = 0;
+
+    while (position !== -1) {
+        position = htmlText.indexOf(searchString, position);
+
+        if (position !== -1) {
+            count++;
+            position += searchString.length;
+            if (count > 5) return false;
+            await new Promise((resolve) => setImmediate(resolve));
+        }
+    }
+
+    return true;
+}
+
+
 const range = (num) => 
     num >= 0 && num <= 9 ? 'ED'
     : num > 9 && num <= 15 ? 'RED'
@@ -29,13 +48,12 @@ const range = (num) =>
     : num > 31 && num <= 64 ? 'YELLOW'
     : num > 64 ? 'GREEN' : '';
 
-
 const normalize = (name) => {
     name = name.replace(/\s+/g, ' ').trim().replace(" Blueprint", "");
     return name.endsWith(" Prime") ? name.replace(" Prime", " Blueprint") : name.replace(" Prime ", " ");
 }
 
-async function fetchData(msg) {
+async function fetchData(msg, ogmsg) {
     console.time("fetchData");
 
     const sheetValues = await googleSheets({
@@ -58,12 +76,6 @@ async function fetchData(msg) {
         );
     });
 
-    if (msg) {
-        await msg.edit({ content: `\`\`\`
-        DONE Fetching data...
-        Updating DB...\`\`\`` });
-    }
-
     const tokenValues = {};
     const values = sheetValues.data.values;
     for (let i = 0; i < values.length; i++) {
@@ -78,6 +90,10 @@ async function fetchData(msg) {
         stockValues[itemName] = dualitemslist.includes(itemName) ? stck / 2 | 0 : stck;
     }
 
+    if (msg) {
+        await msg.edit({ content: `\`\`\`[2/2] Fetching data...\`\`\`` });
+    }
+
     stockValues["Venka Blades"] = stockValues["Venka Blade"] || 0;
     delete stockValues["Venka Blade"];
 
@@ -87,6 +103,8 @@ async function fetchData(msg) {
         const response = await axios.get(url);
 
         const $ = cheerio.load(response.data);
+        const htmlText = $.html();
+
         /**
          * @type {Object[]}
          * @typedef {{name: string, rewards: {name: string, value: number}[]}}
@@ -140,6 +158,10 @@ async function fetchData(msg) {
         const allPartNames = [];
         const orderToSortBy = [25.33, 11, 2];
 
+        if (msg) {
+            await msg.edit({ content: `\`\`\`DONE Fetching data...\nCreating Records...\`\`\`` });
+        }
+
         for (const relic of relicRewards) {
             const trueName = relic.name.split(" ").slice(0, -2).join(" ");
             const trueType = relic.name.split(" ").slice(-1)[0];
@@ -165,41 +187,34 @@ async function fetchData(msg) {
                     name: trueName,
                     rewards: newRewards.sort((a, b) => orderToSortBy.indexOf(a.rarity) - orderToSortBy.indexOf(b.rarity)),
                     tokens: tokenValues[trueName],
-                    vaulted: false,
+                    vaulted: await searchForDrops(htmlText, trueName),
                     parts: newRewards.map((reward) => reward.item.replace(" x2", "")),
                 });
             }
         }
 
         if (msg) {
-            await msg.edit({ content: `\`\`\`
-        DONE Fetching data...
-        DONE Updating DB...\`\`\`` });
+            await msg.edit({ content: `\`\`\`DONE Fetching data...\nDONE Creating Records...\nUpdating DB...\`\`\`` });
         }
 
         const JSONData = { relicData: newRelicRewards, relicNames: allRelicNames, partNames: allPartNames }
         await fs.writeFile(path.join(__dirname, '..', 'data', 'RelicData.json'), JSON.stringify(JSONData))
 
         if (msg) {
-            await msg.edit({ content: `\`\`\`
-        DONE Fetching data...
-        DONE Updating DB... Finished.\`\`\`` });
+            await msg.edit({ content: `\`\`\`DONE Fetching data...\nDONE Creating Records...\nDONE Updating DB... ✅\`\`\`` });
+            ogmsg.react('✔');
         }
         
         setTimeout(async () => {
             if (msg) {
                 await msg.delete();
             }
-        }, 10_000);
+        }, 4_000);
     } catch (error) {
         console.error("Error fetching relic rewards:", error);
         if (msg) {
-            await msg.edit({ content: `\`\`\`
-                DONE Fetching data...
-                FAIL Updating DB...
-    
-                ${error.message}
-                \`\`\`` });
+            await msg.edit({ content: `Couldn't update database. Error: ${error.message}` });
+            ogmsg.react('❌');
         }
         return [];
     } finally {

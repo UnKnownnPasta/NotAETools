@@ -12,9 +12,8 @@ module.exports = {
      * @param {Message} message
      */
     async execute(client, message) {
-        let textMessage = `\`\`\`
-        Fetching data...\`\`\``
+        let textMessage = `\`\`\`[1/2] Fetching data...\`\`\``;
         const msg = await message.channel.send(textMessage);
-        await fetchData(msg);
+        await fetchData(msg, message);
     }
 }
