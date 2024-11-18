@@ -200,7 +200,7 @@ async function processRelics(relicRewards, stockValues, tokenValues, htmlText, m
 
                 newRewards.push({
                     item: `${rewardName}${dualitemslist.includes(rewardName) ? " x2" : ""}`,
-                    stock: stock || 0,
+                    stock: stock || (rewardName.includes("Forma") ? null : 0),
                     color: range(parseInt(stock) || 0),
                     rarity: parseFloat(reward.value),
                 })
