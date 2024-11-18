@@ -95,9 +95,10 @@ async function fetchData(msg, ogmsg) {
         const url = "https://warframe-web-assets.nyc3.cdn.digitaloceanspaces.com/uploads/cms/hnfvc0o3jnfvc873njb03enrf56.html";
         const response = await axios.get(url);
 
-        const $ = cheerio.load(response.data);
         const htmlText = response.data;
-        const tables = $("h3#relicRewards").next("table").find("tbody > tr")
+        const extractedHtml = htmlText.match(/<h3 id="relicRewards">.*?<h3 id="keyRewards">/s)?.[0] || "";
+        const $ = cheerio.load(extractedHtml);
+        const tables = $("table tbody > tr")
 
         if (msg) {
             await msg.edit({ content: `\`\`\`[2/2] Fetching data...\`\`\`` });
@@ -131,11 +132,12 @@ async function fetchData(msg, ogmsg) {
     }
 }
 
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 async function processTables($, data, msg) {
     const relicRewards = [];
     let currentRelic = { rewards: [] };
 
-    data.each((_, row) => {
+    await data.each(async (_, row) => {
         const columns = $(row).find("td");
         const textName = $(row).find("th").text().trim();
 
@@ -144,6 +146,7 @@ async function processTables($, data, msg) {
                 relicRewards.push(currentRelic);
                 currentRelic = { rewards: [] };
             }
+            await delay(200);
             return;
         }
 
@@ -157,6 +160,7 @@ async function processTables($, data, msg) {
             };
             currentRelic.rewards.push(reward);
         }
+        await delay(50);
     });
 
     if (currentRelic.rewards.length > 0) {
@@ -176,12 +180,14 @@ async function processRelics(relicRewards, stockValues, tokenValues, htmlText, m
 
     for (const relic of relicRewards) {
         const trueName = relic.name.split(" ").slice(0, -2).join(" ");
-        const trueType = relic.name.split(" ").slice(-1)[0];
-
         if (trueName.includes("Requiem")) continue;
-        if (!allRelicNames.includes(trueName)) allRelicNames.push(trueName);
+    
+        const trueType = relic.name.split(" ").slice(-1)[0];
+        allRelicNames.push(trueName);
 
-        if (!newRelicRewards.some((r) => r.name === trueName) && trueType === "(Intact)") {
+        if (trueType !== "(Intact)") {
+            continue;
+        } else {
             const newRewards = [];
 
             for (const reward of relic.rewards) {
@@ -189,7 +195,7 @@ async function processRelics(relicRewards, stockValues, tokenValues, htmlText, m
                 rewardName = rewardName.endsWith(" Prime") ? rewardName.replace(" Prime", " Blueprint") : rewardName;
                 const stock = stockValues[rewardName];
 
-                if (!allPartNames.includes(rewardName) && !rewardName.includes("Forma")) 
+                if (!rewardName.includes("Forma")) 
                     allPartNames.push(rewardName);
 
                 newRewards.push({
@@ -212,7 +218,7 @@ async function processRelics(relicRewards, stockValues, tokenValues, htmlText, m
 
     await msg.edit({ content: `\`\`\`DONE Fetching data...\nDONE Creating Records...\nUpdating DB...\`\`\`` });
 
-    return { relicData: newRelicRewards, relicNames: allRelicNames, partNames: allPartNames };
+    return { relicData: newRelicRewards, relicNames: [... new Set(allRelicNames)], partNames: [... new Set(allPartNames)] };
 }
 
 
