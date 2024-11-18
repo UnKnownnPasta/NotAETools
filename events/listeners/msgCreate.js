@@ -24,7 +24,7 @@ module.exports = {
             message.content === "++update" 
             && 
             ((message.author.id == '740536348166848582' || message.author.id == '498993740715917312')
-            || message.member.roles.cache.find(x => x.id == '890240560542134276'))
+            || message.member.roles.cache.find(x => x.id == '890240560496017476'))
         ) {
             await updateRelics.execute(client, message);
             return;
