@@ -167,7 +167,9 @@ async function processTables($, data, msg) {
         relicRewards.push(currentRelic);
     }
 
-    await msg.edit({ content: `\`\`\`DONE Fetching data...\nCreating Records...\`\`\`` });
+    if (msg) {
+        await msg.edit({ content: `\`\`\`DONE Fetching data...\nCreating Records...\`\`\`` });
+    }
 
     return relicRewards;
 }
@@ -216,7 +218,9 @@ async function processRelics(relicRewards, stockValues, tokenValues, htmlText, m
         }
     }
 
-    await msg.edit({ content: `\`\`\`DONE Fetching data...\nDONE Creating Records...\nUpdating DB...\`\`\`` });
+    if (msg) {
+        await msg.edit({ content: `\`\`\`DONE Fetching data...\nDONE Creating Records...\nUpdating DB...\`\`\`` });
+    }
 
     return { relicData: newRelicRewards, relicNames: [... new Set(allRelicNames)], partNames: [... new Set(allPartNames)] };
 }
