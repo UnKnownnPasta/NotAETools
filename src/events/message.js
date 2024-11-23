@@ -2,13 +2,14 @@ import { Events } from 'discord.js';
 
 /** @type {import('../config/types').Event} */
 export default {
-    name: Events.ClientReady,
+    name: Events.MessageCreate,
     enabled: true,
-    trigger: "once",
+    trigger: "on",
     /**
+     * @param {import('discord.js').Message} message 
      * @param {import('discord.js').Client} client
      */
-    async execute(client) {
-        console.log(`Ready! Logged in as ${client.user.tag}`);
+    async execute(client, message) {
+        console.log(message);
     }
 }

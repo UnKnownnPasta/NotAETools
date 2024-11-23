@@ -1,0 +1,1 @@
+export const _bool_true = (f) => f == true ? true : false;
