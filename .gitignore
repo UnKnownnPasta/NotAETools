@@ -15,6 +15,7 @@ soupdata.json
 # Other
 *.traineddata
 *.sqlite
+.env.*
 .env
 wfcd-relic-tool/node_modules
 *.log
