@@ -331,7 +331,7 @@ async function getAllBoxData(client) {
     await Promise.all(arrOfEntries.map(async ([chnl, cid]) => {
         await boxChannel.fetch(cid).then(/*** @param {ThreadChannel} thread */ async (thread) => {
             if (!thread.messageCount) return;
-            const messages = await thread.messages.fetch({ limit: thread.messageCount, cache: false })
+            const messages = await thread.messages.fetch({ limit: /*thread.messageCount*/100, cache: false })
             messages.map((msg) => {
                 if (msg.content.toLowerCase().includes('banned')) return;
 
@@ -490,7 +490,7 @@ async function retrieveSoupStoreRelics(client) {
         [INTACTRELIC, RADDEDRELIC].map(async (RELICSTORE, i) => {
             await boxChannel.fetch(RELICSTORE).then(async (thread) => {
                 if (!thread.messageCount) return;
-                const messages = await thread.messages.fetch({ limit: thread.messageCount, cache: false })
+                const messages = await thread.messages.fetch({ limit: /*thread.messageCount*/100, cache: false })
                 messages.map(/** * @param {Message} msg **/async (msg) => {
                     const Relics = [...parseStringToList(msg.content)].map(x => x[0].replace(/\[0m/g, '').replace(/\[(2;)?34m/g, '').split(/\s*\| /g))
                     if (!Relics.length) return;
