@@ -1,6 +1,6 @@
 import { Events } from 'discord.js';
 
-/** @type {import('../config/types').Event} */
+/** @type {import('../other/types').Event} */
 export default {
     name: Events.ClientReady,
     enabled: true,

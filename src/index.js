@@ -5,6 +5,7 @@ import { readdir } from "node:fs/promises";
 import { _bool_true } from './services/utils.js';
 
 import { ActivityType, Client, Collection, GatewayIntentBits as GIB, Partials } from 'discord.js';
+import CommandHandler from './other/handler.js';
 
 class Bot extends Client {
     constructor() {
@@ -26,12 +27,15 @@ class Bot extends Client {
             },
         });
 
+        this.prefix = "++";
         this.sequence();
     }
 
     async sequence() {
+        this.cmd_handler = new CommandHandler(this);
+        await this.cmd_handler.create();
         await this.loadEvents();
-        await this.login(process.env.DISCORD_TOKEN).then(() => console.log(`Logged in as ${this.user.tag}`));
+        await this.login(process.env.DISCORD_TOKEN);
     }
 
     async loadEvents() {
@@ -42,7 +46,7 @@ class Bot extends Client {
             const event = await import(`file://${join(eventFiles, file)}`);
 
             if (_bool_true(event.default.enabled) || !_bool_true(event.default.disabled)) {
-                this[event.default.trigger](event.default.name, (...args) => event.default.execute(...args));
+                this[event.default.trigger](event.default.name, (...args) => event.default.execute(this, ...args));
             }
         }
     }

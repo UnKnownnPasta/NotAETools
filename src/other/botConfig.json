@@ -1,0 +1,108 @@
+{
+    "fissureChannel": "1192962141205045328",
+    "collectionBox": {
+        "testid": "1221032022919872572",
+        "testchannels": {
+            "weapon": "1221032209893294101",
+            "ntoz": "1221695851231973386",
+            "atom": "1221695831875256441",
+            "melee": "1221388067806384168"
+        },
+        "id": "1193067569301684256",
+        "channels": {
+            "weapon": "1193449436207124490",
+            "atom": "1193449882044858428",
+            "ntoz": "1193449757683757147",
+            "melee": "1193449614758662255"
+        }
+    },
+    "spreadsheet": {
+        "personal": {
+            "id": "1Hk9ENpfW--WV_rg1Pwa24VZyrvq8WGBAAoSFEgocfYo",
+            "ranges": {
+                "relic": "!A2:I",
+                "treasury": "Treasury!A2:B",
+                "farmer": "Farmer!A2:G"
+            }
+        },
+        "treasury": {
+            "id": "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY",
+            "relicName": "Tracker - LIVE",
+            "useridName": "Directory",
+            "ranges": { "relic": "!A2:H", "ids": "!B2:C" }
+        },
+        "farmer": {
+            "id": "18uYn374Y-n_VBX9sQsTLoSRY9-JtgGGLHWihotxjdPY",
+            "resourceName": "Main",
+            "userName": "Farmer List",
+            "ranges": {
+                "resource": {
+                    "AK": "!A30:C53",
+                    "CK": "!D30:F53",
+                    "HK": "!G30:I53",
+                    "TK": "!J30:L53",
+                    "YK": "!A59:C82",
+                    "IK": "!D59:F82",
+                    "MK": "!G59:I82",
+                    "WK": "!J59:L82"
+                },
+                "users": "!A3:H"
+            }
+        }
+    },
+    "byhex": {
+        "#150b2e": "ED",
+        "#3c0000": "RED",
+        "#472502": "ORANGE",
+        "#4b3800": "YELLOW",
+        "#162e0b": "GREEN",
+        "#282828": ""
+    },
+    "dualitemslist": [
+        "Afuris Barrel",
+        "Afuris Receiver",
+        "Akarius Barrel",
+        "Akarius Receiver",
+        "Akbolto Barrel",
+        "Akbolto Receiver",
+        "Akjagara Barrel",
+        "Akjagara Receiver",
+        "Aksomati Barrel",
+        "Aksomati Receiver",
+        "Akstiletto Barrel",
+        "Akstiletto Receiver",
+        "Hikou Pouch",
+        "Spira Pouch",
+        "Spira Blade",
+        "Ankyros Gauntlet",
+        "Ankyros Blade",
+        "Bo Ornament",
+        "Dual Kamas Handle",
+        "Dual Kamas Blade",
+        "Dual Keres Handle",
+        "Dual Keres Blade",
+        "Fang Handle",
+        "Fang Blade",
+        "Glaive Blade",
+        "Guandao Blade",
+        "Gunsen Handle",
+        "Gunsen Blade",
+        "Kogake Boot",
+        "Kogake Gauntlet",
+        "Kronen Handle",
+        "Kronen Blade",
+        "Nami Skyla Handle",
+        "Nami Skyla Blade",
+        "Ninkondi Handle",
+        "Orthos Blade",
+        "Tekko Gauntlet",
+        "Tekko Blade",
+        "Tipedo Ornament",
+        "Venka Gauntlet",
+        "Venka Blade",
+        "Okina Handle",
+        "Okina Blade",
+        "Quassus Handle",
+        "Quassus Blade"
+    ]
+}

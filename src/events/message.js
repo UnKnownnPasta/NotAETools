@@ -1,6 +1,6 @@
 import { Events } from 'discord.js';
 
-/** @type {import('../config/types').Event} */
+/** @type {import('../other/types').Event} */
 export default {
     name: Events.MessageCreate,
     enabled: true,
@@ -10,6 +10,9 @@ export default {
      * @param {import('discord.js').Client} client
      */
     async execute(client, message) {
-        console.log(message);
+        const args = message.content.replace(client.prefix, "");
+        const command = client.cmd_handler.find(`${args.split(" ")[0]}-message`);
+
+        if (command) command.execute(message, client);
     }
 }

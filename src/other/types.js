@@ -1,0 +1,24 @@
+/**
+ * @typedef {Object} Event
+ * @property {string} name - The name of the event.
+ * @property {boolean} enabled - Whether the event is enabled.
+ * @property {boolean} disabled - Whether the event is disabled.
+ * @property {"on" | "once"} trigger - The trigger type (either "on" or "once").
+ * @property {function(...args: any[]): any} execute - The function to execute for the event.
+ */
+
+/**
+ * @typedef {Object} Command
+ * @property {string} name - The name of the command.
+ * @property {function} execute - The function to execute when the command is run.
+ * @property {boolean} enabled - Whether the command is enabled.
+ * @property {boolean} disabled - Whether the command is disabled.
+ * @property {"message" | "interaction"} trigger - The trigger type (either "message" or "interaction").
+ */
+
+/**
+ * @typedef {Command} InteractionCommand
+ * @property {Object} data - The interaction command data.
+ */
+
+export default {};
