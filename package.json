@@ -20,7 +20,9 @@
     "mongodb": "^6.10.0",
     "mongoose": "^8.7.2",
     "pagination.djs": "^4.0.13",
-    "pino": "^7.11.0",
     "pino-pretty": "^11.0.0"
+  },
+  "devDependencies": {
+    "pino": "^9.5.0"
   }
 }

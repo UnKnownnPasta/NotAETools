@@ -6,11 +6,11 @@ const path = require("node:path");
 const { getAllBoxData } = require("../scripts/dbcreate.js");
 
 const range = (num) => 
-    num >= 0 && num <= 9 ? 'ED'
-    : num > 9 && num <= 15 ? 'RED'
-    : num > 15 && num <= 31 ? 'ORANGE'
-    : num > 31 && num <= 64 ? 'YELLOW'
-    : num > 64 ? 'GREEN' : '';
+    num >= 0 && num <= 11 ? 'ED'
+    : num > 11 && num <= 23 ? 'RED'
+    : num > 23 && num <= 39 ? 'ORANGE'
+    : num > 39 && num <= 59 ? 'YELLOW'
+    : num > 59 ? 'GREEN' : '';
 
 const codeObj = {
     "ED": 0,
@@ -37,11 +37,11 @@ const hex = {
 }
 
 const stockRanges = {
-    "ED": "0 - 9",
-    "RED": "10 - 15",
-    "ORANGE": "16 - 31",
-    "YELLOW": "32 - 64",
-    "GREEN": "64 - inf",
+    "ED": "0 - 11",
+    "RED": "12 - 23",
+    "ORANGE": "24 - 39",
+    "YELLOW": "40 - 59",
+    "GREEN": "60 - inf",
 }
 
 module.exports = {

@@ -42,11 +42,11 @@ async function searchForDrops(htmlText, searchString) {
 
 
 const range = (num) => 
-    num >= 0 && num <= 9 ? 'ED'
-    : num > 9 && num <= 15 ? 'RED'
-    : num > 15 && num <= 31 ? 'ORANGE'
-    : num > 31 && num <= 64 ? 'YELLOW'
-    : num > 64 ? 'GREEN' : '';
+    num >= 0 && num <= 11 ? 'ED'
+    : num > 11 && num <= 23 ? 'RED'
+    : num > 23 && num <= 39 ? 'ORANGE'
+    : num > 39 && num <= 59 ? 'YELLOW'
+    : num > 59 ? 'GREEN' : '';
 
 const normalize = (name) => {
     name = name.replace(/\s+/g, ' ').trim().replace(" Blueprint", "");
