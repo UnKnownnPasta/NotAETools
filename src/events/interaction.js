@@ -11,6 +11,9 @@ export default {
     async execute(client, interaction) {
         const command = interaction.commandName;
 
-        if (command) client.cmd_handler.find(`${command}-interaction`).execute(client, interaction);
+        if (command) {
+            client.cmd_handler.find(`${command}-interaction`).execute(client, interaction);
+            console.log(`${interaction.user.username} used /${command}`);
+        }
     }
 }

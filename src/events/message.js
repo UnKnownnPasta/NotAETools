@@ -13,6 +13,9 @@ export default {
         const args = message.content.replace(client.prefix, "");
         const command = client.cmd_handler.find(`${args.split(" ")[0]}-message`);
 
-        if (command) command.execute(message, client);
+        if (command) {
+            command.execute(message, client);
+            console.log(`${message.author.username} used ${client.prefix}${command.name}`);
+        }
     }
 }

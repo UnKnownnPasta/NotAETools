@@ -1,11 +1,12 @@
 import dotenv from 'dotenv';
-import { resolve, join } from 'node:path';
+import { join } from 'node:path';
 dotenv.config({ path: join(import.meta.dirname, `../.env.${process.env.NODE_ENV}`) });
-import { readdir } from "node:fs/promises";
 import { _bool_true } from './services/utils.js';
 
 import { ActivityType, Client, Collection, GatewayIntentBits as GIB, Partials } from 'discord.js';
 import CommandHandler from './other/handler.js';
+import { getFissures } from './services/warframe.js';
+import { start_db } from './services/databaseMerged.js';
 
 class Bot extends Client {
     constructor() {
@@ -33,33 +34,20 @@ class Bot extends Client {
 
     async sequence() {
         this.cmd_handler = new CommandHandler(this);
-        await this.cmd_handler.create();
-        await this.loadEvents();
+        await this.cmd_handler.createBasic();
+        await this.cmd_handler.loadEvents();
+        await start_db();
         await this.login(process.env.DISCORD_TOKEN);
-    }
-
-    async loadEvents() {
-        const eventFiles = join(import.meta.dirname, './events/');
-        const events = await readdir(eventFiles);
-
-        for (const file of events) {
-            const event = await import(`file://${join(eventFiles, file)}`);
-
-            if (_bool_true(event.default.enabled) || !_bool_true(event.default.disabled)) {
-                this[event.default.trigger](event.default.name, (...args) => event.default.execute(this, ...args));
-            }
-        }
+        await this.guilds.fetch({force: true});
+        await this.intervals();
     }
 
     async intervals() {
-        setInterval(() => {
-            this.user.setPresence({
-                activities: [
-                    { name: "Zlushiie 🎅", type: ActivityType.Watching },
-                ],
-                status: "idle",
-            });
-        }, 10000);
+        await getFissures(this);
+        
+        // setInterval(async () => {
+        //     await getFissures(this);
+        // }, 30_000);
     }
 }
 

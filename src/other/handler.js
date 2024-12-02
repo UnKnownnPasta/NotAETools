@@ -21,7 +21,7 @@ export default class CommandHandler {
         return this.commands.find(command => command.name === name && command.trigger === trigger);
     }
 
-    async create() {
+    async createBasic() {
         const commandsPath_msg = join(import.meta.dirname, '../commands/message/');
         const commandsPath_int = join(import.meta.dirname, '../commands/interaction/');
 
@@ -48,6 +48,19 @@ export default class CommandHandler {
         // await this.deploy(interactionCommands);
     }
 
+    async loadEvents() {
+        const eventFiles = join(import.meta.dirname, '../events/');
+        const events = await readdir(eventFiles);
+
+        for (const file of events) {
+            const event = await import(`file://${join(eventFiles, file)}`);
+
+            if (_bool_true(event.default.enabled) || !_bool_true(event.default.disabled)) {
+                this.client[event.default.trigger](event.default.name, (...args) => event.default.execute(this.client, ...args));
+            }
+        }
+    }
+
     async deploy(commandData) {
         if (!commandData.length) return;
         const commands = commandData.map(command => command?.data?.toJSON()).filter(Boolean);
@@ -62,7 +75,7 @@ export default class CommandHandler {
 
             console.log(`Successfully reloaded ${data.length} application (/) commands.`);
         } catch (err) {
-            console.error('Deploy js failed', err)
+            console.error('Deploying application (/) commands failed', err)
         }
     }
 }
