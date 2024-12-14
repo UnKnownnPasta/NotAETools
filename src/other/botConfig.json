@@ -9,5 +9,39 @@
     },
     "hex_codes": {
         "embed__invis": "#2c2c34"
+    },
+    "spreadsheet": {
+        "personal": {
+            "id": "1Hk9ENpfW--WV_rg1Pwa24VZyrvq8WGBAAoSFEgocfYo",
+            "ranges": {
+                "relic": "!A2:I",
+                "treasury": "Treasury!A2:B",
+                "farmer": "Farmer!A2:G"
+            }
+        },
+        "treasury": {
+            "id": "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY",
+            "relicName": "Tracker - LIVE",
+            "useridName": "Directory",
+            "ranges": { "relic": "!A2:H", "ids": "!B2:C" }
+        },
+        "farmer": {
+            "id": "18uYn374Y-n_VBX9sQsTLoSRY9-JtgGGLHWihotxjdPY",
+            "resourceName": "Main",
+            "userName": "Farmer List",
+            "ranges": {
+                "resource": {
+                    "AK": "!A30:C53",
+                    "CK": "!D30:F53",
+                    "HK": "!G30:I53",
+                    "TK": "!J30:L53",
+                    "YK": "!A59:C82",
+                    "IK": "!D59:F82",
+                    "MK": "!G59:I82",
+                    "WK": "!J59:L82"
+                },
+                "users": "!A3:H"
+            }
+        }
     }
 }
