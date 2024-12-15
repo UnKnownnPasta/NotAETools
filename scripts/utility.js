@@ -150,7 +150,13 @@ async function refreshFissures(client) {
 
         const { WorldState } = await import('warframe-worldstate-parser');
         const worldstateData = await fetch('https://content.warframe.com/dynamic/worldState.php').then((data) => data.text());
-        const { fissures: fisres } = new WorldState(worldstateData);
+        const { fissures: fisres } = new WorldState(worldstateData, { logger: {
+            error: (...args) => console.error(...args),
+            warn: (...args) => {},
+            info: (...args) => {},
+            debug: (...args) => {},
+            log: (...args) => {},
+        } });
 
         const response = fisres.filter(({ tier, missionType, active, expired, isStorm }) =>
             !isStorm && missions.includes(missionType) && active && tiers.includes(tier) && !expired
@@ -165,6 +171,7 @@ async function refreshFissures(client) {
         // --- Fissure Embeds ---
         const [N_Embed, S_Embed] = Object.entries(fissures.reduce((acc, fissure) => {
             let currentEmbed = fissure[2] ? acc.S_Embed : acc.N_Embed;
+            if (fissure[1].includes('Sabotage') && fissure[1].includes('Void')) return acc;
 
             currentEmbed[fissure[0]]
             ? (currentEmbed[fissure[0]].value += fissure[1])

@@ -1,6 +1,6 @@
 const { VoiceState, Client } = require("discord.js");
 const { default: mongoose } = require("mongoose");
-const vcmodel = require('../../data/vcmodel');
+const vcmodel = require('./vcmodel');
 
 module.exports = {
     name: 'voiceStateUpdate',
