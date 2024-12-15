@@ -37,7 +37,7 @@ setInterval(async () => {
 		client.intrv_count++
 		client.fissureLast = new Date().getTime() + 180000
 	})
-}, 180_000);
+}, 300_000);
 
 // Load all commands
 ;(async () => {
@@ -65,7 +65,7 @@ async function run_mongo() {
 
 // Login
 ;(async () => {
-	await run_mongo().catch(err => logger.error(err, '[MONGODB] Failed to connect to MongoDB.'));
+	// await run_mongo().catch(err => logger.error(err, '[MONGODB] Failed to connect to MongoDB.'));
 
 	client.dofilter = true;
 	await client.login(process.env.TOKEN);
@@ -81,7 +81,6 @@ async function run_mongo() {
 		await client.guilds.fetch({ force: true });
 		client.boxData = await getAllBoxData(client)
 
-		console.log('Fetching data..');
 		await Promise.all([
 			fetchData(),
 			refreshFissures(client),
