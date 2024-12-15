@@ -37,7 +37,7 @@ setInterval(async () => {
 		client.intrv_count++
 		client.fissureLast = new Date().getTime() + 180000
 	})
-}, 300_000);
+}, 420_000);
 
 // Load all commands
 ;(async () => {
