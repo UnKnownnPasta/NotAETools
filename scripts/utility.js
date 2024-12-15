@@ -146,8 +146,11 @@ async function refreshFissures(client) {
         }
 
         const missions = ["Extermination", "Capture", "Sabotage", "Rescue"];
-        const tiers = ["Lith", "Meso", "Neo", "Axi"]
-        const fisres = (await axios.get("https://api.warframestat.us/pc/fissures")).data;
+        const tiers = ["Lith", "Meso", "Neo", "Axi"];
+
+        const { WorldState } = await import('warframe-worldstate-parser');
+        const worldstateData = await fetch('https://content.warframe.com/dynamic/worldState.php').then((data) => data.text());
+        const { fissures: fisres } = new WorldState(worldstateData);
 
         const response = fisres.filter(({ tier, missionType, active, expired, isStorm }) =>
             !isStorm && missions.includes(missionType) && active && tiers.includes(tier) && !expired
@@ -175,16 +178,17 @@ async function refreshFissures(client) {
         const embedSort = (embed) => Object.values(embed[1]).sort((a, b) => tiers.indexOf(a.name) - tiers.indexOf(b.name))
 
         const NormEmbed = new EmbedBuilder()
-            .setAuthor({ name: "Regular Fissures", 
+            .setAuthor({ name: "Regular Fissures",
                 iconURL: `https://cdn.discordapp.com/emojis/${parseEmoji("<:normalPath:1287248821461454910>").id}.png` })
             .setColor("#2c2c34")
             .setFields(embedSort(N_Embed));
 
         const SPEmbed = new EmbedBuilder()
-            .setAuthor({ name: "Steel Path Fissures", 
+            .setAuthor({ name: "Steel Path Fissures",
                 iconURL: `https://cdn.discordapp.com/emojis/${parseEmoji("<:steelPath:1287249765091905620>").id}.png` })
             .setFields(embedSort(S_Embed))
             .setColor("#2c2c34")
+            .setFooter({ text: `Last updated` })
             .setTimestamp();
 
         if (NormEmbed.data.fields.length == 0) NormEmbed.setDescription(`No ideal fissures`);

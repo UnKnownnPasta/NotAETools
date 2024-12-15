@@ -27,10 +27,12 @@
             }
         },
         "treasury": {
-            "id": "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY",
-            "relicName": "Tracker - LIVE",
-            "useridName": "Directory",
-            "ranges": { "relic": "!A2:H", "ids": "!B2:C" }
+            "tracker": "15VbpC6N6Lt3AK8WtF5bcSre6R5nqYSbMvF--d9LhZdU",
+            "database": "1Mrp2qcFY9CO8V-MndnYCkkVBJ-f_U_zeK-oq3Ncashk",
+            "ranges": {
+                "partsData": "MANAGERS!Q3:S",
+                "relictokenData": "RAW DATA!A3:B"
+            }
         },
         "farmer": {
             "id": "18uYn374Y-n_VBX9sQsTLoSRY9-JtgGGLHWihotxjdPY",

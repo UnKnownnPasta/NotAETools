@@ -40,7 +40,6 @@ async function searchForDrops(htmlText, searchString) {
     return true;
 }
 
-
 const range = (num) => 
     num >= 0 && num <= 11 ? 'ED'
     : num > 11 && num <= 23 ? 'RED'
@@ -57,15 +56,15 @@ async function fetchData(msg, ogmsg) {
     console.time("fetchData");
 
     const sheetValues = await googleSheets({
-        spreadsheetId: spreadsheet.personal.id,
-        range: "Sheet2" + "!H2:I",
+        spreadsheetId: spreadsheet.treasury.database,
+        range: spreadsheet.treasury.ranges.relictokenData,
     }).catch((err) => {
-        logger.error(err, "Error fetching items and stock, using google client");
+        logger.error(err, "Error fetching relic tokens, using google client");
     });
 
     const sheetValues2 = await googleSheets({
-        spreadsheetId: spreadsheet.personal.id,
-        range: "Sheet2" + "!A2:C",
+        spreadsheetId: spreadsheet.treasury.tracker,
+        range: spreadsheet.treasury.ranges.partsData,
     }).catch((err) => {
         logger.error(err, "Error fetching items and stock, using google client");
     });

@@ -21,6 +21,7 @@
     "mongoose": "^8.7.2",
     "pagination.djs": "^4.0.13",
     "pino": "^9.5.0",
-    "pino-pretty": "^11.0.0"
+    "pino-pretty": "^11.0.0",
+    "warframe-worldstate-parser": "^4.2.2"
   }
 }
