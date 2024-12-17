@@ -21,4 +21,25 @@
  * @property {Object} data - The interaction command data.
  */
 
+/**
+ * @typedef {Object} dataItem
+ * @property {string} item - Item Name.
+ * @property {string} amount - Amount of the item.
+ */
+
+/**
+ * @typedef {Object} CacheOfDataItem
+ * @property {string} author - Author ID.
+ * @property {string} id - Message ID.
+ * @property {dataItem[]} data - Data object parsed from the message.
+ */
+
+/**
+ * @typedef {Object} CacheOfSoupMessage
+ * @property {string} author - Message author.
+ * @property {string} link - Message link.
+ * @property {string} message - Message content.
+ * @property {dataItem[]} data - Data object parsed from the message.
+ */
+
 export default {};

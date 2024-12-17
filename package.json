@@ -6,7 +6,8 @@
     "type": "module",
     "scripts": {
         "dev": "set \"NODE_ENV=development\" && node ./src/index.js",
-        "start": "set \"NODE_ENV=production\" && node ./src/index.js"
+        "prod": "set \"NODE_ENV=production\" && node ./src/index.js"
+        
     },
     "repository": {
         "type": "git",
