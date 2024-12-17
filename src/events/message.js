@@ -1,5 +1,5 @@
 import { Events } from 'discord.js';
-import { EntityClassifierInstance } from '../services/nlp.js';
+import entityClassifierInstance from '../services/nlp.js';
 
 /** @type {import('../other/types').Event} */
 export default {
@@ -11,10 +11,13 @@ export default {
      * @param {import('discord.js').Client} client
      */
     async execute(client, message) {
-        const args = message.content.replace(client.prefix, "");
-        const request = args.split(" ")[0]
+        if (message.author.bot || !message.content.startsWith(client.prefix)) return;
         
-        const command = client.cmd_handler.find(`${request}-message`);
+        const args = message.content.replace(client.prefix, "");
+        const request = entityClassifierInstance.classifyEntity(args);
+        console.log(request);
+        
+        const command = client.cmd_handler.find(`${request.category}-message`);
 
         if (command) {
             command.execute(message, client);

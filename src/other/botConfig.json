@@ -20,10 +20,12 @@
             }
         },
         "treasury": {
-            "id": "1Fv0SCmBalcT-DNo02F4Q1CiX_Np6Q7vsmuVO6c2PiPY",
-            "relicName": "Tracker - LIVE",
-            "useridName": "Directory",
-            "ranges": { "relic": "!A2:H", "ids": "!B2:C" }
+            "tracker": "15VbpC6N6Lt3AK8WtF5bcSre6R5nqYSbMvF--d9LhZdU",
+            "database": "1Mrp2qcFY9CO8V-MndnYCkkVBJ-f_U_zeK-oq3Ncashk",
+            "ranges": {
+                "partsData": "MANAGERS!Q3:S",
+                "relictokenData": "RAW DATA!A3:B"
+            }
         },
         "farmer": {
             "id": "18uYn374Y-n_VBX9sQsTLoSRY9-JtgGGLHWihotxjdPY",
@@ -43,5 +45,52 @@
                 "users": "!A3:H"
             }
         }
-    }
+    },
+    "dualitemslist": [
+        "Afuris Barrel",
+        "Afuris Receiver",
+        "Akarius Barrel",
+        "Akarius Receiver",
+        "Akbolto Barrel",
+        "Akbolto Receiver",
+        "Akjagara Barrel",
+        "Akjagara Receiver",
+        "Aksomati Barrel",
+        "Aksomati Receiver",
+        "Akstiletto Barrel",
+        "Akstiletto Receiver",
+        "Hikou Pouch",
+        "Spira Pouch",
+        "Spira Blade",
+        "Ankyros Gauntlet",
+        "Ankyros Blade",
+        "Bo Ornament",
+        "Dual Kamas Handle",
+        "Dual Kamas Blade",
+        "Dual Keres Handle",
+        "Dual Keres Blade",
+        "Fang Handle",
+        "Fang Blade",
+        "Glaive Blade",
+        "Guandao Blade",
+        "Gunsen Handle",
+        "Gunsen Blade",
+        "Kogake Boot",
+        "Kogake Gauntlet",
+        "Kronen Handle",
+        "Kronen Blade",
+        "Nami Skyla Handle",
+        "Nami Skyla Blade",
+        "Ninkondi Handle",
+        "Orthos Blade",
+        "Tekko Gauntlet",
+        "Tekko Blade",
+        "Tipedo Ornament",
+        "Venka Gauntlet",
+        "Venka Blade",
+        "Okina Handle",
+        "Okina Blade",
+        "Quassus Handle",
+        "Quassus Blade"
+    ]
 }
