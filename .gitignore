@@ -1,7 +1,7 @@
 # Folders
 node_modules
+_dev
 
 # Files
-_dev
 .env.*
 .env
