@@ -10,7 +10,6 @@ import { ActivityType, Client, Collection, GatewayIntentBits as GIB, Partials } 
 import CommandHandler from './other/handler.js';
 import { getFissures } from './services/fissure.js';
 import { start_db } from './services/databaseMerged.js';
-import { writeFileSync } from 'node:fs'
 import { fetchData } from './services/googleSheets.js';
 import boxCacheManager from './managers/boxCacheManager.js';
 import relicCacheManager from './managers/relicCacheManager.js';
@@ -47,7 +46,7 @@ class Bot extends Client {
         await this.cmd_handler.loadEvents();
         
         // Link and update database (mongo & json)
-        // await fetchData();
+        await fetchData();
         // await start_db();
         await entityClassifierInstance.updateLocalData();
 
@@ -55,7 +54,7 @@ class Bot extends Client {
         await this.login(process.env.DISCORD_TOKEN);
         this.once('ready', async () => {
             await this.guilds.fetch({ force: true });
-            await this.startCaching();
+            // await this.startCaching();
         });
     }
 

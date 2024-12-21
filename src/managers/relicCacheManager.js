@@ -21,12 +21,12 @@ class RelicCacheManager {
         stored: []
       }
     ]
+    this.relicCache = {};
   }
   async setCache() {
     const data = readFileSync(join(__dirname, '../data/relics.json'), 'utf-8');
     const relics = await JSON.parse(data);
-
-    
+    this.relicCache = relics;
   }
 }
 

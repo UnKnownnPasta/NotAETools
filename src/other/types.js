@@ -42,4 +42,14 @@
  * @property {dataItem[]} data - Data object parsed from the message.
  */
 
+/**
+ * @typedef {Object} primeItem
+ * @property {string} item - The name of the prime item.
+ * @property {boolean} x2 - Whether the prime item is dual equipped.
+ * @property {number} stock - The stock of the prime item.
+ * @property {string} color - The color of the prime item.
+ * @property {number} rarity - The rarity of the prime item.
+ * @property {string[]} relicFrom - The relic from which the prime item is obtained.
+ */
+
 export default {};

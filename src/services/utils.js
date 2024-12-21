@@ -14,19 +14,42 @@ export async function _run_safe(fn) {
 
 export function extractItems(input) {
 	const items = [];
-	const inputParts = input.split(/[\n,]\s*/); // Split by both newline and comma, with optional space after
+	const parts = input
+		.toLowerCase()
+		.replace(/\s+/g, ' ')
+		.replace(/\s*prime\s*/g, ' ')
+		.replace(/\(.*?\)/g, "")
+		.replace(/<@!?[^>]+>/g, "")
+		.replace(/x(\d+)/g, '$1x')
+		.replace(/ and /g, " & ")
+		.trim()
+		.replace(/\b(\d+)\s*x?\s*\b/g, '$1x ')
+		.replace(/\b(\d+)\s*x?\b\s*(.*?)\s*/g, '$1x $2, ')
+		.split(/(?:(?:, )|(?:\n)|(?:\s(?=\b\d+x?\b)))/);
 
-	// Iterate over each part (e.g., "4x aklex link")
+	const newParts = [];
+	for (let i = 0; i < parts.length; i++) {
+			if (/\d+x/.test(parts[i]) && i < parts.length - 1) {
+					newParts.push(parts[i] + parts[i + 1]);
+					i++;
+			} else if (i < parts.length - 1 && parts[i + 1].endsWith('x ')) {
+					newParts.push(parts[i + 1] + parts[i]);
+					i++;
+			} else {
+					newParts.push(parts[i]);
+			}
+	}
+
+	const inputParts = newParts.filter(x => /\dx/.test(x));
+
+	// Iterate over each part
 	inputParts.forEach((part) => {
 			const tokens = part.replace("bp", "Blueprint").replace("rec", "Receiver").replace(/[^0-9 &a-zA-Z]/g, "").trim().split(/\s+/);
-			const amountMatch = tokens[0].match(/^(\d+)x$/); // Check if the first token is a quantity (e.g., "4x")
+			const amountMatch = tokens[0].match(/^(\d+)x$/);
 			if (amountMatch) {
-					const amount = parseInt(amountMatch[1], 10); // Extract the amount (e.g., 4 from "4x")
-					const itemName = tokens.slice(1).join(" "); // Remaining part is the item name (e.g., "aklex link")
-
-					// Classify the item using the classifyEntity function
-					const classification = entityClassifierInstance.classifyEntity(itemName);
-					console.log(tokens, classification);
+					const amount = parseInt(amountMatch[1], 10);
+					const itemName = tokens.slice(1).join(" ");
+					const classification = entityClassifierInstance.classifyEntity(titleCase(itemName));
 
 					if (classification.category !== "unknown" && classification.entity !== "unknown") {
 							items.push({ item: classification.entity + " " + classification.detail, amount });
@@ -48,6 +71,10 @@ export function titleCase(str) {
 		}
 		if (words[i] == "rec") {
 			words[i] = "Receiver";
+			continue;
+		}
+		if (words[i] == "sys") {
+			words[i] = "Systems";
 			continue;
 		}
 		words[i] =

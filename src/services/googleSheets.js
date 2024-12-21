@@ -7,6 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { range } from "./utils.js";
+import relicCacheManager from "../managers/relicCacheManager.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.resolve(__filename, '..');
 
@@ -100,7 +101,8 @@ export async function fetchData(msg, ogmsg) {
 			const relicRewards = await processTables($, tables, msg);
 			const PrimeData = await processRelics(relicRewards, stockValues, tokenValues, htmlText, msg);
 
-			fs.writeFileSync(path.join(__dirname, '..', 'data', 'relics.json'), JSON.stringify(PrimeData))
+			await fs.promises.writeFile(path.join(__dirname, '..', 'data', 'relics.json'), JSON.stringify(PrimeData));
+			await relicCacheManager.setCache();
 
 			if (msg) {
 				await msg.edit({ content: `\`\`\`DONE Fetching data...\nDONE Creating Records...\nDONE Updating DB... ✅\`\`\`` });

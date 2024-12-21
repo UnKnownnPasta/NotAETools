@@ -2,6 +2,9 @@ import { extractItems } from "../services/utils.js";
 
 class BoxCacheManager {
   constructor() {
+    /**
+     * @type {import("discord.js").Client}
+     */
     this._client = {};
     this.boxChannelID = "1221032022919872572";
     this.channelCache = [
@@ -34,7 +37,14 @@ class BoxCacheManager {
     this.boxCache = [];
   }
 
+  resetStored() {
+    for (const channel of this.channelCache) {
+      channel.stored = [];
+    }
+  }
+
   setBoxCache() {
+    this.boxCache = [];
     for (const channel of this.channelCache) {
       const cacheItems = channel.stored.map(msg => msg.data).flat();
       for (const item of cacheItems) {
@@ -48,12 +58,14 @@ class BoxCacheManager {
     }
   }
 
-  async updateCache() {
+  async updateCache(channelID="--") {
+    if (!this._client) return;
     console.time("updateCache");
-    /** @type {import("discord.js").ThreadManager} */
-    const thread = this._client.channels.cache.get(this.boxChannelID)?.threads;
+
+    this.resetStored();
 
     for (const channel of this.channelCache) {
+      if (channelID != "--" && channelID != channel.id) continue;
       const threadChannel = await this._client.channels.fetch(channel.id);
       
       if (!threadChannel) {
@@ -74,6 +86,7 @@ class BoxCacheManager {
           data: extractItems(msgContent)
         }
       });
+
       channel.stored.push(...messages);
     }
 

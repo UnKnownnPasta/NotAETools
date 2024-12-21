@@ -3,15 +3,14 @@ import boxCacheManager from '../managers/boxCacheManager.js';
 
 /** @type {import('../other/types').Event} */
 export default {
-    name: Events.MessageUpdate,
+    name: Events.MessageDelete,
     enabled: true,
     trigger: "on",
     /**
-     * @param {import('discord.js').Message} newMessage 
+     * @param {import('discord.js').Message} message 
      * @param {import('discord.js').Client} client
      */
-    async execute(client, oldMessage, newMessage) {
-        const message = newMessage;
+    async execute(client, message) { // id defined
         if (message.author.bot) return;
         
         if (message.channel.isThread()) {
