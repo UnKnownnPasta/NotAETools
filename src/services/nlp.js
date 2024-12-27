@@ -1,4 +1,4 @@
-import { titleCase } from "./utils.js";
+import { isRelicFF, titleCase } from "./utils.js";
 import { fileURLToPath } from "node:url";
 import { join, resolve } from "node:path";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -53,6 +53,7 @@ class EntityClassifier {
 	}
 
 	async updateLocalData() {
+		console.time("nlp::updateLocalData");
 		const parsedData = await JSON.parse(
 			readFileSync(join(__dirname, "../data/relics.json"), "utf-8")
 		);
@@ -69,9 +70,7 @@ class EntityClassifier {
 		const deepData__primes = [];
 		for (const p of pdata) {
 			if (p.item == "Forma") continue;
-			const lArray = deepData__primes.find((x) =>
-				x.some((y) => y.split(" ")[0] == p.item.split(" ")[0])
-			);
+			const lArray = deepData__primes.find((x) =>x.some((y) => y.split(" ")[0] == p.item.split(" ")[0]));
 			if (lArray) {
 				lArray.push(p.item);
 			} else {
@@ -109,110 +108,128 @@ class EntityClassifier {
 
 		this.data.primes.keywords = deep__primes_kws;
 		this.data.primes.details = deep__primes_details;
+
+		console.timeEnd("nlp::updateLocalData");
 	}
 
 	classifyEntity(input) {
-		const tokens = titleCase(input).toLowerCase().split(/\s+/);
-		let bestMatch = { category: "unknown", entity: "unknown", detail: "unknown", score: 0 };
+		let bestMatch = {
+			category: "unknown",
+			entity: "unknown",
+			detail: "unknown",
+			score: 0,
+		};
+		if (!input || !this.data.primes.keywords) return bestMatch;
+		let tokens = titleCase(input).toLowerCase().split(/\s+/);
 
 		entityLoop: for (let cat in this.data) {
 			const keywords = this.data[cat].keywords;
 
 			// Special handling for status
-            switch (cat) {
-            case "status":
-            const statusMatch = keywords.find((keyword) =>
-                tokens.some((token) => similarity(keyword, token) > 0.8)
-            );
+			switch (cat) {
+				case "status":
+					const statusMatch = keywords.find((keyword) =>
+						tokens.some((token) => similarity(keyword, token) > 0.8)
+					);
 
-            if (statusMatch) {
-                bestMatch = {
-                    category: cat,
-                    entity: statusMatch,
-                    detail: tokens.slice(1).join(" "),
-                    score: 1, // Status is a definitive match
-                };
-                break entityLoop;
-            }
-			break;
-
-            case "relics":
-            tokens.forEach((token) => {
-                const relicEntityMatch = keywords.find(
-                    (keyword) => similarity(keyword, token) > 0.8
-                );
-
-                if (relicEntityMatch) {
-                    const relicDetails = this.data[cat].details[relicEntityMatch] || [];
-                    const relicDetailMatch = relicDetails.find((detail) =>
-                        tokens.some(
-                            (token) => similarity(detail.toLowerCase(), token) > 0.8
-                        )
-                    );
-
-                    if (relicDetailMatch) {
-                        bestMatch = {
-                            category: cat,
-                            entity:
-                                relicEntityMatch.charAt(0).toUpperCase() +
-                                relicEntityMatch.slice(1),
-                            detail: relicDetailMatch,
-                            score: 1
-                        };
-                    }
-                }
-            });
-            if (bestMatch.category === "relics") break entityLoop;
-            continue;
-			break;
-
-			case "primes":
-			keywords.forEach((keyword) => {
-				const keywordTokens = keyword.toLowerCase().split(/\s+/);
-
-				const keywordScore =
-					keywordTokens.reduce((score, kw, kwIndex) => {
-						const bestMatch = tokens.map((token, tokenIndex) => {
-							const baseSimilarity = similarity(kw, token);
-							const positionPenalty = Math.abs(kwIndex - tokenIndex) * 0.08;
-							return Math.max(0, baseSimilarity - positionPenalty);
-						});
-						return score + Math.max(...bestMatch);
-					}, 0) / keywordTokens.length;
-
-				if (keywordScore > bestMatch.score && keywordScore > 0.4) {
-					bestMatch.category = cat;
-					bestMatch.entity = keyword.charAt(0).toUpperCase() + keyword.slice(1);
-					bestMatch.score = keywordScore;
-
-					const details = this.data[cat].details[keyword] || [];
-					const detailMatch = details
-						.map((detail) => {
-							const detailTokens = detail.toLowerCase().split(/\s+/);
-							const detailScore =
-								detailTokens.reduce((score, dt) => {
-									return (
-										score +
-										Math.max(...tokens.map((token) => similarity(dt, token)))
-									);
-								}, 0) / detailTokens.length;
-							return { detail, score: detailScore };
-						})
-						.sort((a, b) => b.score - a.score)[0];
-
-					if (detailMatch && detailMatch.score > 0.38) {
-						bestMatch.detail = detailMatch.detail;
-					} else {
-						bestMatch.detail = "unknown";
+					if (statusMatch) {
+						bestMatch = {
+							category: cat,
+							entity: statusMatch,
+							detail: tokens.slice(1).join(" "),
+							score: 1, // Status is a definitive match
+						};
+						break entityLoop;
 					}
-				}
-			});
-            if (bestMatch.category === "primes") break entityLoop;
-            break;
-        }
+					break;
+
+				case "relics":
+					let rTokens = isRelicFF(input)
+					if (!rTokens) continue;
+					rTokens = rTokens.toLowerCase().split(/\s+/);
+					rTokens.forEach((token) => {
+						const relicEntityMatch = keywords.find(
+							(keyword) => similarity(keyword, token) > 0.8
+						);
+
+						if (relicEntityMatch) {
+							const relicDetails =
+								this.data[cat].details[relicEntityMatch] || [];
+							const relicDetailMatch = relicDetails.find((detail) =>
+								rTokens.some(
+									(token) => similarity(detail.toLowerCase(), token) > 0.8
+								)
+							);
+
+							if (relicDetailMatch) {
+								bestMatch = {
+									category: cat,
+									entity:
+										relicEntityMatch.charAt(0).toUpperCase() +
+										relicEntityMatch.slice(1),
+									detail: relicDetailMatch,
+									score: 1,
+								};
+							}
+						}
+					});
+					if (bestMatch.category === "relics") break entityLoop;
+					continue;
+					break;
+
+				case "primes":
+					keywords.forEach((keyword) => {
+						const keywordTokens = keyword.toLowerCase().split(/\s+/);
+
+						const keywordScore =
+							keywordTokens.reduce((score, kw, kwIndex) => {
+								const bestMatch = tokens.map((token, tokenIndex) => {
+									const baseSimilarity = similarity(kw, token);
+									const positionPenalty = Math.abs(kwIndex - tokenIndex) * 0.08;
+									return Math.max(0, baseSimilarity - positionPenalty);
+								});
+								return score + Math.max(...bestMatch);
+							}, 0) / keywordTokens.length;
+
+						if (keywordScore > bestMatch.score && keywordScore > 0.4) {
+							bestMatch.category = cat;
+							bestMatch.entity =
+								keyword.charAt(0).toUpperCase() + keyword.slice(1);
+							bestMatch.score = keywordScore;
+
+							const details = this.data[cat].details[keyword] || [];
+							const detailMatch = details
+								.map((detail) => {
+									const detailTokens = detail.toLowerCase().split(/\s+/);
+									const detailScore =
+										detailTokens.reduce((score, dt) => {
+											return (
+												score +
+												Math.max(
+													...tokens.map((token) => similarity(dt, token))
+												)
+											);
+										}, 0) / detailTokens.length;
+									return { detail, score: detailScore };
+								})
+								.sort((a, b) => b.score - a.score)[0];
+
+							if (detailMatch && detailMatch.score > 0.38) {
+								bestMatch.detail = detailMatch.detail;
+							} else {
+								bestMatch.detail = "unknown";
+							}
+						}
+					});
+					if (bestMatch.category === "primes") break entityLoop;
+					break;
+			}
 		}
 
-		return bestMatch;
+		return {
+			...bestMatch,
+			fullForm: bestMatch.entity + " " + bestMatch.detail,
+		};
 	}
 }
 

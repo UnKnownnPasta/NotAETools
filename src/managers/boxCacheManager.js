@@ -6,7 +6,6 @@ class BoxCacheManager {
      * @type {import("discord.js").Client}
      */
     this._client = {};
-    this.boxChannelID = "1221032022919872572";
     this.channelCache = [
       {
         id: "1221695831875256441",
@@ -38,9 +37,7 @@ class BoxCacheManager {
   }
 
   resetStored() {
-    for (const channel of this.channelCache) {
-      channel.stored = [];
-    }
+    this.channelCache.forEach(channel => channel.stored = []);
   }
 
   setBoxCache() {
@@ -60,7 +57,7 @@ class BoxCacheManager {
 
   async updateCache(channelID="--") {
     if (!this._client) return;
-    console.time("updateCache");
+    console.time("box::updateCache");
 
     this.resetStored();
 
@@ -92,7 +89,7 @@ class BoxCacheManager {
 
     this.setBoxCache();
 
-    console.timeEnd("updateCache");
+    console.timeEnd("box::updateCache");
   }
 }
 

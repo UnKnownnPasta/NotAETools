@@ -37,9 +37,9 @@
 /**
  * @typedef {Object} CacheOfSoupMessage
  * @property {string} author - Message author.
- * @property {string} link - Message link.
- * @property {string} message - Message content.
- * @property {dataItem[]} data - Data object parsed from the message.
+ * @property {string} id - Message ID.
+ * @property {string} content - Message content.
+ * @property {dataItem[]} contains - Data object parsed from the message.
  */
 
 /**

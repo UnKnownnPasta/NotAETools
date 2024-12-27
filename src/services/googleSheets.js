@@ -45,7 +45,7 @@ const normalize = (name) => {
 };
 
 export async function fetchData(msg, ogmsg) {
-	console.time("fetchData");
+	console.time("google::fetchData");
 
 	// Fetch data from google sheets
 	const sheetValues = await googleSheets({
@@ -120,7 +120,7 @@ export async function fetchData(msg, ogmsg) {
 			}
 			return [];
 	} finally {
-			console.timeEnd("fetchData");
+			console.timeEnd("google::fetchData");
 	}
 }
 

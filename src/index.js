@@ -6,7 +6,7 @@ const __dirname = resolve(__filename, '..');
 dotenv.config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
 import { _bool_true } from './services/utils.js';
 
-import { ActivityType, Client, Collection, GatewayIntentBits as GIB, Partials } from 'discord.js';
+import { ActivityType, Client, GatewayIntentBits as GIB, Partials } from 'discord.js';
 import CommandHandler from './other/handler.js';
 import { getFissures } from './services/fissure.js';
 import { start_db } from './services/databaseMerged.js';
@@ -35,6 +35,16 @@ class Bot extends Client {
             },
         });
 
+        setInterval(() => {
+            const memoryUsage = process.memoryUsage();
+            console.log(`Memory Usage: 
+                RSS: ${(memoryUsage.rss / 1024 / 1024).toFixed(2)} MB
+                Heap Total: ${(memoryUsage.heapTotal / 1024 / 1024).toFixed(2)} MB
+                Heap Used: ${(memoryUsage.heapUsed / 1024 / 1024).toFixed(2)} MB
+                External: ${(memoryUsage.external / 1024 / 1024).toFixed(2)} MB
+            `);
+        }, 2000);
+
         this.prefix = "++";
         this.sequence();
     }
@@ -54,7 +64,7 @@ class Bot extends Client {
         await this.login(process.env.DISCORD_TOKEN);
         this.once('ready', async () => {
             await this.guilds.fetch({ force: true });
-            // await this.startCaching();
+            await this.startCaching();
         });
     }
 
