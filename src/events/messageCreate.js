@@ -1,6 +1,7 @@
 import { Events } from 'discord.js';
 import entityClassifierInstance from '../services/nlp.js';
 import boxCacheManager from '../managers/boxCacheManager.js';
+import relicCacheManager from '../managers/relicCacheManager.js';
 
 /** @type {import('../other/types.js').Event} */
 export default {
@@ -20,6 +21,11 @@ export default {
             for (const channel of boxCacheManager.channelCache) {
                 if (channel.id == channelID) {
                     await boxCacheManager.updateCache(channelID);
+                }
+            }
+            for (const channel of relicCacheManager.soupCache) {
+                if (channel.id == channelID) {
+                    await relicCacheManager.setCache(channelID);
                 }
             }
             return;

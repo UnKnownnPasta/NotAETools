@@ -33,6 +33,9 @@ function similarity(str1, str2) {
 class EntityClassifier {
 	constructor() {
 		this.data = {
+			status: {
+				keywords: ["ed", "red", "orange", "yellow", "green"],
+			},
 			relics: {
 				keywords: ["lith", "meso", "neo", "axi"],
 				details: {
@@ -45,9 +48,6 @@ class EntityClassifier {
 			primes: {
 				keywords: [],
 				details: {},
-			},
-			status: {
-				keywords: ["ed", "red", "orange", "yellow", "green"],
 			},
 		};
 	}

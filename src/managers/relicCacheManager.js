@@ -10,8 +10,9 @@ class RelicCacheManager {
   constructor() {
     /** @type {import("discord.js").Client} */
     this._client = {};
+    /** @type {import("../other/types").CacheOfSoupChannel[]} */
     this.soupCache = [];
-    this.relicCache = {};
+    this.relicCache = [];
   }
 
   init(clientInstance) {
@@ -20,13 +21,11 @@ class RelicCacheManager {
       {
         id: process.env.CHANNELS_RELIC_intact,
         tags: ['intact', 'soup'],
-        /** @type {import("../other/types").CacheOfSoupMessage[]} */
         stored: []
       },
       {
         id: process.env.CHANNELS_RELIC_radded,
         tags: ['radded', 'soup'],
-        /** @type {import("../other/types").CacheOfSoupMessage[]} */
         stored: []
       }
     ]
@@ -62,8 +61,18 @@ class RelicCacheManager {
     }
     console.timeEnd("relic::setCache");
   }
-  searchForCache(relic) {
-    return this.soupCache.some(cache => cache.stored.some(msg => msg.contains.find(item => item.item == titleCase(relic))));
+
+  /** @returns {import("../other/types").dataItem} */
+  searchForSoupCache(relic) {
+    for (const cache of this.soupCache) {
+      for (const msg of cache.stored) {
+        const test = msg.contains.find(item => item.item === relic);
+        if (test) {
+          return test; // Return the cache containing the matching item
+        }
+      }
+    }
+    return null; // Return null if no match is found
   }
 }
 

@@ -43,6 +43,13 @@
  */
 
 /**
+ * @typedef {Object} CacheOfSoupChannel
+ * @property {string} id - Channel ID.
+ * @property {CacheOfSoupMessage[]} stored - Array of soup messages.
+ * @property {string[]} tags - Array of tags.
+ */
+
+/**
  * @typedef {Object} primeItem
  * @property {string} item - The name of the prime item.
  * @property {boolean} x2 - Whether the prime item is dual equipped.
