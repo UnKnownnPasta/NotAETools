@@ -1,4 +1,4 @@
-import { extractItems } from "../services/utils.js";
+import { extractItems } from "../services/nlp.js";
 
 class BoxCacheManager {
   constructor() {
@@ -6,34 +6,41 @@ class BoxCacheManager {
      * @type {import("discord.js").Client}
      */
     this._client = {};
+    this.channelCache = [];
+    
+    /** @type {import("../other/types").dataItem[]} */
+    this.boxCache = [];
+  }
+
+  init(clientInstance) {
+    this._client = clientInstance;
     this.channelCache = [
+      
       {
-        id: "1221695831875256441",
+        id: process.env.CHANNELS_BOX_atom,
         tags: ['atom', 'warframe'],
         /** @type {import("../other/types").CacheOfDataItem[]} */
         stored: []
       },
       {
-        id: "1221695851231973386",
+        id: process.env.CHANNELS_BOX_ntoz,
         tags: ['ntoz', 'warframe'],
         /** @type {import("../other/types").CacheOfDataItem[]} */
         stored: []
       },
       {
-        id: "1221388067806384168",
+        id: process.env.CHANNELS_BOX_melee,
         tags: ['melee', 'other', 'misc', 'weapon'],
         /** @type {import("../other/types").CacheOfDataItem[]} */
         stored: []
       },
       {
-        id: "1221032209893294101",
+        id: process.env.CHANNELS_BOX_primary,
         tags: ['primary', 'secondary', 'weapon'],
         /** @type {import("../other/types").CacheOfDataItem[]} */
         stored: []
       }
-    ];
-    /** @type {import("../other/types").dataItem[]} */
-    this.boxCache = [];
+    ]
   }
 
   resetStored() {

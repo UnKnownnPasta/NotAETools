@@ -4,9 +4,9 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = resolve(__filename, '..');
 dotenv.config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
-import { _bool_true } from './services/utils.js';
 
 import { ActivityType, Client, GatewayIntentBits as GIB, Partials } from 'discord.js';
+import { _bool_true } from './services/utils.js';
 import CommandHandler from './other/handler.js';
 import { getFissures } from './services/fissure.js';
 import { start_db } from './services/databaseMerged.js';
@@ -56,7 +56,7 @@ class Bot extends Client {
         await this.cmd_handler.loadEvents();
         
         // Link and update database (mongo & json)
-        await fetchData();
+        // await fetchData();
         // await start_db();
         await entityClassifierInstance.updateLocalData();
 
@@ -69,8 +69,8 @@ class Bot extends Client {
     }
 
     async startCaching() {
-        boxCacheManager._client = this;
-        relicCacheManager._client = this;
+        boxCacheManager.init(this);
+        relicCacheManager.init(this);
         await boxCacheManager.updateCache();
         await relicCacheManager.setCache();
     }

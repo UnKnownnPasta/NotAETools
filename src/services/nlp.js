@@ -235,4 +235,52 @@ class EntityClassifier {
 
 const entityClassifierInstance = new EntityClassifier();
 
+export function extractItems(input) {
+	const items = [];
+	const parts = input
+		.toLowerCase()
+		.replace(/\s+/g, ' ')
+		.replace(/\s*prime\s*/g, ' ')
+		.replace(/\(.*?\)/g, "")
+		.replace(/<@!?[^>]+>/g, "")
+		.replace(/x(\d+)/g, '$1x')
+		.replace(/ and /g, " & ")
+		.trim()
+		.replace(/\b(\d+)\s*x?\s*\b/g, '$1x ')
+		.replace(/\b(\d+)\s*x?\b\s*(.*?)\s*/g, '$1x $2, ')
+		.split(/(?:(?:, )|(?:\n)|(?:\s(?=\b\d+x?\b)))/);
+
+	const newParts = [];
+	for (let i = 0; i < parts.length; i++) {
+			if (/\d+x/.test(parts[i]) && i < parts.length - 1) {
+					newParts.push(parts[i] + parts[i + 1]);
+					i++;
+			} else if (i < parts.length - 1 && parts[i + 1].endsWith('x ')) {
+					newParts.push(parts[i + 1] + parts[i]);
+					i++;
+			} else {
+					newParts.push(parts[i]);
+			}
+	}
+
+	const inputParts = newParts.filter(x => /\dx/.test(x));
+
+	// Iterate over each part
+	inputParts.forEach((part) => {
+			const tokens = part.replace("bp", "Blueprint").replace("rec", "Receiver").replace(/[^0-9 &a-zA-Z]/g, "").trim().split(/\s+/);
+			const amountMatch = tokens[0].match(/^(\d+)x$/);
+			if (amountMatch) {
+					const amount = parseInt(amountMatch[1], 10);
+					const itemName = tokens.slice(1).join(" ");
+					const classification = entityClassifierInstance.classifyEntity(titleCase(itemName));
+
+					if (classification.category !== "unknown" && classification.entity !== "unknown") {
+							items.push({ item: classification.entity + " " + classification.detail, amount });
+					}
+			}
+	});
+
+	return items;
+}
+
 export default entityClassifierInstance;

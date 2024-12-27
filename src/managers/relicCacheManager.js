@@ -10,22 +10,28 @@ class RelicCacheManager {
   constructor() {
     /** @type {import("discord.js").Client} */
     this._client = {};
+    this.soupCache = [];
+    this.relicCache = {};
+  }
+
+  init(clientInstance) {
+    this._client = clientInstance;
     this.soupCache = [
       {
-        id: "1236313453355073556",
+        id: process.env.CHANNELS_RELIC_intact,
         tags: ['intact', 'soup'],
         /** @type {import("../other/types").CacheOfSoupMessage[]} */
         stored: []
       },
       {
-        id: "1236313496082317382",
+        id: process.env.CHANNELS_RELIC_radded,
         tags: ['radded', 'soup'],
         /** @type {import("../other/types").CacheOfSoupMessage[]} */
         stored: []
       }
     ]
-    this.relicCache = {};
   }
+
   async setCache(channelID='--') {
     if (!this._client.readyTimestamp) return;
     console.time("relic::setCache");
