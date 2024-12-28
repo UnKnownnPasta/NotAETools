@@ -11,7 +11,8 @@ export default {
      * @param {import('discord.js').Message} message 
      * @param {import('discord.js').Client} client
      */
-    async execute(client, message) { // id defined
+    async execute(client, message) {
+        if (!client.finishedSequence) return;
         if (message.author.bot) return;
         
         if (message.channel.isThread()) {

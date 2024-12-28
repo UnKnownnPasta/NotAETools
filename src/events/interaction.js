@@ -9,6 +9,7 @@ export default {
      * @param {import('discord.js').Interaction} interaction
      */
     async execute(client, interaction) {
+        if (!client.finishedSequence) return;
         const command = interaction.commandName;
 
         if (command) {

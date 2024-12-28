@@ -46,6 +46,7 @@ class Bot extends Client {
         // }, 2000);
 
         this.prefix = "++";
+        this.finishedSequence = false;
         this.sequence();
     }
 
@@ -63,15 +64,18 @@ class Bot extends Client {
         // Bot online in discord
         await this.login(process.env.DISCORD_TOKEN);
         this.once('ready', async () => {
+            console.log(`Ready! Logged in as ${this.user.tag}`);
             await this.guilds.fetch({ force: true });
             await this.startCaching();
+
+            this.finishedSequence = true;
         });
     }
 
     async startCaching() {
-        // boxCacheManager.init(this);
+        boxCacheManager.init(this);
         relicCacheManager.init(this);
-        // await boxCacheManager.updateCache();
+        await boxCacheManager.updateCache();
         await relicCacheManager.setCache();
     }
 }
