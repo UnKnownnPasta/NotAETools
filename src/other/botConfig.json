@@ -8,8 +8,15 @@
         "type__steelpath": "1287249765091905620"
     },
     "hex_codes": {
-        "embed__invis": "#2c2c34"
+        "embed__invis": "#2c2c34",
+        "relic__ED": "#150b2e",
+        "relic__RED": "#3c0000",
+        "relic__ORANGE": "#472502",
+        "relic__YELLOW": "#4b3800",
+        "relic__GREEN": "#162e0b",
+        "relic__": "#282828"
     },
+    "breaker": "  •  ",
     "spreadsheet": {
         "personal": {
             "id": "1Hk9ENpfW--WV_rg1Pwa24VZyrvq8WGBAAoSFEgocfYo",

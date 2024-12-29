@@ -75,7 +75,7 @@ class Bot extends Client {
     async startCaching() {
         boxCacheManager.init(this);
         relicCacheManager.init(this);
-        await boxCacheManager.updateCache();
+        // await boxCacheManager.updateCache();
         await relicCacheManager.setCache();
     }
 }
