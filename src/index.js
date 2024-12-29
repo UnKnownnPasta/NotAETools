@@ -35,16 +35,6 @@ class Bot extends Client {
             },
         });
 
-        // setInterval(() => {
-        //     const memoryUsage = process.memoryUsage();
-        //     console.log(`Memory Usage: 
-        //         RSS: ${(memoryUsage.rss / 1024 / 1024).toFixed(2)} MB
-        //         Heap Total: ${(memoryUsage.heapTotal / 1024 / 1024).toFixed(2)} MB
-        //         Heap Used: ${(memoryUsage.heapUsed / 1024 / 1024).toFixed(2)} MB
-        //         External: ${(memoryUsage.external / 1024 / 1024).toFixed(2)} MB
-        //     `);
-        // }, 2000);
-
         this.prefix = "++";
         this.finishedSequence = false;
         this.sequence();
