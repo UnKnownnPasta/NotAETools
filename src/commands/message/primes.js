@@ -43,7 +43,11 @@ function createSetEmbed(primeData) {
 	const setEmbed = new EmbedBuilder();
 	/** @type {import('../../other/types').primeItem} */
 	const primeSet = relicCacheManager.relicCache.primes.filter(
-		prime => prime.item.startsWith(primeData.entity)
+		prime => {
+			if (primeData.entity == "Mag") return prime.item.split(" ")[0] == "Mag";
+			else if (primeData.entity == "Bo") return prime.item.split(" ")[0] == "Bo";
+			else return prime.item.startsWith(primeData.entity)
+		}
 	);
 
 	const entityStocks = [];
@@ -82,14 +86,8 @@ export default {
 	name: "primes",
 	enabled: true,
 	trigger: "message",
-	/**
-	 *
-	 * @param {Message} message
-	 */
 	execute: async (message) => {
-		const entity = entityClassifierInstance.classifyEntity(
-			message.content.slice(2).trim()
-		);
+		const entity = entityClassifierInstance.classifyEntity(message.content.slice(2).trim());
 
 		if (entity.detail == "unknown") {
 			const setEmbed = createSetEmbed(entity);

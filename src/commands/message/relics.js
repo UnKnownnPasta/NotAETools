@@ -49,7 +49,7 @@ export default {
         })
       }
     
-      const colorRange = range(Math.min(...fixedRewardData.map(i => i.stock + i.box)));
+      const colorRange = range(Math.min(...fixedRewardData.filter(i => i.item !== "Forma").map(i => i.stock + i.box)));
       const embed = new EmbedBuilder()
       .setTitle(`[ ${entity.fullForm} Relic ]`)
       .setDescription('```ml\n' + embedLogic.join("\n") + '\n```')

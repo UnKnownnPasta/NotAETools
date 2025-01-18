@@ -45,7 +45,7 @@ export default class CommandHandler {
             }
         }
 
-        // await this.deploy(interactionCommands);
+        await this.deploy(interactionCommands);
     }
 
     async loadEvents() {
