@@ -9,11 +9,11 @@
     },
     "hex_codes": {
         "embed__invis": "#2c2c34",
-        "relic__ED": "#150b2e",
-        "relic__RED": "#3c0000",
-        "relic__ORANGE": "#472502",
-        "relic__YELLOW": "#4b3800",
-        "relic__GREEN": "#162e0b",
+        "relic__ED": "#351c75",
+        "relic__RED": "#990000",
+        "relic__ORANGE": "#b45f06",
+        "relic__YELLOW": "#bf9000",
+        "relic__GREEN": "#38761d",
         "relic__": "#282828"
     },
     "breaker": "  •  ",
