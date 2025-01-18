@@ -26,7 +26,7 @@ function createPrimeEmbed(primeData) {
 					.map((i, x) => (i.item == primeData.fullForm ? x : -1))
 					?.filter((x) => x != -1)?.[0] || 0
 			];
-		return `${rarity} | ${relic.name.trim()} {${relic.tokens}} {${relic.vaulted ? "V" : "UV"}}`;
+		return `${rarity} │ ${relic.name.trim()} {${relic.tokens}} {${relic.vaulted ? "V" : "UV"}}`;
 	});
 
 	primeEmbed.setTitle(`[ ${primeData.fullForm}${primePart.x2 ? " X2" : ""} ]`);
@@ -47,14 +47,27 @@ function createSetEmbed(primeData) {
 	);
 
 	const entityStocks = [];
-	const setDataString = primeSet.map(prime => {
-		const boxCache = boxCacheManager.boxCache.find((i) => i.item == prime.item)?.amount || 0;
+	let boxCounter = 0;
+	let setDataString = primeSet.map(prime => {
+    const boxCache = boxCacheManager.boxCache.find((i) => i.item == prime.item)?.amount || 0;
 
-		entityStocks.push(prime.stock || 0); // ignore box
-		return `${prime.stock}${boxCache ? ` (+${boxCache})` : ""} | ${prime.item} {${prime.color}}`;
-	})
+    entityStocks.push(prime.stock || 0); // Ignore box
 
-	setEmbed.setTitle(`[ ${primeData.entity} Set ]`);
+    const boxCacheStr = boxCache ? `(+${boxCache})` : "";
+    const stockStr = `${prime.stock}`.padEnd(2);
+		boxCacheStr ? boxCounter++ : null;
+
+    return `${stockStr}${boxCacheStr.padEnd(5)}│ ${prime.item} {${prime.color}}`.trim();
+	});
+
+	if (!boxCounter) {
+		setDataString = setDataString.map(str => {
+			const data = str.split('│');
+			return [data[0].trim().padEnd(3), "│", data[1]].join('');
+		})
+	}
+
+	setEmbed.setTitle(`[ ${primeData.entity} Prime ]`);
 	setEmbed.setFooter({
 		text: `${Math.min(...entityStocks)}x in stock`,
 	});

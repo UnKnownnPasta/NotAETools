@@ -28,10 +28,31 @@ export default {
           box: parseInt(res?.amount) | 0
         });
       }
+
+      let boxCounter = 0;
+      let embedLogic = fixedRewardData.map((reward, index) => {
+        const stockStr = `${reward.stock}`.padEnd(2);
+        const inBox = boxCacheManager.boxCache.find(i => i.item == reward.item)
+        const boxStr = inBox ? `(+${inBox.amount})`.padEnd(5) : "".padEnd(5);
+        inBox ? boxCounter++ : null;
+    
+        const itemStr = `${reward.item}${reward.x2 ? " X2" : ""}`;
+        const formattedLine = `${stringRange[index]} │ ${stockStr}${boxStr}│ ${itemStr} {${range(reward.stock + reward.box)}}`;
+    
+        return formattedLine;
+      });
+
+      if (!boxCounter) {
+        embedLogic = embedLogic.map(str => {
+          const data = str.split('│');
+          return [data[0].trim().padEnd(3), "│ ", data[1].trim().padEnd(3), "│", data[2]].join('');
+        })
+      }
+    
       const colorRange = range(Math.min(...fixedRewardData.map(i => i.stock + i.box)));
       const embed = new EmbedBuilder()
       .setTitle(`[ ${entity.fullForm} Relic ]`)
-      .setDescription('```ml\n' + fixedRewardData.map((i, j) => `${stringRange[j]} | ${i.stock}${i.box ? ` (+${i.box})` : ""} | ${i.item} ${i.x2 ? "X2" : ""} {${range(i.stock + i.box)}}`).join("\n") + '\n```')
+      .setDescription('```ml\n' + embedLogic.join("\n") + '\n```')
       .setFooter({ text: `${relicData.vaulted ? 'Vaulted' : 'Unvaulted' } relic${breaker}${colorRange} relic` })
       .setColor(hex_codes[`relic__${colorRange}`] || "#FFFFFF")
       .setTimestamp();
