@@ -24,14 +24,23 @@ export default class CommandHandler {
     async createBasic() {
         const commandsPath_msg = join(import.meta.dirname, '../commands/message/');
         const commandsPath_int = join(import.meta.dirname, '../commands/interaction/');
+        const commandsPath_btn = join(import.meta.dirname, '../commands/buttons/');
 
         const commandFiles_msg = await readdir(commandsPath_msg);
         const commandFiles_int = await readdir(commandsPath_int);
+        const commandFiles_btn = await readdir(commandsPath_btn);
 
         const interactionCommands = [];
 
         for (const file of commandFiles_msg) {
             const command = await import(`file://${join(commandsPath_msg, file)}`);
+            if (_bool_true(command.default.enabled) || !_bool_true(command.default.disabled)) {
+                this.register(command.default);
+            }
+        }
+
+        for (const file of commandFiles_btn) {
+            const command = await import(`file://${join(commandsPath_btn, file)}`);
             if (_bool_true(command.default.enabled) || !_bool_true(command.default.disabled)) {
                 this.register(command.default);
             }
@@ -63,7 +72,7 @@ export default class CommandHandler {
 
     async deploy(commandData) {
         if (!commandData.length) return;
-        const commands = commandData.map(command => command?.data?.toJSON()).filter(Boolean);
+        const commands = commandData.map(command => command?.data?.toJSON()).filter(x => x !== undefined);
         const rest = new REST().setToken(process.env.DISCORD_TOKEN);
         try {
             console.log(`Started refreshing ${commands.length} application (/) commands.`);

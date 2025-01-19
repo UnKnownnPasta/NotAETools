@@ -1,8 +1,36 @@
-import { SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { titleCase } from "../../services/utils.js";
+
+const resourceNames = [
+	"Credits",
+	"Alloy Plate",
+	"Circuits",
+	"Control Module",
+	"Cryotic",
+	"Detonite Ampule",
+	"Ferrite",
+	"Fieldron Sample",
+	"Forma",
+	"Gallium",
+	"Morphics",
+	"Mutagen Sample",
+	"Nano Spores",
+	"Neural Sensors",
+	"Neurodes",
+	"Orokin Cell",
+	"Oxium",
+	"Plastids",
+	"Polymer Bundle",
+	"Rubedo",
+	"Salvage",
+	"Detonite Injector",
+	"Fieldron",
+	"Mutagen Mass",
+];
 
 /** @type {import('../../other/types').InteractionCommand} */
 export default {
-	name: "ping",
+	name: "fhost",
 	enabled: true,
 	trigger: "interaction",
 	execute: async (client, i) => {
@@ -109,8 +137,8 @@ export default {
 			option
 				.setName("resource")
 				.setDescription("Resource being farmed (has autocomplete)")
-				.setRequired(true)
 				.setAutocomplete(true)
+				.setRequired(true)
 		)
 		.addStringOption((option) =>
 			option
