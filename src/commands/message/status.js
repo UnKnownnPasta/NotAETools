@@ -29,7 +29,7 @@ export default {
         return range(parseInt(p.stock) + parseInt(boxAddition)) == entity.entity.toUpperCase();
       })
       .sort((a, b) => a.stock - b.stock)
-      .map(item => `${`[${item.stock}]`.padEnd(5)}│ ${item.item}`);
+      .map(item => `${`[${item.stock + (boxCacheManager.boxCache.find((i) => i.item == item.item)?.amount || 0)}]`.padEnd(5)}│ ${item.item}`);
 
     const baseEmbed = new EmbedBuilder()
       .setTitle(`[ ${entity.entity.toUpperCase()} ]`)

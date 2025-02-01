@@ -21,7 +21,7 @@ export default {
     if (relicData) {
       const fixedRewardData = [];
       for (const item of relicData.rewards) {
-        const res = boxCacheManager.boxCache.find(i => i.item == item);
+        const res = boxCacheManager.boxCache.find(i => i.item == item.item);
         fixedRewardData.push({
           ...item,
           stock: parseInt(item.stock) | 0,
@@ -32,9 +32,8 @@ export default {
       let boxCounter = 0;
       let embedLogic = fixedRewardData.map((reward, index) => {
         const stockStr = `${reward.stock}`.padEnd(2);
-        const inBox = boxCacheManager.boxCache.find(i => i.item == reward.item)
-        const boxStr = inBox ? `(+${inBox.amount})`.padEnd(5) : "".padEnd(5);
-        inBox ? boxCounter++ : null;
+        const boxStr = reward.box ? `(+${reward.box})`.padEnd(5) : "".padEnd(5);
+        reward.box ? boxCounter++ : null;
     
         const itemStr = `${reward.item}${reward.x2 ? " X2" : ""}`;
         const formattedLine = `${stringRange[index]} │ ${stockStr}${boxStr}│ ${itemStr} {${range(reward.stock + reward.box)}}`;
