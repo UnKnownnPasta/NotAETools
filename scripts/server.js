@@ -1,11 +1,15 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { fetchData } from '../src/services/googleSheets.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const server = http.createServer(async (req, res) => {
     if (req.url.startsWith('/forceupdate')) {
-        const token = decodeURIComponent(req.headers.token)
+        const token = decodeURIComponent(req.headers.token);
         if (token === process.env.supertoken) {
             await fetchData();
             res.writeHead(200, { 'Content-Type': 'text/plain' });
