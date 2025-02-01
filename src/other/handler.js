@@ -34,6 +34,7 @@ export default class CommandHandler {
 
         for (const file of commandFiles_msg) {
             const command = await import(`file://${join(commandsPath_msg, file)}`);
+            if (!command.default) continue;
             if (_bool_true(command.default.enabled) || !_bool_true(command.default.disabled)) {
                 this.register(command.default);
             }
@@ -41,6 +42,7 @@ export default class CommandHandler {
 
         for (const file of commandFiles_btn) {
             const command = await import(`file://${join(commandsPath_btn, file)}`);
+            if (!command.default) continue;
             if (_bool_true(command.default.enabled) || !_bool_true(command.default.disabled)) {
                 this.register(command.default);
             }
@@ -48,6 +50,7 @@ export default class CommandHandler {
 
         for (const file of commandFiles_int) {
             const command = await import(`file://${join(commandsPath_int, file)}`);
+            if (!command.default) continue;
             if (_bool_true(command.default.enabled) || !_bool_true(command.default.disabled)) {
                 this.register(command.default);
                 interactionCommands.push(command.default);
@@ -63,7 +66,7 @@ export default class CommandHandler {
 
         for (const file of events) {
             const event = await import(`file://${join(eventFiles, file)}`);
-
+            if (!event.default) continue;
             if (_bool_true(event.default.enabled) || !_bool_true(event.default.disabled)) {
                 this.client[event.default.trigger](event.default.name, (...args) => event.default.execute(this.client, ...args));
             }

@@ -223,3 +223,51 @@ async function processRelics(relicRewards, stockValues, tokenValues, htmlText, m
 
 	return { relics: allRelicData, primes: filteredAllPrimeData };
 }
+
+export async function getAllClanData(clan=undefined) {
+	if (!clan) {
+			return await Promise.all(Object.entries(spreadsheet.farmer.ranges.resource).map(async (key) => {
+					const clandata = await googleSheets({
+							spreadsheetId: spreadsheet.farmer.id,
+							range: spreadsheet.farmer.resourceName + key[1]
+					})
+					if (!clandata) return { clan: key[0], resource: {} };
+	
+					let localist = {};
+					await Promise.all(clandata.data.values.map(x => localist[x[0]] = { amt: x[1], short: x[2] ?? '0' }))
+					return { clan: key[0], resource: localist };
+			}))
+			.then(async (results) => {
+					return results.filter(res => res);
+			})
+			.catch(error => {
+					logger.error(error, 'Error fetching sheet values for clans');
+			});
+	} else {
+			const clandata = await googleSheets({
+					spreadsheetId: spreadsheet.farmer.id,
+					range: spreadsheet.farmer.resourceName + spreadsheet.farmer.ranges.resource[clan]
+			})
+			if (!clandata) return { clan: clan, resource: {} };
+
+			let localist = {};
+			 clandata.data.values.map(x => localist[x[0]] = { amt: x[1], short: x[2] ?? '0' })
+			return { clan: clan, resource: localist };
+	}
+}
+
+export async function getAllLeaderboardData() {
+	return await googleSheets({
+		spreadsheetId: '1Mrp2qcFY9CO8V-MndnYCkkVBJ-f_U_zeK-oq3Ncashk',
+		range: 'Leaderboard!D30:I'
+	}).then((re) => {
+			return re.data.values.map((data) => {
+					if (data.filter(x => !x).length > 1) return;
+					const run = isNaN(parseInt(data[4])) ? 0 : parseInt(data[4])
+					const rad = isNaN(parseInt(data[3])) ? 0 : parseInt(data[3])
+					const merch = isNaN(parseInt(data[2])) ? 0 : parseInt(data[2])
+					const userid = data[1].replace('ID: ', '')
+					return { uid: userid === '' ? '000000' : userid, name: !data[0] ? '#NF!' : data[0], all: run + rad + merch, run, rad, merch }
+			}).filter(x => x)
+	})
+}

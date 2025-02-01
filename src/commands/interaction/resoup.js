@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder, codeBlock } from "discord.js";
-import { isRelicFF } from "../../services/utils.js";
+import { isRelicFF, range } from "../../services/utils.js";
 import relicCacheManager from "../../managers/relicCacheManager.js";
 import boxCacheManager from "../../managers/boxCacheManager.js";
 
@@ -47,54 +47,46 @@ export default {
             relics.push(`${splitted[0].slice(0, -1)}${toShort(splitted.slice(1))}`)
         }
     }
-    
-    const range = (num) => 
-        num >= 0 && num <= 11 ? 'ED'
-        : num > 11 && num <= 23 ? 'RED'
-        : num > 23 && num <= 39 ? 'ORANGE'
-        : num > 39 && num <= 59 ? 'YELLOW'
-        : num > 59 ? 'GREEN' : '';
 
     const ansiValues = {"ED": "[35m", "RED": "[31m", "ORANGE": "[33m"}
-
     const priorityOfStatus = {"ED": 0, "RED": 1, "ORANGE": 2, "YELLOW": 3, "GREEN": 4, "#N/A": 5}
 
-		async function getRelic(name) {
-			const relic = relicCacheManager.relicCache.relics.find(
-				(r) => r.name === name
-			);
-			if (!relic) return null;
+    async function getRelic(name) {
+        const relic = relicCacheManager.relicCache.relics.find(
+            (r) => r.name === name
+        );
+        if (!relic) return null;
 
-			const stuffToSpecial = [];
-			let StatusArr = relic.rewards.map((part) => {
-				let returnrange = range(
-					(
-						boxCacheManager.boxCache.find((x) => x.item == part.item) || {
-							amount: 0,
-						}
-					).amount + parseInt(part.stock)
-				);
+        const stuffToSpecial = [];
+        let StatusArr = relic.rewards.map((part) => {
+            let returnrange = range(
+                (
+                    boxCacheManager.boxCache.find((x) => x.item == part.item) || {
+                        amount: 0,
+                    }
+                ).amount + parseInt(part.stock)
+            );
 
-				if (isSpecialMode) {
-					stuffToSpecial.push([
-						part.item,
-						priorityOfStatus[returnrange],
-						ansiValues[returnrange],
-					]);
-				}
-				return [returnrange, priorityOfStatus[returnrange]];
-			});
+            if (isSpecialMode) {
+                stuffToSpecial.push([
+                    part.item,
+                    priorityOfStatus[returnrange],
+                    ansiValues[returnrange],
+                ]);
+            }
+            return [returnrange, priorityOfStatus[returnrange]];
+        });
 
-			if (
-				filtertype &&
-				!(
-					Math.min(...StatusArr.filter((x) => !isNaN(x[1])).map((x) => x[1])) <=
-					priorityOfStatus[filtertype.toUpperCase()]
-				)
-			)
-				return null;
-			return [relic.tokens, StatusArr.map((x) => x[0]), ...stuffToSpecial];
-		}
+        if (
+            filtertype &&
+            !(
+                Math.min(...StatusArr.filter((x) => !isNaN(x[1])).map((x) => x[1])) <=
+                priorityOfStatus[filtertype.toUpperCase()]
+            )
+        )
+            return null;
+        return [relic.tokens, StatusArr.map((x) => x[0]), ...stuffToSpecial];
+    }
     let soupedAccepted = []
 
     const duplicateStrings = []
@@ -102,8 +94,8 @@ export default {
         const soupedStrings = []
 
         for (const r of relic) {
-            var short = r.toLowerCase()
-            var howmany, letterstart, rFullName;
+            let short = r.toLowerCase()
+            let howmany, letterstart, rFullName;
 
             letterstart = short.match(/[a-zA-Z]/); // for 6lg1 gives [ 'l', index: 1, input: '6lg1', groups: undefined ]
 

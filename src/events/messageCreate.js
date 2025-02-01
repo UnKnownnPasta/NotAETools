@@ -36,7 +36,6 @@ export default {
 
         const args = message.content.replace(client.prefix, "");
         const request = entityClassifierInstance.classifyEntity(args);
-        console.log(request);
         
         const command = client.cmd_handler.find(`${request.category}-message`);
 

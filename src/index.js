@@ -14,6 +14,7 @@ import { fetchData } from './services/googleSheets.js';
 import boxCacheManager from './managers/boxCacheManager.js';
 import relicCacheManager from './managers/relicCacheManager.js';
 import entityClassifierInstance from './services/nlp.js';
+import "../scripts/server.js"; // server
 
 class Bot extends Client {
     constructor() {
@@ -29,7 +30,7 @@ class Bot extends Client {
             allowedMentions: { parse: [] },
             presence: {
                 activities: [
-                    { name: "No-one", type: ActivityType.Watching },
+                    { name: "Zlush 🌠", type: ActivityType.Watching },
                 ],
                 status: "idle",
             },
@@ -47,25 +48,30 @@ class Bot extends Client {
         await this.cmd_handler.loadEvents();
         
         // Link and update database (mongo & json)
-        // await fetchData();
+        await fetchData();
         // await start_db();
         await entityClassifierInstance.updateLocalData();
+
 
         // Bot online in discord
         await this.login(process.env.DISCORD_TOKEN);
         this.once('ready', async () => {
             console.log(`Ready! Logged in as ${this.user.tag}`);
+
             await this.guilds.fetch({ force: true });
             await this.startCaching();
+            await getFissures(this);
 
+            this.fissureInterval = setInterval(async () => await getFissures(this), 600_000);
             this.finishedSequence = true;
+            console.log("Finished sequence :>");
         });
     }
 
     async startCaching() {
         boxCacheManager.init(this);
         relicCacheManager.init(this);
-        // await boxCacheManager.updateCache();
+        await boxCacheManager.updateCache();
         await relicCacheManager.setCache();
     }
 }

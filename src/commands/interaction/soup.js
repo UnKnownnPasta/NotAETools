@@ -29,14 +29,7 @@ export default {
 		}
 
 		const ansiValues = { ED: "[35m", RED: "[31m", ORANGE: "[33m" };
-		const priorityOfStatus = {
-			ED: 0,
-			RED: 1,
-			ORANGE: 2,
-			YELLOW: 3,
-			GREEN: 4,
-			"#N/A": 5,
-		};
+		const priorityOfStatus = { ED: 0, RED: 1, ORANGE: 2, YELLOW: 3, GREEN: 4, "#N/A": 5 };
 
 		async function getRelic(name) {
 			const relic = relicCacheManager.relicCache.relics.find(
@@ -82,8 +75,8 @@ export default {
 			const soupedStrings = [];
 
 			for (const r of relic) {
-				var short = r.toLowerCase();
-				var howmany, letterstart, rFullName;
+				let short = r.toLowerCase();
+				let howmany, letterstart, rFullName;
 
 				letterstart = short.match(/[a-zA-Z]/); // for 6lg1 gives [ 'l', index: 1, input: '6lg1', groups: undefined ]
 

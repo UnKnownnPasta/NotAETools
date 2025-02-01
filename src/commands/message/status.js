@@ -7,6 +7,14 @@ import { Pagination } from 'pagination.djs'
 import boxCacheManager from "../../managers/boxCacheManager.js";
 import { range } from "../../services/utils.js";
 
+const stockRanges = {
+  "ED": "0 - 11",
+  "RED": "12 - 23",
+  "ORANGE": "24 - 39",
+  "YELLOW": "40 - 59",
+  "GREEN": "60 - inf",
+}
+
 /** @type {import('../../other/types').Command} */
 export default {
 	name: "status",
@@ -35,7 +43,7 @@ export default {
         new EmbedBuilder(baseEmbed)
         .setDescription('```ml\n' + entityDataFiltered.slice(i, i + desc_slice).join("\n") + '\n```')
         .setFooter({ text:
-          `Parts with x - x stock${breaker}${entityDataFiltered.length} results${breaker}Page ${Math.floor(i / desc_slice) + 1}/${Math.ceil(entityDataFiltered.length / desc_slice)}` 
+          `Parts with ${stockRanges[entity.entity.toUpperCase()]} stock${breaker}${entityDataFiltered.length} results${breaker}Page ${Math.floor(i / desc_slice) + 1}/${Math.ceil(entityDataFiltered.length / desc_slice)}` 
         })
       );
     }
@@ -43,6 +51,5 @@ export default {
     const pagination = new Pagination(message);
     pagination.setEmbeds(paginationFields);
     pagination.render();
-    // message.reply({ embeds: [embed] });
 	},
 };
