@@ -15,7 +15,6 @@ class BoxCacheManager {
   init(clientInstance) {
     this._client = clientInstance;
     this.channelCache = [
-      
       {
         id: process.env.CHANNELS_BOX_atom,
         tags: ['atom', 'warframe'],

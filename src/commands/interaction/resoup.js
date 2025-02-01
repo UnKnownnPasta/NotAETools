@@ -27,7 +27,7 @@ export default {
             str = str.replace(//g, '')
             regex = /\d+x\s*\[0m\| \[(2;)?34m(Lith|Meso|Neo|Axi) [A-Z]\d+/g;
         } else {
-            regex = /\b\d+x\s+\|\s+(Lith|Meso|Neo|Axi)\s[A-Z]\d+\b/g;
+            regex = /\b\d+x\s*\|\s+(Lith|Meso|Neo|Axi)\s[A-Z]\d+\b/g;
         }
         const matches = str.matchAll(regex);
         return matches || [];

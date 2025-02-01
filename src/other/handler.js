@@ -22,42 +22,31 @@ export default class CommandHandler {
     }
 
     async createBasic() {
-        const commandsPath_msg = join(import.meta.dirname, '../commands/message/');
-        const commandsPath_int = join(import.meta.dirname, '../commands/interaction/');
-        const commandsPath_btn = join(import.meta.dirname, '../commands/buttons/');
-
-        const commandFiles_msg = await readdir(commandsPath_msg);
-        const commandFiles_int = await readdir(commandsPath_int);
-        const commandFiles_btn = await readdir(commandsPath_btn);
+        const commandDirectories = {
+            message: join(import.meta.dirname, '../commands/message/'),
+            interaction: join(import.meta.dirname, '../commands/interaction/'),
+            buttons: join(import.meta.dirname, '../commands/buttons/')
+        };
 
         const interactionCommands = [];
 
-        for (const file of commandFiles_msg) {
-            const command = await import(`file://${join(commandsPath_msg, file)}`);
-            if (!command.default) continue;
-            if (_bool_true(command.default.enabled) || !_bool_true(command.default.disabled)) {
-                this.register(command.default);
+        for (const [type, dirPath] of Object.entries(commandDirectories)) {
+            const commandFiles = await readdir(dirPath);
+
+            for (const file of commandFiles) {
+                const command = await import(`file://${join(dirPath, file)}`);
+                if (!command.default) continue;
+
+                if (_bool_true(command.default.enabled) || !_bool_true(command.default.disabled)) {
+                    this.register(command.default);
+                    if (type === 'interaction') {
+                        interactionCommands.push(command.default);
+                    }
+                }
             }
         }
 
-        for (const file of commandFiles_btn) {
-            const command = await import(`file://${join(commandsPath_btn, file)}`);
-            if (!command.default) continue;
-            if (_bool_true(command.default.enabled) || !_bool_true(command.default.disabled)) {
-                this.register(command.default);
-            }
-        }
-
-        for (const file of commandFiles_int) {
-            const command = await import(`file://${join(commandsPath_int, file)}`);
-            if (!command.default) continue;
-            if (_bool_true(command.default.enabled) || !_bool_true(command.default.disabled)) {
-                this.register(command.default);
-                interactionCommands.push(command.default);
-            }
-        }
-
-        await this.deploy(interactionCommands);
+        await this.deploy(interactionCommands);        
     }
 
     async loadEvents() {
