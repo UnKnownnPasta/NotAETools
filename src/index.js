@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = resolve(__filename, '..');
-dotenv.config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
+dotenv.config({ path: resolve(__dirname, `../.env${process.env.NODE_ENV == 'production' ? '' : '.development'}`) });
 
 import { ActivityType, Client, GatewayIntentBits as GIB, Partials } from 'discord.js';
 import { _bool_true } from './services/utils.js';
