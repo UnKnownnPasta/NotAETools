@@ -23,13 +23,16 @@ export default {
 	execute: async (message) => {
     const entity = entityClassifierInstance.classifyEntity(message.content.slice(2).trim());
 		const entityDataFiltered = relicCacheManager.relicCache.primes
+      .map(p => ({
+        ...p,
+        box: boxCacheManager.boxCache.find((i) => i.item == p.item)?.amount || 0
+      }))
       .filter(p => {
         if (p.item == "Forma") return false;
-        const boxAddition = boxCacheManager.boxCache.find((i) => i.item == p.item)?.amount || 0;
-        return range(parseInt(p.stock) + parseInt(boxAddition)) == entity.entity.toUpperCase();
+        return range(parseInt(p.stock) + p.box) == entity.entity.toUpperCase();
       })
-      .sort((a, b) => a.stock - b.stock)
-      .map(item => `${`[${item.stock + (boxCacheManager.boxCache.find((i) => i.item == item.item)?.amount || 0)}]`.padEnd(5)}│ ${item.item}`);
+      .sort((a, b) => (a.stock + a.box) - (b.stock + b.box))
+      .map(item => `${`[${item.stock + item.box}]`.padEnd(5)}│ ${item.item}`);
 
     const baseEmbed = new EmbedBuilder()
       .setTitle(`[ ${entity.entity.toUpperCase()} ]`)
