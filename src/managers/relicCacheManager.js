@@ -52,7 +52,8 @@ class RelicCacheManager {
         return {
           id: msg.id,
           content: msg.content,
-          author: msg.author.id,
+          url: msg.url,
+          author: msg.author.username,
           contains: [...prepData],
         }
       });
@@ -64,15 +65,16 @@ class RelicCacheManager {
 
   /** @returns {import("../other/types").dataItem} */
   searchForSoupCache(relic) {
+    const matches = []
     for (const cache of this.soupCache) {
       for (const msg of cache.stored) {
         const test = msg.contains.find(item => item.item === relic);
         if (test) {
-          return test; // Return the cache containing the matching item
+          matches.push([test, msg, cache.tags[0]]);
         }
       }
     }
-    return null; // Return null if no match is found
+    return matches; // Return null if no match is found
   }
 }
 

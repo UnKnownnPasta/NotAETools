@@ -35,8 +35,15 @@ export default {
         if (!message.content.startsWith(client.prefix)) return;
 
         const args = message.content.replace(client.prefix, "");
-        const request = entityClassifierInstance.classifyEntity(args);
-        
+        const alt_command = client.cmd_handler.find(`${args}-message`);
+
+        if (alt_command) {
+            alt_command.execute(message, client);
+            console.log(`${message.author.username} used ${client.prefix}${alt_command.name} as ${client.prefix}${args}`);
+            return;
+        }
+
+        const request = entityClassifierInstance.classifyEntity(args);        
         const command = client.cmd_handler.find(`${request.category}-message`);
 
         if (command) {

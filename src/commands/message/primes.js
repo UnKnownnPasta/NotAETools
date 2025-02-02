@@ -1,9 +1,10 @@
-import { EmbedBuilder, Message } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Message, codeBlock } from "discord.js";
 import boxCacheManager from "../../managers/boxCacheManager.js";
 import entityClassifierInstance from "../../services/nlp.js";
 import relicCacheManager from "../../managers/relicCacheManager.js";
 import { range } from "../../services/utils.js";
 import jsonExports from '../../other/botConfig.json' with { type: 'json' };
+import { ExtraRowPosition, Pagination } from "pagination.djs";
 const { breaker, hex_codes } = jsonExports;
 
 const stringRange = ["C ", "C ", "C ", "UC", "UC", "RA"];
@@ -29,14 +30,19 @@ function createPrimeEmbed(primeData) {
 		return `${rarity} │ ${relic.name.trim()} {${relic.tokens}} {${relic.vaulted ? "V" : "UV"}}`;
 	});
 
-	primeEmbed.setTitle(`[ ${primeData.fullForm}${primePart.x2 ? " X2" : ""} ]`);
 	primeEmbed.setFooter({
 		text: `${primePart.stock}${boxCache ? ` (+${boxCache})` : ""}x in stock${breaker}${primePart.color} part`,
 	});
-	primeEmbed.setDescription("```ml\n" + relicString.join("\n") + "\n```");
-	primeEmbed.setTimestamp();
+	primeEmbed.setTitle(`[ ${primeData.fullForm}${primePart.x2 ? " X2" : ""} ]`);
 	primeEmbed.setColor(hex_codes[`relic__${primePart.color}`] || "#FFFFFF");
-	return primeEmbed;
+	primeEmbed.setTimestamp();
+
+	if (relicString.length > 25) {
+		return [primeEmbed, relicString];
+	} else {
+		primeEmbed.setDescription("```ml\n" + relicString.join("\n") + "\n```");
+		return primeEmbed;
+	}
 }
 
 function createSetEmbed(primeData) {
@@ -86,15 +92,54 @@ export default {
 	name: "primes",
 	enabled: true,
 	trigger: "message",
+	/** @param {Message} message */
 	execute: async (message) => {
 		const entity = entityClassifierInstance.classifyEntity(message.content.slice(2).trim());
 
-		if (entity.detail == "unknown") {
+		if (entity.detail == "unknown") { // Prime set
+			const searchSoupSet = new ButtonBuilder()
+				.setCustomId(`searchsoup-set-${entity.entity}`)
+				.setLabel('🔎 Soup Store')
+				.setStyle(ButtonStyle.Secondary);
+			const soupButtonSet = new ActionRowBuilder().addComponents(searchSoupSet);
 			const setEmbed = createSetEmbed(entity);
-			message.reply({ embeds: [setEmbed] });
-		} else {
+			
+			message.reply({ embeds: [setEmbed], components: [soupButtonSet] });
+		} else { // Prime part
+			const searchSoupPart = new ButtonBuilder()
+				.setCustomId(`searchsoup-part-${entity.fullForm}`)
+				.setLabel('🔎 Soup Store')
+				.setStyle(ButtonStyle.Secondary);
+			const soupButtonPart = new ActionRowBuilder().addComponents(searchSoupPart);
 			const primeEmbed = createPrimeEmbed(entity);
-			message.reply({ embeds: [primeEmbed] });
+
+			if (!Array.isArray(primeEmbed)) {
+				message.reply({ embeds: [primeEmbed], components: [soupButtonPart] });
+			} else {
+				const [baseEmbed, primeDataString] = primeEmbed;
+				const embedArray = [];
+
+				for (let i = 0; i < primeDataString.length; i += 25) {
+					const embed = new EmbedBuilder(baseEmbed);
+					embed.setDescription(codeBlock('ml', primeDataString.slice(i, i + 25).join("\n")));
+					embedArray.push(embed);
+				}
+
+				const partPagination = new Pagination(message, {
+					firstEmoji: "⏮",
+					prevEmoji: "◀️",
+					nextEmoji: "▶️",
+					lastEmoji: "⏭",
+					idle: 240_000,
+					buttonStyle: ButtonStyle.Secondary,
+					loop: true,
+				});
+				partPagination.setEmbeds(embedArray, (embed, index, array) => {
+					return embed.setTitle(`${embed.data.title} (${index + 1}/${array.length})`);
+				});
+				partPagination.addActionRows([soupButtonPart], ExtraRowPosition.Below);
+				partPagination.render();
+			}
 		}
 	},
 };

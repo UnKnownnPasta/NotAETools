@@ -1,4 +1,4 @@
-import { EmbedBuilder } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
 import relicCacheManager from '../../managers/relicCacheManager.js';
 import entityClassifierInstance from '../../services/nlp.js';
 import boxCacheManager from '../../managers/boxCacheManager.js';
@@ -50,12 +50,19 @@ export default {
     
       const colorRange = range(Math.min(...fixedRewardData.filter(i => i.item !== "Forma").map(i => i.stock + i.box)));
       const embed = new EmbedBuilder()
-      .setTitle(`[ ${entity.fullForm} Relic ]`)
-      .setDescription('```ml\n' + embedLogic.join("\n") + '\n```')
-      .setFooter({ text: `${relicData.vaulted ? 'Vaulted' : 'Unvaulted' } relic${breaker}${colorRange} relic` })
-      .setColor(hex_codes[`relic__${colorRange}`] || "#FFFFFF")
-      .setTimestamp();
-      message.reply({ embeds: [embed] });
+        .setTitle(`[ ${entity.fullForm} Relic ]`)
+        .setDescription('```ml\n' + embedLogic.join("\n") + '\n```')
+        .setFooter({ text: `${relicData.vaulted ? 'Vaulted' : 'Unvaulted' } relic${breaker}${colorRange} relic` })
+        .setColor(hex_codes[`relic__${colorRange}`] || "#FFFFFF")
+        .setTimestamp();
+
+      const searchSoupRelic = new ButtonBuilder()
+        .setCustomId(`searchsoup-relic-${entity.fullForm}`)
+        .setLabel('🔎 Soup Store')
+        .setStyle(ButtonStyle.Secondary);
+      const soupButtonRelic = new ActionRowBuilder().addComponents(searchSoupRelic);
+      
+      message.reply({ embeds: [embed], components: [soupButtonRelic] });
     }
   },
 }
