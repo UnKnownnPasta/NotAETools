@@ -25,7 +25,7 @@ export default {
 		const entityDataFiltered = relicCacheManager.relicCache.primes
       .map(p => ({
         ...p,
-        box: boxCacheManager.boxCache.find((i) => i.item == p.item)?.amount || 0
+        box: parseInt(boxCacheManager.boxCache.find((i) => i.item == p.item)?.amount || 0)
       }))
       .filter(p => {
         if (p.item == "Forma") return false;

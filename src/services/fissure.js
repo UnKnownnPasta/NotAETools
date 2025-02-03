@@ -27,6 +27,35 @@ async function fetchChannel(client) {
     return messageToEdit;
 }
 
+function getFissureTimings(fisTimes) {
+    const currentTime = Math.floor(new Date().getTime() / 1000);
+
+    const tierMap = new Map();
+
+    fisTimes.forEach(([tier, expiryTime]) => {
+        const farthestTime = tierMap.get(tier);
+        
+        if ((!farthestTime) || Math.abs(expiryTime - currentTime) > Math.abs(farthestTime - currentTime)) {
+            tierMap.set(tier, expiryTime);
+        }
+    });
+
+    const updatedTierMap = new Map();
+
+    tierMap.forEach((farthestTime, tier) => {
+        const farthestExpiryTime = farthestTime - 3 * 60;
+        const farthestElement = fisTimes.find(([currentTier, expiryTime]) => {
+            return currentTier === tier && Math.abs(expiryTime - farthestExpiryTime) <= 180 && expiryTime - currentTime > 0;
+        });
+
+        if (farthestElement) {
+            updatedTierMap.set(tier, farthestExpiryTime);
+        }
+    });
+
+    return updatedTierMap;
+}
+
 export async function getFissures(client) {
     const fissureData = await getWarframeData();
     const fissureMessage = await fetchChannel(client);
@@ -74,6 +103,55 @@ export async function getFissures(client) {
     if (NormEmbed.data.fields.length == 0) NormEmbed.setDescription(`No ideal fissures`);
     if (SPEmbed.data.fields.length == 0) SPEmbed.setDescription(`No ideal fissures`);
 
+    /** (1.3) Create a embed to show when the next reset happens  */
+    const emojiObj = { 
+        "Lith": "<:LithRelicIntact:1287249967475458078>", 
+        "Meso": "<:MesoRelicIntact:1287250081380044801>", 
+        "Neo": "<:NeoRelicIntact:1287250258765545502>", 
+        "Axi": "<:AxiRelicIntact:1287250368299925524>" 
+    }
+    let timeArrOfObj = [];
+    const fisTimes = getFissureTimings(
+        fissureArray
+            .filter(({ tier, isStorm, expired, active }) => tiers.includes(tier) && !isStorm && !expired && active)
+            .map(({ isHard, tier, expiry }) => [
+                isHard + " " + tier, (new Date(expiry).getTime() / 1000) | 0
+            ])
+    );
+
+    Array.from(fisTimes.entries())
+    .sort((a, b) => b[0].localeCompare(a[0]))
+    .forEach(([key, val]) => {
+        timeArrOfObj.push({ era: key, time: `<t:${val}:R>` })
+    });
+    
+    const allTimeObjs = Object.entries(timeArrOfObj.reduce((acc, { era, time }) => {
+        const [ status, erra ] = era.split(' ')
+        let currentEmbed = acc[`${erra}time`];
+
+        if (!currentEmbed.norm && status == 'false') currentEmbed.norm = time;
+        else if (!currentEmbed.sp && status == 'true') currentEmbed.sp = time;
+
+        return acc;
+    }, {
+        Lithtime: { norm: undefined, sp: undefined },
+        Mesotime: { norm: undefined, sp: undefined },
+        Neotime: { norm: undefined, sp: undefined },
+        Axitime: { norm: undefined, sp: undefined },
+    }));
+
+    const timeObjSort = (embed, type) => embed
+        .sort((a, b) => tiers.indexOf(a[0].replace('time', '')) - tiers.indexOf(b[0].replace('time', '')))
+        .map(c => `${emojiObj[c[0].replace('time', '')]} ${c[1][type] ?? 'Awaiting reset'}`)
+
+    const NextFissuresEmbed = new EmbedBuilder()
+    .setColor("#b6a57f")
+    .addFields(
+        { name: "Regular", value: timeObjSort(allTimeObjs, 'norm').join("\n"), inline: true },
+        { name: "Steel Path", value: timeObjSort(allTimeObjs, 'sp').join("\n"), inline: true }
+    )
+    .setFooter({ text: "Next Fissure Reset Timers / by era" })
+
     /** UPDATE FISSURE MESSAGE WITH CREATED EMBEDS */
-    await fissureMessage.edit({ content: null, embeds: [NormEmbed, SPEmbed] });
+    await fissureMessage.edit({ content: null, embeds: [NormEmbed, SPEmbed, NextFissuresEmbed] });
 }

@@ -30,11 +30,12 @@ function createPrimeEmbed(primeData) {
 		return `${rarity} │ ${relic.name.trim()} {${relic.tokens}} {${relic.vaulted ? "V" : "UV"}}`;
 	});
 
+	const trueColor = range(primePart.stock + boxCache);
 	primeEmbed.setFooter({
-		text: `${primePart.stock}${boxCache ? ` (+${boxCache})` : ""}x in stock${breaker}${primePart.color} part`,
+		text: `${primePart.stock}${boxCache ? ` (+${boxCache})` : ""}x in stock${breaker}${trueColor} part`,
 	});
 	primeEmbed.setTitle(`[ ${primeData.fullForm}${primePart.x2 ? " X2" : ""} ]`);
-	primeEmbed.setColor(hex_codes[`relic__${primePart.color}`] || "#FFFFFF");
+	primeEmbed.setColor(hex_codes[`relic__${trueColor}`] || "#FFFFFF");
 	primeEmbed.setTimestamp();
 
 	if (relicString.length > 25) {
@@ -61,7 +62,7 @@ function createSetEmbed(primeData) {
 	let setDataString = primeSet.map(prime => {
     const boxCache = boxCacheManager.boxCache.find((i) => i.item == prime.item)?.amount || 0;
 
-    entityStocks.push(prime.stock || 0); // Ignore box
+    entityStocks.push((prime.stock + boxCache) || 0); // Ignore box
 
     const boxCacheStr = boxCache ? `(+${boxCache})` : "";
     const stockStr = `${prime.stock}`.padEnd(2);
