@@ -2,10 +2,10 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'disc
 import relicCacheManager from '../../managers/relicCacheManager.js';
 import entityClassifierInstance from '../../services/nlp.js';
 import boxCacheManager from '../../managers/boxCacheManager.js';
-const stringRange = ["C ", "C ", "C ", "UC", "UC", "RA"];
 import jsonExports from '../../other/botConfig.json' with { type: 'json' };
 import { range } from '../../services/utils.js';
 const { breaker, hex_codes } = jsonExports;
+const stringRange = ["C ", "C ", "C ", "UC", "UC", "RA"];
 
 /** @type {import('../../other/types').Command} */
 export default {
@@ -31,12 +31,13 @@ export default {
 
       let boxCounter = 0;
       let embedLogic = fixedRewardData.map((reward, index) => {
-        const stockStr = `${reward.stock}`.padEnd(2);
-        const boxStr = reward.box ? `(+${reward.box})`.padEnd(5) : "".padEnd(5);
-        reward.box ? boxCounter++ : null;
-    
         const itemStr = `${reward.item}${reward.x2 ? " X2" : ""}`;
-        const formattedLine = `${stringRange[index]} │ ${stockStr}${boxStr}│ ${itemStr} {${range(reward.stock + reward.box)}}`;
+        const rangeStr = reward.item == "Forma" ? "" : `{${range(reward.stock + reward.box)}}`;
+        const stockStr = reward.item == "Forma" ? "".padEnd(2) : `${reward.stock}`.padEnd(2);
+        const boxStr = reward.box ? `(+${reward.box})`.padEnd(5) : "".padEnd(5);
+        
+        reward.box ? boxCounter++ : null;
+        const formattedLine = `${stringRange[index]} │ ${stockStr}${boxStr}│ ${itemStr} ${rangeStr}`;
     
         return formattedLine;
       });

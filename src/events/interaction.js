@@ -14,7 +14,7 @@ export default {
         const command = interaction.commandName;
         if (interaction.isChatInputCommand()) {
             client.cmd_handler.find(`${command}-interaction`)?.execute(client, interaction);
-            console.log(`${interaction.user.username} used /${command}`);
+            console.log(`${interaction.user.username} used /${command} as ${interaction.options?.data?.map(x=>`"${x.name}": ${x.value}`)?.join(', ')}`);
         } else if (interaction.isAutocomplete()) {
             client.cmd_handler.find(`${command}-interaction`)?.autocomplete(interaction);
         } else if (interaction.isButton()) {
