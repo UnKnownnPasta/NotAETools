@@ -112,7 +112,7 @@ export async function getFissures(client) {
     }
     let timeArrOfObj = [];
     const fisTimes = getFissureTimings(
-        fissureArray
+        fissureData
             .filter(({ tier, isStorm, expired, active }) => tiers.includes(tier) && !isStorm && !expired && active)
             .map(({ isHard, tier, expiry }) => [
                 isHard + " " + tier, (new Date(expiry).getTime() / 1000) | 0
