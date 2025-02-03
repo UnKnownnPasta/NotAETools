@@ -37,8 +37,8 @@ const server = http.createServer(async (req, res) => {
                 res.end();
             }
         });
-    } else if (req.url.startsWith('../blob/')) {
-        const filePath = path.join(__dirname, req.url);
+    } else if (req.url.startsWith('/blob/')) {
+        const filePath = path.join(__dirname, '..', req.url);
         fs.readFile(filePath, (err, data) => {
             if (err) {
                 res.writeHead(404, { 'Content-Type': 'text/plain' });

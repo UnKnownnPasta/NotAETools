@@ -14,7 +14,7 @@ export default {
     async execute(client, oldMessage, newMessage) {
         if (!client.finishedSequence) return;
         const message = newMessage;
-        if (message.author.bot) return;
+        if (message.author?.bot) return;
         
         if (message.channel.isThread()) {
             const channelID = message.channelId;
