@@ -101,7 +101,7 @@ export async function fetchData(msg, ogmsg) {
 			const relicRewards = await processTables($, tables, msg);
 			const PrimeData = await processRelics(relicRewards, stockValues, tokenValues, htmlText, msg);
 
-			await fs.promises.writeFile(path.join(__dirname, '..', 'data', 'relics.json'), JSON.stringify(PrimeData));
+			await fs.promises.writeFile(path.join(__dirname, '..', 'data', 'relicsdb.json'), JSON.stringify(PrimeData));
 			await relicCacheManager.setCache();
 
 			if (msg) {

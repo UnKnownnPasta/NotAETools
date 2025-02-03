@@ -1,4 +1,4 @@
-# Scheme of relics.json
+# Scheme of relicsdb.json
 
 ```json
 {

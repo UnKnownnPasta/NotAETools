@@ -5,3 +5,4 @@ _dev
 # Files
 .env.*
 .env
+src/data/relicsdb.json

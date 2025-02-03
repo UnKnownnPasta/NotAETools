@@ -1,0 +1,262 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About AETools</title>
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    html {
+      height: 100%;
+    }
+
+    .container {
+      text-align: left;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 80%;
+      max-width: 800px;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container markdown-body">
+    <div align="center">
+
+      <div style="background-color: #333;">
+        <img src="../blob/logo.png" width="250" alt="Warp">
+      </div>
+
+      <p><img src="https://img.shields.io/badge/created_with-discord.js_v14-blue" alt="Static Badge"> <img
+          src="https://img.shields.io/badge/license-MIT-green" alt="Static Badge"> <img
+          src="https://img.shields.io/badge/contributors-1-orange" alt="Static Badge"></p>
+      <hr>
+
+      <h3>AETools is a multipurpose utility bot for staff teams, inspired by <a
+          href="https://github.com/Zlushiie">Zlushiie</a>.</h3>
+    </div>
+
+    <br>
+
+    <h1>Introduction</h1>
+    <p>Being used since 2022, the bot has many functions which are used constantly, every day. To name a few,</p>
+    <h2>API Calls</h2>
+    <ul>
+      <li>Utilizes <a href="https://www.warframe.com">Warframe</a>'s endpoint to track all available fissures</li>
+      <li>Utilizes Google Sheets API to track Shop stock</li>
+    </ul>
+    <h2>Features</h2>
+    <p align="center">
+      <a href="#squad-hosting">Squad Hosting</a> •
+      <a href="#merching">Merching Relics</a> •
+      <a href="#relic-viewing">Viewing Relics</a> •
+      <a href="#prime-sets">Viewing Prime Sets</a> •
+      <a href="#prime-parts">Viewing Relics For a Part</a> •
+      <a href="#part-availability">Viewing Stock</a> •
+      <a href="#clan-resources">Viewing Clan Resources</a>
+    </p>
+
+    <br>
+
+    <h1>Commands</h1>
+    <p><strong>*IMPORTANT*</strong> To preface, all commands are used in discord by prefacing them with a Slash ("/"),
+      and typing required options in given choice boxes. This is shown in the examples aswell.</p>
+    <p>The only exception to this is the "++" commands; which are used to check relics, status and prime
+      frames/weapons/etc</p>
+    <p>Command arguments with `*` in front are optional arguments. Ones without are compulsory.</p>
+    <h2 id="relic-viewing">Relic viewing</h2>
+    <p>Command Syntax: <code>++RELIC NAME</code> or <code>++SHORTHAND</code></p>
+    <p>Here:</p>
+    <ul>
+      <li>
+        <p><code>RELIC NAME</code> can be anything like <strong>Axi L6</strong> or <strong>Lith G1</strong></p>
+      </li>
+      <li>
+        <p><code>SHORTHAND</code> is stuff like <strong>al6</strong> or <strong>lg1</strong>
+          Eg. a relic name <strong>Lith G1</strong> can be shortened to the <strong>relic era</strong> i.e. "Lith" =&gt;
+          "L" and <strong>relic type</strong>, which is "G1"</p>
+        <p> Hence making the shorthand <code>LG1</code> or <code>lg1</code></p>
+      </li>
+    </ul>
+    <p>Example:</p>
+    <div><img src="../blob/relicexample.png"></div>
+
+    <p><strong>*NOTE*</strong>: The blue text is the stock of the part in the relic, C/UC/RA means COMMON/UNCOMMON/RARE
+      and the number in <strong>{}</strong> is the token value of the relic.</p>
+    <p>Parts with <strong>x2</strong> next to them require 2 of the part to count for 1 stock.</p>
+    <p>ORANGE/etc means the same as it does in <a
+        href="https://docs.google.com/document/d/1syjdKLIhfIoAvNFwHtO4yBQjSZTOe869az9xaMBPQrc/">here</a>
+    </p>
+    <h2 id="squad-hosting">Squad Hosting</h2>
+    <h3>1. Treasury</h3>
+    <p>Command Syntax: <code>/thost count:NUMBER relic:RELIC *type:TYPE</code></p>
+    <p>Here:</p>
+    <ul>
+      <li><code>count</code> is the number of relics you want to host
+        It can be a <strong>multiple of 3</strong>, like <em>6, 12, etc</em> but <em>NOT any number less than 6</em>.
+      </li>
+      <li><code>relic</code> is the relic you want to host. This follows the same format as <a
+          href="#relic-viewing">Relic Viewing</a>.</li>
+      <li><code>type</code> is a OPTIONAL choice, used to indicate whether a run is a treasury (normal), free (Bois) or
+        a pre-filled squad host (prehost)</li>
+    </ul>
+    <p>Example:</p>
+    <div><img src="../blob/squadtreexample.png"></div>
+
+    <p>The bot will host a squad as:</p>
+    <div><img src="../blob/squadtrehostedex.png"></div>
+
+    <p>And after getting 4 members, the bot will ping all squad members. The host then invites them and runs the relic.
+    </p>
+    <h3>2. Farmer</h3>
+    <p>Command Syntax: <code>/fhost mission:TEXT resource:RESOURCE frame:FRAME missiontype:TYPE *duration:TIME</code>
+    </p>
+    <p>Here:</p>
+    <ul>
+      <li><code>TEXT</code> is the description of the mission being run. Eg. For a run in void survival on ani, you'd
+        write <code>Ani - void</code></li>
+      <li><code>RESOURCE</code> is the resource being farmed, selected from the autofill choice that pops up on typing
+        the resource name.</li>
+      <li><code>FRAME</code> is the selected frame that the host (you) will be using.</li>
+      <li><code>TYPE</code> is the mission type from the available choices: DEFENSE/SURVIVAL/EXCAVATION</li>
+      <li><code>TIME</code> is the duration of the run in minutes, as a number eg. 180</li>
+    </ul>
+    <p>Example:</p>
+    <div><img src="../blob/farmerrunex.png"></div>
+
+    <h2 id="part-availability">Part Availability</h2>
+    <p>Used for checking what parts have a status</p>
+    <p>Command Syntax: <code>++STATUS</code></p>
+    <p>where status (about this <a
+        href="https://docs.google.com/document/d/1syjdKLIhfIoAvNFwHtO4yBQjSZTOe869az9xaMBPQrc/">here</a>)
+      is ED / ORANGE / RED / YELLOW / GREEN</p>
+    <h2 id="merching">Merching</h2>
+    <p>As a merchant, it is important to post relics in the <img
+        src="https://img.shields.io/badge/%23%E3%80%8A%F0%9F%A5%A3%E3%80%8Bwhite%20soup%20store-3c4270"
+        alt="Static Badge"> channel.
+      Heres how you do it.</p>
+    <p>Command Syntax: <code>/soup relics:RELICTEXT *filtertype:TYPE</code></p>
+    <p>Here:</p>
+    <ul>
+      <li>
+        <p><code>relics</code> is a series of relics that you want to soup.
+          Each souped relic is given using SHORTHAND syntax shown in <a href="#relic-viewing">Relic Viewing</a>, i.e.
+          <code>6lg1</code>, where 6 is the quantity of relics you own and lg1 the relic itself.
+        </p>
+        <p> You can give a series of relics and their quantity, seperated by space or just a single relic.</p>
+      </li>
+      <li>
+        <p><code>filtertype</code> is a OPTIONAL choice, that allows you to filter all relics that aren't ED/RED/ORANGE
+          (more about this <a
+            href="https://docs.google.com/document/d/1syjdKLIhfIoAvNFwHtO4yBQjSZTOe869az9xaMBPQrc/">here</a>)
+        </p>
+      </li>
+    </ul>
+    <p>Example:</p>
+    <div><img src="../blob/soupexample.png"></div>
+
+    <p>After this, the bot replies as:</p>
+    <div><img src="../blob/soupresult.png"></div>
+
+    <p>You can post this text in <img src="https://img.shields.io/badge/%23Intact%20Relic%20Soup%20Store-3c4270"
+        alt="Static Badge"> or <img src="https://img.shields.io/badge/%23Radded%20Relic%20Soup%20Store-3c4270"
+        alt="Static Badge">, if the relics are pre-radded.</p>
+    <h3>Resouping relics</h3>
+    <p>Once you posted the relics, the relics will no longer have the correct ED/etc numbers as members of treasury may
+      have run the relic. It can be tiring to fetch the same relic code you used to soup them, then run it through /soup
+      again.</p>
+    <p>To remedy this, you can use <code>/resoup</code></p>
+    <p>Command Syntax: <code>/resoup relics:SOUPTEXT *filtertype:TYPE</code></p>
+    <p>Here in <code>SOUPTEXT</code>, you place the massive text you get from <code>/soup</code>. The bot will give you
+      the soup text with updated ED/RED/ORANGE values.</p>
+    <p>Example: </p>
+    <div><img src="../blob/resoupexample.png"></div>
+
+    <h2 id="prime-sets">Prime Sets</h2>
+    <p>To know which relics to run, you need to check their stocks. You can use the <code>++</code> syntax to see the
+      stock of prime warframes.</p>
+    <p>Command Sytax: <code>++FRAME prime</code></p>
+    <p>Here, FRAME is the name of the frame to fetch. like: <code>++vauban prime</code></p>
+    <p>Example: </p>
+    <div><img src="../blob/primesetexample.png"></div>
+
+    <p><strong>*NOTE*</strong>:
+      The blue numbers indicate the stock, and ORANGE/ED/etc means exactly what it means. (incase you forgot, <a
+        href="https://docs.google.com/document/d/1syjdKLIhfIoAvNFwHtO4yBQjSZTOe869az9xaMBPQrc/">see
+        this</a>)</p>
+    <p>Things like AND in names are substituted with &amp;, eg. <code>cobra &amp; crane prime</code></p>
+    <h2 id="prime-parts">Prime Parts</h2>
+    <p>After knowing what prime frames/weapons/etc are in ED Stock, you can check what relics have those prime parts.
+    </p>
+    <p>Command Syntax: <code>++PART</code></p>
+    <p>Here <code>PART</code> is any prime part, like <code>++mirage systems</code>, without the "prime" word.</p>
+    <p>Some words like <strong>Neuroptics</strong>, <strong>Systems</strong>, etc. can be shortened to their first few
+      letters, like <code>++mirage neuro</code> or <code>++inaros sys</code>
+      <strong>Blueprint</strong> can be shortened to <code>++kronen bp</code>
+    </p>
+    <h2 id="clan-resources">Clan Resources</h2>
+    <p>For farmers, it is necessary to see what resources are in low stock for their clan. This can be done via:</p>
+    <ol>
+      <li>
+        <p><code>/resource resource:NAME</code></p>
+        <ul>
+          <li>NAME is the name of the resource to see. *MAKE SURE TO SELECT THE NAME FROM AUTOCOMPLETE LIST, ABOVE WHERE
+            YOU TYPED THE COMMAND*</li>
+          <li>Example: <div><img src="../blob/resourceex.png"></div>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <p><code>/clan clan:NAME</code></p>
+        <ul>
+          <li>NAME is any choice from the choices list, shown in example</li>
+          <li>Example: <div><img src="../blob/clanex.png"></div>
+          </li>
+        </ul>
+      </li>
+    </ol>
+    <br>
+
+    <h1>Contributing to the bot</h1>
+    <p>Are you well versed in Javascript and want to help develop the bot? Here's how you can do it.</p>
+    <h2>Pre-requisites</h2>
+    <p>To work on the bot, make sure you have the following:</p>
+    <ul>
+      <li>Node.js - version ^18.x.x</li>
+      <li>Git - latest</li>
+    </ul>
+    <h2>Working on the bot</h2>
+    <p>BEFORE you run this, do make sure you have up-to-date tools to work with:</p>
+    <ul>
+      <li><code>node --version</code> says a version greater than or equal to 18.x.x</li>
+      <li><code>git --version</code> says a verion greater than or equal to 2.4x.x</li>
+    </ul>
+    <p>Clone the project:</p>
+    <pre><code class="language-shell">git clone https://github.com/UnKnownnPasta/NotAETools &amp;&amp; cd NotAETools &amp;&amp; touch .env &amp;&amp; npm install
+</code></pre>
+    <p>And you can now test and work on the project!</p>
+    <p><strong>Notes</strong>: You'll need to add the following variables into your <code>.env</code>:
+      <code>TOKEN</code>, <code>GOOGLEAPIKEY</code>, <code>MAINGUILDID</code>, <code>CLIENTID</code>
+    </p>
+    <p>The names are self-explanatory.</p>
+
+  </div>
+
+
+</body>
+
+</html>

@@ -35,7 +35,7 @@ class RelicCacheManager {
     if (!this._client.readyTimestamp) return;
     console.time("relic::setCache");
     // Relic Cache
-    const data = readFileSync(join(__dirname, '../data/relics.json'), 'utf-8');
+    const data = readFileSync(join(__dirname, '../data/relicsdb.json'), 'utf-8');
     const relics = await JSON.parse(data);
     this.relicCache = relics;
 

@@ -55,7 +55,7 @@ class EntityClassifier {
 	async updateLocalData() {
 		console.time("nlp::updateLocalData");
 		const parsedData = await JSON.parse(
-			readFileSync(join(__dirname, "../data/relics.json"), "utf-8")
+			readFileSync(join(__dirname, "../data/relicsdb.json"), "utf-8")
 		);
 		const rdata = parsedData.relics;
 		const pdata = parsedData.primes;
