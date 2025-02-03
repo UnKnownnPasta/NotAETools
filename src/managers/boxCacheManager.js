@@ -42,8 +42,12 @@ class BoxCacheManager {
     ]
   }
 
-  resetStored() {
-    this.channelCache.forEach(channel => channel.stored = []);
+  resetStored(chID='--') {
+    if (chID != '--') {
+      this.channelCache.find(channel => channel.id == chID).stored = [];
+    } else {
+      this.channelCache.forEach(channel => channel.stored = []);
+    }
   }
 
   setBoxCache() {
@@ -65,7 +69,11 @@ class BoxCacheManager {
     if (!this._client) return;
     console.time("box::updateCache");
 
-    this.resetStored();
+    if (channelID == "--") {
+      this.resetStored();
+    } else {
+      this.resetStored(channelID);
+    }
 
     for (const channel of this.channelCache) {
       if (channelID != "--" && channelID != channel.id) continue;
