@@ -1,7 +1,7 @@
 import { EmbedBuilder, MessageFlags, SlashCommandBuilder } from 'discord.js';
 import { getAllClanData } from '../../services/googleSheets.js';
 import { titleCase } from '../../services/utils.js';
-import { resourceNames } from '../../data/resource.js';
+import { resourceNames } from '../../data/constants.js';
 
 const reverseClan = {
   IK: "Imouto",

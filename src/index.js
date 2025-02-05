@@ -16,6 +16,7 @@ import boxCacheManager from './managers/boxCacheManager.js';
 import relicCacheManager from './managers/relicCacheManager.js';
 import entityClassifierInstance from './services/nlp.js';
 import "../scripts/server.js"; // server
+import './other/crash.js';
 
 class Bot extends Client {
     constructor() {

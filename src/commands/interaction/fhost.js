@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, MessageFlags, SlashCommandBuilder } from "discord.js";
 import { titleCase } from "../../services/utils.js";
-import { resourceNames } from "../../data/resource.js";
+import { resourceNames } from "../../data/constants.js";
 
 /** @type {import('../../other/types').InteractionCommand} */
 export default {
