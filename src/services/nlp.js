@@ -213,8 +213,8 @@ class EntityClassifier {
 									return { detail, score: detailScore };
 								})
 								.sort((a, b) => b.score - a.score)[0];
-
-							if (detailMatch && detailMatch.score > 0.38) {
+								
+							if (detailMatch && detailMatch.score > 0.4) {
 								bestMatch.detail = detailMatch.detail;
 							} else {
 								bestMatch.detail = "unknown";

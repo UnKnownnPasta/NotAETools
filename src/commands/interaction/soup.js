@@ -1,4 +1,4 @@
-import { codeBlock, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { codeBlock, EmbedBuilder, MessageFlags, SlashCommandBuilder } from 'discord.js';
 import { isRelicFF, range } from '../../services/utils.js';
 import boxCacheManager from '../../managers/boxCacheManager.js';
 import relicCacheManager from '../../managers/relicCacheManager.js';
@@ -9,25 +9,22 @@ export default {
 	enabled: true,
 	trigger: "interaction",
 	execute: async (client, i) => {
-		await i.deferReply();
-		const relics = i.options.getString("relics", true).split(" "),
-			filtertype = i.options.getString("filtertype", false);
+		const relics = i.options.getString("relics", true).split(" ");
+		const filtertype = i.options.getString("filtermode", false);
 		const isSpecialMode = i.options.getBoolean("new", false) ?? false;
 
 		if (
 			relics
 				.join(" ")
-				.match(
-					/\d+x\s*\|\s*[^\|]+?\s*\|\s*\d+\s*ED\s*\|\s*\d+\s*RED\s*\|\s*\d+\s*ORANGE/g
-				) ||
-			relics.join(" ").includes("")
-		) {
-			return i.editReply({
-				content: `Resouping of soup like\n\`\`\`ml\n{12} | 12x | Lith K2  | 1 ED | 0 RED | 2 ORANGE\`\`\`is done using \`/resoup\` not \`/soup\`.`,
-				ephemeral: true,
+				.match(/\d+x\s*\|\s*[^\|]+?\s*\|\s*\d+\s*ED\s*\|\s*\d+\s*RED\s*\|\s*\d+\s*ORANGE/g) || relics.join(" ").includes("")
+			) {
+			return i.reply({ 
+				content: `Resouping of soup like\n\`\`\`ml\n{12} | 12x | Lith K2  | 1 ED | 0 RED | 2 ORANGE\`\`\`is done using \`/resoup\` not \`/soup\`.`, 
+				flags: MessageFlags.Ephemeral
 			});
 		}
-
+		await i.deferReply();
+		
 		const ansiValues = { ED: "[35m", RED: "[31m", ORANGE: "[33m" };
 		const priorityOfStatus = { ED: 0, RED: 1, ORANGE: 2, YELLOW: 3, GREEN: 4, "#N/A": 5 };
 
@@ -196,10 +193,7 @@ export default {
 
 		let codeText = `\n*CODE: ${soupedAccepted.join(" ")}*`;
 		if (soupedString.length > 4096 - codeText.length)
-			return i.editReply({
-				content: `Souped relics is too big to render.`,
-				ephemeral: true,
-			});
+			return i.editReply({ content: `Souped relics is too big to render.` });
 
 		if (duplicateStrings.length !== 0) {
 			i.editReply({
@@ -235,25 +229,24 @@ export default {
 			option
 				.setName("relics")
 				.setDescription(
-					"Relics to soup. Relics are of format 8lg1, which means 8x lith g1"
+					"List of relics to soup seperated by spaces. Relics are of format 6lg1, which means 6x lith g1"
 				)
 				.setRequired(true)
 		)
 		.addStringOption((option) =>
 			option
-				.setName("filtertype")
-				.setDescription("Filter souped relics by type of parts they have")
+				.setName("filtermode")
+				.setDescription("Filter given relics by status of parts in them; eg. only ed or red.")
 				.setChoices(
 					{ name: "ED", value: "ed" },
 					{ name: "RED", value: "red" }
-					// { name: 'BOX', value: 'box' },
 				)
 				.setRequired(false)
 		)
 		.addBooleanOption((option) =>
 			option
 				.setName("new")
-				.setDescription("Renders soup in a new method")
+				.setDescription("Renders soup in coloured ansi format, that previews lowest stock parts from each relic.")
 				.setRequired(false)
 		),
 };

@@ -1,4 +1,4 @@
-import { ActionRowBuilder, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, EmbedBuilder, MessageFlags } from "discord.js";
 
 /** @type {import('../../other/types').InteractionCommand} */
 export default {
@@ -33,7 +33,7 @@ export default {
 			if (filterCheck.length <= 1) {
 				return i.reply({
 					content: `Squad needs atleast 2 members.`,
-					ephemeral: true,
+					flags: MessageFlags.Ephemeral
 				});
 			} else {
 				minimumFill = filterCheck.length;

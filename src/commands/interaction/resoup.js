@@ -1,4 +1,4 @@
-import { EmbedBuilder, SlashCommandBuilder, codeBlock } from "discord.js";
+import { EmbedBuilder, MessageFlags, SlashCommandBuilder, codeBlock } from "discord.js";
 import { isRelicFF, range } from "../../services/utils.js";
 import relicCacheManager from "../../managers/relicCacheManager.js";
 import boxCacheManager from "../../managers/boxCacheManager.js";
@@ -9,15 +9,13 @@ export default {
 	enabled: true,
 	trigger: "interaction",
 	execute: async (client, i) => {
-    await i.deferReply()
-    let soupedText = i.options.getString('oldsoup', true),
-    filtertype = i.options.getString('filtertype', false) ?? false;
+    const soupedText = i.options.getString('oldsoup', true);
+    const filtertype = i.options.getString('filtermode', false) ?? false;
 
     if (soupedText.match(/\b\d+(l|m|n|a)\w+\d+\b/g)) {
-        return i.editReply({ content: `Making soup using shorthand like **6lg1** is done using the \`/soup\` command, not \`/resoup\``,
-            ephemeral: true
-         })
+        return i.reply({ content: `Making soup using shorthand like **6lg1** is done using the \`/soup\` command, not \`/resoup\``, flags: MessageFlags.Ephemeral });
     }
+    await i.deferReply();
 
     const isSpecialMode = soupedText.includes('[0m');
 
@@ -180,7 +178,7 @@ export default {
     .join('\n\n')
     let codeText =  `\n*CODE: ${soupedAccepted.join(' ')}*`
     if (soupedString.length > 4096 - codeText.length)
-        return i.editReply({ content: `Souped relics is too big to render.`, ephemeral: true })
+        return i.editReply({ content: `Souped relics is too big to render.` })
 
     if (duplicateStrings.length !== 0) {
         i.editReply({ content: `Duplicates removed: ${duplicateStrings.join(' ')}`, embeds: [ 
@@ -207,7 +205,7 @@ export default {
 		)
 		.addStringOption((option) =>
 			option
-				.setName("filtertype")
+				.setName("filtermode")
 				.setDescription("Filter souped relics by type of parts they have")
 				.setChoices(
 					{ name: "ED", value: "ed" },

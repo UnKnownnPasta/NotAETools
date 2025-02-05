@@ -1,32 +1,6 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, MessageFlags, SlashCommandBuilder } from "discord.js";
 import { titleCase } from "../../services/utils.js";
-
-const resourceNames = [
-	"Credits",
-	"Alloy Plate",
-	"Circuits",
-	"Control Module",
-	"Cryotic",
-	"Detonite Ampule",
-	"Ferrite",
-	"Fieldron Sample",
-	"Forma",
-	"Gallium",
-	"Morphics",
-	"Mutagen Sample",
-	"Nano Spores",
-	"Neural Sensors",
-	"Neurodes",
-	"Orokin Cell",
-	"Oxium",
-	"Plastids",
-	"Polymer Bundle",
-	"Rubedo",
-	"Salvage",
-	"Detonite Injector",
-	"Fieldron",
-	"Mutagen Mass",
-];
+import { resourceNames } from "../../data/resource.js";
 
 /** @type {import('../../other/types').InteractionCommand} */
 export default {
@@ -42,7 +16,7 @@ export default {
 		if (!resourceNames.includes(resource))
 			return i.reply({
 				content: `Resource selected is not a valid one, select one from the autocomplete list.`,
-				ephemeral: true,
+				flags: MessageFlags.Ephemeral,
 			});
 
 		const farmEmbed = new EmbedBuilder()

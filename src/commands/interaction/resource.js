@@ -1,33 +1,7 @@
-import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { EmbedBuilder, MessageFlags, SlashCommandBuilder } from 'discord.js';
 import { getAllClanData } from '../../services/googleSheets.js';
 import { titleCase } from '../../services/utils.js';
-
-const resourceNames = [
-  "Credits",
-  "Alloy Plate",
-  "Circuits",
-  "Control Module",
-  "Cryotic",
-  "Detonite Ampule",
-  "Ferrite",
-  "Fieldron Sample",
-  "Forma",
-  "Gallium",
-  "Morphics",
-  "Mutagen Sample",
-  "Nano Spores",
-  "Neural Sensors",
-  "Neurodes",
-  "Orokin Cell",
-  "Oxium",
-  "Plastids",
-  "Polymer Bundle",
-  "Rubedo",
-  "Salvage",
-  "Detonite Injector",
-  "Fieldron",
-  "Mutagen Mass",
-];
+import { resourceNames } from '../../data/resource.js';
 
 const reverseClan = {
   IK: "Imouto",
@@ -57,14 +31,14 @@ export default {
   enabled: true,
   trigger: "interaction",
   execute: async (client, i) => {
-    await i.deferReply()
     const resrc = titleCase(i.options.getString('resource', true) ?? "")
     const clanname = titleCase(i.options.getString('clan', false) ?? "")
 
     if (!resourceNames.includes(resrc)) 
-        return i.editReply({ content: `Invalid resource, choose from autofill instead`, ephemeral: true });
-
-    const resources = await getAllClanData();
+        return i.reply({ content: `Invalid resource, choose from autofill instead`, flags: MessageFlags.Ephemeral });
+    
+    await i.deferReply()
+    const resources = await getAllClanData(reverseClan[clanname]);
     const clanEmbed = new EmbedBuilder()
     .setTitle(`Resource overview of ${resrc}`);
 
