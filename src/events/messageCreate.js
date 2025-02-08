@@ -35,7 +35,7 @@ export default {
         if (!message.content.startsWith(client.prefix)) return;
 
         const args = message.content.replace(client.prefix, "");
-        const alt_command = client.cmd_handler.find(`${args}-message`);
+        const alt_command = client.cmd_handler.find(`${args.split(" ")[0]}-message`);
 
         if (alt_command) {
             alt_command.execute(message, client);
