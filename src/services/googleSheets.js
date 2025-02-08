@@ -128,8 +128,10 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 async function processTables($, data, msg) {
 	const relicRewards = [];
 	let currentRelic = { rewards: [] };
+	const dataSet = data.toArray();
 
-	await data.each(async (_, row) => {
+	for (let i = 0; i < dataSet.length; i++) {
+			const row = dataSet[i];
 			const columns = $(row).find("td");
 			const textName = $(row).find("th").text().trim();
 
@@ -138,8 +140,8 @@ async function processTables($, data, msg) {
 							relicRewards.push(currentRelic);
 							currentRelic = { rewards: [] };
 					}
-					await delay(200);
-					return;
+					await delay(5);
+					continue;
 			}
 
 			if (!currentRelic.name && textName) {
@@ -152,8 +154,7 @@ async function processTables($, data, msg) {
 					};
 					currentRelic.rewards.push(reward);
 			}
-			await delay(50);
-	});
+	}
 
 	if (currentRelic.rewards.length > 0) {
 			relicRewards.push(currentRelic);
