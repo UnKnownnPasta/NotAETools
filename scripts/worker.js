@@ -2,6 +2,21 @@ export default {
   async scheduled(event, env, ctx) {
     await updateFissures(env);
   },
+  async fetch(request, env, ctx) {
+    const authHeader = request.headers.get("X-Source-Job");
+    
+    if (!authHeader || authHeader !== env.EXPECTED_AUTH_TOKEN) {
+      return new Response("Invalid request", { status: 200 });
+    }
+    
+    try {
+      await updateFissures(env);
+      return new Response("Fissures updated successfully", { status: 200 });
+    } catch (error) {
+      console.error("Error updating fissures:", error);
+      return new Response("Internal server error", { status: 500 });
+    }
+  }
 };
 
 const eDef = {
@@ -218,7 +233,7 @@ async function updateChannelMessage(env, data) {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      "User-Agent": "DiscordBot (https://github.com/UnKnownnPasta/NotAETools, 2.4.5)",
+      "User-Agent": "DiscordBot (https://github.com/UnKnownnPasta/NotAETools, 1.0.0)",
       Authorization: `Bot ${env.TOKEN}`,
     },
     body: JSON.stringify(data),

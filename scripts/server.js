@@ -29,8 +29,15 @@ app.get('/forceupdate', async (req, res) => {
 
 // Heartbeat route
 app.get('/heartbeat', (req, res) => {
-    res.status(200).send('OK!');
+    const badgeData = {
+        schemaVersion: 1,
+        label: 'status',
+        message: 'operational',
+        color: 'brightgreen'
+    };
+    res.json(badgeData);
 });
+
 
 // Serve about.html file
 app.get('/', (req, res) => {
