@@ -63,8 +63,8 @@ class Bot extends Client {
             await this.guilds.fetch({ force: true });
             await this.startCaching();
             // await getFissures(this);
-
-            this.fissureInterval = setInterval(async () => await getFissures(this), 600_000);
+            // this.fissureInterval = setInterval(async () => await getFissures(this), 600_000);
+            
             this.finishedSequence = true;
             console.log("Finished sequence :>");
         });
