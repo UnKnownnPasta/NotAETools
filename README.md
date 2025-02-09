@@ -5,11 +5,13 @@
     <img src="./blob/logo.png" width="250" alt="Warp" />
   </div>
 
-![Static Badge](https://img.shields.io/badge/created_with-discord.js_v14-blue) ![Static Badge](https://img.shields.io/badge/license-MIT-green) ![Static Badge](https://img.shields.io/badge/contributors-1-orange)
+![Built With Discord](https://img.shields.io/badge/created_with-discord.js_v14-blue) ![License](https://img.shields.io/badge/license-MIT-green) 
+
+![Status](https://notaetools.onrender.com/heartbeat)
 
 <hr />
 
-### AETools is a multipurpose utility bot for staff teams, inspired by [Zlushiie](https://github.com/Zlushiie).
+### AETools is a multipurpose utility bot for a staff team, inspired by [Zlushiie](https://github.com/Zlushiie).
 
 </div>
 
@@ -19,8 +21,8 @@
 Being used since 2022, the bot has many functions which are used constantly, every day. To name a few,
 
 ## API Calls
-- Utilizes [Warframe](https://www.warframe.com)'s endpoint to track all available fissures
-- Utilizes Google Sheets API to track Shop stock
+- Utilizes [Warframe](https://www.warframe.com)'s endpoint to track all available fissures through Cloudfare Workers
+- Utilizes Warframe's endpoint to get, format, and display game data through discord command
 
 ## Features
 <p align="center">
@@ -66,7 +68,7 @@ ORANGE/etc means the same as it does in [here](https://docs.google.com/document/
 
 ## Squad Hosting
 
-### 1. Treasury
+### 1. Treasury  [ *DEPRECATED* ]
 
 Command Syntax: `/thost count:NUMBER relic:RELIC *type:TYPE`
 
@@ -215,8 +217,28 @@ Clone the project:
 git clone https://github.com/UnKnownnPasta/NotAETools && cd NotAETools && touch .env && npm install
 ```
 
-And you can now test and work on the project!
+Run the bot:
 
-**Notes**: You'll need to add the following variables into your `.env`: `TOKEN`, `GOOGLEAPIKEY`, `MAINGUILDID`, `CLIENTID`
+```shell
+npm run dev
+```
 
-The names are self-explanatory.
+## Deploying the bot
+
+To deploy the bot, you need to follow these steps:
+
+1. Make sure you have up-to-date tools to work with:
+    - `node --version` says a version greater than or equal to 18.x.x
+    - `git --version` says a verion greater than or equal to 2.4x.x
+
+2. Clone the project:
+
+```shell
+git clone https://github.com/UnKnownnPasta/NotAETools
+```
+
+3. Run the bot:
+
+```shell
+npm run prod
+```
