@@ -7,7 +7,7 @@
 
 ![Built With Discord](https://img.shields.io/badge/created_with-discord.js_v14-blue) ![License](https://img.shields.io/badge/license-MIT-green) 
 
-![Status](https://notaetools.onrender.com/heartbeat)
+![Status Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fnotaetools.onrender.com%2Fheartbeat)
 
 <hr />
 
