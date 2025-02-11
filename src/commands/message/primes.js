@@ -68,7 +68,7 @@ function createSetEmbed(primeData) {
     const stockStr = `${prime.stock}`.padEnd(2);
 		boxCacheStr ? boxCounter++ : null;
 
-    return `${stockStr}${boxCacheStr.padEnd(5)}│ ${prime.item} {${prime.color}}`.trim();
+    return `${stockStr}${boxCacheStr.padEnd(5)}│ ${prime.item} {${range(prime.stock + boxCache)}}`.trim();
 	});
 
 	if (!boxCounter) {
