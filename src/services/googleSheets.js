@@ -46,6 +46,7 @@ const normalize = (name) => {
 
 export async function fetchData(msg, ogmsg) {
 	console.time("google::fetchData");
+	console.log(`@time ${new Date().toLocaleString()} fetchData() started`);
 
 	// Fetch data from google sheets
 	const sheetValues = await googleSheets({
@@ -140,7 +141,6 @@ async function processTables($, data, msg) {
 							relicRewards.push(currentRelic);
 							currentRelic = { rewards: [] };
 					}
-					await delay(5);
 					continue;
 			}
 

@@ -1,5 +1,7 @@
 import boxCacheManager from '../../managers/boxCacheManager.js';
 import relicCacheManager from '../../managers/relicCacheManager.js';
+import { fetchData } from '../../services/googleSheets.js';
+import entityClassifierInstance from '../../services/nlp.js';
 
 /** @type {import('../../other/types').Command} */
 export default {
@@ -22,12 +24,45 @@ export default {
         message.reply(`Memory usage: ${memoryUsage.toFixed(2)} MB`);
       break;
       case "cache":
-        const firstCache = relicCacheManager.relicCache.length;
+        const firstCacheA = relicCacheManager.relicCache.primes.length;
+        const firstCacheB = relicCacheManager.relicCache.relics.length;
         const secondCache = boxCacheManager.boxCache.length;
-        message.reply(`First cache: ${firstCache} | Second cache: ${secondCache}`);
+        message.reply(`First cache A: ${firstCacheA} | First cache B: ${firstCacheB} | Second cache: ${secondCache}`);
+      break;
+      case "google":
+        const msg = await message.reply(`Queued.`);
+        try {
+          await fetchData(msg, message);
+        } catch (err) {
+          msg.edit(`Error: ${err.message}`);
+        }
+      break;
+      case "search":
+        const parsed = request.slice(2).join(" ");
+        const entity = entityClassifierInstance.classifyEntity(parsed);
+        if (!entity.detail) return message.reply(`Invalid item: ${parsed}`);
+        const boxData = boxCacheManager.boxCache.find(i => i.item == `${entity.fullForm}`)?.amount || 0;
+        const cacheData = relicCacheManager.relicCache.primes.find(i => i.item == `${entity.fullForm}`)?.stock || 0;
+        message.reply(`Describing: ${entity.fullForm}\nBox amount: ${boxData} | Cache amount: ${cacheData}`);
+      break;
+      case 'refresh':
+        const cid = request[3];
+        const type = request[2];
+        const msg_ = await message.reply(`Refreshing ${type} cache for ${cid}...`);
+        try {
+          if (type == 'box') {
+            await boxCacheManager.updateCache(cid);
+            msg_.edit(`Box cache for ${cid} updated successfully.`);
+          } else if (type == 'relic') {
+            await relicCacheManager.setCache(cid);
+            msg_.edit(`Relic cache for ${cid} updated successfully.`);
+          }
+        } catch (error) {
+          msg_.edit(`Error: ${error.message}`);
+        }
       break;
       default:
-        message.reply(`Invalid command: ${command}`);
+        message.reply(`Invalid command: ${command} | Valid commands: memory, cache, google, search, refresh[box|relic]`);
       break;
     }
   },

@@ -4,13 +4,12 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = resolve(__filename, '..');
 const depEnv = process.env.deploymentEnvironment;
-dotenv.config({ path: resolve(__dirname, `../.env${depEnv == "nonlocal" ? "" : (process.env.NODE_ENV == 'production' ? '.production' : '.development')}`) });
+const envExtra = depEnv == "nonlocal" ? "" : (process.env.NODE_ENV == 'production' ? '.production' : '.development');
+dotenv.config({ path: resolve(__dirname, `../.env${envExtra}`) });
 
 import { ActivityType, Client, GatewayIntentBits as GIB, Partials } from 'discord.js';
 import { _bool_true } from './services/utils.js';
 import CommandHandler from './other/handler.js';
-import { getFissures } from './services/fissure.js';
-import { start_db } from './services/databaseMerged.js';
 import { fetchData } from './services/googleSheets.js';
 import boxCacheManager from './managers/boxCacheManager.js';
 import relicCacheManager from './managers/relicCacheManager.js';
@@ -51,9 +50,7 @@ class Bot extends Client {
         
         // Link and update database (mongo & json)
         await fetchData();
-        // await start_db();
         await entityClassifierInstance.updateLocalData();
-
 
         // Bot online in discord
         await this.login(process.env.DISCORD_TOKEN);
@@ -62,9 +59,7 @@ class Bot extends Client {
 
             await this.guilds.fetch({ force: true });
             await this.startCaching();
-            // await getFissures(this);
-            // this.fissureInterval = setInterval(async () => await getFissures(this), 600_000);
-            
+
             this.finishedSequence = true;
             console.log("Finished sequence :>");
         });

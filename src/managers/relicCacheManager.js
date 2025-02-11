@@ -12,7 +12,7 @@ class RelicCacheManager {
     this._client = {};
     /** @type {import("../other/types").CacheOfSoupChannel[]} */
     this.soupCache = [];
-    this.relicCache = [];
+    this.relicCache = { relics: [], primes: [] };
   }
 
   init(clientInstance) {
