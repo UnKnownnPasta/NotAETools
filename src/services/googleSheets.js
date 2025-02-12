@@ -19,7 +19,7 @@ const googleSheets = async ({ spreadsheetId, range }) => {
 	});
 };
 
-async function searchForDrops(htmlText, searchString) {
+function searchForDrops(htmlText, searchString) {
 	let count = 0;
 	let position = 0;
 
@@ -30,7 +30,6 @@ async function searchForDrops(htmlText, searchString) {
 			count++;
 			position += searchString.length;
 			if (count > 5) return false;
-			await new Promise((resolve) => setImmediate(resolve));
 		}
 	}
 
@@ -79,9 +78,7 @@ export async function fetchData(msg, ogmsg) {
 	}
 
 	// Log progress
-	if (msg) {
-			await msg.edit({ content: `\`\`\`[1.5/2] Fetching data...\`\`\`` });
-	}
+	if (msg) await msg.edit({ content: `\`\`\`[1/4] Fetching data...\`\`\`` });
 
 	stockValues["Venka Blades"] = stockValues["Venka Blade"] || 0;
 	delete stockValues["Venka Blade"];
@@ -91,27 +88,27 @@ export async function fetchData(msg, ogmsg) {
 			const response = await axios.get(url);
 
 			const htmlText = response.data;
-			const extractedHtml = htmlText.match(/<h3 id="relicRewards">.*?<h3 id="keyRewards">/s)?.[0] || "";
+			const extractedHtml = htmlText.match(/<h3 id="relicRewards">.*?(?=<h3 id="keyRewards">)/s)?.[0] || "";
 			const $ = cheerio.load(extractedHtml);
-			const tables = $("table tbody > tr")
+			const tables = $("table tbody tr");
 
-			if (msg) {
-					await msg.edit({ content: `\`\`\`[2/2] Fetching data...\`\`\`` });
-			}
-
-			const relicRewards = await processTables($, tables, msg);
-			const PrimeData = await processRelics(relicRewards, stockValues, tokenValues, htmlText, msg);
+			if (msg) await msg.edit({ content: `\`\`\`[2/4] Processing data...\`\`\`` });
+			
+			const relicRewards = processTables($, tables, msg);
+			if (msg) await msg.edit({ content: `\`\`\`[3/4] Processing data...\nDONE Creating Records...\`\`\`` });
+			const PrimeData = processRelics(relicRewards, stockValues, tokenValues, htmlText, msg);
+			if (msg) await msg.edit({ content: `\`\`\`DONE Processing data...\nDONE Creating Records...\nUpdating DB...\`\`\`` });
 
 			await fs.promises.writeFile(path.join(__dirname, '..', 'data', 'relicsdb.json'), JSON.stringify(PrimeData));
 			await relicCacheManager.setCache();
 
 			if (msg) {
-				await msg.edit({ content: `\`\`\`DONE Fetching data...\nDONE Creating Records...\nDONE Updating DB... ✅\`\`\`` });
+				await msg.edit({ content: `\`\`\`DONE Processing data...\nDONE Creating Records...\nDONE Updating DB... ✅\`\`\`` });
 				ogmsg.react('✔');
 
 				setTimeout(async () => {
 					await msg.delete();
-				}, 4_000);
+				}, 2_000);
 			}
 	} catch (error) {
 			console.error("Error fetching relic rewards:", error);
@@ -125,8 +122,14 @@ export async function fetchData(msg, ogmsg) {
 	}
 }
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-async function processTables($, data, msg) {
+/**
+ * 
+ * @param {import('cheerio').CheerioAPI} $ 
+ * @param {import('cheerio').Cheerio<Element>} data 
+ * @param {*} msg 
+ * @returns 
+ */
+function processTables($, data) {
 	const relicRewards = [];
 	let currentRelic = { rewards: [] };
 	const dataSet = data.toArray();
@@ -160,14 +163,10 @@ async function processTables($, data, msg) {
 			relicRewards.push(currentRelic);
 	}
 
-	if (msg) {
-			await msg.edit({ content: `\`\`\`DONE Fetching data...\nCreating Records...\`\`\`` });
-	}
-
 	return relicRewards;
 }
 
-async function processRelics(relicRewards, stockValues, tokenValues, htmlText, msg) {
+function processRelics(relicRewards, stockValues, tokenValues, htmlText) {
 	const allRelicData = [];
 	const allPrimeData = [];
 	const orderToSortBy = [25.33, 11, 2];
@@ -202,13 +201,9 @@ async function processRelics(relicRewards, stockValues, tokenValues, htmlText, m
 							name: trueName,
 							rewards: currentRewards.sort((a, b) => orderToSortBy.indexOf(a.rarity) - orderToSortBy.indexOf(b.rarity)),
 							tokens: tokenValues[trueName],
-							vaulted: await searchForDrops(htmlText, trueName),
+							vaulted: searchForDrops(htmlText, trueName),
 					});
 			}
-	}
-
-	if (msg) {
-			await msg.edit({ content: `\`\`\`DONE Fetching data...\nDONE Creating Records...\nUpdating DB...\`\`\`` });
 	}
 
 	const filteredAllPrimeData = [];

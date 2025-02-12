@@ -8,7 +8,7 @@ import { fetchData } from '../src/services/googleSheets.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.SERVER_PORT || 8080;
 
 // Initialize express-status-monitor
 app.use(expressStatusMonitor());
@@ -19,9 +19,14 @@ app.use(express.json());
 // Route to force an update
 app.get('/forceupdate', async (req, res) => {
     const token = decodeURIComponent(req.headers.token);
-    if (token === process.env.supertoken) {
-        await fetchData();
-        res.status(200).send('OK!');
+    if (token === process.env.SUPERTOKEN) {
+        try {
+            await fetchData();
+            res.status(200).send('OK!');
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal Server Error');
+        }
     } else {
         res.status(403).send('403 Forbidden');
     }
@@ -35,7 +40,7 @@ app.get('/heartbeat', (req, res) => {
         message: 'operational',
         color: 'brightgreen'
     };
-    res.json(badgeData);
+    res.status(200).json(badgeData);
 });
 
 
