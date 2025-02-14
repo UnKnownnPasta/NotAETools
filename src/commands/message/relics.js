@@ -51,7 +51,7 @@ export default {
     
       const colorRange = range(Math.min(...fixedRewardData.filter(i => i.item !== "Forma").map(i => i.stock + i.box)));
       const embed = new EmbedBuilder()
-        .setTitle(`[ ${entity.fullForm} Relic ]`)
+        .setTitle(`[ ${entity.fullForm} Relic ] {${relicData.tokens}}`)
         .setDescription('```ml\n' + embedLogic.join("\n") + '\n```')
         .setFooter({ text: `${relicData.vaulted ? 'Vaulted' : 'Unvaulted' } relic${breaker}${colorRange} relic` })
         .setColor(hex_codes[`relic__${colorRange}`] || "#FFFFFF")

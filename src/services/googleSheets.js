@@ -8,6 +8,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { range } from "./utils.js";
 import relicCacheManager from "../managers/relicCacheManager.js";
+import entityClassifierInstance from "./nlp.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.resolve(__filename, '..');
 
@@ -99,8 +100,10 @@ export async function fetchData(msg, ogmsg) {
 			const PrimeData = processRelics(relicRewards, stockValues, tokenValues, htmlText, msg);
 			if (msg) await msg.edit({ content: `\`\`\`DONE Processing data...\nDONE Creating Records...\nUpdating DB...\`\`\`` });
 
-			await fs.promises.writeFile(path.join(__dirname, '..', 'data', 'relicsdb.json'), JSON.stringify(PrimeData));
-			await relicCacheManager.setCache();
+			await fs.promises.writeFile(path.join(__dirname, '..', 'data', 'relicsdb.json'), JSON.stringify(PrimeData)).then(async () => {
+				await relicCacheManager.setCache();
+				await entityClassifierInstance.updateLocalData();
+			});
 
 			if (msg) {
 				await msg.edit({ content: `\`\`\`DONE Processing data...\nDONE Creating Records...\nDONE Updating DB... ✅\`\`\`` });

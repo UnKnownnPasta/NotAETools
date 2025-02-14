@@ -68,13 +68,19 @@ class EntityClassifier {
 		this.data.relics.details = relicData;
 
 		const deepData__primes = [];
-		for (const p of pdata) {
-			if (p.item == "Forma") continue;
-			const lArray = deepData__primes.find((x) =>x.some((y) => y.split(" ")[0] == p.item.split(" ")[0]));
+		for (const part_of of pdata) {
+			if (part_of.item == "Forma") continue;
+			const lArray = deepData__primes.find((old_set) => {
+				if (part_of.item.startsWith("Dual")) {
+					return old_set.some((old_item) => old_item.split(" ").slice(0, 2).join(" ") == part_of.item.split(" ").slice(0, 2).join(" "));
+				} else {
+					return old_set.some((old_item) => old_item.split(" ")[0] == part_of.item.split(" ")[0]);
+				}
+			});
 			if (lArray) {
-				lArray.push(p.item);
+				lArray.push(part_of.item);
 			} else {
-				deepData__primes.push([p.item]);
+				deepData__primes.push([part_of.item]);
 			}
 		}
 
@@ -93,6 +99,8 @@ class EntityClassifier {
 					break;
 				}
 			}
+
+			console.log("Group:", group, "Common Prefix:", commonPrefix);
 
 			const commonName = commonPrefix.join(" "); // Combine common words for the keyword
 			const details = group.map((item) =>
@@ -198,6 +206,7 @@ class EntityClassifier {
 							bestMatch.score = keywordScore;
 
 							const details = this.data[cat].details[keyword] || [];
+							console.log("details", details, keywordTokens);
 							const detailMatch = details
 								.map((detail) => {
 									const detailTokens = detail.toLowerCase().split(/\s+/);
