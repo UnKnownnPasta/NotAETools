@@ -100,8 +100,6 @@ class EntityClassifier {
 				}
 			}
 
-			console.log("Group:", group, "Common Prefix:", commonPrefix);
-
 			const commonName = commonPrefix.join(" "); // Combine common words for the keyword
 			const details = group.map((item) =>
 				item.split(" ").slice(commonPrefix.length).join(" ")
@@ -206,7 +204,6 @@ class EntityClassifier {
 							bestMatch.score = keywordScore;
 
 							const details = this.data[cat].details[keyword] || [];
-							console.log("details", details, keywordTokens);
 							const detailMatch = details
 								.map((detail) => {
 									const detailTokens = detail.toLowerCase().split(/\s+/);
