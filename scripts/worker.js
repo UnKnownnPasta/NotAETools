@@ -33,7 +33,6 @@ class EmbedBuilder {
       description: "",
       color: 0x0099ff,
       fields: [],
-      timestamp: new Date().toISOString(),
     };
   }
 
@@ -143,6 +142,8 @@ async function updateFissures(env) {
     /** (1.1) Reduce fissures into embeds */
     const [N_Embed, S_Embed] = Object.entries(fissures.reduce((acc, fissure) => {
         let currentEmbed = fissure[2] ? acc.S_Embed : acc.N_Embed;
+        
+        if (fissure[1].includes("Stribog (Void)")) return acc;
 
         currentEmbed[fissure[0]]
         ? (currentEmbed[fissure[0]].value += fissure[1])
@@ -158,18 +159,16 @@ async function updateFissures(env) {
     const NormEmbed = new EmbedBuilder()
         .setAuthor({ name: "Regular Fissures", iconURL: `https://cdn.discordapp.com/emojis/${eDef.type__normal}.png` })
         .setColor(eDef.hex__embed__invis)
-        .setFields(embedSort(N_Embed))
-        .build();
+        .setFields(embedSort(N_Embed));
 
     const SPEmbed = new EmbedBuilder()
         .setAuthor({ name: "Steel Path Fissures", iconURL: `https://cdn.discordapp.com/emojis/${eDef.type__steelpath}.png` })
         .setFields(embedSort(S_Embed))
         .setColor(eDef.hex__embed__invis)
-        .setTimestamp()
-        .build();
+        .setTimestamp();
 
-    if (NormEmbed.fields.length == 0) NormEmbed.setDescription(`No ideal fissures`);
-    if (SPEmbed.fields.length == 0) SPEmbed.setDescription(`No ideal fissures`);
+    if (NormEmbed.embed.fields.length == 0) NormEmbed.setDescription(`No ideal fissures`);
+    if (SPEmbed.embed.fields.length == 0) SPEmbed.setDescription(`No ideal fissures`);
 
     /** (1.3) Create a embed to show when the next reset happens  */
     const emojiObj = { 
@@ -224,7 +223,7 @@ async function updateFissures(env) {
       .build();
 
     /** UPDATE FISSURE MESSAGE WITH CREATED EMBEDS */
-    await updateChannelMessage(env, { content: null, embeds: [NormEmbed, SPEmbed, NextFissuresEmbed] });
+    await updateChannelMessage(env, { content: null, embeds: [NormEmbed.build(), SPEmbed.build(), NextFissuresEmbed] });
 }
 
 async function updateChannelMessage(env, data) {
