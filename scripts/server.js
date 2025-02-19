@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import expressStatusMonitor from 'express-status-monitor';
 import { fetchData } from '../src/services/googleSheets.js';
+import { updateFissures } from './fissures.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -69,6 +70,24 @@ app.get('/blob/*', (req, res) => {
         }
     });
 });
+
+// Endpoint for fissure updating
+app.get('/fissure', async (request, res) => {
+    const authHeader = (request.headers["X-Source-Job"] || request.headers["x-source-job"]);
+    
+    // if (!authHeader || authHeader !== process.env.EXPECTED_AUTH_TOKEN) {
+    //   console.error('Unauthorized request to /fissure');
+    //   res.status(401).send('401 Unauthorized');
+    // }
+
+    try {
+      await updateFissures(process.env);
+      res.status(200).send('OK!');
+    } catch (error) {
+      console.error("Error updating fissures:", error);
+      res.status(500).send('500 Internal Server Error');
+    }
+})
 
 // Start the server
 app.listen(PORT, () => {
