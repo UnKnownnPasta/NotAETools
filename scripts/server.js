@@ -75,10 +75,10 @@ app.get('/blob/*', (req, res) => {
 app.get('/fissure', async (request, res) => {
     const authHeader = (request.headers["X-Source-Job"] || request.headers["x-source-job"]);
     
-    // if (!authHeader || authHeader !== process.env.EXPECTED_AUTH_TOKEN) {
-    //   console.error('Unauthorized request to /fissure');
-    //   res.status(401).send('401 Unauthorized');
-    // }
+    if (!authHeader || authHeader !== process.env.EXPECTED_AUTH_TOKEN) {
+      console.error('Unauthorized request to /fissure');
+      res.status(401).send('401 Unauthorized');
+    }
 
     try {
       await updateFissures(process.env);
