@@ -2,6 +2,7 @@ import { codeBlock, EmbedBuilder, MessageFlags, SlashCommandBuilder } from 'disc
 import { isRelicFF, range } from '../../services/utils.js';
 import boxCacheManager from '../../managers/boxCacheManager.js';
 import relicCacheManager from '../../managers/relicCacheManager.js';
+import { Pagination } from 'pagination.djs';
 
 /** @type {import('../../other/types').InteractionCommand} */
 export default {
@@ -23,7 +24,7 @@ export default {
 				flags: MessageFlags.Ephemeral
 			});
 		}
-		await i.deferReply();
+		// await i.deferReply();
 		
 		const ansiValues = { ED: "[35m", RED: "[31m", ORANGE: "[33m" };
 		const priorityOfStatus = { ED: 0, RED: 1, ORANGE: 2, YELLOW: 3, GREEN: 4, "#N/A": 5 };
@@ -185,41 +186,74 @@ export default {
 		const soupedString = ["Lith", "Meso", "Neo", "Axi"]
 			.map((x) => {
 				let isempty = filterRelics(x);
-				if (isempty.length != 0) return isempty.sort(sortFunction).join("\n");
+				if (isempty.length != 0) return isempty.sort(sortFunction);
 				else return undefined;
 			})
 			.filter((x) => x !== undefined)
-			.join("\n\n");
+			.flat();
 
-		let codeText = `\n*CODE: ${soupedAccepted.join(" ")}*`;
-		if (soupedString.length > 4096 - codeText.length)
-			return i.editReply({ content: `Souped relics is too big to render.` });
+		const codeText = `\n*CODE: ${soupedAccepted.join(" ")}*`;
+		const maxSoupLength = 4096;
+		const msgContent = duplicateStrings.length !== 0 ? `Duplicates removed: ${duplicateStrings.join(" ")}` : null;
 
-		if (duplicateStrings.length !== 0) {
-			i.editReply({
-				content: `Duplicates removed: ${duplicateStrings.join(" ")}`,
+		if (soupedString.join("\n").length + codeText.length < maxSoupLength) {
+			i.reply({
+				content: msgContent,
 				embeds: [
 					new EmbedBuilder()
 						.setTitle("Souped relics")
 						.setDescription(
 							(isSpecialMode
-								? codeBlock("ansi", soupedString)
-								: codeBlock("ml", soupedString)) + codeText
+								? codeBlock("ansi", soupedString.join("\n"))
+								: codeBlock("ml", soupedString.join("\n"))) + codeText
 						),
 				],
 			});
 		} else {
-			i.editReply({
-				embeds: [
+			const stringArrayOfSoup = [];
+			const soupEmbeds = [];
+			const _step = isSpecialMode ? 20 : 45;
+
+			function transitionNewline(strarr) {
+				let base = strarr[0].match(/(Lith|Meso|Neo|Axi)/g)[0];
+				const newArr = [];
+				for (const item of strarr) {
+					const baseMatch = item.match(/(Lith|Meso|Neo|Axi)/g)[0];
+					if (!(base === baseMatch)) {
+						newArr.push("\n" + item);
+						base = baseMatch;
+					} else {
+						newArr.push(item);
+					}
+				}
+				return newArr;
+			}
+
+			for (let i = 0; i < soupedString.length; i += _step) {
+				let item = soupedString.slice(i, i + _step);
+				item = transitionNewline(item).join("\n");
+				stringArrayOfSoup.push(
+					(isSpecialMode
+						? codeBlock("ansi", item)
+						: codeBlock("ml", item))
+				);
+			}
+
+			stringArrayOfSoup.push((stringArrayOfSoup.pop() + codeText).slice(0, maxSoupLength))
+
+			for (let i = 0; i < stringArrayOfSoup.length; i++) {
+				soupEmbeds.push(
 					new EmbedBuilder()
 						.setTitle("Souped relics")
-						.setDescription(
-							(isSpecialMode
-								? codeBlock("ansi", soupedString)
-								: codeBlock("ml", soupedString)) + codeText
-						),
-				],
+						.setDescription(stringArrayOfSoup[i])
+				);
+			}
+
+			const soupPagination = new Pagination(i);
+			soupPagination.setEmbeds(soupEmbeds, (embed, i, arr) => {
+				return embed.setFooter({ text: `Page ${i + 1} of ${arr.length} ` });
 			});
+			soupPagination.render();
 		}
 	},
 	data: new SlashCommandBuilder()
