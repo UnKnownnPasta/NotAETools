@@ -51,7 +51,13 @@ export default {
         const msg_ = await message.reply(`Refreshing ${type} cache for ${cid}...`);
         try {
           if (type == 'box') {
-            await boxCacheManager.updateCache(cid);
+            if (cid == 'all') {
+              for (const stored_id of boxCacheManager.channelCache.map(c => c.id)) {
+                await boxCacheManager.updateCache(stored_id);
+              }
+            } else {
+              await boxCacheManager.updateCache(cid);
+            }
             msg_.edit(`Box cache for ${cid} updated successfully.`);
           } else if (type == 'relic') {
             await relicCacheManager.setCache(cid);
@@ -62,7 +68,7 @@ export default {
         }
       break;
       default:
-        message.reply(`Invalid command: ${command} | Valid commands: memory, cache, google, search, refresh[box|relic]`);
+        message.reply(`Invalid command: ${command} | Valid commands: memory, cache, google, search[name], refresh[box|relic][id|all]`);
       break;
     }
   },

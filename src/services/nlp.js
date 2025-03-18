@@ -4,6 +4,7 @@ import { join, resolve } from "node:path";
 import { readFileSync, writeFileSync } from "node:fs";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = resolve(__filename, "..");
+import crypto from "node:crypto";
 
 // Function to calculate similarity
 function similarity(str1, str2) {
@@ -53,7 +54,8 @@ class EntityClassifier {
 	}
 
 	async updateLocalData() {
-		console.time("nlp::updateLocalData");
+		const specialID = crypto.randomBytes(20).toString('hex');
+		console.time(`nlp::updateLocalData [${specialID}]`);
 		const parsedData = await JSON.parse(
 			readFileSync(join(__dirname, "../data/relicsdb.json"), "utf-8")
 		);
@@ -115,7 +117,7 @@ class EntityClassifier {
 		this.data.primes.keywords = deep__primes_kws;
 		this.data.primes.details = deep__primes_details;
 
-		console.timeEnd("nlp::updateLocalData");
+		console.timeEnd(`nlp::updateLocalData [${specialID}]`);
 	}
 
 	classifyEntity(input) {

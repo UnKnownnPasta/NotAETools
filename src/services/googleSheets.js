@@ -11,6 +11,7 @@ import relicCacheManager from "../managers/relicCacheManager.js";
 import entityClassifierInstance from "./nlp.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.resolve(__filename, '..');
+import crypto from "node:crypto";
 
 const googleSheets = async ({ spreadsheetId, range }) => {
 	return google.sheets("v4").spreadsheets.values.get({
@@ -45,7 +46,8 @@ const normalize = (name) => {
 };
 
 export async function fetchData(msg, ogmsg) {
-	console.time("google::fetchData");
+	const specialID = crypto.randomBytes(20).toString('hex');
+	console.time(`google::fetchData [${specialID}]`);
 	console.log(`@time ${new Date().toLocaleString()} fetchData() started`);
 
 	// Fetch data from google sheets
@@ -121,7 +123,7 @@ export async function fetchData(msg, ogmsg) {
 			}
 			return [];
 	} finally {
-			console.timeEnd("google::fetchData");
+			console.timeEnd(`google::fetchData [${specialID}]`);
 	}
 }
 

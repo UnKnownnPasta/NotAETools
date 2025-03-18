@@ -50,7 +50,6 @@ class Bot extends Client {
         
         // Link and update database (mongo & json)
         await fetchData();
-        await entityClassifierInstance.updateLocalData();
 
         // Bot online in discord
         await this.login(process.env.DISCORD_TOKEN);

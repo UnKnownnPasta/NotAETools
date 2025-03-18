@@ -5,6 +5,7 @@ import { extractSoup, titleCase } from '../services/utils.js';
 import { channel } from 'node:diagnostics_channel';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = resolve(__filename, '..');
+import crypto from "node:crypto";
 
 class RelicCacheManager {
   constructor() {
@@ -33,7 +34,8 @@ class RelicCacheManager {
 
   async setCache(channelID='--') {
     if (!this._client.readyTimestamp) return;
-    console.time("relic::setCache");
+    const specialID = crypto.randomBytes(20).toString('hex');
+    console.time(`relic::setCache [${specialID}]`);
     // Relic Cache
     const data = readFileSync(join(__dirname, '../data/relicsdb.json'), 'utf-8');
     const relics = await JSON.parse(data);
@@ -60,7 +62,7 @@ class RelicCacheManager {
       channel.stored = [];
       channel.stored.push(...messages);
     }
-    console.timeEnd("relic::setCache");
+    console.timeEnd(`relic::setCache [${specialID}]`);
   }
 
   /** @returns {import("../other/types").dataItem} */

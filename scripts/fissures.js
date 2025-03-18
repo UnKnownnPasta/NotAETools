@@ -120,11 +120,13 @@ export async function updateFissures(env) {
         isHard,
     ]);
 
+    const blacklist = ["Stribog (Void)", "Cervantes (Earth)", "Thebe (Jupiter)"]
+
     /** (1.1) Reduce fissures into embeds */
     const [N_Embed, S_Embed] = Object.entries(fissures.reduce((acc, fissure) => {
         let currentEmbed = fissure[2] ? acc.S_Embed : acc.N_Embed;
         
-        if (fissure[1].includes("Stribog (Void)")) return acc;
+        if (blacklist.some(elem => fissure[1].includes(elem))) return acc;
 
         currentEmbed[fissure[0]]
         ? (currentEmbed[fissure[0]].value += fissure[1])

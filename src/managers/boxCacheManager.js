@@ -1,4 +1,5 @@
 import { extractItems } from "../services/nlp.js";
+import crypto from "node:crypto";
 
 class BoxCacheManager {
   constructor() {
@@ -67,7 +68,8 @@ class BoxCacheManager {
 
   async updateCache(channelID="--") {
     if (!this._client) return;
-    console.time("box::updateCache");
+    const specialID = crypto.randomBytes(20).toString('hex');
+    console.time(`box::updateCache [${specialID}]`);
 
     if (channelID == "--") {
       this.resetStored();
@@ -103,7 +105,7 @@ class BoxCacheManager {
 
     this.setBoxCache();
 
-    console.timeEnd("box::updateCache");
+    console.timeEnd(`box::updateCache [${specialID}]`);
   }
 }
 
