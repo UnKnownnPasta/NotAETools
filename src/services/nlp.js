@@ -4,6 +4,8 @@ import { join, resolve } from "node:path";
 import { readFileSync, writeFileSync } from "node:fs";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = resolve(__filename, "..");
+import jsonExports from '../other/botConfig.json' with { type: 'json' };
+const { dualitemslist } = jsonExports;
 import crypto from "node:crypto";
 
 // Function to calculate similarity
@@ -283,7 +285,9 @@ export function extractItems(input) {
 					const classification = entityClassifierInstance.classifyEntity(titleCase(itemName));
 
 					if (classification.category !== "unknown" && classification.entity !== "unknown") {
-							items.push({ item: classification.entity + " " + classification.detail, amount });
+							const finalItem = classification.entity + " " + classification.detail;
+							const finalAmt = dualitemslist.includes(finalItem) ? (amount / 2 | 0) : amount;
+							items.push({ item: finalItem, amount: finalAmt });
 					}
 			}
 	});
