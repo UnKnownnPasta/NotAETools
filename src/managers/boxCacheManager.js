@@ -1,5 +1,7 @@
 import { extractItems } from "../services/nlp.js";
 import crypto from "node:crypto";
+import { Mutex } from "async-mutex";
+const mutex = new Mutex;
 
 class BoxCacheManager {
   constructor() {
@@ -68,44 +70,46 @@ class BoxCacheManager {
 
   async updateCache(channelID="--") {
     if (!this._client) return;
-    const specialID = crypto.randomBytes(20).toString('hex');
-    console.time(`box::updateCache [${specialID}]`);
-
-    if (channelID == "--") {
-      this.resetStored();
-    } else {
-      this.resetStored(channelID);
-    }
-
-    for (const channel of this.channelCache) {
-      if (channelID != "--" && channelID != channel.id) continue;
-      const threadChannel = await this._client.channels.fetch(channel.id);
-
-      if (!threadChannel) {
-        console.warn(`No thread found for ${channel.id}`);
-        continue;
+    await mutex.runExclusive(async () => {
+      const specialID = crypto.randomBytes(20).toString('hex');
+      console.time(`box::updateCache [${specialID}]`);
+  
+      if (channelID == "--") {
+        this.resetStored();
+      } else {
+        this.resetStored(channelID);
       }
 
-      const messageCache = await threadChannel.messages.fetch({ limit: 100 });
-      const messages = messageCache.map(msg => {
-        const msgContent = msg.content
-          .replace(/\s*prime\s*/g, ' ')
-          .replace(/\(.*?\)/g, "")
-          .replace(/<@!?[^>]+>/g, ""); // User mentions regex
-        
-        return {
-          author: msg.author.id,
-          id: msg.id,
-          data: extractItems(msgContent)
+      for (const channel of this.channelCache) {
+        if (channelID != "--" && channelID != channel.id) continue;
+        const threadChannel = await this._client.channels.fetch(channel.id);
+  
+        if (!threadChannel) {
+          console.warn(`No thread found for ${channel.id}`);
+          continue;
         }
-      });
 
-      channel.stored.push(...messages);
-    }
-
-    this.setBoxCache();
-
-    console.timeEnd(`box::updateCache [${specialID}]`);
+        const messageCache = await threadChannel.messages.fetch({ limit: 100 });
+        const messages = messageCache.map(msg => {
+          const msgContent = msg.content
+            .replace(/\s*prime\s*/g, ' ')
+            .replace(/\(.*?\)/g, "")
+            .replace(/<@!?[^>]+>/g, ""); // User mentions regex
+          
+          return {
+            author: msg.author.id,
+            id: msg.id,
+            data: extractItems(msgContent)
+          }
+        });
+  
+        channel.stored.push(...messages);
+      }
+  
+      this.setBoxCache();
+  
+      console.timeEnd(`box::updateCache [${specialID}]`);
+    })
   }
 }
 

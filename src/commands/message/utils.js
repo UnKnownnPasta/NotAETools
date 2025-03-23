@@ -60,7 +60,11 @@ export default {
             }
             msg_.edit(`Box cache for ${cid} updated successfully.`);
           } else if (type == 'relic') {
-            await relicCacheManager.setCache(cid);
+            if (cid == 'soup') {
+              await relicCacheManager.setSoupCache(cid);
+            } else if (cid == 'prime') {
+              await relicCacheManager.setRelicCache();
+            }
             msg_.edit(`Relic cache for ${cid} updated successfully.`);
           }
         } catch (error) {
@@ -68,7 +72,7 @@ export default {
         }
       break;
       default:
-        message.reply(`Invalid command: ${command} | Valid commands: memory, cache, google, search[name], refresh[box|relic][id|all]`);
+        message.reply(`Invalid command: ${command} | Valid commands: memory, cache, google, search[name], refresh[box[id|all]|relic[soup|prime]]`);
       break;
     }
   },

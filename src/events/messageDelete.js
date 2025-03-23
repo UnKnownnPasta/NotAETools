@@ -25,7 +25,7 @@ export default {
             }
             for (const channel of relicCacheManager.soupCache) {
                 if (channel.id == channelID) {
-                    await relicCacheManager.setCache(channelID);
+                    await relicCacheManager.setSoupCache(channelID);
                 }
             }
             return;

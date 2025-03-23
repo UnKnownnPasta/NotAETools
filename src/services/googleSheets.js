@@ -103,7 +103,8 @@ export async function fetchData(msg, ogmsg) {
 			if (msg) await msg.edit({ content: `\`\`\`DONE Processing data...\nDONE Creating Records...\nUpdating DB...\`\`\`` });
 
 			await fs.promises.writeFile(path.join(__dirname, '..', 'data', 'relicsdb.json'), JSON.stringify(PrimeData)).then(async () => {
-				await relicCacheManager.setCache();
+				await relicCacheManager.setRelicCache();
+				await relicCacheManager.setSoupCache();
 				await entityClassifierInstance.updateLocalData();
 			});
 

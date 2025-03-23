@@ -6,6 +6,8 @@ import { channel } from 'node:diagnostics_channel';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = resolve(__filename, '..');
 import crypto from "node:crypto";
+import { Mutex } from "async-mutex";
+const mutex = new Mutex;
 
 class RelicCacheManager {
   constructor() {
@@ -32,37 +34,48 @@ class RelicCacheManager {
     ]
   }
 
-  async setCache(channelID='--') {
+  async setRelicCache() {
     if (!this._client.readyTimestamp) return;
-    const specialID = crypto.randomBytes(20).toString('hex');
-    console.time(`relic::setCache [${specialID}]`);
-    // Relic Cache
-    const data = readFileSync(join(__dirname, '../data/relicsdb.json'), 'utf-8');
-    const relics = await JSON.parse(data);
-    this.relicCache = relics;
+    await mutex.runExclusive(async () => {
+      const specialID = crypto.randomBytes(20).toString('hex');
+      console.time(`relic::setRelicCache [${specialID}]`);
+      // Relic Cache
+      const data = readFileSync(join(__dirname, '../data/relicsdb.json'), 'utf-8');
+      const relics = await JSON.parse(data);
+      this.relicCache = relics;
+      console.timeEnd(`relic::setRelicCache [${specialID}]`);
+    })
+  }
 
-    // Soup Cache
-    for (const channel of this.soupCache) {
-      if (channelID != '--' && channelID != channel.id) continue;
-      const msgC = await this._client.channels.fetch(channel.id);
-      if (!msgC) {
-        console.warn(`No cache for ${channel.id}): ${channel.name}`);
-      }
-      const messageCache = await msgC.messages.fetch({ limit: 100 });
-      const messages = messageCache.map(msg => {
-        const prepData = extractSoup(msg.content);
-        return {
-          id: msg.id,
-          content: msg.content,
-          url: msg.url,
-          author: msg.author.username,
-          contains: [...prepData],
+  async setSoupCache(channelID='--') {
+    if (!this._client.readyTimestamp) return;
+    await mutex.runExclusive(async () => {
+      const specialID = crypto.randomBytes(20).toString('hex');
+      console.time(`relic::setSoupCache [${specialID}]`);
+  
+      // Soup Cache
+      for (const channel of this.soupCache) {
+        if (channelID != '--' && channelID != channel.id) continue;
+        const msgC = await this._client.channels.fetch(channel.id);
+        if (!msgC) {
+          console.warn(`No cache for ${channel.id}): ${channel.name}`);
         }
-      });
-      channel.stored = [];
-      channel.stored.push(...messages);
-    }
-    console.timeEnd(`relic::setCache [${specialID}]`);
+        const messageCache = await msgC.messages.fetch({ limit: 100 });
+        const messages = messageCache.map(msg => {
+          const prepData = extractSoup(msg.content);
+          return {
+            id: msg.id,
+            content: msg.content,
+            url: msg.url,
+            author: msg.author.username,
+            contains: [...prepData],
+          }
+        });
+        channel.stored = [];
+        channel.stored.push(...messages);
+      }
+      console.timeEnd(`relic::setSoupCache [${specialID}]`);
+    })
   }
 
   /** @returns {import("../other/types").dataItem} */
