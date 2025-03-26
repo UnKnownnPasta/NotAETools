@@ -45,45 +45,25 @@ class BoxCacheManager {
     ]
   }
 
-  resetStored(chID='--') {
-    if (chID != '--') {
-      this.channelCache.find(channel => channel.id == chID).stored = [];
-    } else {
-      this.channelCache.forEach(channel => channel.stored = []);
-    }
-  }
-
-  setBoxCache() {
-    this.boxCache = [];
-    for (const channel of this.channelCache) {
-      const cacheItems = channel.stored.map(msg => msg.data).flat();
-      for (const item of cacheItems) {
-        const tItem = this.boxCache.find(i => i.item == item.item)
-        if (tItem) {
-          tItem.amount += item.amount
-        } else {
-          this.boxCache.push(item);
-        }
-      }
-    }
-  }
-
-  async updateCache(channelID="--") {
+  async updateCache(chID="--") {
     if (!this._client) return;
     await mutex.runExclusive(async () => {
       const specialID = crypto.randomBytes(20).toString('hex');
       console.time(`box::updateCache [${specialID}]`);
   
-      if (channelID == "--") {
-        this.resetStored();
+      // Box Cache
+      if (chID != '--') {
+        this.channelCache.find(channel => channel.id == chID).stored = [];
       } else {
-        this.resetStored(channelID);
+        for (const c of this.channelCache) {
+          c.stored = [];
+        }
       }
 
       for (const channel of this.channelCache) {
         if (channelID != "--" && channelID != channel.id) continue;
         const threadChannel = await this._client.channels.fetch(channel.id);
-  
+
         if (!threadChannel) {
           console.warn(`No thread found for ${channel.id}`);
           continue;
@@ -95,7 +75,7 @@ class BoxCacheManager {
             .replace(/\s*prime\s*/g, ' ')
             .replace(/\(.*?\)/g, "")
             .replace(/<@!?[^>]+>/g, ""); // User mentions regex
-          
+
           return {
             author: msg.author.id,
             id: msg.id,
@@ -106,7 +86,21 @@ class BoxCacheManager {
         channel.stored.push(...messages);
       }
   
-      this.setBoxCache();
+      const tempCache = [];
+
+      for (const channel of this.channelCache) {
+        const cacheItems = channel.stored.map(msg => msg.data).flat();
+        for (const item of cacheItems) {
+          const tItem = tempCache.find(i => i.item == item.item)
+          if (tItem) {
+            tItem.amount += item.amount
+          } else {
+            tempCache.push(item);
+          }
+        }
+      }
+
+      this.boxCache = tempCache;
   
       console.timeEnd(`box::updateCache [${specialID}]`);
     })
