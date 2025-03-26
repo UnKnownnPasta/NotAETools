@@ -61,7 +61,7 @@ class BoxCacheManager {
       }
 
       for (const channel of this.channelCache) {
-        if (channelID != "--" && channelID != channel.id) continue;
+        if (chID != "--" && chID != channel.id) continue;
         const threadChannel = await this._client.channels.fetch(channel.id);
 
         if (!threadChannel) {
