@@ -2,7 +2,6 @@ import { fileURLToPath } from 'node:url';
 import { readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path';
 import { extractSoup, titleCase } from '../services/utils.js';
-import { channel } from 'node:diagnostics_channel';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = resolve(__filename, '..');
 import crypto from "node:crypto";
