@@ -69,8 +69,18 @@ function titleCase(str) {
 
 async function getWarframeData() {
   const response = await fetch('https://api.warframestat.us/pc/fissures')
-    .then(res => res.json())
-    .catch(console.log);
+  .then(async (res) => {
+    const text = await res.text(); // Capture raw content
+    try {
+      return JSON.parse(text);
+    } catch (jsonError) {
+      console.error('JSON Parse Error:', jsonError.message);
+      console.error('Raw Response', text.slice(0, 1000));
+      throw jsonError;
+    }
+  })
+  .catch(console.error);
+
   return response;
 }
 
