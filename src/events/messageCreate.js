@@ -13,7 +13,6 @@ export default {
      * @param {import('discord.js').Client} client
      */
     async execute(client, message) {
-        return;
         if (!client.finishedSequence) return;
         if (message.author.bot) return;
         
