@@ -1,7 +1,7 @@
 import { extractItems } from "../services/nlp.js";
 import crypto from "node:crypto";
 import { Mutex } from "async-mutex";
-const mutex = new Mutex;
+const mutex = new Mutex();
 
 class BoxCacheManager {
   constructor() {

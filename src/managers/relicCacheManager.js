@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = resolve(__filename, '..');
 import crypto from "node:crypto";
 import { Mutex } from "async-mutex";
-const mutex = new Mutex;
+const mutex = new Mutex();
 
 class RelicCacheManager {
   constructor() {
