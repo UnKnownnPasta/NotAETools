@@ -51,17 +51,9 @@ class BoxCacheManager {
       const specialID = crypto.randomBytes(20).toString('hex');
       console.time(`box::updateCache [${specialID}]`);
   
-      // Box Cache
-      if (chID != '--') {
-        this.channelCache.find(channel => channel.id == chID).stored = [];
-      } else {
-        for (const c of this.channelCache) {
-          c.stored = [];
-        }
-      }
-
       for (const channel of this.channelCache) {
         if (chID != "--" && chID != channel.id) continue;
+
         const threadChannel = await this._client.channels.fetch(channel.id);
 
         if (!threadChannel) {
@@ -83,6 +75,7 @@ class BoxCacheManager {
           }
         });
   
+        channel.stored = [];
         channel.stored.push(...messages);
       }
   
@@ -100,7 +93,8 @@ class BoxCacheManager {
         }
       }
 
-      this.boxCache = tempCache;
+      this.boxCache = [];
+      this.boxCache.push(...tempCache);
   
       console.timeEnd(`box::updateCache [${specialID}]`);
     })

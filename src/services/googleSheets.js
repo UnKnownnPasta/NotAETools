@@ -261,7 +261,7 @@ export async function getAllClanData(clan=undefined) {
 export async function getAllLeaderboardData() {
 	return await googleSheets({
 		spreadsheetId: '1Mrp2qcFY9CO8V-MndnYCkkVBJ-f_U_zeK-oq3Ncashk',
-		range: 'Leaderboard!D30:I'
+		range: 'Leaderboard!D29:I'
 	}).then((re) => {
 			return re.data.values.map((data) => {
 					if (data.filter(x => !x).length > 1) return;
