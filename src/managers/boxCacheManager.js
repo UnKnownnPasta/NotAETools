@@ -75,8 +75,7 @@ class BoxCacheManager {
           }
         });
   
-        channel.stored = [];
-        channel.stored.push(...messages);
+        channel.stored = structuredClone(messages);
       }
   
       const tempCache = [];
@@ -93,8 +92,7 @@ class BoxCacheManager {
         }
       }
 
-      this.boxCache = [];
-      this.boxCache.push(...tempCache);
+      this.boxCache = structuredClone(tempCache);
   
       console.timeEnd(`box::updateCache [${specialID}]`);
     })

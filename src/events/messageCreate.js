@@ -22,7 +22,6 @@ export default {
             for (const channel of boxCacheManager.channelCache) {
                 if (channel.id == channelID) {
                     await boxCacheManager.updateCache(channelID);
-                    console.log(`Call msg content: ${message.content} in create`);
                 }
             }
             for (const channel of relicCacheManager.soupCache) {
