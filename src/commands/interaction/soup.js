@@ -36,6 +36,8 @@ export default {
 			"Blueprint": "Bp",
 			"Cerebrum": "Cere",
 			"Chassis": "Chas",
+			"Barrel": "Bar",
+			"Blade": "Bl",
 		}
 		const useReplacements = (str) => {
 			for (const [key, value] of Object.entries(replacements)) {
@@ -116,7 +118,6 @@ export default {
 				soupedAccepted.push(short);
 
 				if (isSpecialMode) {
-					console.log(res, res.slice(2).filter((x) => x[2]));
 					let goodParts = res
 						.slice(2)
 						.filter((x) => x[2])
