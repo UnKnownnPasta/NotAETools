@@ -28,6 +28,21 @@ export default {
 		
 		const ansiValues = { ED: "[35m", RED: "[31m", ORANGE: "[33m" };
 		const priorityOfStatus = { ED: 0, RED: 1, ORANGE: 2, YELLOW: 3, GREEN: 4, "#N/A": 5 };
+		const rarityList = ['C', 'C', 'C', 'UC', 'UC', 'RA'];
+		const replacements = {
+			"Neuroptics": "Neuro",
+			"Systems": "Sys",
+			"Receiver": "Rec",
+			"Blueprint": "Bp",
+			"Cerebrum": "Cere",
+			"Chassis": "Chas",
+		}
+		const useReplacements = (str) => {
+			for (const [key, value] of Object.entries(replacements)) {
+				str = str.replace(key, value);
+			}
+			return str;
+		}
 
 		async function getRelic(name) {
 			const relic = relicCacheManager.relicCache.relics.find(
@@ -47,9 +62,10 @@ export default {
 
 				if (isSpecialMode) {
 					stuffToSpecial.push([
-						part.item,
+						useReplacements(part.item),
 						priorityOfStatus[returnrange],
 						ansiValues[returnrange],
+						rarityList[relic.rewards.findIndex((x) => x.item == part.item)],
 					]);
 				}
 				return [returnrange, priorityOfStatus[returnrange]];
@@ -100,13 +116,14 @@ export default {
 				soupedAccepted.push(short);
 
 				if (isSpecialMode) {
+					console.log(res, res.slice(2).filter((x) => x[2]));
 					let goodParts = res
 						.slice(2)
 						.filter((x) => x[2])
 						.sort((a, b) => a[1] - b[1])
 						.slice(0, 2)
 						.map((x) => {
-							return `${x[2]}${x[0].replace(" x2", "")}[0m`;
+							return `${x[2]}${x[0].replace(" x2", "")}(${x[3]})[0m`;
 						});
 
 					soupedStrings.push(
