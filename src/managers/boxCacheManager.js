@@ -87,7 +87,7 @@ class BoxCacheManager {
           if (tItem) {
             tItem.amount += item.amount
           } else {
-            tempCache.push(item);
+            tempCache.push(structuredClone(item));
           }
         }
       }

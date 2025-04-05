@@ -18,7 +18,7 @@ function createPrimeEmbed(primeData) {
 	const relicData = primePart.relicFrom.map((relic) => {
 		return relicCacheManager.relicCache.relics.find((i) => i.name == relic);
 	});
-	const boxCache = boxCacheManager.boxCache.find((i) => i.item == primeData.fullForm)?.amount || 0;
+	const boxData = boxCacheManager.boxCache.find((i) => i.item == primeData.fullForm)?.amount || 0;
 	
 	const relicString = relicData.map((relic) => {
 		const rarity =
@@ -30,9 +30,9 @@ function createPrimeEmbed(primeData) {
 		return `${rarity} │ ${relic.name.trim()} {${relic.tokens}} {${relic.vaulted ? "V" : "UV"}}`;
 	});
 
-	const trueColor = range(primePart.stock + boxCache);
+	const trueColor = range(primePart.stock + boxData);
 	primeEmbed.setFooter({
-		text: `${primePart.stock}${boxCache ? ` (+${boxCache})` : ""}x in stock${breaker}${trueColor} part`,
+		text: `${primePart.stock}${boxData ? ` (+${boxData})` : ""}x in stock${breaker}${trueColor} part`,
 	});
 	primeEmbed.setTitle(`[ ${primeData.fullForm}${primePart.x2 ? " X2" : ""} ]`);
 	primeEmbed.setColor(hex_codes[`relic__${trueColor}`] || "#FFFFFF");
@@ -60,15 +60,15 @@ function createSetEmbed(primeData) {
 	const entityStocks = [];
 	let boxCounter = 0;
 	let setDataString = primeSet.map(prime => {
-    const boxCache = boxCacheManager.boxCache.find((i) => i.item == prime.item)?.amount || 0;
+    const boxData = boxCacheManager.boxCache.find((i) => i.item == prime.item)?.amount || 0;
 
-    entityStocks.push((prime.stock + boxCache) || 0); // Ignore box
+    entityStocks.push((prime.stock + boxData) || 0); // Ignore box
 
-    const boxCacheStr = boxCache ? `(+${boxCache})` : "";
+    const boxDataStr = boxData ? `(+${boxData})` : "";
     const stockStr = `${prime.stock}`.padEnd(2);
-		boxCacheStr ? boxCounter++ : null;
+		boxDataStr ? boxCounter++ : null;
 
-    return `${stockStr}${boxCacheStr.padEnd(5)}│ ${prime.item}${prime.x2 ? " X2" : ""} {${range(prime.stock + boxCache)}}`.trim();
+    return `${stockStr}${boxDataStr.padEnd(5)}│ ${prime.item}${prime.x2 ? " X2" : ""} {${range(prime.stock + boxData)}}`.trim();
 	});
 
 	if (!boxCounter) {
