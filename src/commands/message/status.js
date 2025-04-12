@@ -21,7 +21,9 @@ export default {
 	enabled: true,
 	trigger: "message",
 	execute: async (message) => {
-    const entity = entityClassifierInstance.classifyEntity(message.content.slice(2).trim());
+    let relicFilter = message.content.slice(5, 9).trim().toLowerCase();
+    if (!['lith', 'meso', 'neo', 'axi'].includes(relicFilter)) relicFilter = null;
+    const entity = entityClassifierInstance.classifyEntity(message.content.slice(2, 4).trim());
 		const entityDataFiltered = relicCacheManager.relicCache.primes
       .map(p => ({
         ...p,
@@ -29,13 +31,14 @@ export default {
       }))
       .filter(p => {
         if (p.item == "Forma") return false;
+        if (relicFilter && !p.relicFrom.some(x => x.toLowerCase().startsWith(relicFilter))) return false;
         return range(parseInt(p.stock) + p.box) == entity.entity.toUpperCase();
       })
       .sort((a, b) => (a.stock + a.box) - (b.stock + b.box))
       .map(item => `${`[${item.stock + item.box}]`.padEnd(5)}│ ${item.item}`);
 
     const baseEmbed = new EmbedBuilder()
-      .setTitle(`[ ${entity.entity.toUpperCase()} ]`)
+      .setTitle(`[ ${entity.entity.toUpperCase()}${relicFilter ? ` - ${relicFilter.toUpperCase()}` : ''} ]`)
       .setColor(hex_codes[`relic__${entity.entity.toUpperCase()}`] || "#FFFFFF")
       .setTimestamp();
 
