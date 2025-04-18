@@ -35,7 +35,7 @@ export default {
         return range(parseInt(p.stock) + p.box) == entity.entity.toUpperCase();
       })
       .sort((a, b) => (a.stock + a.box) - (b.stock + b.box))
-      .map(item => `${`[${item.stock + item.box}]`.padEnd(5)}│ ${item.item}`);
+      .map(item => `${`[${item.stock + item.box}]`.padEnd(5)}│ ${item.item} ${item.x2 ? "X2" : ""}`);
 
     const baseEmbed = new EmbedBuilder()
       .setTitle(`[ ${entity.entity.toUpperCase()}${relicFilter ? ` - ${relicFilter.toUpperCase()}` : ''} ]`)
