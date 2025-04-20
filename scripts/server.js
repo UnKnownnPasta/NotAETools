@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import expressStatusMonitor from 'express-status-monitor';
 import { fetchData } from '../src/services/googleSheets.js';
 import { updateFissures } from './fissures.js';
+import { getMerged } from '../src/managers/stored/getMerged.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,6 +17,9 @@ app.use(expressStatusMonitor());
 
 // Middleware to parse JSON
 app.use(express.json());
+
+// Middleware to serve static files
+app.use(express.static(__dirname));
 
 // Route to force an update
 app.get('/forceupdate', async (req, res) => {
@@ -87,6 +91,22 @@ app.get('/fissure', async (request, res) => {
       console.error("Error updating fissures:", error);
       res.status(500).send('500 Internal Server Error');
     }
+})
+
+// Website endpoint
+app.get('/explorer', (req, res) => {
+    const filePath = path.join(__dirname, 'explorer.html');
+    fs.readFile(filePath, (err, data) => {
+        if (err) {
+            res.status(500).send('500 Internal Server Error');
+        } else {
+            res.status(200).contentType('text/html').send(data);
+        }
+    });
+});
+
+app.get('/api/explorer', async (req, res) => {
+    res.json(await getMerged());
 })
 
 // Start the server

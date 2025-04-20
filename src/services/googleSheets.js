@@ -196,7 +196,7 @@ function processRelics(relicRewards, stockValues, tokenValues, htmlText) {
 									item: `${rewardName}`,
 									x2: dualitemslist.includes(rewardName),
 									stock: stock || (rewardName.includes("Forma") ? null : 0),
-									color: range(parseInt(stock) || 0),
+									color: (rewardName.includes("Forma") ? 'GREEN' : range(parseInt(stock) || 0)),
 									rarity: parseFloat(reward.value),
 									relicFrom: trueName,
 							})
