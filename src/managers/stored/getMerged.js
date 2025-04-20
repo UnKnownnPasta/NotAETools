@@ -1,4 +1,5 @@
 // Load relicsdb.json, load boxCacheManager's sstored box amounts, and add the box amount to all parts in relicsdb.json
+import { range } from '../../services/utils.js';
 import boxCacheManager from '../boxCacheManager.js';
 import relicCacheManager from '../relicCacheManager.js';
 
@@ -17,6 +18,7 @@ export async function getMerged() {
     for (const part of relic.rewards) {
       if (boxObject[part.item]) {
         part.stock += boxObject[part.item];
+        part.color = range(part.stock);
       }
     }
   }

@@ -587,7 +587,7 @@
     <ul class="nav-links">
       <li><a href="#" class="active">Relics & Primes Explorer</a></li>
       <li class="theme-switch">
-        <label>Theme:</label>
+        <label>Dark Mode:</label>
         <label class="theme-toggle">
           <input type="checkbox" id="themeToggle">
           <span class="slider"></span>
@@ -623,7 +623,7 @@
       </div>
       
       <div class="filter-group">
-        <label for="x2Filter">x2 Status</label>
+        <label for="x2Filter">x2 Items</label>
         <select id="x2Filter">
           <option value="all">All Items</option>
           <option value="true">Has an x2 item</option>
@@ -634,10 +634,11 @@
       <div class="filter-group">
         <label>Token Filter (Relics only)</label>
         <div class="token-options">
-          <button class="token-preset" data-value="1">1+</button>
-          <button class="token-preset" data-value="3">3+</button>
-          <button class="token-preset" data-value="5">5+</button>
-          <button class="token-preset" data-value="7">7+</button>
+          <button class="token-preset" data-value="10">10+</button>
+          <button class="token-preset" data-value="12">12+</button>
+          <button class="token-preset" data-value="18">18+</button>
+          <button class="token-preset" data-value="24">24+</button>
+          <button class="token-preset" data-value="30">30+</button>
           <button class="token-preset" data-value="0">Clear</button>
         </div>
         <div class="token-input">
@@ -650,15 +651,15 @@
         <div class="color-filter filter-item">
           <div class="color-filter-header">
             <span class="color-indicator color-ed"></span>
-            <label>ED (Purple)</label>
+            <label>ED</label>
             <input type="number" id="edMinFilter" placeholder="Min" min="0" max="10" class="small-input">
           </div>
           <div class="rarity-checkboxes">
             <label class="rarity-checkbox">
-              <input type="checkbox" class="rarity-filter" data-color="ed" data-rarity="25.33"> UNCOMMON
+              <input type="checkbox" class="rarity-filter" data-color="ed" data-rarity="25.33"> COMMON
             </label>
             <label class="rarity-checkbox">
-              <input type="checkbox" class="rarity-filter" data-color="ed" data-rarity="11"> COMMON
+              <input type="checkbox" class="rarity-filter" data-color="ed" data-rarity="11"> UNCOMMON
             </label>
             <label class="rarity-checkbox">
               <input type="checkbox" class="rarity-filter" data-color="ed" data-rarity="2"> RARE
@@ -674,10 +675,10 @@
           </div>
           <div class="rarity-checkboxes">
             <label class="rarity-checkbox">
-              <input type="checkbox" class="rarity-filter" data-color="red" data-rarity="25.33"> UNCOMMON
+              <input type="checkbox" class="rarity-filter" data-color="red" data-rarity="25.33"> COMMON
             </label>
             <label class="rarity-checkbox">
-              <input type="checkbox" class="rarity-filter" data-color="red" data-rarity="11"> COMMON
+              <input type="checkbox" class="rarity-filter" data-color="red" data-rarity="11"> UNCOMMON
             </label>
             <label class="rarity-checkbox">
               <input type="checkbox" class="rarity-filter" data-color="red" data-rarity="2"> RARE
@@ -693,10 +694,10 @@
           </div>
           <div class="rarity-checkboxes">
             <label class="rarity-checkbox">
-              <input type="checkbox" class="rarity-filter" data-color="orange" data-rarity="25.33"> UNCOMMON
+              <input type="checkbox" class="rarity-filter" data-color="orange" data-rarity="25.33"> COMMON
             </label>
             <label class="rarity-checkbox">
-              <input type="checkbox" class="rarity-filter" data-color="orange" data-rarity="11"> COMMON
+              <input type="checkbox" class="rarity-filter" data-color="orange" data-rarity="11"> UNCOMMON
             </label>
             <label class="rarity-checkbox">
               <input type="checkbox" class="rarity-filter" data-color="orange" data-rarity="2"> RARE
@@ -712,10 +713,10 @@
           </div>
           <div class="rarity-checkboxes">
             <label class="rarity-checkbox">
-              <input type="checkbox" class="rarity-filter" data-color="yellow" data-rarity="25.33"> UNCOMMON
+              <input type="checkbox" class="rarity-filter" data-color="yellow" data-rarity="25.33"> COMMON
             </label>
             <label class="rarity-checkbox">
-              <input type="checkbox" class="rarity-filter" data-color="yellow" data-rarity="11"> COMMON
+              <input type="checkbox" class="rarity-filter" data-color="yellow" data-rarity="11"> UNCOMMON
             </label>
             <label class="rarity-checkbox">
               <input type="checkbox" class="rarity-filter" data-color="yellow" data-rarity="2"> RARE
@@ -731,10 +732,10 @@
           </div>
           <div class="rarity-checkboxes">
             <label class="rarity-checkbox">
-              <input type="checkbox" class="rarity-filter" data-color="green" data-rarity="25.33"> UNCOMMON
+              <input type="checkbox" class="rarity-filter" data-color="green" data-rarity="25.33"> COMMON
             </label>
             <label class="rarity-checkbox">
-              <input type="checkbox" class="rarity-filter" data-color="green" data-rarity="11"> COMMON
+              <input type="checkbox" class="rarity-filter" data-color="green" data-rarity="11"> UNCOMMON
             </label>
             <label class="rarity-checkbox">
               <input type="checkbox" class="rarity-filter" data-color="green" data-rarity="2"> RARE

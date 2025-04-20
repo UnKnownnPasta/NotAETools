@@ -448,8 +448,8 @@ function init(data) {
 	// Convert rarity value to name
 	function getRarityName(rarity) {
 		if (rarity === 2) return "RARE";
-		if (rarity === 11) return "COMMON";
-		if (rarity === 25.33) return "UNCOMMON";
+		if (rarity === 11) return "UNCOMMON";
+		if (rarity === 25.33) return "COMMON";
 		return rarity;
 	}
 
