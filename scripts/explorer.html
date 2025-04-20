@@ -420,11 +420,13 @@
       transition: all 0.3s;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
       border-left: 4px solid var(--accent);
+      z-index: 12;
     }
     
     .item:hover {
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
       transform: translateY(-3px);
+      z-index: 15;
     }
     
     .item h4 {
@@ -475,7 +477,7 @@
       padding: 15px;
       width: 250px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-      z-index: 1000; /* Very high z-index to ensure it's on top */
+      z-index: 20;
       color: var(--text-primary);
       transition: background-color 0.3s ease, color 0.3s ease;
       max-height: 300px; /* Default max height */
@@ -509,7 +511,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 2000;
+      z-index: 10;
     }
     
     .loading-spinner {
@@ -766,9 +768,9 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-links">
-      <a href="#">DM The bot</a>
+      <a target="_blank" rel="noopener noreferrer" href="https://discord.com/channels/@me/1180450390475550780">DM The bot</a>
       <span>•</span>
-      <a href="#">Source</a>
+      <a target="_blank" rel="noopener noreferrer" href="https://github.com/UnKnownnPasta/NotAETools">Source</a>
     </div>
   </footer>
 
