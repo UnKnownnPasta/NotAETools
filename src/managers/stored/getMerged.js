@@ -26,7 +26,7 @@ export async function getMerged() {
   // add for primes
   for (const prime of relicObject.primes) {
     if (boxObject[prime.item]) {
-      part.stock = (part.stock || 0) + (boxObject[part.item] || 0);
+      prime.stock = (prime.stock || 0) + (boxObject[prime.item] || 0);
       prime.color = range(prime.stock);
     }
   }
