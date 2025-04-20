@@ -9,6 +9,7 @@ function init(data) {
 	const totalCountEl = document.getElementById("totalCount");
 	const currentPageEl = document.getElementById("currentPage");
 	const totalPagesEl = document.getElementById("totalPages");
+	const resetButton = document.getElementById("resetButton");
 	const prevButton = document.getElementById("prevButton");
 	const nextButton = document.getElementById("nextButton");
 	const tokenFilter = document.getElementById("tokenFilter");
@@ -63,12 +64,6 @@ function init(data) {
 		if (colorLower === "yellow") return "text-yellow";
 		if (colorLower === "green") return "text-green";
 		return "";
-	}
-
-	// Count rewards by color in a relic
-	function countRewardsByColor(rewards, color) {
-		return rewards.filter((r) => r.color.toLowerCase() === color.toLowerCase())
-			.length;
 	}
 
 	// Check if a relic has any x2 rewards
@@ -171,185 +166,62 @@ function init(data) {
 
 			// Color filters with rarity (only for relics)
 			if (item._kind === "relics") {
-				// ED filter
-				if (fEdMin > 0) {
-					const edRewards = item.rewards.filter(
-						(r) =>
-							r.color.toLowerCase() === "ed" && matchesRarityFilter(r, "ed")
+				const colorFilters = {
+					ed: fEdMin,
+					red: fRedMin,
+					orange: fOrangeMin,
+					yellow: fYellowMin,
+					green: fGreenMin
+				};
+				
+				for (const [color, min] of Object.entries(colorFilters)) {
+					const selectedRarities = getSelectedRarities(color);
+					const matchingRewardsRarity = item.rewards.filter(
+						r => r.color.toLowerCase() === color && matchesRarityFilter(r, color)
 					);
-					if (edRewards.length < fEdMin) return false;
-				} else {
-					// Check if any ED rewards should be filtered by rarity
-					const selectedEdRarities = getSelectedRarities("ed");
-					if (selectedEdRarities.length > 0) {
-						const hasMatchingEdReward = item.rewards.some(
-							(r) =>
-								r.color.toLowerCase() === "ed" && matchesRarityFilter(r, "ed")
-						);
-						if (!hasMatchingEdReward) return false;
-					}
-				}
 
-				// RED filter
-				if (fRedMin > 0) {
-					const redRewards = item.rewards.filter(
-						(r) =>
-							r.color.toLowerCase() === "red" && matchesRarityFilter(r, "red")
+					const matchingRewards = item.rewards.filter(
+						r => r.color.toLowerCase() === color
 					);
-					if (redRewards.length < fRedMin) return false;
-				} else {
-					// Check if any RED rewards should be filtered by rarity
-					const selectedRedRarities = getSelectedRarities("red");
-					if (selectedRedRarities.length > 0) {
-						const hasMatchingRedReward = item.rewards.some(
-							(r) =>
-								r.color.toLowerCase() === "red" && matchesRarityFilter(r, "red")
-						);
-						if (!hasMatchingRedReward) return false;
-					}
-				}
 
-				// ORANGE filter
-				if (fOrangeMin > 0) {
-					const orangeRewards = item.rewards.filter(
-						(r) =>
-							r.color.toLowerCase() === "orange" &&
-							matchesRarityFilter(r, "orange")
-					);
-					if (orangeRewards.length < fOrangeMin) return false;
-				} else {
-					// Check if any ORANGE rewards should be filtered by rarity
-					const selectedOrangeRarities = getSelectedRarities("orange");
-					if (selectedOrangeRarities.length > 0) {
-						const hasMatchingOrangeReward = item.rewards.some(
-							(r) =>
-								r.color.toLowerCase() === "orange" &&
-								matchesRarityFilter(r, "orange")
-						);
-						if (!hasMatchingOrangeReward) return false;
+					if (min > 0) {
+						if (matchingRewards.length < min) return false;
+					} 
+					if (selectedRarities.length > 0) {
+						if (matchingRewardsRarity.length === 0) return false;
 					}
-				}
-
-				// YELLOW filter
-				if (fYellowMin > 0) {
-					const yellowRewards = item.rewards.filter(
-						(r) =>
-							r.color.toLowerCase() === "yellow" &&
-							matchesRarityFilter(r, "yellow")
-					);
-					if (yellowRewards.length < fYellowMin) return false;
-				} else {
-					// Check if any YELLOW rewards should be filtered by rarity
-					const selectedYellowRarities = getSelectedRarities("yellow");
-					if (selectedYellowRarities.length > 0) {
-						const hasMatchingYellowReward = item.rewards.some(
-							(r) =>
-								r.color.toLowerCase() === "yellow" &&
-								matchesRarityFilter(r, "yellow")
-						);
-						if (!hasMatchingYellowReward) return false;
-					}
-				}
-
-				// GREEN filter
-				if (fGreenMin > 0) {
-					const greenRewards = item.rewards.filter(
-						(r) =>
-							r.color.toLowerCase() === "green" &&
-							matchesRarityFilter(r, "green")
-					);
-					if (greenRewards.length < fGreenMin) return false;
-				} else {
-					// Check if any GREEN rewards should be filtered by rarity
-					const selectedGreenRarities = getSelectedRarities("green");
-					if (selectedGreenRarities.length > 0) {
-						const hasMatchingGreenReward = item.rewards.some(
-							(r) =>
-								r.color.toLowerCase() === "green" &&
-								matchesRarityFilter(r, "green")
-						);
-						if (!hasMatchingGreenReward) return false;
-					}
-				}
+				}				
 			}
 
 			// Color filters for primes
 			if (item._kind === "primes") {
 				const color = item.color.toLowerCase();
 
-				// Check if the prime item matches any color filter with rarity
-				if (color === "ed") {
-					const selectedRarities = getSelectedRarities("ed");
-					if (
-						selectedRarities.length > 0 &&
-						!selectedRarities.includes(item.rarity)
-					) {
-						return false;
-					}
-					if (fEdMin > 0) return true;
-				}
-
-				if (color === "red") {
-					const selectedRarities = getSelectedRarities("red");
-					if (
-						selectedRarities.length > 0 &&
-						!selectedRarities.includes(item.rarity)
-					) {
-						return false;
-					}
-					if (fRedMin > 0) return true;
-				}
-
-				if (color === "orange") {
-					const selectedRarities = getSelectedRarities("orange");
-					if (
-						selectedRarities.length > 0 &&
-						!selectedRarities.includes(item.rarity)
-					) {
-						return false;
-					}
-					if (fOrangeMin > 0) return true;
-				}
-
-				if (color === "yellow") {
-					const selectedRarities = getSelectedRarities("yellow");
-					if (
-						selectedRarities.length > 0 &&
-						!selectedRarities.includes(item.rarity)
-					) {
-						return false;
-					}
-					if (fYellowMin > 0) return true;
-				}
-
-				if (color === "green") {
-					const selectedRarities = getSelectedRarities("green");
-					if (
-						selectedRarities.length > 0 &&
-						!selectedRarities.includes(item.rarity)
-					) {
-						return false;
-					}
-					if (fGreenMin > 0) return true;
-				}
-
-				// If any color filter is active, filter out items that don't match
-				if (
-					(fEdMin > 0 ||
-						fRedMin > 0 ||
-						fOrangeMin > 0 ||
-						fYellowMin > 0 ||
-						fGreenMin > 0) &&
-					!(
-						color === "ed" ||
-						color === "red" ||
-						color === "orange" ||
-						color === "yellow" ||
-						color === "green"
-					)
-				) {
+				const minFilters = {
+					ed: fEdMin,
+					red: fRedMin,
+					orange: fOrangeMin,
+					yellow: fYellowMin,
+					green: fGreenMin
+				};
+				
+				// If any filter is active, and the item's color is not in the filtered set, reject it
+				const anyFilterActive = Object.values(minFilters).some(val => val > 0);
+				if (anyFilterActive && !(color in minFilters)) {
 					return false;
 				}
+				
+				// If the item's color has an active filter, check rarity match
+				if (color in minFilters && minFilters[color] > 0) {
+					const selectedRarities = getSelectedRarities(color);
+					if (selectedRarities.length > 0 && !selectedRarities.includes(item.rarity)) {
+						return false;
+					}
+					return true;
+				}
+				
+				// If no filters, or color has no min filter, let it through
+				return !anyFilterActive;				
 			}
 
 			return true;
@@ -402,7 +274,7 @@ function init(data) {
             <p><span>Rarity:</span> <span>${getRarityName(
 							item.rarity
 						)}</span></p>
-            <p><span>From:</span> <span>${
+            <p><span>From:</span> <span style="overflow-y: auto; max-height: 120px; padding-left: 10px">${
 							Array.isArray(item.relicFrom)
 								? item.relicFrom.join(", ")
 								: item.relicFrom
@@ -510,6 +382,21 @@ function init(data) {
 		}
 	}
 
+	function resetColorFilters() {
+		// Reset min values
+		filters.edMin.value = 0;
+		filters.redMin.value = 0;
+		filters.orangeMin.value = 0;
+		filters.yellowMin.value = 0;
+		filters.greenMin.value = 0;
+	
+		// Uncheck all rarity checkboxes
+		filters.rarityFilters.forEach(cb => cb.checked = false);
+	
+		// Re-apply filter
+		filterItems();
+	}
+
 	// Load data with simulated delay
 	function loadData() {
 		loadingOverlay.style.display = "flex";
@@ -522,7 +409,7 @@ function init(data) {
 			loadingOverlay.style.display = "none";
 
 			filterItems();
-		}, 1000);
+		}, 100);
 	}
 
 	// Event listeners
@@ -553,6 +440,9 @@ function init(data) {
 			setTokenFilter(button.dataset.value);
 		});
 	});
+
+	// Reset button
+	resetButton.addEventListener("click", resetColorFilters);
 
 	// Add event listeners to filters
 	Object.values(filters).forEach((f) => {

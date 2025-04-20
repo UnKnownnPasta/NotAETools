@@ -34,6 +34,7 @@
     
     /* Dark mode colors */
     [data-theme="dark"] {
+      color-scheme: dark;
       --primary: #f44336;
       --primary-dark: #d32f2f;
       --primary-light: #ef9a9a;
@@ -183,7 +184,7 @@
     .main-content {
       flex: 1;
       padding: 2rem;
-      max-width: 1400px;
+      max-width: 2000px;
       margin: 0 auto;
       width: 100%;
     }
@@ -193,7 +194,9 @@
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+      justify-content: center;
       background-color: var(--card-bg);
+      align-items: center;
       padding: 1.5rem;
       border-radius: 8px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
@@ -249,10 +252,12 @@
     }
 
 		.filter-item {
-			/* thing right side border*/
 			border-right: 1px solid var(--border);
 			padding-right: 1rem;
 		}
+    .filter-item:nth-last-child(1) {
+      border-right: none;
+    }
     
     .color-indicator {
       width: 15px;
@@ -303,6 +308,10 @@
       padding-top: 1rem;
       border-top: 1px solid var(--border);
     }
+
+    #tokenFilter {
+      width: 40%;
+    }
     
     .token-options {
       display: flex;
@@ -348,9 +357,28 @@
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
+
+    .reset-button {
+      background-color: var(--accent);
+      color: var(--text-on-dark);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      transition: background-color 0.3s ease;
+    }
+
+    .reset-button:hover {
+      background-color: var(--accent-dark);
+    }
     
     .results-count {
-      font-weight: 500;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
       color: var(--text-primary);
     }
     
@@ -417,6 +445,7 @@
       background-color: var(--card-bg);
       border-radius: 8px;
       padding: 1.5rem;
+      max-height: 350px;
       position: relative;
       transition: all 0.3s;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
@@ -754,7 +783,8 @@
     <!-- Results counter and navigation -->
     <div id="resultsHeader" class="results-header" style="display: none;">
       <div class="results-count">
-        Showing <span id="currentCount">0</span> of <span id="totalCount">0</span> results
+        <div>Showing <span id="currentCount">0</span> of <span id="totalCount">0</span> results</div>
+        <button id="resetButton" class="reset-button">Reset Filters</button>
       </div>
       <div class="results-navigation">
         <button id="prevButton" class="nav-button" disabled>Previous</button>
