@@ -20,7 +20,7 @@ app.use(expressStatusMonitor());
 app.use(express.json());
 // Middleware to serve static files
 app.use(express.static(__dirname));
-
+app.set('trust proxy', true);
 
 const baseLimitter = {
     windowMs: 10 * 60 * 1000,
