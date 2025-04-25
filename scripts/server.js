@@ -20,7 +20,6 @@ app.use(expressStatusMonitor());
 app.use(express.json());
 // Middleware to serve static files
 app.use(express.static(__dirname));
-app.set('trust proxy', true);
 
 const baseLimitter = {
     windowMs: 10 * 60 * 1000,
@@ -100,7 +99,7 @@ app.get('/blob/*', blobLimiter, (req, res) => {
 });
 
 // Endpoint for fissure updating
-app.get('/fissure', apiLimiter, async (request, res) => {
+app.get('/fissure', async (request, res) => {
     const authHeader = (request.headers["X-Source-Job"] || request.headers["x-source-job"]);
     
     if (!authHeader || authHeader !== process.env.EXPECTED_AUTH_TOKEN) {
