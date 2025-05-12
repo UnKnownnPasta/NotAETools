@@ -50,8 +50,10 @@ AETools is a comprehensive Discord bot and web application designed for Warframe
 - Relic Soup: `/soup` or `/resoup`
 
 ### Web Interface
-- Visit `http://localhost:8080` for the about page
-- Visit `http://localhost:8080/explorer` for the relic explorer
+- Visit `http://aetools.koyeb.app` for the about page
+- Visit `http://aetools.koyeb.app/explorer` for the relic explorer
+- Visit `http://aetools.koyeb.app/tutorial` for the tutorial
+
 ## Technical Architecture
 
 ### Project Structure
@@ -139,20 +141,20 @@ project-root/
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the AGPL-3.0 License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
 - Inspired by [Zlushiie](https://github.com/Zlushiie)
-- Built for the Warframe community
-- Special thanks to all contributors
+- Built for a Warframe community
+- Special thanks to all contributors (me and me and testers)
 
 ## Support
 
 For support, please:
 1. Check the [documentation](https://github.com/UnKnownnPasta/NotAETools/tree/V2#readme)
 2. Open an [issue](https://github.com/UnKnownnPasta/NotAETools/issues)
-3. Contact the maintainers
+3. Contact the maintainers (me)
 
 ## Status
 
