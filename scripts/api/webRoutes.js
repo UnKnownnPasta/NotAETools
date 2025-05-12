@@ -56,6 +56,18 @@ router.get('/explorer', globalLimiter, (req, res) => {
     });
 });
 
+// Serve tutorial.html file
+router.get('/tutorial', globalLimiter, (req, res) => {
+    const filePath = path.join(__dirname, '..', '..', 'src', 'web', 'views', 'tutorial.html');
+    fs.readFile(filePath, (err, data) => {
+        if (err) {
+            res.status(500).send('500 Internal Server Error');
+        } else {
+            res.status(200).contentType('text/html').send(data);
+        }
+    });
+});
+
 // Serve static files from the /blob/ directory
 router.get('/blob/*', blobLimiter, (req, res) => {
     const filePath = path.join(__dirname, '..', '..', req.path);
