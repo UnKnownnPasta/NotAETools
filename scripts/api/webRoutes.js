@@ -12,6 +12,9 @@ const router = express.Router();
 const baseLimitter = {
     windowMs: 10 * 60 * 1000,
     max: 100,
+    keyGenerator: (req) => {
+        return req.headers['user-agent'] || 'anonymous';
+    },
     handler: (req, res, next, options) => {
       res.status(options.statusCode).json({ error: 'Rate limit exceeded' });
       next();
