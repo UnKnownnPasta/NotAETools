@@ -4,7 +4,7 @@
   <img src="./blob/logo.png" width="250" alt="AETools Logo" />
   
   ![Built With Discord](https://img.shields.io/badge/created_with-discord.js_v14-blue)
-  ![License](https://img.shields.io/badge/license-MIT-green)
+  ![License](https://img.shields.io/badge/license-AGPL3.0-green)
   ![Status Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Faetools.koyeb.app%2Fapi%2Fheartbeat)
 </div>
 
