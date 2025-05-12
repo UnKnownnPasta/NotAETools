@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AETools | Tutorial</title>
+    <link rel="shortcut icon" href="/public/images/icon.png" type="image/x-icon">
+    <link rel="stylesheet" href="/public/css/tutorial.css" type="text/css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="/blob/logo.png" width="250" alt="AETools Logo" width="40">
+            </div>
+            <nav>
+                <a href="/">About</a>
+                <a href="/explorer">Explorer</a>
+                <a href="/tutorial" class="active">Tutorial</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="demo-container">
+                <div class="demo-sidebar">
+                    <h2>Commands</h2>
+                    <div class="command-list">
+                        <button class="command-btn" data-command="relic">Relic Viewing</button>
+                        <button class="command-btn" data-command="squad">Squad Hosting</button>
+                        <button class="command-btn" data-command="soup">Relic Soup</button>
+                        <button class="command-btn" data-command="prime">Prime Sets</button>
+                        <button class="command-btn" data-command="resource">Clan Resources</button>
+                    </div>
+                </div>
+
+                <div class="demo-content">
+                    <div class="discord-mock">
+                        <div class="chat-container">
+                            <div class="message user">
+                                <img src="/public/images/user-avatar.png" alt="User Avatar" width="40">
+                                <div class="message-content">
+                                    <div class="message-header">
+                                        <span class="username">User</span>
+                                        <span class="timestamp">Today at 12:00</span>
+                                    </div>
+                                    <div class="message-text">Click a command to see how it works!</div>
+                                </div>
+                            </div>
+                            <div id="bot-response" class="message bot">
+                                <img src="/public/images/bot-avatar.png" alt="Bot Avatar" width="40">
+                                <div class="message-content">
+                                    <div class="message-header">
+                                        <span class="username">AETools</span>
+                                        <span class="timestamp">Today at 12:00</span>
+                                    </div>
+                                    <div class="message-text">...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script>
+        // Demo responses for each command
+        const responses = {
+            relic: `
+                <div class="message user">
+                    <img src="/public/images/user-avatar.png" alt="User Avatar" width="40">
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="username">User</span>
+                            <span class="timestamp">Today at 12:01</span>
+                        </div>
+                        <div class="message-text">++Axi L6</div>
+                    </div>
+                </div>
+                <div class="message bot">
+                    <img src="/public/images/bot-avatar.png" alt="Bot Avatar" width="40">
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="username">AETools</span>
+                            <span class="timestamp">Today at 12:01</span>
+                        </div>
+                        <div class="message-text">
+                            <strong>Axi L6</strong> Relic<br>
+                            <ul>
+                                <li>Vauban Prime Blueprint (RARE) {15}</li>
+                                <li>Akstiletto Prime Link (UNCOMMON) {45}</li>
+                                <li>Forma Blueprint (COMMON) {60}</li>
+                                <li>...and more</li>
+                            </ul>
+                            <span class="note">C/UC/RA = Common/Uncommon/Rare, {n} = token value</span>
+                        </div>
+                    </div>
+                </div>
+            `,
+            squad: `
+                <div class="message user">
+                    <img src="/public/images/user-avatar.png" alt="User Avatar" width="40">
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="username">User</span>
+                            <span class="timestamp">Today at 12:02</span>
+                        </div>
+                        <div class="message-text">/thost count:6 relic:Axi L6</div>
+                    </div>
+                </div>
+                <div class="message bot">
+                    <img src="/public/images/bot-avatar.png" alt="Bot Avatar" width="40">
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="username">AETools</span>
+                            <span class="timestamp">Today at 12:02</span>
+                        </div>
+                        <div class="message-text">
+                            Squad created for <strong>6x Axi L6</strong>!<br>
+                            Waiting for 3 more members to join...
+                        </div>
+                    </div>
+                </div>
+            `,
+            soup: `
+                <div class="message user">
+                    <img src="/public/images/user-avatar.png" alt="User Avatar" width="40">
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="username">User</span>
+                            <span class="timestamp">Today at 12:03</span>
+                        </div>
+                        <div class="message-text">/soup relics:6lg1 3al6</div>
+                    </div>
+                </div>
+                <div class="message bot">
+                    <img src="/public/images/bot-avatar.png" alt="Bot Avatar" width="40">
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="username">AETools</span>
+                            <span class="timestamp">Today at 12:03</span>
+                        </div>
+                        <div class="message-text">
+                            <strong>Soup Result:</strong><br>
+                            6x Lith G1: [ED: 2, RED: 1, ORANGE: 3]<br>
+                            3x Axi L6: [ED: 1, RED: 2, ORANGE: 0]
+                        </div>
+                    </div>
+                </div>
+            `,
+            prime: `
+                <div class="message user">
+                    <img src="/public/images/user-avatar.png" alt="User Avatar" width="40">
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="username">User</span>
+                            <span class="timestamp">Today at 12:04</span>
+                        </div>
+                        <div class="message-text">++vauban prime</div>
+                    </div>
+                </div>
+                <div class="message bot">
+                    <img src="/public/images/bot-avatar.png" alt="Bot Avatar" width="40">
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="username">AETools</span>
+                            <span class="timestamp">Today at 12:04</span>
+                        </div>
+                        <div class="message-text">
+                            <strong>Vauban Prime</strong> Stock:<br>
+                            Neuroptics: 3<br>
+                            Chassis: 2<br>
+                            Systems: 1<br>
+                            Blueprint: 4
+                        </div>
+                    </div>
+                </div>
+            `,
+            resource: `
+                <div class="message user">
+                    <img src="/public/images/user-avatar.png" alt="User Avatar" width="40">
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="username">User</span>
+                            <span class="timestamp">Today at 12:05</span>
+                        </div>
+                        <div class="message-text">/resource resource:Hexenon</div>
+                    </div>
+                </div>
+                <div class="message bot">
+                    <img src="/public/images/bot-avatar.png" alt="Bot Avatar" width="40">
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="username">AETools</span>
+                            <span class="timestamp">Today at 12:05</span>
+                        </div>
+                        <div class="message-text">
+                            <strong>Clan Resource: Hexenon</strong><br>
+                            Current Stock: 120<br>
+                            Status: <span style="color:green;">Sufficient</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        };
+
+        // Handle command button clicks
+        document.querySelectorAll('.command-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const command = this.getAttribute('data-command');
+                document.querySelector('.chat-container').innerHTML = responses[command];
+            });
+        });
+    </script>
+</body>
+</html>

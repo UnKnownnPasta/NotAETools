@@ -1,0 +1,130 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #181a20;
+    color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+.logo-container img {
+    background: #222;
+    border-radius: 10px;
+    padding: 0.5rem;
+}
+nav a {
+    color: #fff;
+    text-decoration: none;
+    /* margin: 0 1rem; */
+    font-weight: 500;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+nav a.active, nav a:hover {
+    background: #7e57c2;
+}
+.intro {
+    margin-bottom: 2rem;
+}
+.demo-container {
+    display: flex;
+    gap: 2rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.demo-sidebar {
+    min-width: 180px;
+    background: #23243a;
+    border-radius: 8px;
+    padding: 1rem;
+}
+.command-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.command-btn {
+    background: #7e57c2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 0.7rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.command-btn:hover, .command-btn:focus {
+    background: #5e35b1;
+}
+.demo-content {
+    flex: 1;
+}
+.discord-mock {
+    background: #23243a;
+    border-radius: 10px;
+    padding: 1.5rem;
+    min-height: 400px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+.discord-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.server-info img {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    margin-right: 0.7rem;
+}
+.server-info span {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+.message {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+.message.user .username {
+    color: #42a5f5;
+}
+.message.bot .username {
+    color: #7e57c2;
+}
+.message-content {
+    background: #181a20;
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    min-width: 200px;
+    max-width: 500px;
+}
+.message-header {
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+}
+.message-text {
+    font-size: 1.05rem;
+}
+.note {
+    display: block;
+    margin-top: 0.5rem;
+    color: #b39ddb;
+    font-size: 0.95rem;
+}

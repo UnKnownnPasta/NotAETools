@@ -602,3 +602,40 @@ input:checked + .slider:before {
     align-items: flex-start;
   }
 }
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  background: #222;
+  padding-right: 2rem;
+  padding-bottom: 0.5rem;
+}
+
+.logo-container img {
+  border-radius: 10px;
+  padding: 0.5rem;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 1rem;
+  font-weight: 500;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+nav a.active, nav a:hover {
+  background: #7e57c2;
+}
+
+@media (max-width: 768px) {
+  header {
+      flex-direction: column;
+      text-align: center;
+      gap: 1rem;
+  }
+}
