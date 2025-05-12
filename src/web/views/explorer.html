@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="shortcut icon" href="/public/images/icon.png" type="image/x-icon">
+  <title>AETools | Explorer</title>
+  <link rel="stylesheet" href="/public/css/explorer.css" type="text/css">
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <ul class="nav-links">
+      <li><a href="#" class="active">Relics & Primes Explorer</a></li>
+      <li class="theme-switch">
+        <label>Dark Mode:</label>
+        <label class="theme-toggle">
+          <input type="checkbox" id="themeToggle">
+          <span class="slider"></span>
+        </label>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="filters">
+      <div class="filter-group">
+        <label for="typeFilter">Type</label>
+        <select id="typeFilter">
+          <option value="all">Relics & Primes</option>
+          <option value="relics">Relics Only</option>
+          <option value="primes">Primes Only</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label for="vaultedFilter">Vault Status</label>
+        <select id="vaultedFilter">
+          <option value="all">All Vault Status</option>
+          <option value="true">Vaulted</option>
+          <option value="false">Unvaulted</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label for="nameSearch">Search</label>
+        <input type="text" id="nameSearch" placeholder="Search name...">
+      </div>
+      
+      <div class="filter-group">
+        <label for="x2Filter">x2 Items</label>
+        <select id="x2Filter">
+          <option value="all">All Items</option>
+          <option value="true">Has an x2 item</option>
+          <option value="false">No x2 items</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label>Token Filter (Relics only)</label>
+        <div class="token-options">
+          <button class="token-preset" data-value="10">10+</button>
+          <button class="token-preset" data-value="12">12+</button>
+          <button class="token-preset" data-value="18">18+</button>
+          <button class="token-preset" data-value="24">24+</button>
+          <button class="token-preset" data-value="30">30+</button>
+          <button class="token-preset" data-value="0">Clear</button>
+        </div>
+        <div class="token-input">
+          <label>Custom:</label>
+          <input type="number" id="tokenFilter" min="0" placeholder="Min tokens">
+        </div>
+      </div>
+      
+      <div class="color-filters">
+        <div class="color-filter filter-item">
+          <div class="color-filter-header">
+            <span class="color-indicator color-ed"></span>
+            <label>ED</label>
+            <input type="number" id="edMinFilter" placeholder="Min" min="0" max="10" class="small-input">
+          </div>
+          <div class="rarity-checkboxes">
+            <label class="rarity-checkbox">
+              <input type="checkbox" class="rarity-filter" data-color="ed" data-rarity="25.33"> COMMON
+            </label>
+            <label class="rarity-checkbox">
+              <input type="checkbox" class="rarity-filter" data-color="ed" data-rarity="11"> UNCOMMON
+            </label>
+            <label class="rarity-checkbox">
+              <input type="checkbox" class="rarity-filter" data-color="ed" data-rarity="2"> RARE
+            </label>
+          </div>
+        </div>
+        
+        <div class="color-filter filter-item">
+          <div class="color-filter-header">
+            <span class="color-indicator color-red"></span>
+            <label>RED</label>
+            <input type="number" id="redMinFilter" placeholder="Min" min="0" max="10" class="small-input">
+          </div>
+          <div class="rarity-checkboxes">
+            <label class="rarity-checkbox">
+              <input type="checkbox" class="rarity-filter" data-color="red" data-rarity="25.33"> COMMON
+            </label>
+            <label class="rarity-checkbox">
+              <input type="checkbox" class="rarity-filter" data-color="red" data-rarity="11"> UNCOMMON
+            </label>
+            <label class="rarity-checkbox">
+              <input type="checkbox" class="rarity-filter" data-color="red" data-rarity="2"> RARE
+            </label>
+          </div>
+        </div>
+        
+        <div class="color-filter filter-item">
+          <div class="color-filter-header">
+            <span class="color-indicator color-orange"></span>
+            <label>ORANGE</label>
+            <input type="number" id="orangeMinFilter" placeholder="Min" min="0" max="10" class="small-input">
+          </div>
+          <div class="rarity-checkboxes">
+            <label class="rarity-checkbox">
+              <input type="checkbox" class="rarity-filter" data-color="orange" data-rarity="25.33"> COMMON
+            </label>
+            <label class="rarity-checkbox">
+              <input type="checkbox" class="rarity-filter" data-color="orange" data-rarity="11"> UNCOMMON
+            </label>
+            <label class="rarity-checkbox">
+              <input type="checkbox" class="rarity-filter" data-color="orange" data-rarity="2"> RARE
+            </label>
+          </div>
+        </div>
+        
+        <div class="color-filter filter-item">
+          <div class="color-filter-header">
+            <span class="color-indicator color-yellow"></span>
+            <label>YELLOW</label>
+            <input type="number" id="yellowMinFilter" placeholder="Min" min="0" max="10" class="small-input">
+          </div>
+          <div class="rarity-checkboxes">
+            <label class="rarity-checkbox">
+              <input type="checkbox" class="rarity-filter" data-color="yellow" data-rarity="25.33"> COMMON
+            </label>
+            <label class="rarity-checkbox">
+              <input type="checkbox" class="rarity-filter" data-color="yellow" data-rarity="11"> UNCOMMON
+            </label>
+            <label class="rarity-checkbox">
+              <input type="checkbox" class="rarity-filter" data-color="yellow" data-rarity="2"> RARE
+            </label>
+          </div>
+        </div>
+        
+        <div class="color-filter filter-item">
+          <div class="color-filter-header">
+            <span class="color-indicator color-green"></span>
+            <label>GREEN</label>
+            <input type="number" id="greenMinFilter" placeholder="Min" min="0" max="10" class="small-input">
+          </div>
+          <div class="rarity-checkboxes">
+            <label class="rarity-checkbox">
+              <input type="checkbox" class="rarity-filter" data-color="green" data-rarity="25.33"> COMMON
+            </label>
+            <label class="rarity-checkbox">
+              <input type="checkbox" class="rarity-filter" data-color="green" data-rarity="11"> UNCOMMON
+            </label>
+            <label class="rarity-checkbox">
+              <input type="checkbox" class="rarity-filter" data-color="green" data-rarity="2"> RARE
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Load Button -->
+    <button id="loadButton" class="load-button">Load Inventory Data</button>
+    
+    <!-- Results counter and navigation -->
+    <div id="resultsHeader" class="results-header" style="display: none;">
+      <div class="results-count">
+        <div>Showing <span id="currentCount">0</span> of <span id="totalCount">0</span> results</div>
+        <button id="resetButton" class="reset-button">Reset Filters</button>
+      </div>
+      <div class="results-navigation">
+        <button id="prevButton" class="nav-button" disabled>Previous</button>
+        <span class="page-indicator">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
+        <button id="nextButton" class="nav-button" disabled>Next</button>
+      </div>
+    </div>
+    
+    <div class="inventory" id="inventory"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-links">
+      <a target="_blank" rel="noopener noreferrer" href="https://discord.com/channels/@me/1180450390475550780">DM The bot</a>
+      <span>•</span>
+      <a target="_blank" rel="noopener noreferrer" href="https://github.com/UnKnownnPasta/NotAETools">Source</a>
+    </div>
+  </footer>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <script src="/public/js/explorer.js"></script>
+</body>
+</html>

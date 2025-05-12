@@ -7,7 +7,7 @@
 
 ![Built With Discord](https://img.shields.io/badge/created_with-discord.js_v14-blue) ![License](https://img.shields.io/badge/license-MIT-green) 
 
-![Status Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Faetools.koyeb.app%2Fheartbeat)
+![Status Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Faetools.koyeb.app%2Fapi%2Fheartbeat)
 
 <hr />
 
@@ -34,6 +34,13 @@ Being used since 2022, the bot has many functions which are used constantly, eve
   <a href="#part-availability">Viewing Stock</a> •
   <a href="#clan-resources">Viewing Clan Resources</a>
 </p>
+
+## Web Interface
+For a more interactive experience, visit our [Relic Explorer](https://aetools.koyeb.app/explorer) web interface. This tool provides:
+- Real-time relic data visualization
+- Interactive search and filtering
+- Detailed relic information
+- Stock tracking and status updates
 
 <br />
 

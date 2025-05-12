@@ -1,4 +1,4 @@
-import { updateFissures } from "./fissures.js"
+import { updateFissures } from "../fissures.js"
 
 export default {
   async scheduled(event, env, ctx) {
