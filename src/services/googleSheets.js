@@ -207,7 +207,7 @@ function processRelics(relicRewards, stockValues, tokenValues, htmlText) {
 							name: trueName,
 							rewards: currentRewards.sort((a, b) => orderToSortBy.indexOf(a.rarity) - orderToSortBy.indexOf(b.rarity)),
 							tokens: tokenValues[trueName],
-							vaulted: searchForDrops(htmlText, trueName),
+							vaulted: searchForDrops(htmlText, `${trueName.trim()} Relic`),
 					});
 			}
 	}
