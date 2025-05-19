@@ -2,9 +2,6 @@ function init(data) {
 	// DOM Elements
 	const inventoryEl = document.getElementById("inventory");
 	const themeToggle = document.getElementById("themeToggle");
-	const loadButton = document.getElementById("loadButton");
-	const loadingOverlay = document.getElementById("loadingOverlay");
-	const resultsHeader = document.getElementById("resultsHeader");
 	const currentCountEl = document.getElementById("currentCount");
 	const totalCountEl = document.getElementById("totalCount");
 	const currentPageEl = document.getElementById("currentPage");
@@ -30,28 +27,86 @@ function init(data) {
 		rarityFilters: document.querySelectorAll(".rarity-filter"),
 	};
 
+	function alignTimelineDots() {
+		const rail = document.querySelector('.js-timeline-rail');
+		const explorerTitle = document.querySelector('.section-explorer .ae-timeline-title-row');
+		const resultsTitle = document.querySelector('.section-results .ae-timeline-title-row');
+		const dotExplorer = document.querySelector('.dot-explorer');
+		const dotResults = document.querySelector('.dot-results');
+		const lineExplorerResults = document.querySelector('.line-explorer-results');
+		const lineResultsFooter = document.querySelector('.line-results-footer');
+		const footer = document.querySelector('.ae-footer');
+		const dotFooter = document.querySelector('.dot-footer');
+
+		if (rail && explorerTitle && resultsTitle && dotExplorer && dotResults && lineExplorerResults && lineResultsFooter && footer) {
+			// Get positions relative to the rail
+			const railRect = rail.getBoundingClientRect();
+			const explorerRect = explorerTitle.getBoundingClientRect();
+			const resultsRect = resultsTitle.getBoundingClientRect();
+			const footerRect = footer.getBoundingClientRect();
+
+			// Calculate center positions
+			const explorerCenter = explorerRect.top + explorerRect.height / 2 - railRect.top;
+			const resultsCenter = resultsRect.top + resultsRect.height / 2 - railRect.top;
+
+			// Position dots
+			dotExplorer.style.top = `${explorerCenter - 9}px`;
+			dotResults.style.top = `${resultsCenter - 9}px`;
+
+			// Position line between dots
+			lineExplorerResults.style.top = `${explorerCenter + 9}px`;
+			lineExplorerResults.style.height = `${resultsCenter - explorerCenter - 18}px`;
+
+			// Position line from results dot to footer
+			const dotBottom = resultsCenter + 9; // bottom of the dot
+			const footerTop = footerRect.top - railRect.top;
+			const lineHeight = Math.max(0, footerTop - dotBottom);
+
+			lineResultsFooter.style.top = `${dotBottom}px`;
+			lineResultsFooter.style.height = `${lineHeight - 20}px`;
+			dotFooter.style.top = `${lineHeight + dotBottom - 20}px`;
+		}
+	}
+
+	window.addEventListener('load', alignTimelineDots);
+	window.addEventListener('resize', alignTimelineDots);
+
+	// Use ResizeObserver for dynamic layout changes
+	window.__aeTimelineResizeObserver = window.__aeTimelineResizeObserver || null;
+	function setupTimelineResizeObserver() {
+		if (window.ResizeObserver && !window.__aeTimelineResizeObserver) {
+			const rail = document.querySelector('.js-timeline-rail');
+			const footer = document.querySelector('.ae-footer');
+			window.__aeTimelineResizeObserver = new ResizeObserver(alignTimelineDots);
+			if (rail) window.__aeTimelineResizeObserver.observe(rail);
+			if (footer) window.__aeTimelineResizeObserver.observe(footer);
+			window.__aeTimelineResizeObserver.observe(document.body);
+		}
+	}
+	setupTimelineResizeObserver();
+
 	// Pagination state
 	let currentPage = 1;
 	const itemsPerPage = 30;
 	let filteredItems = [];
-	let dataLoaded = false;
 
 	// Dark mode toggle
-	themeToggle.addEventListener("change", function () {
-		if (this.checked) {
+	if (themeToggle) {
+		themeToggle.addEventListener("change", function () {
+			if (this.checked) {
+				document.documentElement.setAttribute("data-theme", "dark");
+				localStorage.setItem("theme", "dark");
+			} else {
+				document.documentElement.removeAttribute("data-theme");
+				localStorage.setItem("theme", "light");
+			}
+		});
+		// Check for saved theme preference
+		const savedTheme = localStorage.getItem("theme");
+		if (savedTheme === "dark") {
 			document.documentElement.setAttribute("data-theme", "dark");
-			localStorage.setItem("theme", "dark");
-		} else {
-			document.documentElement.removeAttribute("data-theme");
-			localStorage.setItem("theme", "light");
+			themeToggle.checked = true;
 		}
-	});
-
-	// Check for saved theme preference
-	const savedTheme = localStorage.getItem("theme");
-	if (savedTheme === "dark") {
-		document.documentElement.setAttribute("data-theme", "dark");
-		themeToggle.checked = true;
 	}
 
 	// Get color class for styling
@@ -96,10 +151,39 @@ function init(data) {
 		return selectedRarities.includes(reward.rarity);
 	}
 
-	// Sanitize user input to prevent XSS
-	function sanitizeInput(input) {
+	// Enhanced sanitizeInput function to prevent XSS and limit length
+	function sanitizeInput(input, maxLength = 100) {
 		if (!input) return "";
-		return input.replace(/[<>]/g, "");
+		const div = document.createElement('div');
+		div.textContent = input;
+		return div.textContent.slice(0, maxLength);
+	}
+
+	// Sanitize HTML content
+	function sanitizeHTML(html) {
+		const div = document.createElement('div');
+		div.textContent = html;
+		return div.textContent;
+	}
+
+	// Validate numeric input with length limit
+	function validateNumericInput(value, min = 0, max = Infinity, maxLength = 10) {
+		const strValue = String(value).slice(0, maxLength);
+		const num = Number(strValue);
+		if (isNaN(num)) return min;
+		return Math.min(Math.max(num, min), max);
+	}
+
+	// Validate color input
+	function validateColor(color) {
+		const validColors = ['ed', 'red', 'orange', 'yellow', 'green'];
+		return validColors.includes(color.toLowerCase()) ? color.toLowerCase() : '';
+	}
+
+	// Validate rarity input
+	function validateRarity(rarity) {
+		const validRarities = [2, 11, 25.33];
+		return validRarities.includes(Number(rarity)) ? Number(rarity) : null;
 	}
 
 	// Update pagination UI
@@ -124,12 +208,12 @@ function init(data) {
 		const fType = filters.type.value;
 		const fVault = filters.vaultedFilter.value;
 		const fX2 = filters.x2Filter.value;
-		const fEdMin = Number(filters.edMin.value) || 0;
-		const fRedMin = Number(filters.redMin.value) || 0;
-		const fOrangeMin = Number(filters.orangeMin.value) || 0;
-		const fYellowMin = Number(filters.yellowMin.value) || 0;
-		const fGreenMin = Number(filters.greenMin.value) || 0;
-		const fToken = Number(filters.token.value) || 0;
+		const fEdMin = validateNumericInput(filters.edMin.value, 0, 10);
+		const fRedMin = validateNumericInput(filters.redMin.value, 0, 10);
+		const fOrangeMin = validateNumericInput(filters.orangeMin.value, 0, 10);
+		const fYellowMin = validateNumericInput(filters.yellowMin.value, 0, 10);
+		const fGreenMin = validateNumericInput(filters.greenMin.value, 0, 10);
+		const fToken = validateNumericInput(filters.token.value, 0);
 
 		let list = [];
 
@@ -243,11 +327,11 @@ function init(data) {
 			emptyMessage.style.textAlign = "center";
 			emptyMessage.style.padding = "3rem";
 			emptyMessage.style.color = "var(--text-secondary)";
-			emptyMessage.innerHTML = `
-          <div style="font-size: 3rem; margin-bottom: 1rem;">📦</div>
-          <h3 style="margin-bottom: 0.5rem;">No items found</h3>
-          <p>Try adjusting your filters or add some items to your inventory.</p>
-        `;
+			emptyMessage.innerHTML = sanitizeHTML(`
+				<div style="font-size: 3rem; margin-bottom: 1rem;">📦</div>
+				<h3 style="margin-bottom: 0.5rem;">No items found</h3>
+				<p>Try adjusting your filters or add some items to your inventory.</p>
+			`);
 			inventoryEl.appendChild(emptyMessage);
 			return;
 		}
@@ -263,47 +347,42 @@ function init(data) {
 
 			if (item._kind === "primes") {
 				// More compact prime item display
-				const colorClass = getColorClass(item.color);
-				card.innerHTML = `
-            <h4 class="${colorClass}">${item.item}</h4>
-            <p><span>x2:</span> <span>${item.x2 ? "Yes" : "No"}</span></p>
-            <p><span>Stock:</span> <span>${item.stock}</span></p>
-            <p><span>Color:</span> <span class="${colorClass}">${
-					item.color
-				}</span></p>
-            <p><span>Rarity:</span> <span>${getRarityName(
-							item.rarity
-						)}</span></p>
-            <p><span>From:</span> <span style="overflow-y: auto; max-height: 120px; padding-left: 10px">${
-							Array.isArray(item.relicFrom)
-								? item.relicFrom.join(", ")
-								: item.relicFrom
-						}</span></p>
-          `;
+				const colorClass = getColorClass(validateColor(item.color));
+				const itemName = sanitizeHTML(item.item);
+				const relicFrom = Array.isArray(item.relicFrom) 
+					? item.relicFrom.map(sanitizeHTML).join(", ")
+					: sanitizeHTML(item.relicFrom);
+
+				card.innerHTML = sanitizeHTML(`
+					<h4 class="${colorClass}">${itemName}</h4>
+					<p><span>x2:</span> <span>${item.x2 ? "Yes" : "No"}</span></p>
+					<p><span>Stock:</span> <span>${validateNumericInput(item.stock)}</span></p>
+					<p><span>Color:</span> <span class="${colorClass}">${validateColor(item.color)}</span></p>
+					<p><span>Rarity:</span> <span>${getRarityName(validateRarity(item.rarity))}</span></p>
+					<p><span>From:</span> <span style="overflow-y: auto; max-height: 120px; padding-left: 10px">${relicFrom}</span></p>
+				`);
 			} else {
-				card.innerHTML = `
-            <h4>${item.name}</h4>
-            <p><span>Tokens:</span> <span>${item.tokens}</span></p>
-            <p><span>Vaulted:</span> <span>${
-							item.vaulted ? "Yes" : "No"
-						}</span></p>
-            <p><span>Kind:</span> <span>Relic</span></p>
-          `;
+				const itemName = sanitizeHTML(item.name);
+				card.innerHTML = sanitizeHTML(`
+					<h4>${itemName}</h4>
+					<p><span>Tokens:</span> <span>${validateNumericInput(item.tokens)}</span></p>
+					<p><span>Vaulted:</span> <span>${item.vaulted ? "Yes" : "No"}</span></p>
+					<p><span>Kind:</span> <span>Relic</span></p>
+				`);
 
 				const tip = document.createElement("div");
 				tip.className = "tooltip";
 
 				item.rewards.forEach((r) => {
-					const colorClass = getColorClass(r.color);
+					const colorClass = getColorClass(validateColor(r.color));
+					const rewardName = sanitizeHTML(r.item);
 					const wr = document.createElement("div");
 					wr.className = "reward";
-					wr.innerHTML = `
-              <span class="${colorClass}">${r.item}</span>
-              <div>x2: ${r.x2 ? "Yes" : "No"}, stock: ${
-						r.stock
-					}, color: <span class="${colorClass}">${r.color}</span></div>
-              <div>Rarity: ${getRarityName(r.rarity)}</div>
-            `;
+					wr.innerHTML = sanitizeHTML(`
+						<span class="${colorClass}">${rewardName}</span>
+						<div>x2: ${r.x2 ? "Yes" : "No"}, stock: ${validateNumericInput(r.stock)}, color: <span class="${colorClass}">${validateColor(r.color)}</span></div>
+						<div>Rarity: ${getRarityName(validateRarity(r.rarity))}</div>
+					`);
 					tip.appendChild(wr);
 				});
 
@@ -315,6 +394,7 @@ function init(data) {
 
 		// Position tooltips properly
 		positionTooltips();
+		alignTimelineDots();
 	}
 
 	// Convert rarity value to name
@@ -377,9 +457,7 @@ function init(data) {
 	// Set token filter from preset
 	function setTokenFilter(value) {
 		tokenFilter.value = value;
-		if (dataLoaded) {
-			filterItems();
-		}
+		filterItems();
 	}
 
 	function resetColorFilters() {
@@ -397,24 +475,10 @@ function init(data) {
 		filterItems();
 	}
 
-	// Load data with simulated delay
-	function loadData() {
-		loadingOverlay.style.display = "flex";
+	// Filter and render items immediately
+	filterItems();
 
-		// Simulate loading delay
-		setTimeout(() => {
-			dataLoaded = true;
-			loadButton.style.display = "none";
-			resultsHeader.style.display = "flex";
-			loadingOverlay.style.display = "none";
-
-			filterItems();
-		}, 100);
-	}
-
-	// Event listeners
-	loadButton.addEventListener("click", loadData);
-
+	// Pagination and filter event listeners
 	prevButton.addEventListener("click", () => {
 		if (currentPage > 1) {
 			currentPage--;
@@ -434,33 +498,25 @@ function init(data) {
 		}
 	});
 
-	// Token preset buttons
 	tokenPresets.forEach((button) => {
 		button.addEventListener("click", () => {
 			setTokenFilter(button.dataset.value);
 		});
 	});
 
-	// Reset button
 	resetButton.addEventListener("click", resetColorFilters);
 
-	// Add event listeners to filters
 	Object.values(filters).forEach((f) => {
 		if (f && f.tagName) {
 			f.addEventListener("input", () => {
-				if (dataLoaded) {
-					filterItems();
-				}
+				filterItems();
 			});
 		}
 	});
 
-	// Add event listeners to rarity checkboxes
 	filters.rarityFilters.forEach((checkbox) => {
 		checkbox.addEventListener("change", () => {
-			if (dataLoaded) {
-				filterItems();
-			}
+			filterItems();
 		});
 	});
 
@@ -469,7 +525,7 @@ function init(data) {
 }
 
 ;(async () => {
-  const res = await fetch('/api/explorer', {method: 'GET'});
-  const data = await res.json();
-  init(data);
+	const res = await fetch('/api/explorer', {method: 'GET'});
+	const data = await res.json();
+	init(data);
 })();
