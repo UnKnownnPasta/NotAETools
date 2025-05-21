@@ -153,20 +153,20 @@ export default {
 			const l = rSplit.map((x) => x.trim());
 			if (isSpecialMode) {
 				const countOf = (x) => (r.match(new RegExp(x, "g")) || []).length;
-				const tokenParse = parseInt(l[0].match(/\{(\d+)\}/)[1]) ?? 0;
+				const tokenParse = parseInt(l[0].match(/\{(\d+)\}/)?.[1]) ?? 0;
 				const counts = [
 					countOf("\\[35m"),
 					countOf("\\[31m"),
 					countOf("\\[33m"),
 				];
 
-				return [tokenParse, counts, rSplit[1].match(/\d+/)[0]];
+				return [tokenParse, counts, rSplit[1].match(/\d+/)?.[0] ?? 0];
 			} else {
 				const ED = l[3].split()[0];
 				const RED = l[4].split()[0];
 				const ORG = l[5].split()[0];
-				return `${ED}${RED}${ORG}-${rSplit[0].match(/\d+/)[0]}-${
-					rSplit[1].match(/\d+/)[0]
+				return `${ED}${RED}${ORG}-${rSplit[0].match(/\d+/)?.[0] ?? 0}-${
+					rSplit[1].match(/\d+/)?.[0] ?? 0
 				}`;
 			}
 		};
