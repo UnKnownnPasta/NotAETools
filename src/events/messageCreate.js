@@ -38,6 +38,7 @@ export default {
         const alt_command = client.cmd_handler.find(`${args.split(" ")[0]}-message`);
 
         if (alt_command) {
+            if (!client.cmd_handler.isCommandEnabled(alt_command.name, 'message')) return;
             alt_command.execute(message, client);
             console.log(`${message.author.username} used ${client.prefix}${alt_command.name} as ${client.prefix}${args}`);
             return;
@@ -47,6 +48,7 @@ export default {
         const command = client.cmd_handler.find(`${request.category}-message`);
 
         if (command) {
+            if (!client.cmd_handler.isCommandEnabled(command.name, 'message')) return;
             command.execute(message, client);
             console.log(`${message.author.username} used ${client.prefix}${command.name} as ${client.prefix}${args}`);
         }

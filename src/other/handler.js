@@ -21,6 +21,45 @@ export default class CommandHandler {
         return this.commands.find(command => command.name === name && command.trigger === trigger);
     }
 
+    isCommandEnabled(name, trigger) {
+        const command = this.find(`${name}-${trigger}`);
+        return command ? command.enabled || !command.disabled : false;
+    }
+
+    async enableCommand(name, trigger) {
+        const command = this.find(`${name}-${trigger}`);
+        if (command) {
+            command.enabled = true;
+            command.disabled = false;
+            
+            // Redeploy interaction commands if this is an interaction command
+            if (trigger === 'interaction') {
+                const interactionCommands = Array.from(this.commands.values())
+                    .filter(cmd => cmd.trigger === 'interaction' && this.isCommandEnabled(cmd.name, cmd.trigger));
+                await this.deploy(interactionCommands);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    async disableCommand(name, trigger) {
+        const command = this.find(`${name}-${trigger}`);
+        if (command) {
+            command.enabled = false;
+            command.disabled = true;
+            
+            // Redeploy interaction commands if this is an interaction command
+            if (trigger === 'interaction') {
+                const interactionCommands = Array.from(this.commands.values())
+                    .filter(cmd => cmd.trigger === 'interaction' && this.isCommandEnabled(cmd.name, cmd.trigger));
+                await this.deploy(interactionCommands);
+            }
+            return true;
+        }
+        return false;
+    }
+
     async createBasic() {
         const commandDirectories = {
             message: join(import.meta.dirname, '../commands/message/'),
@@ -37,11 +76,12 @@ export default class CommandHandler {
                 const command = await import(`file://${join(dirPath, file)}`);
                 if (!command.default) continue;
 
-                if (_bool_true(command.default.enabled) || !_bool_true(command.default.disabled)) {
-                    this.register(command.default);
-                    if (type === 'interaction') {
-                        interactionCommands.push(command.default);
-                    }
+                // Register all commands regardless of enabled state
+                this.register(command.default);
+                
+                // Only add to interaction commands if enabled
+                if (type === 'interaction' && this.isCommandEnabled(command.default.name, command.default.trigger)) {
+                    interactionCommands.push(command.default);
                 }
             }
         }

@@ -71,8 +71,30 @@ export default {
           msg_.edit(`Error: ${error.message}`);
         }
       break;
+      case 'toggle':
+        const cmdName = request[2];
+        const cmdType = request[3] || 'message'; // Default to message commands if type not specified
+        const cmd = client.cmd_handler.find(`${cmdName}-${cmdType}`);
+        
+        if (!cmd) {
+          return message.reply(`Command not found: ${cmdName} (${cmdType})`);
+        }
+
+        const currentState = client.cmd_handler.isCommandEnabled(cmdName, cmdType);
+        try {
+          if (currentState) {
+            await client.cmd_handler.disableCommand(cmdName, cmdType);
+            message.reply(`Disabled command: ${cmdName} (${cmdType})`);
+          } else {
+            await client.cmd_handler.enableCommand(cmdName, cmdType);
+            message.reply(`Enabled command: ${cmdName} (${cmdType})`);
+          }
+        } catch (error) {
+          message.reply(`Error toggling command: ${error.message}`);
+        }
+      break;
       default:
-        message.reply(`Invalid command: ${command} | Valid commands: memory, cache, google, search[name], refresh[box[id|all]|relic[soup|prime]]`);
+        message.reply(`Invalid command: ${command} | Valid commands: memory, cache, google, search[name], refresh[box[id|all]|relic[soup|prime]], toggle[name][type]`);
       break;
     }
   },

@@ -7,13 +7,19 @@
  * @property {function(...args: any[]): any} execute - The function to execute for the event.
  */
 
+import { Client, CommandInteraction, Message } from "discord.js";
+
+/**
+ * @typedef {(client: Client, trigger: CommandInteraction | Message) => void} ExecuteFunction
+ */
+
 /**
  * @typedef {Object} Command
  * @property {string} name - The name of the command.
- * @property {function} execute - The function to execute when the command is run.
+ * @property {ExecuteFunction} execute - The function to execute when the command is run.
  * @property {boolean} enabled - Whether the command is enabled.
  * @property {boolean} disabled - Whether the command is disabled.
- * @property {"message" | "interaction"} trigger - The trigger type (either "message" or "interaction").
+ * @property {"message" | "interaction" | "button"} trigger - The trigger type.
  */
 
 /**

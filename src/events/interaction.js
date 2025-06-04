@@ -13,13 +13,27 @@ export default {
         
         const command = interaction.commandName;
         if (interaction.isChatInputCommand()) {
-            client.cmd_handler.find(`${command}-interaction`)?.execute(client, interaction);
+            const cmd = client.cmd_handler.find(`${command}-interaction`);
+            if (!cmd || !client.cmd_handler.isCommandEnabled(command, 'interaction')) return;
+            cmd.execute(client, interaction);
             console.log(`${interaction.user.username} used /${command} as ${interaction.options?.data?.map(x=>`"${x.name}": ${x.value}`)?.join(', ')}`);
         } else if (interaction.isAutocomplete()) {
-            client.cmd_handler.find(`${command}-interaction`)?.autocomplete(interaction);
+            const cmd = client.cmd_handler.find(`${command}-interaction`);
+            if (!cmd || !client.cmd_handler.isCommandEnabled(command, 'interaction')) {
+                return interaction.respond([]);
+            }
+            cmd.autocomplete(interaction);
         } else if (interaction.isButton()) {
             if (interaction.customId.startsWith('paginate')) return;
-            client.cmd_handler.find(`${interaction.customId.split('-')[0]}-button`)?.execute(client, interaction);
+            const [cmdName] = interaction.customId.split('-');
+            const cmd = client.cmd_handler.find(`${cmdName}-button`);
+            if (!cmd || !client.cmd_handler.isCommandEnabled(cmdName, 'button')) {
+                return interaction.reply({ 
+                    content: 'This button is currently disabled.', 
+                    ephemeral: true 
+                });
+            }
+            cmd.execute(client, interaction);
             console.log(`${interaction.user.username} used button ${interaction.customId}`);
         }
     }
