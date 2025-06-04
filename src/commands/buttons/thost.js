@@ -11,10 +11,10 @@ export default {
     const buttonType = i.customId.split('-')[1]
 
     if (buttonType == 'join') {
-      // if (participants.includes(i.member.id)) 
-      //   return i.reply({ content: "Already in the run.", flags: MessageFlags.Ephemeral });
-      // if (participants.length >= 4)
-      //   return i.reply({ content: "Run is full.", flags: MessageFlags.Ephemeral });
+      if (participants.includes(i.member.id)) 
+        return i.reply({ content: "Already in the run.", flags: MessageFlags.Ephemeral });
+      if (participants.length >= 4)
+        return i.reply({ content: "Run is full.", flags: MessageFlags.Ephemeral });
 
       participants.push(i.member.id);
       await i.message.edit({
