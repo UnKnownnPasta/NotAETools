@@ -38,14 +38,14 @@ export default {
 		const nekros2Btn = buildBtn("Nekros 2", ButtonStyle.Success);
 		const khoraBtn = buildBtn("Khora", ButtonStyle.Success);
 		const novaBtn = buildBtn("Nova", ButtonStyle.Success);
-		const wispBtn = buildBtn("Wisp", ButtonStyle.Success);
+		// const wispBtn = buildBtn("Wisp", ButtonStyle.Success);
 		const cancelBtn = buildBtn("❌", ButtonStyle.Danger);
 		const confirmBtn = buildBtn("✅", ButtonStyle.Success);
 
 		const possFrames = [
 			nekrosBtn,
 			khoraBtn,
-			wispBtn,
+			// wispBtn,
 			novaBtn,
 			nekros2Btn,
 			anyBtn,
@@ -71,7 +71,7 @@ export default {
 			khoraBtn,
 			nekros2Btn,
 			novaBtn,
-			wispBtn
+			// wispBtn
 		);
 		const optionBtn = new ActionRowBuilder().addComponents(
 			anyBtn,
@@ -123,7 +123,7 @@ export default {
 					{ name: "Khora", value: "Khora" },
 					{ name: "Nekros", value: "Nekros" },
 					{ name: "Nova", value: "Nova" },
-					{ name: "Wisp", value: "Wisp" },
+					// { name: "Wisp", value: "Wisp" },
 					{ name: "Any", value: "Any" }
 				)
 		)

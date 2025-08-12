@@ -85,7 +85,7 @@ export default {
 			await i.update({
 				content: i.message.content,
 				embeds: [globalHostEmbed],
-				components: [newRow(hostComps.slice(0, 5)), newRow(hostComps.slice(5))],
+				components: [newRow(hostComps.slice(0, 4)), newRow(hostComps.slice(4))],
 			});
 		} else if (
 			doFilterCheck &&
@@ -93,7 +93,7 @@ export default {
 			allIDs.includes(i.user.id) &&
 			i.message.content.slice(2, -1) == i.user.id
 		) {
-			await i.message.delete();
+			await i.message.delete().catch(console.log);
 			await i.channel.send({
 				embeds: [
 					new EmbedBuilder().setTitle(`Run "${hostTitle}" was cancelled`),
@@ -142,7 +142,7 @@ export default {
 			await i.update({
 				content: i.message.content,
 				embeds: [globalHostEmbed],
-				components: [newRow(hostComps.slice(0, 5)), newRow(hostComps.slice(5))],
+				components: [newRow(hostComps.slice(0, 4)), newRow(hostComps.slice(4))],
 			});
 		}
 

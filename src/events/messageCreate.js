@@ -16,7 +16,7 @@ export default {
         if (!client.finishedSequence) return;
         if (message.author.bot) return;
         
-        if (message.channel.isThread()) {
+        if (message.channel.isThread() && message.channel.id != '1204247177237500014') {
             const channelID = message.channelId;
         
             for (const channel of boxCacheManager.channelCache) {

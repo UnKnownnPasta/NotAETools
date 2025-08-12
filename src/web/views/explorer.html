@@ -25,7 +25,7 @@
     <nav class="ae-header-nav">
       <a href="/">Home</a>
       <a href="/explorer">Explorer</a>
-      <a href="/vault">Vault</a>
+      <a href="/tutorial">Tutorial</a>
     </nav>
     <div class="ae-header-profile">
       <img src="/public/images/server-icon.png" alt="Profile" class="ae-header-avatar">
@@ -33,14 +33,14 @@
   </header>
 
   <div class="ae-timeline-main">
-    <div class="ae-timeline-rail js-timeline-rail">
+    <div class="ae-timeline-rail js-timeline-rail ae-timeline-rail-desktop">
       <div class="ae-timeline-dot dot-explorer"></div>
       <div class="ae-timeline-line line-explorer-results"></div>
       <div class="ae-timeline-dot dot-results"></div>
       <div class="ae-timeline-line line-results-footer"></div>
       <div class="ae-timeline-dot dot-footer"></div>
     </div>
-    <div class="ae-timeline-content" style="padding-right:2.5rem;">
+    <div class="ae-timeline-content">
       <!-- Relic Explorer Title & Filters -->
       <section class="ae-timeline-section section-explorer">
         <div class="ae-timeline-title-row">Relic Explorer</div>
@@ -196,7 +196,7 @@
       <!-- Results Title & Navigation -->
       <section class="ae-timeline-section section-results">
         <div class="ae-timeline-title-row" style="align-items: flex-start;">
-          <div id="resultsHeader" style="display: flex; width: 100%; justify-content: space-between;">
+          <div id="resultsHeader" style="display: flex; width: 100%; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
           <span style="margin-right: 1rem; align-self: center;">Results</span>
           <div class="results-count">
               <div>Showing <span id="currentCount">0</span> of <span id="totalCount">0</span></div>
