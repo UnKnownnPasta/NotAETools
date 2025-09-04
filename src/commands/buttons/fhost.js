@@ -3,7 +3,7 @@ import { ActionRowBuilder, EmbedBuilder, MessageFlags } from "discord.js";
 /** @type {import('../../other/types').InteractionCommand} */
 export default {
 	name: "fhost",
-	enabled: true,
+	enabled: false,
 	trigger: "button",
 	execute: async (client, i) => {
 		const hostEmbed = i.message.embeds[0];

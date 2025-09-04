@@ -5,7 +5,7 @@ import { resourceNames } from "../../data/constants.js";
 /** @type {import('../../other/types').InteractionCommand} */
 export default {
 	name: "fhost",
-	enabled: true,
+	enabled: false,
 	trigger: "interaction",
 	execute: async (client, i) => {
 		const mission = i.options.getString("mission", true).toLowerCase(),

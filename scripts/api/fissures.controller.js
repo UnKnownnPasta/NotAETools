@@ -120,8 +120,8 @@ export async function updateFissures(env) {
     const tiers = ["Lith", "Meso", "Neo", "Axi"];
 
     /** CREATE EMBED FOR NORMAL AND SP FISSURES */
-    const fissureArray = fissureData.filter(({ tier, missionType, active, expired, isStorm }) =>
-        !isStorm && missions.includes(missionType) && active && tiers.includes(tier) && !expired
+    const fissureArray = fissureData.filter(({ tier, missionType, expiry, isStorm }) =>
+        !isStorm && missions.includes(missionType) && tiers.includes(tier) && ((new Date() - new Date(expiry)) < 0)
     );
 
     const fissures = await fissureArray.map(({ tier, missionType, node, expiry, isHard }) => [
@@ -174,7 +174,7 @@ export async function updateFissures(env) {
     const timeArrOfObj = [];
     const fisTimes = getFissureTimings(
         fissureData
-            .filter(({ tier, isStorm, expired, active }) => tiers.includes(tier) && !isStorm && !expired && active)
+            .filter(({ tier, isStorm, expiry }) => tiers.includes(tier) && !isStorm && ((new Date() - new Date(expiry)) < 0))
             .map(({ isHard, tier, expiry }) => [
                 isHard + " " + tier, (new Date(expiry).getTime() / 1000) | 0
             ])

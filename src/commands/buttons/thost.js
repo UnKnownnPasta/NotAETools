@@ -4,7 +4,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, MessageFlag
 export default {
   name: 'thost',
   trigger: 'button',
-  enabled: true,
+  enabled: false,
   execute: async (client, i) => {
     const msgEmbed = i.message.embeds;
     let participants = msgEmbed[0].description.split("\n").map(i => i.match(/\d+/g)?.[0]).filter(Boolean)

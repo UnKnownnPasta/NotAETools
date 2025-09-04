@@ -54,12 +54,12 @@ router.get('/heartbeat', (req, res) => {
 
 // Endpoint for fissure updating
 router.get('/fissure', async (request, res) => {
-    const authHeader = (request.headers["X-Source-Job"] || request.headers["x-source-job"]);
+    // const authHeader = (request.headers["X-Source-Job"] || request.headers["x-source-job"]);
     
-    if (!authHeader || authHeader !== process.env.EXPECTED_AUTH_TOKEN) {
-      console.error('Unauthorized request to API /fissure', authHeader);
-      return res.status(401).send('401 Unauthorized');
-    }
+    // if (!authHeader || authHeader !== process.env.EXPECTED_AUTH_TOKEN) {
+    //   console.error('Unauthorized request to API /fissure', authHeader);
+    //   return res.status(401).send('401 Unauthorized');
+    // }
 
     try {
       await updateFissures(process.env);

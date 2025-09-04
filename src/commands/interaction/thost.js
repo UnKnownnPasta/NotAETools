@@ -42,7 +42,7 @@ async function getFissures(type) {
 /** @type {import('../../other/types').InteractionCommand} */
 export default {
     name: "thost",
-    disabled: true,
+    enabled: false,
     trigger: "interaction",
     execute: async (client, i) => {
         try {

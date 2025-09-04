@@ -26,7 +26,7 @@ const reverseClan = {
 /** @type {import('../../other/types').Command} */
 export default {
 	name: "clan",
-	enabled: true,
+	enabled: false,
 	trigger: "interaction",
 	execute: async (client, i) => {
     await i.deferReply()

@@ -28,7 +28,7 @@ const clanOptions = [
 /** @type {import('../../other/types').Command} */
 export default {
   name: "resource",
-  enabled: true,
+  enabled: false,
   trigger: "interaction",
   execute: async (client, i) => {
     const resrc = titleCase(i.options.getString('resource', true) ?? "")
