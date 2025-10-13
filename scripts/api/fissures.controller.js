@@ -116,12 +116,14 @@ function getFissureTimings(fisTimes) {
 export async function updateFissures(env) {
     const fissureData = await getWarframeData();
     
-    const missions = ["Extermination", "Capture", "Sabotage", "Rescue"];
+    const missions = ["Extermination", "Capture", "Sabotage", "Rescue", "Defense"];
     const tiers = ["Lith", "Meso", "Neo", "Axi"];
+    const whitelistDefense = ["Tessera (Venus)", "Taranis (Void)", "Paimon (Europa)", "Proteus (Neptune)", "Outer Terminus (Pluto)", "Belenus (Void)"]
 
     /** CREATE EMBED FOR NORMAL AND SP FISSURES */
-    const fissureArray = fissureData.filter(({ tier, missionType, expiry, isStorm }) =>
+    const fissureArray = fissureData.filter(({ tier, missionType, expiry, isStorm, node }) =>
         !isStorm && missions.includes(missionType) && tiers.includes(tier) && ((new Date() - new Date(expiry)) < 0)
+        && (missionType == "Defense" ? whitelistDefense.includes(node) : true)
     );
 
     const fissures = await fissureArray.map(({ tier, missionType, node, expiry, isHard }) => [
