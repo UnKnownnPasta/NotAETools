@@ -1,3 +1,5 @@
+import { FData } from "../../src/services/utils.js";
+
 const eDef = {
   "type__normal": "1287248821461454910",
   "type__steelpath": "1287249765091905620",
@@ -118,7 +120,7 @@ export async function updateFissures(env) {
     
     const missions = ["Extermination", "Capture", "Sabotage", "Rescue", "Defense"];
     const tiers = ["Lith", "Meso", "Neo", "Axi"];
-    const whitelistDefense = ["Tessera (Venus)", "Taranis (Void)", "Paimon (Europa)", "Proteus (Neptune)", "Outer Terminus (Pluto)", "Belenus (Void)"]
+    const whitelistDefense = FData.data;
 
     /** CREATE EMBED FOR NORMAL AND SP FISSURES */
     const fissureArray = fissureData.filter(({ tier, missionType, expiry, isStorm, node }) =>

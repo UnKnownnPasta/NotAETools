@@ -3,6 +3,7 @@ import { fetchData } from '../../src/services/googleSheets.js';
 import { updateFissures } from '../../scripts/api/fissures.controller.js';
 import { getMerged } from '../../src/managers/stored/getMerged.js'
 import { rateLimit } from 'express-rate-limit';
+import { FData } from '../../src/services/utils.js';
 
 const router = express.Router();
 
@@ -40,6 +41,23 @@ router.get('/forceupdate', apiLimiter, async (req, res) => {
         res.status(403).send('403 Forbidden');
     }
 });
+
+router.get('/updatedefense', async (req,res) => {
+    const token = decodeURIComponent(req.headers['X-Source-Job'] || req.headers['x-source-job']);
+
+    if (token !== process.env.EXPECTED_AUTH_TOKEN) {
+        console.error('Unauthorized request to API /updatedefense', token);
+        return res.status(401).send('401 Unauthorized');
+    }
+
+    try {
+        FData.data = await FData.fetchFissureData();
+        res.status(200).send('OK! ' + FData.data.length + ' fissures');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('500 Internal Server Error');
+    }
+})
 
 // Heartbeat route
 router.get('/heartbeat', (req, res) => {

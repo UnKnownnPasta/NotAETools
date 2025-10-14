@@ -10,6 +10,33 @@ export async function _run_safe(fn) {
 	};
 }
 
+class FissureData {
+  constructor() {
+    this.data = null;
+  }
+
+  async init() {
+    this.data = await this.fetchFissureData();
+  }
+
+  async fetchFissureData() {
+    const url = "https://gist.githubusercontent.com/UnKnownnPasta/916fb6a743c8e317d7f7cc5b3a3a4b87/raw/40f90a701693696965f05d00590f7d4770eabbd9/wfdm.txt";
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      const text = await response.text();
+      return text.split('\n');
+    } catch (error) {
+      console.error('Fetch error:', error);
+      return null;
+    }
+  }
+}
+
+const FData = new FissureData();
+FData.init();
+export { FData };
+
 /** @returns {import("../other/types.js").dataItem[]} @param {string} input */
 export function extractSoup(input) {
 	input = input.replace(/(```)/g, '').replace(/\x1B\[[0-9;]*[A-Za-z]/g, '').split('\n');
