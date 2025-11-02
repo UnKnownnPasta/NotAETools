@@ -13,11 +13,12 @@ const lbOptions = [
 /** @type {import('../../other/types').Command} */
 export default {
   name: "tleaderboard",
-  enabled: true,
+  enabled: false,
   trigger: "interaction",
   execute: async (client, i) => {
     await i.deferReply()
     const fetchData = await getAllLeaderboardData();
+    if (!fetchData.length) return i.editReply('Leaderboard is empty!');
     const embArr = []
     const curSub = i.options.getString('sector', true);
     const sortedData = fetchData.sort((a, b) => b[curSub] - a[curSub])

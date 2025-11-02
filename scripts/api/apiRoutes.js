@@ -1,6 +1,6 @@
 import express from 'express';
 import { fetchData } from '../../src/services/googleSheets.js';
-import { updateFissures } from '../../scripts/api/fissures.controller.js';
+import { updateFissureChannelMessage } from '../../scripts/api/fissures.controller.js';
 import { getMerged } from '../../src/managers/stored/getMerged.js'
 import { rateLimit } from 'express-rate-limit';
 import { FData } from '../../src/services/utils.js';
@@ -80,7 +80,7 @@ router.get('/fissure', async (request, res) => {
     }
 
     try {
-      await updateFissures(process.env);
+      await updateFissureChannelMessage(process.env);
       return res.status(200).send('OK!');
     } catch (error) {
       console.error("Error updating fissures:", error);

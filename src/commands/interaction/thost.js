@@ -4,39 +4,49 @@ import relicCacheManager from "../../managers/relicCacheManager.js";
 import { constructEmbed } from '../../commands/message/relics.js'
 
 async function getFissures(type) {
-  if (!type) return "null";
-  const url = `https://discord.com/api/v10/channels/${process.env.F_CHANNELID}/messages/${process.env.F_MESSAGEID}`;
-  const response = await fetch(url, {
+  if (!type) return "No type provided";
+
+  const { F_CHANNELID, F_MESSAGEID, DISCORD_TOKEN } = process.env;
+  if (!F_CHANNELID || !F_MESSAGEID || !DISCORD_TOKEN) return "Fissures not configured";
+
+  const url = `https://discord.com/api/v10/channels/${F_CHANNELID}/messages/${F_MESSAGEID}`;
+  const controller = new AbortController();
+  const timeoutMs = 5000;
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
       method: "GET",
       headers: {
-          "User-Agent": "DiscordBot (https://github.com/UnKnownnPasta/NotAETools, 1.0.0)",
-          Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+        "User-Agent": "DiscordBot (https://github.com/UnKnownnPasta/NotAETools, 1.0.0)",
+        Authorization: `Bot ${DISCORD_TOKEN}`,
       },
-  });
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
 
-  if (!response.ok) {
-      return 'Failed to fetch fissures data';
+    if (!response.ok) {
+      return `Failed to fetch fissures data (${response.status})`;
+    }
+
+    const message = await response.json();
+    const embeds = Array.isArray(message?.embeds) ? message.embeds : [];
+    if (embeds.length === 0) return "No fissures data available";
+
+    // Search all embeds and all fields for matching type, preserve order
+    const matches = embeds.flatMap((embed) =>
+      (Array.isArray(embed?.fields) ? embed.fields : [])
+        .filter((field) => String(field?.name ?? "").trim().toLowerCase() === String(type).trim().toLowerCase())
+        .map((field) => String(field?.value ?? "").trim())
+    );
+
+    const fissures = matches.join("\n").trim();
+    return fissures || "No ideal fissures";
+  } catch (error) {
+    clearTimeout(timeout);
+    if (error?.name === "AbortError") return "Fissures fetch timed out";
+    return "Failed to fetch fissures data";
   }
-
-  const message = await response.json();
-
-  if (!message.embeds || message.embeds.length === 0) {
-      return 'No fissures data available';
-  }
-
-  let fissures = message.embeds
-      .slice(0, 2)
-      .map(embed => embed.fields)
-      .map(embeds => 
-        embeds
-        .filter(field => field.name === type)
-        .map(field => `${field.value}`)
-        .join("\n")
-      )
-      .join("\n")
-      .trim();
-
-  return fissures || "No ideal fissures";
 }
 
 /** @type {import('../../other/types').InteractionCommand} */

@@ -220,22 +220,27 @@ export async function updateFissures(env) {
       .build();
 
     /** UPDATE FISSURE MESSAGE WITH CREATED EMBEDS */
-    await updateChannelMessage(env, { content: null, embeds: [NormEmbed.build(), SPEmbed.build(), NextFissuresEmbed] });
+    return { content: null, embeds: [NormEmbed.build(), SPEmbed.build(), NextFissuresEmbed] };
 }
 
-async function updateChannelMessage(env, data) {
-  const url = `https://discord.com/api/v10/channels/${env.F_CHANNELID}/messages/${env.F_MESSAGEID}`;
-  const response = await fetch(url, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      "User-Agent": "DiscordBot (https://github.com/UnKnownnPasta/NotAETools, 1.0.0)",
-      Authorization: `Bot ${env.DISCORD_TOKEN}`,
-    },
-    body: JSON.stringify(data),
-  });
+export async function updateFissureChannelMessage(env) {
+  try {
+    const data = await updateFissures(env);
+    const url = `https://discord.com/api/v10/channels/${env.F_CHANNELID}/messages/${env.F_MESSAGEID}`;
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "User-Agent": "DiscordBot (https://github.com/UnKnownnPasta/NotAETools, 1.0.0)",
+        Authorization: `Bot ${env.DISCORD_TOKEN}`,
+      },
+      body: JSON.stringify(data),
+    });
 
-  if (!response.ok) {
-    console.error("Failed to update Discord message", await response.text());
+    if (!response.ok) {
+      console.error("Failed to update Discord message", await response.text());
+    }
+  } catch (e) {
+    console.error(e);
   }
 }

@@ -259,17 +259,23 @@ export async function getAllClanData(clan=undefined) {
 }
 
 export async function getAllLeaderboardData() {
-	return await googleSheets({
-		spreadsheetId: '1Mrp2qcFY9CO8V-MndnYCkkVBJ-f_U_zeK-oq3Ncashk',
-		range: 'Leaderboard!D29:I'
-	}).then((re) => {
-			return re.data.values.map((data) => {
-					if (data.filter(x => !x).length > 1) return;
-					const run = isNaN(parseInt(data[4])) ? 0 : parseInt(data[4])
-					const rad = isNaN(parseInt(data[3])) ? 0 : parseInt(data[3])
-					const merch = isNaN(parseInt(data[2])) ? 0 : parseInt(data[2])
-					const userid = data[1].replace('ID: ', '')
-					return { uid: userid === '' ? '000000' : userid, name: !data[0] ? '#NF!' : data[0], all: run + rad + merch, run, rad, merch }
-			}).filter(x => x)
-	})
+	try {
+		const re = await googleSheets({
+			spreadsheetId: '1Mrp2qcFY9CO8V-MndnYCkkVBJ-f_U_zeK-oq3Ncashk',
+			range: 'Leaderboard!D29:I'
+		});
+
+		const rows = re?.data?.values || [];
+		return rows.map((data) => {
+			if (!data || data.filter(x => !x).length > 1) return;
+			const run = parseInt(data[4], 10) || 0;
+			const rad = parseInt(data[3], 10) || 0;
+			const merch = parseInt(data[2], 10) || 0;
+			const userid = (data[1] || '').replace('ID: ', '');
+			return { uid: userid === '' ? '000000' : userid, name: !data[0] ? '#NF!' : data[0], all: run + rad + merch, run, rad, merch };
+		}).filter(Boolean);
+	} catch (error) {
+		console.error('Error fetching leaderboard data:', error);
+		return [];
+	}
 }
