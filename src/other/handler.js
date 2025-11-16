@@ -22,8 +22,8 @@ export default class CommandHandler {
     }
 
     isCommandEnabled(name, trigger) {
-        const command = this.find(`${name}-${trigger}`);
-        return command ? command.enabled || !command.disabled : false;
+    const command = this.find(`${name}-${trigger}`);
+    return command && command.enabled !== false;
     }
 
     async enableCommand(name, trigger) {
@@ -73,18 +73,22 @@ export default class CommandHandler {
             const commandFiles = await readdir(dirPath);
 
             for (const file of commandFiles) {
-                const command = await import(`file://${join(dirPath, file)}`);
-                if (!command.default) continue;
-                                
-                // Only add to interaction commands if enabled
-                if (type === 'interaction' && this.isCommandEnabled(command.default.name, command.default.trigger)) {
-                this.register(command.default);
-                    interactionCommands.push(command.default);
+                if (!file.endsWith('.js')) continue;
+
+                const module = await import(`file://${join(dirPath, file)}`);
+                const cmd = module.default;
+                if (!cmd) continue;
+
+                this.register(cmd);
+
+                if (type === 'interaction' && this.isCommandEnabled(cmd.name, cmd.trigger)) {
+                    interactionCommands.push(cmd);
                 }
             }
         }
 
-        await this.deploy(interactionCommands);        
+        if (interactionCommands.length)
+            await this.deploy(interactionCommands);
     }
 
     async loadEvents() {
