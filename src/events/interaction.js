@@ -9,7 +9,9 @@ export default {
      * @param {import('discord.js').Interaction} interaction
      */
     async execute(client, interaction) {
-        if (!client.finishedSequence) return;
+        if (!client.finishedSequence) {
+            return;
+        }
         
         const command = interaction.commandName;
         if (interaction.isChatInputCommand()) {
@@ -23,18 +25,20 @@ export default {
                 return interaction.respond([]);
             }
             cmd.autocomplete(interaction);
-        } else if (interaction.isButton()) {
-            if (interaction.customId.startsWith('paginate')) return;
-            const [cmdName] = interaction.customId.split('-');
-            const cmd = client.cmd_handler.find(`${cmdName}-button`);
-            if (!cmd || !client.cmd_handler.isCommandEnabled(cmdName, 'button')) {
-                return interaction.reply({ 
-                    content: 'This button is currently disabled.', 
-                    ephemeral: true 
-                });
+        } else {
+            if (interaction.isButton()) {
+                if (interaction.customId.startsWith('paginate')) return;
+                const [cmdName] = interaction.customId.split('-');
+                const cmd = client.cmd_handler.find(`${cmdName}-button`);
+                if (!cmd || !client.cmd_handler.isCommandEnabled(cmdName, 'button')) {
+                    return interaction.reply({ 
+                        content: 'This button is currently disabled.', 
+                        ephemeral: true 
+                    });
+                }
+                cmd.execute(client, interaction);
+                console.log(`${interaction.user.username} used button ${interaction.customId}`);
             }
-            cmd.execute(client, interaction);
-            console.log(`${interaction.user.username} used button ${interaction.customId}`);
         }
     }
 }
