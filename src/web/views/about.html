@@ -2,212 +2,225 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AETools | About</title>
-  <link rel="shortcut icon" href="/public/images/icon.png" type="image/x-icon">
-  <link rel="stylesheet" href="/public/css/about.css" type="text/css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head>
+  <link rel="shortcut icon" href="/public/images/icon.png" type="image/x-icon" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-<body>
-  <div class="container">
-    <header>
-      <div class="logo-container">
-        <img src="/blob/logo.png" width="250" alt="AETools Logo">
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+</style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50 font-poppins">
+
+  <div class="max-w-6xl mx-auto px-6 py-10">
+
+    <!-- Header -->
+    <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+      <div class="flex items-center gap-4">
+        <div class="bg-slate-900/70 border border-slate-800/80 rounded-2xl px-3 py-2 shadow-lg shadow-black/40">
+          <img src="/blob/logo.png" alt="AETools Logo" class="w-40 md:w-56">
+        </div>
       </div>
-      <nav>
-        <a href="/" class="active">About</a>
-        <a href="/explorer">Explorer</a>
-        <a href="/tutorial">Tutorial</a>
+
+      <nav
+        class="flex items-center justify-between sm:justify-end gap-2 text-sm bg-slate-950/60 border border-slate-800 rounded-full px-2 py-1 shadow-md shadow-black/40">
+        <a href="/"
+          class="px-3 py-1.5 rounded-full bg-[#5865F2] text-white font-medium shadow shadow-indigo-900/70">
+          About
+        </a>
+        <a href="/explorer"
+          class="px-3 py-1.5 rounded-full text-slate-300 hover:text-white hover:bg-slate-800/70 transition">
+          Explorer
+        </a>
+        <a href="/tutorial"
+          class="px-3 py-1.5 rounded-full text-slate-300 hover:text-white hover:bg-slate-800/70 transition">
+          Tutorial
+        </a>
       </nav>
     </header>
 
-    <main>
-      <section class="intro">
-        <div class="badges">
-          <img src="https://img.shields.io/badge/created_with-discord.js_v14-blue" alt="Discord.js Badge">
-          <img src="https://img.shields.io/badge/license-AGPL3.0-green" alt="License Badge">
-          <img src="https://img.shields.io/badge/contributors-1-orange" alt="Contributors Badge">
-        </div>
-        <h1>AETools</h1>
-        <p class="subtitle">A multipurpose utility bot for staff teams, inspired by <a href="https://github.com/Zlushiie">Zlushiie</a>.</p>
-      </section>
+    <!-- Intro -->
+    <section class="text-center mb-16">
+      <div class="flex justify-center space-x-3 mb-6">
+        <img class="rounded-md shadow" src="https://img.shields.io/badge/created_with-discord.js_v14-blue">
+        <img class="rounded-md shadow" src="https://img.shields.io/badge/license-AGPL3.0-green">
+        <img class="rounded-md shadow" src="https://img.shields.io/badge/contributors-1-orange">
+      </div>
 
-      <section class="content">
-        <div class="card">
-          <h2>Introduction</h2>
-          <p>Being used since 2022, the bot has many functions which are used constantly, every day. To name a few,</p>
-          
-          <h3>API Calls</h3>
-          <ul>
-            <li>Utilizes <a href="https://www.warframe.com">Warframe</a>'s endpoint to track all available fissures</li>
-            <li>Utilizes Google Sheets API to track Shop stock</li>
+      <h1 class="text-5xl font-bold mb-3">AETools</h1>
+      <p class="text-gray-300 text-lg">A multipurpose utility bot for staff teams.</p>
+    </section>
+
+    <!-- MAIN CONTENT -->
+    <section class="space-y-14">
+
+      <!-- Intro Card -->
+      <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-8 shadow-lg backdrop-blur">
+        <h2 class="text-3xl font-semibold mb-4">Introduction</h2>
+        <p class="mb-5">Being used since 2022, the bot has many functions which are used constantly, every day.</p>
+
+        <h3 class="text-xl font-medium mb-3">Features</h3>
+        <div class="flex flex-wrap gap-3">
+          <a href="#relic-viewing" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg">Relic Viewing</a>
+          <a href="#merching" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg">Merching Relics</a>
+          <a href="#prime" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg">Prime Sets</a>
+          <a href="#part-availability" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg">Viewing Stock</a>
+          <a href="#soup-store" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg">Soup Store analysis</a>
+        </div>
+      </div>
+
+      <!-- Commands -->
+      <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-8 shadow-lg backdrop-blur">
+        <h2 class="text-3xl font-semibold mb-8">Commands</h2>
+
+        <div class="bg-gray-700/40 p-4 rounded-lg border border-gray-600 mb-10">
+          <p><strong>*IMPORTANT*</strong> All commands are used in Discord with slash ("/") except <code class="text-blue-300">++</code> which is used for relics, primes, and status.</p>
+        </div>
+
+        <!-- Relic Viewing -->
+        <div class="command-section reveal border-l-4 border-gray-600/70 pl-6 ml-2 mt-12 mb-16" id="relic-viewing">
+          <h3 class="text-2xl font-semibold mb-4">Relic Viewing</h3>
+          <p>Command Syntax: <code>++RELIC NAME</code> or <code>++SHORTHAND</code></p>
+
+          <div class="grid md:grid-cols-2 gap-6 mt-6">
+            <div class="bg-gray-700/30 p-4 rounded-lg border border-gray-600">
+              <h4 class="font-semibold mb-2">RELIC NAME</h4>
+              <p>Examples: <strong>Axi L6</strong>, <strong>Lith G1</strong></p>
+            </div>
+
+            <div class="bg-gray-700/30 p-4 rounded-lg border border-gray-600">
+              <h4 class="font-semibold mb-2">SHORTHAND</h4>
+              <p>Examples: <strong>al6</strong>, <strong>lg1</strong></p>
+              <p class="mt-2 text-sm">Formed from first letter of era + type (Lith G1 → LG1)</p>
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <h4 class="font-semibold mb-2">Example:</h4>
+            <img src="/blob/relicexample.png" class="rounded-lg shadow" alt="Relic Example">
+          </div>
+
+          <div class="bg-gray-700/40 p-4 rounded-lg border border-gray-600 mt-6">
+            <p><strong>*NOTE*</strong>: Blue numbers = stock, C/UC/RA = rarity.</p>
+            <p>Parts with <strong>x2</strong> cost 2 for 1 stock.</p>
+            <p>ORANGE/etc match the rules explained <a href="https://sites.google.com/view/treasuryteam/overview" class="text-blue-300">here</a>.</p>
+          </div>
+        </div>
+
+        <!-- Part Availability -->
+        <div class="command-section reveal  border-l-4 border-gray-600/70 pl-6 ml-2 mt-12 mb-16" id="part-availability">
+          <h3 class="text-2xl font-semibold mb-4">Part Availability</h3>
+          <p>Command Syntax: <code>++STATUS</code></p>
+          <p>Status values: ED / ORANGE / RED / YELLOW / GREEN</p>
+
+          <div class="mt-6">
+            <img src="/blob/partstatusex.png" class="rounded-lg shadow" alt="Status Example">
+          </div>
+        </div>
+
+        <!-- Merching -->
+        <div class="command-section reveal border-l-4 border-gray-600/70 pl-6 ml-2 mt-12 mb-16" id="merching">
+          <h3 class="text-2xl font-semibold mb-4">Merching</h3>
+          <p>Command Syntax: <code>/soup relics:RELICTEXT *filtermode:TYPE</code></p>
+
+          <ul class="list-disc ml-6 mt-2">
+            <li><strong>relics</strong>: e.g. <code>6lg1</code></li>
+            <li><strong>filtermode</strong>: optional filter</li>
+            <li><strong>new</strong>: colored soup output</li>
           </ul>
 
-          <h3>Features</h3>
-          <div class="feature-links">
-            <a href="#relic-viewing">Relic Viewing</a>
-            <a href="#squad-hosting">Squad Hosting</a>
-            <a href="#merching">Merching Relics</a>
-            <a href="#prime-sets">Prime Sets</a>
-            <a href="#prime-parts">Prime Parts</a>
-            <a href="#part-availability">Viewing Stock</a>
-            <a href="#clan-resources">Clan Resources</a>
+          <div class="mt-6">
+            <h4 class="font-semibold mb-2">Example:</h4>
+            <img src="/blob/soupexample.png" class="rounded-lg shadow">
+          </div>
+
+          <div class="bg-gray-700/40 p-4 rounded-lg border border-gray-600 mt-6">
+            <p>Bot replies with a soup result for posting in merch channels.</p>
+            <img src="/blob/soupresult.png" class="rounded-lg shadow mt-3">
+          </div>
+
+          <div class="mt-10">
+            <h4 class="font-semibold mb-2">Resouping</h4>
+            <p>Command Syntax: <code>/resoup relics:SOUPTEXT</code></p>
+            <img src="/blob/resoupexample.png" class="rounded-lg shadow mt-4">
           </div>
         </div>
 
-        <div class="card">
-          <h2>Commands</h2>
-          <div class="note-box">
-            <p><strong>*IMPORTANT*</strong> All commands are used in Discord by prefacing them with a Slash ("/"), and typing required options in given choice boxes. The only exception to this is the "++" commands, which are used to check relics, status, and prime frames/weapons/etc. Command arguments with <code>*</code> in front are optional; those without are compulsory.</p>
+        <!-- Prime Set & Parts -->
+        <div class="command-section reveal border-l-4 border-gray-600/70 pl-6 ml-2 mt-12 mb-16" id="prime">
+          <h3 class="text-2xl font-semibold mb-4">Prime Lookup</h3>
+
+          <ul class="list-disc ml-6">
+            <li><code>++PRIME</code> → full prime set</li>
+            <li><code>++PRIME PART</code> → specific component</li>
+          </ul>
+
+          <div class="mt-6 space-y-4">
+            <img src="/blob/primesetexample.png" class="rounded-lg shadow" alt="">
+            <img src="/blob/primepartex.png" class="rounded-lg shadow" alt="">
           </div>
 
-          <!-- Relic Viewing -->
-          <div class="command-section" id="relic-viewing">
-            <h3>Relic Viewing</h3>
-            <div class="command-info">
-              <p>Command Syntax: <code>++RELIC NAME</code> or <code>++SHORTHAND</code></p>
-              <div class="command-details">
-                <div class="detail-item">
-                  <h4>RELIC NAME</h4>
-                  <p>Can be anything like <strong>Axi L6</strong> or <strong>Lith G1</strong></p>
-                </div>
-                <div class="detail-item">
-                  <h4>SHORTHAND</h4>
-                  <p>Stuff like <strong>al6</strong> or <strong>lg1</strong></p>
-                  <p>Eg. a relic name <strong>Lith G1</strong> can be shortened to the <strong>relic era</strong> i.e. "Lith" => "L" and <strong>relic type</strong>, which is "G1"</p>
-                  <p>Hence making the shorthand <code>LG1</code> or <code>lg1</code></p>
-                </div>
-              </div>
-              <div class="example">
-                <h4>Example:</h4>
-                <img src="/blob/relicexample.png" alt="Relic Example">
-              </div>
-              <div class="note-box">
-                <p><strong>*NOTE*</strong>: The blue text is the stock of the part in the relic, C/UC/RA means COMMON/UNCOMMON/RARE and the number in <strong>{}</strong> is the token value of the relic.</p>
-                <p>Parts with <strong>x2</strong> next to them require 2 of the part to count for 1 stock.</p>
-                <p>ORANGE/etc means the same as it does in <a href="https://docs.google.com/document/d/1syjdKLIhfIoAvNFwHtO4yBQjSZTOe869az9xaMBPQrc/">here</a></p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Squad Hosting -->
-          <div class="command-section" id="squad-hosting">
-            <h3>Squad Hosting</h3>
-            <div class="command-info">
-              <p>Command Syntax: <code>/thost count:NUMBER relic:RELIC *type:TYPE</code></p>
-              <ul>
-                <li><code>count</code>: Number of relics to host (multiple of 3, e.g. 6, 12, etc.)</li>
-                <li><code>relic</code>: The relic you want to host (same format as Relic Viewing)</li>
-                <li><code>type</code>: Optional, indicates run type (treasury, free, prehost)</li>
-              </ul>
-              <div class="example">
-                <h4>Example:</h4>
-                <img src="/blob/squadtreexample.png" alt="Squad Example">
-              </div>
-              <div class="note-box">
-                <p>The bot will host a squad, ping all members, and manage the run automatically.</p>
-              </div>
-            </div>
-            <div class="command-info">
-              <p>Command Syntax: <code>/fhost mission:TEXT resource:RESOURCE frame:FRAME missiontype:TYPE *duration:TIME</code></p>
-              <ul>
-                <li><code>TEXT</code>: Mission description (e.g. "Ani - void")</li>
-                <li><code>RESOURCE</code>: Resource being farmed</li>
-                <li><code>FRAME</code>: Frame used by the host</li>
-                <li><code>TYPE</code>: Mission type (DEFENSE/SURVIVAL/EXCAVATION)</li>
-                <li><code>TIME</code>: Optional, duration in minutes</li>
-              </ul>
-              <div class="example">
-                <h4>Example:</h4>
-                <img src="/blob/farmerrunex.png" alt="Farmer Example">
-              </div>
-            </div>
-          </div>
-
-          <!-- Part Availability -->
-          <div class="command-section" id="part-availability">
-            <h3>Part Availability</h3>
-            <div class="command-info">
-              <p>Command Syntax: <code>++STATUS</code></p>
-              <p>Status can be ED / ORANGE / RED / YELLOW / GREEN. See <a href="https://docs.google.com/document/d/1syjdKLIhfIoAvNFwHtO4yBQjSZTOe869az9xaMBPQrc/">this doc</a> for more info.</p>
-            </div>
-          </div>
-
-          <!-- Merching -->
-          <div class="command-section" id="merching">
-            <h3>Merching</h3>
-            <div class="command-info">
-              <p>Command Syntax: <code>/soup relics:RELICTEXT *filtertype:TYPE</code></p>
-              <ul>
-                <li><code>relics</code>: Series of relics to soup (e.g. <code>6lg1</code>)</li>
-                <li><code>filtertype</code>: Optional, filter for ED/RED/ORANGE</li>
-              </ul>
-              <div class="example">
-                <h4>Example:</h4>
-                <img src="/blob/soupexample.png" alt="Soup Example">
-              </div>
-              <div class="note-box">
-                <p>After this, the bot replies with a soup result, which you can post in the appropriate channel.</p>
-                <img src="/blob/soupresult.png" alt="Soup Result Example">
-              </div>
-            </div>
-            <div class="command-info">
-              <h4>Resouping Relics</h4>
-              <p>Command Syntax: <code>/resoup relics:SOUPTEXT *filtertype:TYPE</code></p>
-              <p>Paste the soup text to get updated ED/RED/ORANGE values.</p>
-              <div class="example">
-                <img src="/blob/resoupexample.png" alt="Resoup Example">
-              </div>
-            </div>
-          </div>
-
-          <!-- Prime Sets -->
-          <div class="command-section" id="prime-sets">
-            <h3>Prime Sets</h3>
-            <div class="command-info">
-              <p>Command Syntax: <code>++FRAME prime</code></p>
-              <p>FRAME is the name of the frame to fetch (e.g. <code>++vauban prime</code>).</p>
-              <div class="example">
-                <img src="/blob/primesetexample.png" alt="Prime Set Example">
-              </div>
-              <div class="note-box">
-                <p>The blue numbers indicate the stock, and ORANGE/ED/etc means exactly what it means. (See <a href="https://docs.google.com/document/d/1syjdKLIhfIoAvNFwHtO4yBQjSZTOe869az9xaMBPQrc/">here</a>.)</p>
-                <p>Names like "cobra & crane prime" are supported.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Prime Parts -->
-          <div class="command-section" id="prime-parts">
-            <h3>Prime Parts</h3>
-            <div class="command-info">
-              <p>Command Syntax: <code>++PART</code></p>
-              <p>PART is any prime part, like <code>++mirage systems</code> (no "prime" word needed).</p>
-              <p>Shortcuts: <strong>Neuroptics</strong> → <code>neuro</code>, <strong>Systems</strong> → <code>sys</code>, <strong>Blueprint</strong> → <code>bp</code></p>
-            </div>
-          </div>
-
-          <!-- Clan Resources -->
-          <div class="command-section" id="clan-resources">
-            <h3>Clan Resources</h3>
-            <div class="command-info">
-              <p>Check what resources are in low stock for your clan:</p>
-              <ul>
-                <li><code>/resource resource:NAME</code> — NAME is the resource to see (select from autocomplete).</li>
-                <li><code>/clan clan:NAME</code> — NAME is any choice from the list.</li>
-              </ul>
-              <div class="example">
-                <img src="/blob/resourceex.png" alt="Resource Example">
-                <img src="/blob/clanex.png" alt="Clan Example">
-              </div>
-            </div>
+          <div class="bg-gray-700/40 p-4 rounded-lg border border-gray-600 mt-6">
+            <p>Blue = stock. Parentheses = box stock. Sum = final count.</p>
+            <p>ORANGE/ED/etc follow the <a href="https://sites.google.com/view/treasuryteam/overview" class="text-blue-300">stock rules</a>.</p>
           </div>
         </div>
-      </section>
-    </main>
+
+        <!-- Soup Store -->
+        <div class="command-section reveal border-l-4 border-gray-600/70 pl-6 ml-2 mt-12 mb-10" id="soup-store">
+          <h3 class="text-2xl font-semibold mb-4">Soup Store Button</h3>
+
+          <p>Lookups automatically include a <strong>Soup Store</strong> button.</p>
+          <p class="mt-2">Examples:</p>
+
+          <ul class="list-disc ml-6 mt-2">
+            <li><code>++inaros</code> → Soup listings for Inaros set</li>
+            <li><code>++lk4</code> → Listings for Lith K4 parts</li>
+          </ul>
+
+          <div class="mt-6">
+            <img src="/blob/soupstoreex.png" class="rounded-lg shadow">
+          </div>
+
+          <div class="bg-gray-700/40 p-4 rounded-lg border border-gray-600 mt-6">
+            <p>If listings exist, the bot posts them automatically.  
+              Otherwise, the page will simply be empty.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
   </div>
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+</script>
+
 </body>
 
 </html>

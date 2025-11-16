@@ -75,12 +75,10 @@ export default class CommandHandler {
             for (const file of commandFiles) {
                 const command = await import(`file://${join(dirPath, file)}`);
                 if (!command.default) continue;
-
-                // Register all commands regardless of enabled state
-                this.register(command.default);
-                
+                                
                 // Only add to interaction commands if enabled
                 if (type === 'interaction' && this.isCommandEnabled(command.default.name, command.default.trigger)) {
+                this.register(command.default);
                     interactionCommands.push(command.default);
                 }
             }

@@ -1,216 +1,655 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AETools | Tutorial</title>
-    <link rel="shortcut icon" href="/public/images/icon.png" type="image/x-icon">
-    <link rel="stylesheet" href="/public/css/tutorial.css" type="text/css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AETools | Tutorial</title>
+  <link rel="shortcut icon" href="/public/images/icon.png" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            poppins: ['Poppins', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            'discord-bg': '#313338',
+            'discord-dark': '#2b2d31',
+            'discord-darker': '#1e1f22',
+            'discord-accent': '#5865F2',
+            'discord-muted': '#b5bac1',
+            'discord-border': '#3f4147',
+            'discord-green': '#3ba55d'
+          },
+          boxShadow: {
+            'discord-card': '0 8px 24px rgba(0,0,0,0.45)',
+          },
+          keyframes: {
+            'fade-up': {
+              '0%': { opacity: 0, transform: 'translateY(8px)' },
+              '100%': { opacity: 1, transform: 'translateY(0)' }
+            },
+            'scale-in': {
+              '0%': { opacity: 0, transform: 'scale(0.97)' },
+              '100%': { opacity: 1, transform: 'scale(1)' }
+            }
+          },
+          animation: {
+            'fade-up': 'fade-up 220ms ease-out forwards',
+            'scale-in': 'scale-in 180ms ease-out forwards'
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <div class="logo-container">
-                <img src="/blob/logo.png" width="250" alt="AETools Logo" width="40">
+
+<body class="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50 font-poppins">
+  <div class="min-h-screen bg-black/20">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
+      <!-- Header -->
+      <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+        <div class="flex items-center gap-4">
+          <div class="bg-slate-900/70 border border-slate-800/80 rounded-2xl px-3 py-2 shadow-lg shadow-black/40">
+            <img src="/blob/logo.png" alt="AETools Logo" class="w-40 md:w-56">
+          </div>
+          <div class="hidden sm:flex flex-col gap-1">
+            <h1 class="text-xl md:text-2xl font-semibold tracking-tight">AETools Tutorial</h1>
+            <p class="text-sm text-slate-400 max-w-md">
+              See exactly how each command behaves in a Discord-style environment.
+            </p>
+          </div>
+        </div>
+
+        <nav
+          class="flex items-center justify-between sm:justify-end gap-2 text-sm bg-slate-950/60 border border-slate-800 rounded-full px-2 py-1 shadow-md shadow-black/40">
+          <a href="/"
+            class="px-3 py-1.5 rounded-full text-slate-300 hover:text-white hover:bg-slate-800/70 transition">
+            About
+          </a>
+          <a href="/explorer"
+            class="px-3 py-1.5 rounded-full text-slate-300 hover:text-white hover:bg-slate-800/70 transition">
+            Explorer
+          </a>
+          <a href="/tutorial"
+            class="px-3 py-1.5 rounded-full bg-discord-accent text-white font-medium shadow shadow-indigo-900/70">
+            Tutorial
+          </a>
+        </nav>
+      </header>
+
+      <!-- Main -->
+      <main>
+        <section
+          class="grid lg:grid-cols-[260px,minmax(0,1fr)] gap-6 lg:gap-8 items-start animate-fade-up opacity-0"
+          id="tutorial-root">
+          <!-- Sidebar -->
+          <aside
+            class="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-4 sm:p-5 shadow-discord-card backdrop-blur">
+            <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
+              <span
+                class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-discord-accent/15 text-xs text-discord-accent">?</span>
+              Commands
+            </h2>
+            <p class="text-xs text-slate-400 mb-4">
+              Pick a command on the left, then hit <span class="font-semibold text-slate-200">Send</span> to see how it
+              plays out.
+            </p>
+
+            <div class="space-y-1">
+              <button
+                class="command-btn w-full text-left text-xs sm:text-sm px-3 py-2 rounded-md border border-transparent bg-slate-900/80 hover:bg-slate-800/80 text-slate-200 transition flex flex-col gap-0.5"
+                data-scenario="axi">
+                <span class="font-medium">Relic lookup</span>
+                <span class="font-mono text-[11px] text-slate-400">++axi l6</span>
+              </button>
+
+              <button
+                class="command-btn w-full text-left text-xs sm:text-sm px-3 py-2 rounded-md border border-transparent bg-slate-900/60 hover:bg-slate-800/80 text-slate-200 transition flex flex-col gap-0.5"
+                data-scenario="soup">
+                <span class="font-medium">Relic soup</span>
+                <span class="font-mono text-[11px] text-slate-400">/soup relics:6lg1 filtermode:ED new:False</span>
+              </button>
+
+              <button
+                class="command-btn w-full text-left text-xs sm:text-sm px-3 py-2 rounded-md border border-transparent bg-slate-900/60 hover:bg-slate-800/80 text-slate-200 transition flex flex-col gap-0.5"
+                data-scenario="resoup">
+                <span class="font-medium">Resoup from oldsoup</span>
+                <span class="font-mono text-[11px] text-slate-400">/resoup oldsoup:{40} | 6x | Lith G1 | ...</span>
+              </button>
+
+              <button
+                class="command-btn w-full text-left text-xs sm:text-sm px-3 py-2 rounded-md border border-transparent bg-slate-900/60 hover:bg-slate-800/80 text-slate-200 transition flex flex-col gap-0.5"
+                data-scenario="inaros">
+                <span class="font-medium">Prime set lookup</span>
+                <span class="font-mono text-[11px] text-slate-400">++inaros</span>
+              </button>
+
+              <button
+                class="command-btn w-full text-left text-xs sm:text-sm px-3 py-2 rounded-md border border-transparent bg-slate-900/60 hover:bg-slate-800/80 text-slate-200 transition flex flex-col gap-0.5"
+                data-scenario="inarosChassis">
+                <span class="font-medium">Prime part + Soup Store</span>
+                <span class="font-mono text-[11px] text-slate-400">++inaros chassis</span>
+              </button>
             </div>
-            <nav>
-                <a href="/">About</a>
-                <a href="/explorer">Explorer</a>
-                <a href="/tutorial" class="active">Tutorial</a>
-            </nav>
-        </header>
 
-        <main>
-            <section class="demo-container">
-                <div class="demo-sidebar">
-                    <h2>Commands</h2>
-                    <div class="command-list">
-                        <button class="command-btn" data-command="relic">Relic Viewing</button>
-                        <button class="command-btn" data-command="squad">Squad Hosting</button>
-                        <button class="command-btn" data-command="soup">Relic Soup</button>
-                        <button class="command-btn" data-command="prime">Prime Sets</button>
-                        <button class="command-btn" data-command="resource">Clan Resources</button>
+            <div
+              class="mt-4 text-[11px] text-slate-400 border-t border-slate-800 pt-3 flex items-start gap-2 leading-relaxed">
+              <span class="mt-0.5 inline-block h-1.5 w-1.5 rounded-full bg-green-500"></span>
+              <p>
+                The chat on the right is only a demo – nothing is actually sent to Discord.
+              </p>
+            </div>
+          </aside>
+
+          <!-- Discord-style demo -->
+          <section
+            class="bg-discord-darker border border-slate-800/80 rounded-2xl shadow-discord-card overflow-hidden">
+            <!-- Top bar -->
+            <div
+              class="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-slate-800/80 bg-discord-dark">
+              <div class="flex items-center gap-2 text-xs text-discord-muted">
+                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-slate-900/70 text-[11px]">
+                  #
+                </span>
+                <span class="font-medium text-slate-100">aetools-demo</span>
+              </div>
+              <span class="hidden sm:inline text-[11px] text-slate-500">Discord-style preview</span>
+            </div>
+
+            <!-- Chat area -->
+            <div class="h-[420px] sm:h-[480px] flex flex-col bg-discord-bg">
+              <div id="chat-container"
+                class="flex-1 overflow-y-auto px-3 sm:px-4 pt-4 pb-2 space-y-3 text-sm text-slate-50">
+                <!-- Initial “click a command” message -->
+                <div class="flex items-start gap-3">
+                  <img src="/public/images/user-avatar.png" alt="User Avatar"
+                    class="w-9 h-9 rounded-full select-none">
+                  <div>
+                    <div class="flex items-baseline gap-2">
+                      <span class="font-medium text-sky-400">User</span>
+                      <span class="text-xs text-discord-muted">Today at 12:00</span>
                     </div>
+                    <div class="mt-0.5 text-slate-100">
+                      Click a command on the left, then press <span
+                        class="font-semibold text-slate-50">Send</span> to watch it play out.
+                    </div>
+                  </div>
                 </div>
 
-                <div class="demo-content">
-                    <div class="discord-mock">
-                        <div class="chat-container">
-                            <div class="message user">
-                                <img src="/public/images/user-avatar.png" alt="User Avatar" width="40">
-                                <div class="message-content">
-                                    <div class="message-header">
-                                        <span class="username">User</span>
-                                        <span class="timestamp">Today at 12:00</span>
-                                    </div>
-                                    <div class="message-text">Click a command to see how it works!</div>
-                                </div>
-                            </div>
-                            <div id="bot-response" class="message bot">
-                                <img src="/public/images/bot-avatar.png" alt="Bot Avatar" width="40">
-                                <div class="message-content">
-                                    <div class="message-header">
-                                        <span class="username">AETools</span>
-                                        <span class="timestamp">Today at 12:00</span>
-                                    </div>
-                                    <div class="message-text">...</div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="flex items-start gap-3">
+                  <img src="/public/images/bot-avatar.png" alt="Bot Avatar"
+                    class="w-9 h-9 rounded-full select-none">
+                  <div>
+                    <div class="flex items-baseline gap-2">
+                      <span class="font-medium text-slate-100">AETools</span>
+                      <span
+                        class="px-1.5 py-0.5 rounded bg-slate-700 text-[10px] uppercase tracking-wide text-slate-100">APP</span>
+                      <span class="text-xs text-discord-muted">Today at 12:00</span>
                     </div>
+                    <div class="mt-0.5 text-slate-100">
+                      I’ll respond exactly like I would in Discord – including Soup Store searches when you click the
+                      button.
+                    </div>
+                  </div>
                 </div>
-            </section>
-        </main>
+              </div>
+
+              <!-- Fake input / send bar -->
+              <div class="border-t border-slate-800/80 bg-discord-dark px-3 sm:px-4 py-3">
+                <div class="flex items-center gap-2 sm:gap-3">
+                  <div
+                    class="flex-1 flex items-center gap-2 bg-discord-darker rounded-lg border border-discord-border px-3 py-2.5 shadow-inner shadow-black/40">
+                    <span class="text-slate-500 text-xs select-none hidden sm:inline">#</span>
+                    <input id="command-input" type="text" readonly
+                      class="flex-1 bg-transparent text-xs sm:text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none"
+                      placeholder="Select a command on the left to pre-fill this box" />
+                  </div>
+                  <button id="send-btn"
+                    class="inline-flex items-center justify-center px-3 sm:px-4 py-2 rounded-md bg-discord-accent text-xs sm:text-sm font-medium shadow shadow-indigo-900/70 disabled:opacity-40 disabled:cursor-not-allowed transition active:scale-[0.97]">
+                    Send
+                  </button>
+                </div>
+                <p class="mt-1 text-[10px] text-slate-500">
+                  The Send button only replays a scripted example – it doesn’t talk to Discord.
+                </p>
+              </div>
+            </div>
+          </section>
+        </section>
+      </main>
     </div>
-    <script>
-        // Demo responses for each command
-        const responses = {
-            relic: `
-                <div class="message user">
-                    <img src="/public/images/user-avatar.png" alt="User Avatar" width="40">
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="username">User</span>
-                            <span class="timestamp">Today at 12:01</span>
-                        </div>
-                        <div class="message-text">++Axi L6</div>
-                    </div>
-                </div>
-                <div class="message bot">
-                    <img src="/public/images/bot-avatar.png" alt="Bot Avatar" width="40">
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="username">AETools</span>
-                            <span class="timestamp">Today at 12:01</span>
-                        </div>
-                        <div class="message-text">
-                            <strong>Axi L6</strong> Relic<br>
-                            <ul>
-                                <li>Vauban Prime Blueprint (RARE) {15}</li>
-                                <li>Akstiletto Prime Link (UNCOMMON) {45}</li>
-                                <li>Forma Blueprint (COMMON) {60}</li>
-                                <li>...and more</li>
-                            </ul>
-                            <span class="note">C/UC/RA = Common/Uncommon/Rare, {n} = token value</span>
-                        </div>
-                    </div>
-                </div>
-            `,
-            squad: `
-                <div class="message user">
-                    <img src="/public/images/user-avatar.png" alt="User Avatar" width="40">
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="username">User</span>
-                            <span class="timestamp">Today at 12:02</span>
-                        </div>
-                        <div class="message-text">/thost count:6 relic:Axi L6</div>
-                    </div>
-                </div>
-                <div class="message bot">
-                    <img src="/public/images/bot-avatar.png" alt="Bot Avatar" width="40">
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="username">AETools</span>
-                            <span class="timestamp">Today at 12:02</span>
-                        </div>
-                        <div class="message-text">
-                            Squad created for <strong>6x Axi L6</strong>!<br>
-                            Waiting for 3 more members to join...
-                        </div>
-                    </div>
-                </div>
-            `,
-            soup: `
-                <div class="message user">
-                    <img src="/public/images/user-avatar.png" alt="User Avatar" width="40">
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="username">User</span>
-                            <span class="timestamp">Today at 12:03</span>
-                        </div>
-                        <div class="message-text">/soup relics:6lg1 3al6</div>
-                    </div>
-                </div>
-                <div class="message bot">
-                    <img src="/public/images/bot-avatar.png" alt="Bot Avatar" width="40">
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="username">AETools</span>
-                            <span class="timestamp">Today at 12:03</span>
-                        </div>
-                        <div class="message-text">
-                            <strong>Soup Result:</strong><br>
-                            6x Lith G1: [ED: 2, RED: 1, ORANGE: 3]<br>
-                            3x Axi L6: [ED: 1, RED: 2, ORANGE: 0]
-                        </div>
-                    </div>
-                </div>
-            `,
-            prime: `
-                <div class="message user">
-                    <img src="/public/images/user-avatar.png" alt="User Avatar" width="40">
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="username">User</span>
-                            <span class="timestamp">Today at 12:04</span>
-                        </div>
-                        <div class="message-text">++vauban prime</div>
-                    </div>
-                </div>
-                <div class="message bot">
-                    <img src="/public/images/bot-avatar.png" alt="Bot Avatar" width="40">
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="username">AETools</span>
-                            <span class="timestamp">Today at 12:04</span>
-                        </div>
-                        <div class="message-text">
-                            <strong>Vauban Prime</strong> Stock:<br>
-                            Neuroptics: 3<br>
-                            Chassis: 2<br>
-                            Systems: 1<br>
-                            Blueprint: 4
-                        </div>
-                    </div>
-                </div>
-            `,
-            resource: `
-                <div class="message user">
-                    <img src="/public/images/user-avatar.png" alt="User Avatar" width="40">
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="username">User</span>
-                            <span class="timestamp">Today at 12:05</span>
-                        </div>
-                        <div class="message-text">/resource resource:Hexenon</div>
-                    </div>
-                </div>
-                <div class="message bot">
-                    <img src="/public/images/bot-avatar.png" alt="Bot Avatar" width="40">
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="username">AETools</span>
-                            <span class="timestamp">Today at 12:05</span>
-                        </div>
-                        <div class="message-text">
-                            <strong>Clan Resource: Hexenon</strong><br>
-                            Current Stock: 120<br>
-                            Status: <span style="color:green;">Sufficient</span>
-                        </div>
-                    </div>
-                </div>
-            `
-        };
+  </div>
 
-        // Handle command button clicks
-        document.querySelectorAll('.command-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const command = this.getAttribute('data-command');
-                document.querySelector('.chat-container').innerHTML = responses[command];
-            });
+  <script>
+    // Simple IntersectionObserver to fade in the main block
+    const root = document.getElementById('tutorial-root');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            root.classList.remove('opacity-0');
+            root.classList.add('animate-fade-up');
+            observer.disconnect();
+          }
         });
-    </script>
+      },
+      { threshold: 0.2 }
+    );
+    observer.observe(root);
+
+    const chatContainer = document.getElementById('chat-container');
+    const commandInput = document.getElementById('command-input');
+    const sendBtn = document.getElementById('send-btn');
+
+    let currentScenario = null;
+
+    // Discord-style message factory
+    function createMessage({ type, username, timestamp, content, isBot, includeAppBadge }) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex items-start gap-3 opacity-0 translate-y-2 transition duration-200';
+
+      const avatar = document.createElement('img');
+      avatar.className = 'w-9 h-9 rounded-full select-none';
+      avatar.alt = type === 'user' ? 'User Avatar' : 'Bot Avatar';
+      avatar.src = type === 'user' ? '/public/images/user-avatar.png' : '/public/images/bot-avatar.png';
+      wrapper.appendChild(avatar);
+
+      const body = document.createElement('div');
+
+      const header = document.createElement('div');
+      header.className = 'flex items-baseline gap-2';
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = type === 'user' ? 'font-medium text-sky-400' : 'font-medium text-slate-100';
+      nameSpan.textContent = username;
+      header.appendChild(nameSpan);
+
+      if (includeAppBadge) {
+        const badge = document.createElement('span');
+        badge.className = 'px-1.5 py-0.5 rounded bg-slate-700 text-[10px] uppercase tracking-wide text-slate-100';
+        badge.textContent = 'APP';
+        header.appendChild(badge);
+      }
+
+      const timeSpan = document.createElement('span');
+      timeSpan.className = 'text-xs text-discord-muted';
+      timeSpan.textContent = timestamp;
+      header.appendChild(timeSpan);
+
+      body.appendChild(header);
+
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'mt-0.5 text-slate-100 text-sm';
+      contentDiv.innerHTML = content;
+      body.appendChild(contentDiv);
+
+      wrapper.appendChild(body);
+
+      // Animate in on next frame
+      requestAnimationFrame(() => {
+        wrapper.classList.remove('opacity-0', 'translate-y-2');
+      });
+
+      return wrapper;
+    }
+
+    function createEmbedCard(innerHtml, accent = 'border-red-500') {
+      const card = document.createElement('div');
+      card.className = `mt-1 rounded-md border-l-4 ${accent} bg-discord-darker border border-slate-800/80 shadow-sm shadow-black/40`;
+      card.innerHTML = innerHtml;
+      return card;
+    }
+
+    // Scenario definitions
+    const scenarios = {
+      axi: {
+        label: '++axi l6',
+        command: '++axi l6',
+        messages: [
+          {
+            type: 'user',
+            username: 'User',
+            timestamp: 'Today at 3:27 PM',
+            content: '++axi l6'
+          },
+          {
+            type: 'bot',
+            username: 'AETools',
+            timestamp: 'Today at 3:27 PM',
+            content: `
+              <div class="inline-flex flex-col rounded bg-discord-dark border border-slate-700/80 shadow-sm shadow-black/40 min-w-[260px] max-w-xl">
+                <div class="px-3 py-2 border-b border-slate-700/60 text-[13px] font-semibold">
+                  [ Axi L6 Relic ] {16}
+                </div>
+                <div class="px-3 py-2 bg-slate-950/60">
+                  <pre class="font-mono text-[11px] leading-snug whitespace-pre-wrap">
+C   42   Forma Blueprint           {YELLOW}
+UC  26   Akstiletto Prime Link     {ORANGE}
+UC  21   Vauban Prime Systems      {ORANGE}
+RA  13   Vauban Prime Blueprint    {RED}</pre>
+                  <div class="mt-2 text-[11px] text-discord-muted">
+                    Vaulted relic · ED relic · Today at 3:27 PM
+                  </div>
+                </div>
+                <div class="px-3 py-2 border-t border-slate-700/60 flex items-center justify-between">
+                  <button
+                    class="inline-flex items-center gap-2 px-2.5 py-1.5 rounded bg-slate-800/80 hover:bg-slate-700/70 text-[11px] text-slate-100 border border-slate-600/80 cursor-default">
+                    <span class="inline-flex items-center justify-center w-3 h-3 rounded-full bg-slate-900">
+                      🔍
+                    </span>
+                    <span>Soup Store</span>
+                  </button>
+                  <span class="text-[11px] text-discord-muted">AETools • Relic Viewer</span>
+                </div>
+              </div>
+            `,
+            isBot: true,
+            includeAppBadge: true
+          }
+        ]
+      },
+
+      soup: {
+        label: '/soup relics:6lg1 filtermode:ED new:False',
+        command: '/soup relics:6lg1 filtermode:ED new:False',
+        messages: [
+          {
+            type: 'user',
+            username: 'User',
+            timestamp: 'Today at 3:28 PM',
+            content: '/soup relics:6lg1 filtermode:ED new:False'
+          },
+          {
+            type: 'bot',
+            username: 'AETools',
+            timestamp: 'Today at 3:28 PM',
+            content: `
+              <div class="inline-flex flex-col rounded bg-discord-dark border border-slate-700/80 shadow-sm shadow-black/40 min-w-[260px] max-w-xl">
+                <div class="px-3 py-2 border-b border-slate-700/60 text-[13px] font-semibold">
+                  Soup Result
+                </div>
+                <div class="px-3 py-2 bg-slate-950/70 space-y-1.5 text-[12px]">
+                  <div class="flex justify-between">
+                    <span class="font-mono text-slate-200">6x Lith G1</span>
+                    <span class="font-mono text-slate-300">ED: <span class="text-discord-green">2</span> · RED: 1 · ORANGE: 3</span>
+                  </div>
+                  <div class="mt-2 text-[11px] text-discord-muted">
+                    Filter: ED · Preview mode (new: False)
+                  </div>
+                </div>
+              </div>
+            `,
+            isBot: true,
+            includeAppBadge: true
+          }
+        ]
+      },
+
+      resoup: {
+        label: '/resoup oldsoup:{40} | 6x | Lith G1 ...',
+        command: '/resoup oldsoup:{40} | 6x  | Lith G1  | 0 ED | 3 RED | 2 ORANGE filtermode:ED',
+        messages: [
+          {
+            type: 'user',
+            username: 'User',
+            timestamp: 'Today at 3:29 PM',
+            content: '/resoup oldsoup:{40} | 6x  | Lith G1  | 0 ED | 3 RED | 2 ORANGE filtermode:ED'
+          },
+          {
+            type: 'bot',
+            username: 'AETools',
+            timestamp: 'Today at 3:29 PM',
+            content: `
+              <div class="inline-flex flex-col rounded bg-discord-dark border border-slate-700/80 shadow-sm shadow-black/40 min-w-[260px] max-w-xl">
+                <div class="px-3 py-2 border-b border-slate-700/60 text-[13px] font-semibold">
+                  Resoup Result
+                </div>
+                <div class="px-3 py-2 bg-slate-950/70 text-[12px] space-y-1.5">
+                  <div class="flex justify-between">
+                    <span class="font-mono text-slate-200">6x Lith G1</span>
+                    <span class="font-mono text-slate-300">ED: <span class="text-discord-green">2</span> · RED: 1 · ORANGE: 3</span>
+                  </div>
+                  <p class="text-[11px] text-discord-muted">
+                    Recalculated from oldsoup string · Filter: ED
+                  </p>
+                </div>
+              </div>
+            `,
+            isBot: true,
+            includeAppBadge: true
+          }
+        ]
+      },
+
+      inaros: {
+        label: '++inaros',
+        command: '++inaros',
+        messages: [
+          {
+            type: 'user',
+            username: 'User',
+            timestamp: 'Today at 3:30 PM',
+            content: '++inaros'
+          },
+          {
+            type: 'bot',
+            username: 'AETools',
+            timestamp: 'Today at 3:30 PM',
+            content: `
+              <div class="inline-flex flex-col rounded bg-discord-dark border border-slate-700/80 shadow-sm shadow-black/40 min-w-[260px] max-w-xl">
+                <div class="px-3 py-2 border-b border-slate-700/60 text-[13px] font-semibold">
+                  [ Inaros Prime ] {4}
+                </div>
+                <div class="px-3 py-2 bg-slate-950/70">
+                  <pre class="font-mono text-[11px] leading-snug whitespace-pre-wrap">
+10(+8)  Inaros Systems        {RED}
+10(+4)  Inaros Neuroptics     {RED}
+27      Inaros Blueprint      {ORANGE}
+34      Inaros Chassis        {ORANGE}</pre>
+                  <div class="mt-2 text-[11px] text-discord-muted">
+                    14x in stock · ED frame · Today at 3:30 PM
+                  </div>
+                </div>
+                <div class="px-3 py-2 border-t border-slate-700/60 flex items-center justify-between">
+                  <button
+                    class="soup-store-btn inline-flex items-center gap-2 px-2.5 py-1.5 rounded bg-slate-800/80 hover:bg-slate-700/70 text-[11px] text-slate-100 border border-slate-600/80"
+                    data-followup="inaros">
+                    <span class="inline-flex items-center justify-center w-3 h-3 rounded-full bg-slate-900">🔍</span>
+                    <span>Soup Store</span>
+                  </button>
+                  <span class="text-[11px] text-discord-muted">Find relics for this set</span>
+                </div>
+              </div>
+            `,
+            isBot: true,
+            includeAppBadge: true
+          }
+        ],
+        soupFollowup: {
+          type: 'bot',
+          username: 'AETools',
+          timestamp: 'Today at 3:31 PM',
+          content: `
+            <div class="inline-flex flex-col rounded bg-discord-dark border border-slate-700/80 shadow-sm shadow-black/40 min-w-[260px] max-w-xl">
+              <div class="px-3 py-2 border-b border-slate-700/60 text-[13px] font-semibold">
+                Found 2 relics
+              </div>
+              <div class="px-3 py-2 bg-slate-950/70 text-[12px] space-y-1.5">
+                <p class="text-[11px] text-discord-muted mb-1">Relics from Soup Store matching: Inaros Prime</p>
+                <p>
+                  By <a href="#" class="underline text-sky-400">ray12426</a> –
+                  <a href="#" class="underline text-sky-400">Soup Link</a> – 6x Lith K4 <span class="italic text-slate-300">(RADDDED)</span>
+                </p>
+                <p>
+                  By <a href="#" class="underline text-sky-400">ray12426</a> –
+                  <a href="#" class="underline text-sky-400">Soup Link</a> – 6x Lith K8 <span class="italic text-slate-300">(RADDDED)</span>
+                </p>
+              </div>
+            </div>
+          `,
+          isBot: true,
+          includeAppBadge: true
+        }
+      },
+
+      inarosChassis: {
+        label: '++inaros chassis',
+        command: '++inaros chassis',
+        messages: [
+          {
+            type: 'user',
+            username: 'User',
+            timestamp: 'Today at 3:32 PM',
+            content: '++inaros chassis'
+          },
+          {
+            type: 'bot',
+            username: 'AETools',
+            timestamp: 'Today at 3:32 PM',
+            content: `
+              <div class="inline-flex flex-col rounded bg-discord-dark border border-orange-500/80 shadow-sm shadow-black/40 min-w-[260px] max-w-xl">
+                <div class="px-3 py-2 border-b border-slate-700/60 text-[13px] font-semibold">
+                  [ Inaros Chassis ] {ORANGE}
+                </div>
+                <div class="px-3 py-2 bg-slate-950/70 text-[12px]">
+                  <p class="font-mono text-[11px] mb-1">34 in stock · ORANGE part</p>
+                  <p>Used in <span class="font-semibold">Inaros Prime</span>.</p>
+                  <p class="mt-1 text-[11px] text-discord-muted">Last updated Today at 3:32 PM.</p>
+                </div>
+                <div class="px-3 py-2 border-t border-slate-700/60 flex items-center justify-between">
+                  <button
+                    class="soup-store-btn inline-flex items-center gap-2 px-2.5 py-1.5 rounded bg-slate-800/80 hover:bg-slate-700/70 text-[11px] text-slate-100 border border-slate-600/80"
+                    data-followup="inarosChassis">
+                    <span class="inline-flex items-center justify-center w-3 h-3 rounded-full bg-slate-900">🔍</span>
+                    <span>Soup Store</span>
+                  </button>
+                  <span class="text-[11px] text-discord-muted">Find relics for this part</span>
+                </div>
+              </div>
+            `,
+            isBot: true,
+            includeAppBadge: true
+          }
+        ],
+        soupFollowup: {
+          type: 'bot',
+          username: 'AETools',
+          timestamp: 'Today at 3:33 PM',
+          content: `
+            <div class="inline-flex flex-col rounded bg-discord-dark border border-slate-700/80 shadow-sm shadow-black/40 min-w-[260px] max-w-xl">
+              <div class="px-3 py-2 border-b border-slate-700/60 text-[13px] font-semibold">
+                Found 1 relics
+              </div>
+              <div class="px-3 py-2 bg-slate-950/70 text-[12px] space-y-1">
+                <p class="text-[11px] text-discord-muted">Relics from Soup Store matching: Inaros Chassis</p>
+                <p>
+                  By <a href="#" class="underline text-sky-400">ray12426</a> –
+                  <a href="#" class="underline text-sky-400">Soup Link</a> – 6x Lith K4 <span class="italic text-slate-300">(RADDDED)</span>
+                </p>
+              </div>
+            </div>
+          `,
+          isBot: true,
+          includeAppBadge: true
+        }
+      }
+    };
+
+    // Handle sidebar selection
+    document.querySelectorAll('.command-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const scenarioKey = btn.getAttribute('data-scenario');
+        currentScenario = scenarios[scenarioKey];
+
+        // Update active styling
+        document.querySelectorAll('.command-btn').forEach((b) => {
+          b.classList.remove('bg-slate-900/80', 'border-slate-700');
+          b.classList.add('bg-slate-900/60');
+        });
+        btn.classList.add('bg-slate-900/80', 'border-slate-700');
+
+        // Pre-fill fake input
+        commandInput.value = currentScenario.command;
+
+        // Enable send button
+        sendBtn.disabled = false;
+      });
+    });
+
+    function attachSoupStoreHandlers() {
+      document.querySelectorAll('.soup-store-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const followupKey = btn.getAttribute('data-followup');
+          const scenario = scenarios[followupKey];
+          if (!scenario || !scenario.soupFollowup) return;
+
+          // Avoid duplicating follow-ups
+          if (btn.dataset.used === 'true') return;
+          btn.dataset.used = 'true';
+
+          const followupMsg = createMessage({
+            ...scenario.soupFollowup
+          });
+
+          chatContainer.appendChild(followupMsg);
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        }, { once: true });
+      });
+    }
+
+    // Handle Send button
+    sendBtn.addEventListener('click', () => {
+      if (!currentScenario) return;
+
+      // Clear chat and rebuild with intro user/bot + new exchange
+      chatContainer.innerHTML = '';
+
+      // Fake "user typed & sent" animation
+      sendBtn.disabled = true;
+
+      const msgs = currentScenario.messages;
+
+      // 1. User message
+      const userMsg = createMessage({
+        type: msgs[0].type,
+        username: msgs[0].username,
+        timestamp: msgs[0].timestamp,
+        content: msgs[0].content,
+        isBot: false,
+        includeAppBadge: false
+      });
+      chatContainer.appendChild(userMsg);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+
+      // 2. Bot reply after small delay
+      setTimeout(() => {
+        const botMsg = createMessage({
+          type: msgs[1].type,
+          username: msgs[1].username,
+          timestamp: msgs[1].timestamp,
+          content: msgs[1].content,
+          isBot: true,
+          includeAppBadge: msgs[1].includeAppBadge
+        });
+        chatContainer.appendChild(botMsg);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        // Wire Soup Store buttons if present
+        attachSoupStoreHandlers();
+
+        // Re-enable send for replay
+        setTimeout(() => {
+          sendBtn.disabled = false;
+        }, 400);
+      }, 450);
+    });
+  </script>
 </body>
+
 </html>
