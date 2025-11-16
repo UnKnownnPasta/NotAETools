@@ -53,7 +53,7 @@ class Bot extends Client {
         // Bot online in discord
         await this.login(process.env.DISCORD_TOKEN);
         this.once('clientReady', async () => {
-            console.log(`Ready! Logged in as ${this.user.tag}`);
+            console.log(`Bot Logged in as ${this.user.tag}`);
 
             await this.guilds.fetch({ force: true });
             await this.startCaching();
