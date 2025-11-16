@@ -68,7 +68,7 @@ router.get('/explorer', globalLimiter, (req, res, next) => {
 });
 router.get('/tutorial', globalLimiter, serveHTML('tutorial.html'));
 
-router.get('/blob/*', blobLimiter, (req, res) => {
+router.get('/blob/*path', blobLimiter, (req, res) => {
   const filePath = path.join(__dirname, '..', '..', req.path);
   fs.readFile(filePath, (err, data) => {
     if (err) return res.status(404).send('404 Not Found');
