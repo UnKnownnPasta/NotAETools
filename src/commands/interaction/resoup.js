@@ -23,9 +23,9 @@ export default {
         let regex;
         if (isSpecialMode) {
             str = str.replace(//g, '')
-            regex = /\d+x\s*\[0m\| \[(2;)?34m(Lith|Meso|Neo|Axi) [A-Z]\d+/g;
+            regex = /\d+x\s*\[0m\| \[(2;)?34m(Lith|Meso|Neo|Axi|Vanguard) [A-Z]\d+/g;
         } else {
-            regex = /\b\d+x\s*\|\s+(Lith|Meso|Neo|Axi)\s[A-Z]\d+\b/g;
+            regex = /\b\d+x\s*\|\s+(Lith|Meso|Neo|Axi|Vanguard)\s[A-Z]\d+\b/g;
         }
         const matches = str.matchAll(regex);
         return matches || [];
@@ -169,7 +169,7 @@ export default {
         return finishedSoup.filter(x => x.split('|')[2].trim().indexOf(rname) !== -1);
     }
 
-    const soupedString = ["Lith", "Meso", "Neo", "Axi"].map(x => {
+    const soupedString = ["Lith", "Meso", "Neo", "Axi", "Vanguard"].map(x => {
         let isempty = filterRelics(x)
         if (isempty.length != 0) return isempty.sort(sortFunction).join('\n')
         else return undefined

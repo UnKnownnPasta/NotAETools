@@ -201,7 +201,7 @@ export default {
 			);
 		};
 
-		const soupedString = ["Lith", "Meso", "Neo", "Axi"]
+		const soupedString = ["Lith", "Meso", "Neo", "Axi", "Vanguard"]
 			.map((x) => {
 				let isempty = filterRelics(x);
 				if (isempty.length != 0) return isempty.sort(sortFunction);
@@ -233,10 +233,10 @@ export default {
 			const _step = isSpecialMode ? 20 : 45;
 
 			function transitionNewline(strarr) {
-				let base = strarr[0].match(/(Lith|Meso|Neo|Axi)/g)[0];
+				let base = strarr[0].match(/(Lith|Meso|Neo|Axi|Vanguard)/g)[0];
 				const newArr = [];
 				for (const item of strarr) {
-					const baseMatch = item.match(/(Lith|Meso|Neo|Axi)/g)[0];
+					const baseMatch = item.match(/(Lith|Meso|Neo|Axi|Vanguard)/g)[0];
 					if (!(base === baseMatch)) {
 						newArr.push("\n" + item);
 						base = baseMatch;

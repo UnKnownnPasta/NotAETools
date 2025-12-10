@@ -40,12 +40,13 @@ class EntityClassifier {
 				keywords: ["ed", "red", "orange", "yellow", "green"],
 			},
 			relics: {
-				keywords: ["lith", "meso", "neo", "axi"],
+				keywords: ["lith", "meso", "neo", "axi", "vanguard"],
 				details: {
 					lith: [],
 					meso: [],
 					neo: [],
 					axi: [],
+					vanguard: []
 				},
 			},
 			primes: {
@@ -64,7 +65,7 @@ class EntityClassifier {
 		const rdata = parsedData.relics;
 		const pdata = parsedData.primes;
 
-		const relicData = { lith: [], meso: [], neo: [], axi: [] };
+		const relicData = { lith: [], meso: [], neo: [], axi: [], vanguard: [] };
 		for (const r of rdata) {
 			const [name, type] = r.name.split(" ");
 			relicData[name.toLowerCase()].push(type);

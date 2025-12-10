@@ -22,7 +22,7 @@ export default {
 	trigger: "message",
 	execute: async (message) => {
     let [statusType, relicFilter] = message.content.trim().slice(2).split(' ');
-    if (!['lith', 'meso', 'neo', 'axi'].includes(relicFilter)) relicFilter = null;
+    if (!['lith', 'meso', 'neo', 'axi', 'vanguard'].includes(relicFilter)) relicFilter = null;
     const entity = entityClassifierInstance.classifyEntity(statusType.trim());
 		const entityDataFiltered = relicCacheManager.relicCache.primes
       .map(p => ({

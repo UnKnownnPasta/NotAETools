@@ -87,12 +87,12 @@ export function isRelicFF(str) {
 	if (!str) return null;
 	str = str.toLowerCase();
 	const relic = str.trim().split(" ");
-	const map = { 'a': 'axi', 'l': 'lith', 'm': 'meso', 'n': 'neo' };
+	const map = { 'a': 'axi', 'l': 'lith', 'm': 'meso', 'n': 'neo', 'v': 'vanguard' };
 	if (relic.length == 1) {
 		return isRelicFF(`${titleCase(map[str[0]] ?? "")} ${str.slice(1).toUpperCase()}`);
 	} else if (relic.length != 2) {
 		return null;
-	} else if (/^(lith|meso|neo|axi)$/.test(relic[0]) && /^[A-Za-z][0-9]{1,2}$/.test(relic[1])) {
+	} else if (/^(lith|meso|neo|axi|vanguard)$/.test(relic[0]) && /^[A-Za-z][0-9]{1,2}$/.test(relic[1])) {
 		return `${titleCase(relic[0])} ${relic[1].toUpperCase()}`;
 	}
 	return null;
