@@ -100,7 +100,6 @@ export function isRelicFF(str) {
 
 export const range = (num) => 
 	num >= 0 && num <= 11 ? 'ED'
-	: num > 11 && num <= 23 ? 'RED'
-	: num > 23 && num <= 39 ? 'ORANGE'
-	: num > 39 && num <= 59 ? 'YELLOW'
-	: num > 59 ? 'GREEN' : '';
+	: num >= 12 && num <= 29 ? 'RED'
+	: num >= 30 && num <= 49 ? 'YELLOW'
+	: num >= 50 ? 'GREEN' : '';

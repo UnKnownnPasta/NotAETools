@@ -141,7 +141,7 @@ export default {
 					soupedStrings.push(
 						`${`{${res[0]}}`.padEnd(5)}| ${(howmany + "x").padEnd(
 							4
-						)}| ${rFullName.padEnd(8)} ${_("ED")} ${_("RED")} ${_("ORANGE")}`
+						)}| ${rFullName.padEnd(8)} ${_("ED")} ${_("RED")}`
 					);
 				}
 			}
@@ -164,8 +164,7 @@ export default {
 			} else {
 				const ED = l[3].split()[0];
 				const RED = l[4].split()[0];
-				const ORG = l[5].split()[0];
-				return `${ED}${RED}${ORG}-${rSplit[0].match(/\d+/)?.[0] ?? 0}-${
+				return `${ED}${RED}-${rSplit[0].match(/\d+/)?.[0] ?? 0}-${
 					rSplit[1].match(/\d+/)?.[0] ?? 0
 				}`;
 			}

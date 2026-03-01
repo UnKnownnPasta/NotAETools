@@ -9,10 +9,9 @@ import { range } from "../../services/utils.js";
 
 const stockRanges = {
   "ED": "0 - 11",
-  "RED": "12 - 23",
-  "ORANGE": "24 - 39",
-  "YELLOW": "40 - 59",
-  "GREEN": "60 - inf",
+  "RED": "12 - 29",
+  "YELLOW": "30 - 49",
+  "GREEN": "50 - inf",
 }
 
 /** @type {import('../../other/types').Command} */

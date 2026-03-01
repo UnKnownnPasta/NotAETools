@@ -37,7 +37,7 @@ class EntityClassifier {
 	constructor() {
 		this.data = {
 			status: {
-				keywords: ["ed", "red", "orange", "yellow", "green"],
+				keywords: ["ed", "red", "yellow", "green"],
 			},
 			relics: {
 				keywords: ["lith", "meso", "neo", "axi", "vanguard"],

@@ -120,7 +120,7 @@ export default {
                 const _ = (rarity) => {
                     return `| ${res[1].filter(x => x == rarity).length}`.padEnd(4) + rarity
                 }
-                soupedStrings.push(`${`{${res[0]}}`.padEnd(5)}| ${(howmany+'x').padEnd(4)}| ${rFullName.padEnd(8)} ${_('ED')} ${_('RED')} ${_('ORANGE')}`)
+                soupedStrings.push(`${`{${res[0]}}`.padEnd(5)}| ${(howmany+'x').padEnd(4)}| ${rFullName.padEnd(8)} ${_('ED')} ${_('RED')}`)
             }
         }
         return soupedStrings
@@ -136,8 +136,8 @@ export default {
 
             return [tokenParse, counts, rSplit[1].match(/\d+/)[0]]
         } else {
-            const ED = l[3].split()[0]; const RED = l[4].split()[0]; const ORG = l[5].split()[0]
-            return `${ED}${RED}${ORG}-${rSplit[0].match(/\d+/)[0]}-${rSplit[1].match(/\d+/)[0]}`
+            const ED = l[3].split()[0]; const RED = l[4].split()[0];
+            return `${ED}${RED}-${rSplit[0].match(/\d+/)[0]}-${rSplit[1].match(/\d+/)[0]}`
         }
     }
     const sortFunction = (a, b) => {
