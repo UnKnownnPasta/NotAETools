@@ -117,6 +117,7 @@ function getFissureTimings(fisTimes) {
 
 export async function updateFissures(env) {
     const fissureData = await getWarframeData();
+    if (!fissureData) return null;
     
     const missions = ["Extermination", "Capture", "Sabotage", "Rescue", "Defense"];
     const tiers = ["Lith", "Meso", "Neo", "Axi"];
@@ -226,6 +227,9 @@ export async function updateFissures(env) {
 export async function updateFissureChannelMessage(env) {
   try {
     const data = await updateFissures(env);
+    if (data == null) {
+      return console.log("Updating fissures failed, data missing.")
+    }
     const url = `https://discord.com/api/v10/channels/${env.F_CHANNELID}/messages/${env.F_MESSAGEID}`;
     const response = await fetch(url, {
       method: "PATCH",
