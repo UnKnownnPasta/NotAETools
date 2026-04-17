@@ -1,4 +1,6 @@
 import { FData } from "../../src/services/utils.js";
+import { discordFetch } from "../../src/services/limiter.js";
+
 
 const eDef = {
   "type__normal": "1287248821461454910",
@@ -70,20 +72,32 @@ function titleCase(str) {
 }
 
 async function getWarframeData() {
-  const response = await fetch('https://api.warframestat.us/pc/fissures')
-  .then(async (res) => {
-    const text = await res.text(); // Capture raw content
+  try {
+    const response = await fetch('https://api.warframestat.us/pc/fissures', {
+      headers: { 'Accept': 'application/json' }
+    });
+    
+    if (!response.ok) {
+      console.error(`WarframeStat API returned ${response.status}: ${response.statusText}`);
+      return null;
+    }
+
+    const text = await response.text();
+    if (!text || text.trim().startsWith('<!DOCTYPE html>')) {
+      console.error('WarframeStat API returned HTML or empty response');
+      return null;
+    }
+
     try {
       return JSON.parse(text);
     } catch (jsonError) {
       console.error('JSON Parse Error:', jsonError.message);
-      console.error('Raw Response', text.slice(0, 1000));
-      throw jsonError;
+      return null;
     }
-  })
-  .catch(console.error);
-
-  return response;
+  } catch (error) {
+    console.error('Fetch Error from WarframeStat:', error.message);
+    return null;
+  }
 }
 
 function getFissureTimings(fisTimes) {
@@ -117,7 +131,10 @@ function getFissureTimings(fisTimes) {
 
 export async function updateFissures(env) {
     const fissureData = await getWarframeData();
-    if (!fissureData) return null;
+    if (!fissureData || !Array.isArray(fissureData)) {
+      console.error("Fissure data is missing or not an array:", typeof fissureData);
+      return null;
+    }
     
     const missions = ["Extermination", "Capture", "Sabotage", "Rescue", "Defense"];
     const tiers = ["Lith", "Meso", "Neo", "Axi"];
@@ -231,7 +248,7 @@ export async function updateFissureChannelMessage(env) {
       return console.log("Updating fissures failed, data missing.")
     }
     const url = `https://discord.com/api/v10/channels/${env.F_CHANNELID}/messages/${env.F_MESSAGEID}`;
-    const response = await fetch(url, {
+    const response = await discordFetch(url, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -242,7 +259,9 @@ export async function updateFissureChannelMessage(env) {
     });
 
     if (!response.ok) {
-      console.error("Failed to update Discord message", await response.text());
+      if (response.status === 429) return; // Silent fail for ratelimits as it's logged in the limiter
+      const errorText = await response.text().catch(() => 'No body');
+      console.error(`Failed to update Discord message [${response.status}]: ${errorText.slice(0, 100)}`);
     }
   } catch (e) {
     console.error(e);

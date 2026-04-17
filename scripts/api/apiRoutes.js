@@ -15,7 +15,6 @@ const baseLimitter = {
     },
     handler: (req, res, next, options) => {
       res.status(options.statusCode).json({ error: 'Rate limit exceeded' });
-      next();
     },
     standardHeaders: true,
     legacyHeaders: false,
@@ -24,6 +23,13 @@ const baseLimitter = {
 const apiLimiter = rateLimit({
     ...baseLimitter,
     max: 50,
+});
+
+const fissureLimiter = rateLimit({
+    ...baseLimitter,
+    windowMs: 60 * 1000, // 1 minute
+    max: 2, // Allow 2 requests per minute (one for job, maybe one manual?)
+    message: { error: 'Fissure update rate limit exceeded. Please wait.' }
 });
 
 // Route to force an update
@@ -71,7 +77,7 @@ router.get('/heartbeat', (req, res) => {
 });
 
 // Endpoint for fissure updating
-router.get('/fissure', async (request, res) => {
+router.get('/fissure', fissureLimiter, async (request, res) => {
     const authHeader = (request.headers["X-Source-Job"] || request.headers["x-source-job"]);
     
     if (!authHeader || authHeader !== process.env.EXPECTED_AUTH_TOKEN) {

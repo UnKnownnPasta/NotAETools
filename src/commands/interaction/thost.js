@@ -1,4 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, MessageFlags, SlashCommandBuilder } from "discord.js";
+import { discordFetch } from "../../services/limiter.js";
+
 import { isRelicFF } from "../../services/utils.js";
 import relicCacheManager from "../../managers/relicCacheManager.js";
 import { constructEmbed } from '../../commands/message/relics.js'
@@ -15,7 +17,7 @@ async function getFissures(type) {
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
-    const response = await fetch(url, {
+    const response = await discordFetch(url, {
       method: "GET",
       headers: {
         "User-Agent": "DiscordBot (https://github.com/UnKnownnPasta/NotAETools, 1.0.0)",

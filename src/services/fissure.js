@@ -6,8 +6,22 @@ import { titleCase } from './utils.js';
 const { emojis, hex_codes } = jsonExports;
 
 async function getWarframeData() {
-    const response = await axios.get('https://api.warframestat.us/pc/fissures')
-    return response.data
+    try {
+        const response = await axios.get('https://api.warframestat.us/pc/fissures', {
+            headers: { 'Accept': 'application/json' },
+            timeout: 10000
+        });
+        
+        if (typeof response.data !== 'object' || response.data === null) {
+            console.error('WarframeStat API returned invalid data type:', typeof response.data);
+            return null;
+        }
+
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching Warframe data in service:', error.message);
+        return null;
+    }
 }
 
 async function fetchChannel(client) {
@@ -58,6 +72,10 @@ function getFissureTimings(fisTimes) {
 
 export async function getFissures(client) {
     const fissureData = await getWarframeData();
+    if (!fissureData || !Array.isArray(fissureData)) {
+        console.error("Fissure data is missing or invalid in service.");
+        return;
+    }
     const fissureMessage = await fetchChannel(client);
     
     const missions = ["Extermination", "Capture", "Sabotage", "Rescue"];
